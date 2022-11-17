@@ -11,8 +11,6 @@ b=$(ls -lt DataParsed/ | grep .txt | wc -l)
 if [[ (! -f IntermediateFiles/lab_files_headers.txt) || $a -ne $b ]]; 
 then
     echo "Writing the lab_files_headers.txt file..."
-    echo $a
-    echo $b
     
     while read -r file;
     do
@@ -22,7 +20,7 @@ fi
 echo "lab_files_headers.txt file prepared:"
 wc -l IntermediateFiles/lab_files_headers.txt
 
-cat IntermediateFiles/lab_files_headers.txt | tr " " "\n" | sort | uniq > IntermediateFiles/lab_files_fields.txt
+cat IntermediateFiles/lab_files_headers.txt | tr " " "\n" | sort | uniq > IntermediateFiles/lab_files_headers.txt
 
 ### 
 # TO DO: SEPARATE FILES SOMEHOW DEPENDING ON THE FIELDS THEY HAVE -> Or not?
