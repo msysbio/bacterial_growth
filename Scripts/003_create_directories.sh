@@ -24,8 +24,9 @@ done < ../experiments_info_mod.txt
 
 cd /Users/julia/bacterialGrowth_thesis/IntermediateFiles
 rm line.txt
-# cd ../
-# rm experiments_info_mod.txt
+
+cd /Users/julia/bacterialGrowth_thesis/
+rm experiments_info_mod.txt
 
 
 cd /Users/julia/bacterialGrowth_thesis/Data
