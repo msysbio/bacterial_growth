@@ -1,5 +1,10 @@
 cd /Users/julia/bacterialGrowth_thesis/IntermediateFiles/
 
+cd ../Data
+mkdir -p experiments
+mkdir -p mediums
+cd ../IntermediateFiles
+
 echo "" > line.txt
 
 
@@ -15,7 +20,7 @@ while read -r line; do
     experiment=$(awk '{print $3}' line.txt)
     replicate=$(awk '{print $2}' line.txt)
     
-    cd ../Data/
+    cd ../Data/experiments/
     mkdir -p $bacteria
     cd $bacteria
     mkdir -p $experiment
@@ -32,7 +37,7 @@ cd /Users/julia/bacterialGrowth_thesis/
 rm experiments_info_mod.txt
 
 
-cd /Users/julia/bacterialGrowth_thesis/Data
+cd /Users/julia/bacterialGrowth_thesis/Data/experiments
 
 echo "BT:"
 ls -lt BT/ | tail -n +2 | wc -l
