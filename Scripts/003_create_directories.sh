@@ -13,12 +13,15 @@ while read -r line; do
 
     bacteria=$(awk '{print $5}' line.txt)
     experiment=$(awk '{print $3}' line.txt)
+    replicate=$(awk '{print $2}' line.txt)
     
     cd ../Data/
     mkdir -p $bacteria
-    cd ../Data/$bacteria
+    cd $bacteria
     mkdir -p $experiment
-    cd ../../IntermediateFiles/
+    cd $experiment
+    mkdir -p $replicate
+    cd /Users/julia/bacterialGrowth_thesis/IntermediateFiles/
     
 done < ../experiments_info_mod.txt
 
