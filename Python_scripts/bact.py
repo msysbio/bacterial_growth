@@ -34,4 +34,10 @@ parser.add_argument("--abundance_measurement",
 
 parser.add_argument("--units",
                     
-                    )                    
+                    )
+
+args = parser.parse_args()
+experiment_name = args.experiment_name
+
+# Cnnection to the DB
+# Load into the DB the variables from args
