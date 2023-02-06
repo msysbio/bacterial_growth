@@ -22,10 +22,13 @@ Front-end options:
 * Write a list with the possible ways to measure metabolites
 * Make a table for XXX species abundances
 
-* REPLICATES --> core table with indices
+
+### Replicates
+* core table with indices
 * biological and technical replicates
 * separate species in a table like metabolites
 
+.
 * Both temperature and pH can change during the experiment
 * Dilution rate (not in our data but happens a lot) ==> binary logic
 
