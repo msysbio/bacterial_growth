@@ -1,4 +1,11 @@
-def create(cursor, DB_NAME, TABLES, table_name, query):
+from __future__ import print_function
+import mysql.connector
+from mysql.connector import errorcode
+
+def create(TABLES, table_name, query):
+
+    cnx = mysql.connector.connect(user='root', password='Pozuelo99.',host='localhost',database='bacteria_trial')
+    cursor = cnx.cursor()
 
     TABLES[table_name] = (query)
 
@@ -14,3 +21,6 @@ def create(cursor, DB_NAME, TABLES, table_name, query):
                 print(err.msg)
         else:
             print("OK")
+
+    cursor.close()
+    cnx.close()
