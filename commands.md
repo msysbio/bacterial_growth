@@ -7,6 +7,23 @@ conda activate master_thesis23
 conda install -n master_thesis23 python=3.6 mysql-connector-python r-essentials r-base
 ```
 
+To work with jupyter: 
+```
+conda create -n master_thesis23         # creates new virtual env
+conda activate master_thesis23          # activate environment in terminal
+conda install jupyter                # install jupyter + notebook
+jupyter notebook                     # start server + kernel inside my-conda-env
+```
+
+### Day to day (everything already installed)
+Just do:
+```
+source ~/miniconda3/etc/profile.d/conda.sh
+conda activate master_thesis23              # activate environment in terminal
+jupyter notebook                            # start server + kernel inside my-conda-env
+```
+
+
 ## MySQL
 ```
 mysql -u root -p
