@@ -4,7 +4,7 @@ from mysql.connector import errorcode
 
 def create(TABLES, table_name, query):
 
-    cnx = mysql.connector.connect(user='root', password='Pozuelo99.',host='localhost',database='bacteria_trial')
+    cnx = mysql.connector.connect(user='root', password='XXX',host='localhost',database='bacteria_trial')
     cursor = cnx.cursor()
 
     TABLES[table_name] = (query)
