@@ -35,6 +35,16 @@ git push -u origin main
 git pull
 ```
 
+Configure .gitignore:
+```
+git config --global core.excludesFile ~/.gitignore
+```
+
+In order to remove things already committed:
+```
+git rm -r --cached XXX
+```
+
 
 ## MySQL
 ```
