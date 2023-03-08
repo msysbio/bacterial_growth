@@ -1,3 +1,5 @@
+BT_batch_mucin1_1.txt
+BT_batch_mucin1_4.txt
 BTRI_WC_RNAseq_1.txt
 BTRI_WC_RNAseq_2.txt
 BTRI_WC_RNAseq_3.txt
@@ -38,10 +40,8 @@ BT_batch_WC2_2.txt
 BT_batch_WC2_3.txt
 BT_batch_WC3_1.txt
 BT_batch_WC3_2.txt
-BT_batch_mucin1_1.txt
 BT_batch_mucin1_2.txt
 BT_batch_mucin1_3.txt
-BT_batch_mucin1_4.txt
 BT_batch_mucin1_5.txt
 BT_batch_mucin1_6.txt
 BT_batch_mucin1_7.txt

@@ -1,12 +1,12 @@
+BTRI_WC_RNAseq
+BTRI_batch_WC
+BTRI_batch_mucin1
+BTRI_mucin_RNAseq
+BTRI_mucin_longterm
 BT_BTspentWC5
 BT_BTspentWC5C
 BT_BTspentWC65
 BT_BTspentWC65C
-BT_RI_WC_RNAseq
-BT_RI_batch_WC
-BT_RI_batch_mucin1
-BT_RI_mucin_RNAseq
-BT_RI_mucin_longterm
 BT_WC_RNAseq
 BT_batch_WC1
 BT_batch_WC2
