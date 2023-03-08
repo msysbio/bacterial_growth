@@ -24,6 +24,17 @@ jupyter notebook
 
 ```
 
+## Github
+```
+git add XXX
+git commit -m "XXX"
+git push -u origin main
+```
+
+```
+git pull
+```
+
 
 ## MySQL
 ```
