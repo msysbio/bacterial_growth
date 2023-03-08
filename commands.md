@@ -19,8 +19,9 @@ jupyter notebook                     # start server + kernel inside my-conda-env
 Just do:
 ```
 source ~/miniconda3/etc/profile.d/conda.sh
-conda activate master_thesis23              # activate environment in terminal
-jupyter notebook                            # start server + kernel inside my-conda-env
+conda activate master_thesis23
+jupyter notebook
+
 ```
 
 
