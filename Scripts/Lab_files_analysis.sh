@@ -79,4 +79,10 @@ while read -r line; do
 
 done < IntermediateFiles/experiments_info_mod.txt
 
+echo "\n---- Getting complete paths of the files..."
+pwd
+find /Users/julia/bacterialGrowth_thesis/Data -type f > /Users/julia/bacterialGrowth_thesis/IntermediateFiles/listOfFiles.list
+head /Users/julia/bacterialGrowth_thesis/IntermediateFiles/listOfFiles.list
+echo '...'
+
 echo "\nDONE!\n"
