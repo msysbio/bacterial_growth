@@ -1,8 +1,6 @@
 PROJECT_PATH=$1
 FILES_PATH=$2
 
-echo "---- Starting to analyse the given data"
-
 # Main directory of the project
 cd $PROJECT_PATH
 
@@ -19,29 +17,22 @@ ls -lt  $FILES_PATH | grep -i .txt | awk '{print $9}' > IntermediateFiles/lab_fi
 
 cd $PROJECT_PATH'IntermediateFiles'
 
-echo "\n---- Obtaining the experiments names..."
 awk '{print substr($1,1,length($1)-6)}' lab_files_names.txt | sort | uniq > lab_experiment_names.txt
-head lab_experiment_names.txt
-echo '...'
 
 ## 2) GET THE HEADERS THAT ARE ON ALL THE GIVEN FILES
 ## ==========================================================================================================================================================================
 rm -f lab_files_headers.txt
 
-echo "\n---- Obtaining the files headers..."
 while read -r file;
     do
         head -n 1 $FILES_PATH$file >> lab_files_headers.txt
 done < lab_files_names.txt
 
 cat lab_files_headers.txt | tr " " "\n" | sort | uniq > lab_headers.txt
-head lab_headers.txt
-echo '...'
 
 ## 3) GET EXPERIMENT INFORMATION TO CREATE THE DIRECTORIES
 ## ==========================================================================================================================================================================
 rm -f experiments_info.txt
-echo "\n---- Obtaining the experiments information..."
 echo 'file_name,experiment_name,replicate_number' | column -t -s "," > experiments_info.txt
 
 while read -r file; do
@@ -53,16 +44,12 @@ while read -r file; do
     
 done < lab_files_names.txt
 
-head experiments_info.txt
-echo '...'
-
 tail -n +2 experiments_info.txt > experiments_info_mod.txt
 
 cd $PROJECT_PATH
 
 ## 4) CREATE THE DIRECTORIES
 ## ==========================================================================================================================================================================
-echo "\n---- Creating the experiments directories..."
 mkdir -p Data/
 while read -r line; do
 
@@ -84,9 +71,4 @@ done < IntermediateFiles/experiments_info_mod.txt
 
 ## 5) GET THE FUL PATHS OF THE FILES ON THE NEW DIRECTORIES
 ## ==========================================================================================================================================================================
-echo "\n---- Getting complete paths of the files..."
 find $PROJECT_PATH'Data' -type f | sort > $PROJECT_PATH'IntermediateFiles/listOfFiles.list'
-head $PROJECT_PATH'IntermediateFiles/listOfFiles.list'
-echo '...'
-
-# echo "\nDONE!\n"
