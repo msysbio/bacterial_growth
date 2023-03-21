@@ -7,12 +7,16 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 from parser import bacterial_parser
-from utils import runBash
+from utils import (
+    runBash, 
+    getMatchingList
+)
 from populate import (
     addExperiment,
     addCultivation,
     addReplicates
 )
+from readInfo import (getInfo)
 
 # ===========================================================================================
 # Variables:
@@ -35,27 +39,38 @@ REP_DESCRIPTION = 'Replicate number #'
 def main():
 
     args = bacterial_parser()
+    print(args.option)
+    print(args.info)
+    print(args.exp_files)
 
-    experimentDir = os.path.abspath(args.dir) + '/'
+    print('\n===================\n')
+
+    experimentDir = os.path.abspath(args.exp_files) + '/'
     experiment = analyzeLabDir(experimentDir)
     experimentName = experiment[0]
     experimentFiles = experiment[1]
 
     headers_dict = clusterHeaders(PROJECT_DIRECTORY + HEADERS_FILE)
 
+    print('\n===================\n')
+
+    infoFile = args.info
+
     if args.option == 1:
-        print('Create a new experiment, with its corresponding cultivation conditions and several replicates.')
+        print('\n\nCreate a new experiment, with its corresponding cultivation conditions and several replicates.')
+        getInfo(infoFile)
 
         # experimentDescription = 
         # experimentDate = 
         # reactorId = 
+
         expId = addExperiment(experimentName=experimentName)
         cultId = addCultivation(expId)
         addReplicates(expId, cultId, headers_dict, experimentFiles)
 
 
     elif args.option == 2:
-        print('Add new cultivation conditions to an exisiting experiment with the corresponding replicates. An experiment ID must be provided.')
+        print('\n\nAdd new cultivation conditions to an exisiting experiment with the corresponding replicates. An experiment ID must be provided.')
 
         # expId = 
         cultId = addCultivation(expId)
@@ -63,7 +78,7 @@ def main():
 
 
     elif args.option == 3:
-        print('Add more replicates to certain cultivation conditions. A cultivation ID must be provided.')
+        print('\n\nAdd more replicates to certain cultivation conditions. A cultivation ID must be provided.')
 
         # expId =
         # cultId = 
@@ -109,5 +124,4 @@ def clusterHeaders(file):
 
 
 if __name__ == "__main__":
-    try: 
-        main()
+    main()
