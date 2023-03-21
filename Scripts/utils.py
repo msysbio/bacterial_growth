@@ -16,7 +16,7 @@ def runBash(file, arguments=[]):
         print("The bash script failed to run.")
 
 
-def dir_path(string):
+def checkPath(string):
     '''
     This function checks if the given string is a directory path
     '''
