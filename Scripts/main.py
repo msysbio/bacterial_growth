@@ -16,8 +16,7 @@ from populate import (
     addCultivation,
     addReplicates
 )
-from readInfo import (getInfo)
-
+from read_yml import getExperimentInfo
 # ===========================================================================================
 # Variables:
 # ===========================================================================================
@@ -55,19 +54,18 @@ def main():
     print('\n===================\n')
 
     infoFile = args.info
+    
 
     if args.option == 1:
         print('\n\nCreate a new experiment, with its corresponding cultivation conditions and several replicates.')
-        getInfo(infoFile)
+        newExperiment = getExperimentInfo(infoFile)
 
-        # experimentDescription = 
-        # experimentDate = 
-        # reactorId = 
+        if 'experimentName' not in newExperiment:
+            newExperiment['experimentName'] = experimentName
 
-        expId = addExperiment(experimentName=experimentName)
+        expId = addExperiment(newExperiment)
         cultId = addCultivation(expId)
         addReplicates(expId, cultId, headers_dict, experimentFiles)
-
 
     elif args.option == 2:
         print('\n\nAdd new cultivation conditions to an exisiting experiment with the corresponding replicates. An experiment ID must be provided.')
@@ -83,6 +81,9 @@ def main():
         # expId =
         # cultId = 
         addReplicates(expId, cultId, headers_dict, experimentFiles)
+
+    else:
+        print(0)
 
 
 

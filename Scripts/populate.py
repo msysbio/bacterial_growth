@@ -3,8 +3,12 @@ import pandas as pd
 from utils import findOccurrences
 import db_functions as db
 
-def addExperiment(**args):
-    expId = db.addExperiment(args)
+EXP_DESCRIPTION = 'This experiment was done in Brussels.'
+CULT_DESCRIPTION = 'In this perturbation, we kept pH at 5'
+REP_DESCRIPTION = 'Replicate number #'
+
+def addExperiment(experiment):
+    expId = db.addExperiment(experiment)
     return expId
 
 def addCultivation(expId):

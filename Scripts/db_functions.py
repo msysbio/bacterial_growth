@@ -33,7 +33,8 @@ def execute(phrase):
     cnx.close()
     return [last_id, res]
 
-def addExperiment(**args):
+def addExperiment(args):
+    print('----->', args)
     """ 
     This function creates a new experiment.
 
@@ -44,10 +45,12 @@ def addExperiment(**args):
     values = "("
     for key, val in args.items():
         fields = fields + key + ','
-        values = values + "'" +val + "',"
+        values = values + "'" +str(val) + "',"
     fields = fields[:-1] + ')'
     values = values[:-1] + ')'
     phrase = "INSERT INTO Experiment " + fields + " VALUES " + values
+
+    print('----->', phrase)
         
     last_id = execute(phrase)[0]
     return last_id

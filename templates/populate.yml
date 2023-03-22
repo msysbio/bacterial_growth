@@ -1,0 +1,15 @@
+experiment:
+  name: MyExperiment
+  date: 2020-02-02
+  author:
+  description: This experiment was carried out in Leuven
+  reactor:
+    name: ambr15f
+    volume: 15
+
+cultivation:
+  bacteria: Bacteroides thetaiotaomicron
+  strain: ABC123 
+  initial_ph: 6.2
+  carbon_source: true
+    
