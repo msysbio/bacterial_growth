@@ -34,11 +34,10 @@ def execute(phrase):
     return [last_id, res]
 
 def addExperiment(args):
-    print('----->', args)
     """ 
     This function creates a new experiment.
 
-    :params: variable number of fields to introduce in the table
+    :params: dictionary of fields to introduce in the table
     :return: id of the inserted record
     """
     fields = "("
@@ -49,19 +48,31 @@ def addExperiment(args):
     fields = fields[:-1] + ')'
     values = values[:-1] + ')'
     phrase = "INSERT INTO Experiment " + fields + " VALUES " + values
-
-    print('----->', phrase)
         
     last_id = execute(phrase)[0]
     return last_id
 
-def addCultivation(cultId, cultDescription, expId):
-    phrase = "INSERT IGNORE INTO CultivationConditions (cultivationId, cultivationDescription, experimentId) VALUES ('"+cultId+"','"+cultDescription+"','"+expId+"')"
-    execute(phrase)
-    return False
+def addCultivation(cultId, expId, args):
+    """ 
+    This function adds some cultivation conditions to an existing experiment.
 
-def addReplicate(repId, repDescription, cultId):
-    phrase = "INSERT IGNORE INTO TechnicalReplicates (replicateId, replicateDescription, cultivationId) VALUES ('"+repId+"','"+repDescription+"','"+cultId+"')"
+    :params: experiment ID, cultivation ID, dictionary of parameters
+    :return: id of the inserted record
+    """
+    fields = "(cultivationId,experimentId,"
+    values = "("+cultId+","+expId+","
+    for key, val in args.items():
+        fields = fields + key + ','
+        values = values + "'" +str(val) + "',"
+    fields = fields[:-1] + ')'
+    values = values[:-1] + ')'
+    phrase = "INSERT IGNORE INTO CultivationConditions " + fields + " VALUES " + values
+
+    last_id = execute(phrase)[0]
+    return last_id
+    
+def addReplicate(repId, cultId):
+    phrase = "INSERT IGNORE INTO TechnicalReplicates (replicateId, cultivationId) VALUES ('"+repId+"','"+cultId+"')"
     last_id = execute(phrase)[0]
     return last_id
 
@@ -70,19 +81,19 @@ def addReplicateFile(repId, **file):
         phrase = "UPDATE TechnicalReplicates SET "+key+" = '"+val+"' WHERE replicateId = '"+repId+"'"
         execute(phrase)
     
-
-
 def addBacteria(bacteriaSpecies, bacteriaStrain):
-    return 
-
-def getLastId():
-    phrase = "SELECT LAST_INSERT_ID();"
-    res = execute(phrase)
-    last_id = res
-    return last_id
+    return False
 
 def countRecords(table, field, value):
     phrase = "SELECT COUNT(*) FROM "+table+" WHERE "+field+" = " + value
     res = execute(phrase)
     count = res[1][0][0]
     return count
+
+def getBacteria(bacteriaSpecies, *bacteriaStrain):
+    bacteriaStrain = bacteriaStrain[0]
+    if len(bacteriaStrain) == 0:
+        phrase = "SELECT * FROM Bacteria WHERE bacteriaSpecies = '"+bacteriaSpecies+"';"
+    else:
+        phrase = "SELECT * FROM Bacteria WHERE bacteriaSpecies = '"+bacteriaSpecies+"' AND bacteriaStrain = '"+bacteriaStrain+"';"
+    execute(phrase)

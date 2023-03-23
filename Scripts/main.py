@@ -16,13 +16,16 @@ from populate import (
     addCultivation,
     addReplicates
 )
-from read_yml import getExperimentInfo
+from read_yml import (
+    getExperimentInfo, 
+    getCultivationInfo
+)
 # ===========================================================================================
 # Variables:
 # ===========================================================================================
 
 PROJECT_DIRECTORY = '/Users/julia/bacterialGrowth_thesis/'
-LAB_ANALYSIS_FILE = 'Scripts/Lab_files_analysis.sh'
+LAB_ANALYSIS_FILE = 'Scripts/Lab_files_analysis2.sh'
 
 HEADERS_FILE = 'IntermediateFiles/lab_headers.txt'
 EXPERIMENTS_LIST = 'IntermediateFiles/listOfFiles.list'
@@ -38,11 +41,6 @@ REP_DESCRIPTION = 'Replicate number #'
 def main():
 
     args = bacterial_parser()
-    print(args.option)
-    print(args.info)
-    print(args.exp_files)
-
-    print('\n===================\n')
 
     experimentDir = os.path.abspath(args.exp_files) + '/'
     experiment = analyzeLabDir(experimentDir)
@@ -51,36 +49,33 @@ def main():
 
     headers_dict = clusterHeaders(PROJECT_DIRECTORY + HEADERS_FILE)
 
-    print('\n===================\n')
-
     infoFile = args.info
     
-
     if args.option == 1:
-        print('\n\nCreate a new experiment, with its corresponding cultivation conditions and several replicates.')
+        print('\n\n--> Create a new experiment, with its corresponding cultivation conditions and several replicates.')
         newExperiment = getExperimentInfo(infoFile)
+        newCultivation = getCultivationInfo(infoFile)
 
         if 'experimentName' not in newExperiment:
             newExperiment['experimentName'] = experimentName
 
         expId = addExperiment(newExperiment)
-        cultId = addCultivation(expId)
-        addReplicates(expId, cultId, headers_dict, experimentFiles)
+        cultId = addCultivation(expId, newCultivation)
+        addReplicates(cultId, headers_dict, experimentFiles)
 
     elif args.option == 2:
-        print('\n\nAdd new cultivation conditions to an exisiting experiment with the corresponding replicates. An experiment ID must be provided.')
+        print('\n\n--> Add new cultivation conditions to an exisiting experiment with the corresponding replicates. An experiment ID must be provided.')
 
         # expId = 
         cultId = addCultivation(expId)
-        addReplicates(expId, cultId, headers_dict, experimentFiles)
+        addReplicates(cultId, headers_dict, experimentFiles)
 
 
     elif args.option == 3:
-        print('\n\nAdd more replicates to certain cultivation conditions. A cultivation ID must be provided.')
+        print('\n\n--> Add more replicates to certain cultivation conditions. A cultivation ID must be provided.')
 
-        # expId =
         # cultId = 
-        addReplicates(expId, cultId, headers_dict, experimentFiles)
+        addReplicates(cultId, headers_dict, experimentFiles)
 
     else:
         print(0)

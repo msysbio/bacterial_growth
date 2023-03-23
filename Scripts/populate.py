@@ -11,19 +11,18 @@ def addExperiment(experiment):
     expId = db.addExperiment(experiment)
     return expId
 
-def addCultivation(expId):
+def addCultivation(expId, cultivation):
     number_cult = db.countRecords('CultivationConditions', 'experimentId', str(expId))
     cultId = expId*100 + number_cult + 1
-    db.addCultivation(str(cultId), CULT_DESCRIPTION, str(expId))
-
+    db.addCultivation(str(cultId),str(expId),cultivation)
     return cultId
 
-def addReplicates(expId, cultId, headers, files):
+def addReplicates(cultId, headers, files):
     number_rep = db.countRecords('TechnicalReplicates', 'cultivationId', str(cultId))
 
     for i, f in enumerate(files):
         repId = str(cultId) + '_' + str(number_rep + i + 1)
-        db.addReplicate(str(repId), REP_DESCRIPTION, str(cultId))
+        db.addReplicate(str(repId), str(cultId))
         
         #Get directory of the provided paths
         path_end = max(findOccurrences(f, "/"))
