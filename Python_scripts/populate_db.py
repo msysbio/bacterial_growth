@@ -65,7 +65,7 @@ try:
     connection = mysql.connector.connect(host='localhost',
                                          database='bacterial_growth',
                                          user='root',
-                                         password='Pozuelo99.')
+                                         password='')
     if connection.is_connected():
         db_Info = connection.get_server_info()
         print("Connected to MySQL Server version ", db_Info)

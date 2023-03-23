@@ -16,7 +16,7 @@ def runBash(file, arguments=[]):
         print("The bash script failed to run.")
 
 
-def checkPath(string):
+def isDir(string):
     '''
     This function checks if the given string is a directory path
     '''
@@ -24,7 +24,16 @@ def checkPath(string):
         return string
     else:
         raise NotADirectoryError(string)
-
+    
+def isFile(string):
+    '''
+    This function checks if the given string is a directory path
+    '''
+    if os.path.isfile(string):
+        return string
+    else:
+        a = 0
+        # Put warning or something here
 
 def findOccurrences(string, ch):
     '''

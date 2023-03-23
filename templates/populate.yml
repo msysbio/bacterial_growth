@@ -1,6 +1,6 @@
 experiment:
-  name: MyExperiment
-  date: 2020-02-02
+  name: OnLabExp ##If not provided, the files directory name will be taken
+  date: 2023-03-23 ##yyyy-mm-dd format
   author:
   description: This experiment was carried out in Leuven
   reactor:
@@ -8,8 +8,29 @@ experiment:
     volume: 15
 
 cultivation:
-  bacteria: Bacteroides thetaiotaomicron
-  strain: ABC123 
+  inoculum_concentration: 7
+  inoculum_volume: 7
   initial_ph: 6.2
+  initial_temperature: 20
   carbon_source: true
+  antibiotic: false
+  description: This ...
+  bacteria: *bacteria
+
+## Indicate which bacteria has been used in the experiment. In case more than two are needed just add the following code below:
+  # bacteria:
+  #   species:
+  #   strain:
+## Note the indentation on each line
+bacteria: &bacteria
+  bacteria1:
+    species: Bacteroides fragilis
+    strain: ##
+  bacteria2:
+    species: Bacteroides thetaiotaomicron
+    strain: VPI 5482
     
+replicates:
+  directory: '/Users/julia/bacterialGrowth_thesis/MyExperiment'
+  description: 
+  

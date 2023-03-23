@@ -1,74 +1,77 @@
-create database BacterialGrowth;
-use BacterialGrowth;
+CREATE DATABASE BacterialGrowth;
+USE BacterialGrowth;
 
-create table if not exists Bacteria (
-	bacteriaId int not null unique,
-    bacteriaGenus varchar(100) default '',
-	bacteriaSpecies varchar(100),
-	bacteriaStrain varchar(100),
-    primary key (bacteriaSpecies, bacteriaStrain)
+CREATE TABLE IF NOT EXISTS Bacteria (
+	bacteriaId INT NOT NULL UNIQUE,
+    bacteriaGenus VARCHAR(100) DEFAULT '',
+	bacteriaSpecies VARCHAR(100),
+	bacteriaStrain VARCHAR(100),
+    PRIMARY KEY (bacteriaSpecies, bacteriaStrain)
 );
 
-create table if not exists Precultivation (
-	precultivationId int not null auto_increment,
-    precultivationDescription text,
-    primary key (precultivationId)
+CREATE TABLE IF NOT EXISTS Precultivation (
+	precultivationId INT AUTO_INCREMENT,
+    precultivationDescription TEXT,
+    PRIMARY KEY (precultivationId)
 );
 
-create table if not exists Reactor (
-	reactorId int not null auto_increment,
-    reactorName TINYTEXT,
-    volume float default 0,
-    atmosphere float default 0,
-    stirring_speed float default 0,
-    reactorMode varchar(50) default '', #chemostat, batch, fed-batch
-    primary key (reactorId)
+CREATE TABLE IF NOT EXISTS Reactor (
+	reactorId INT AUTO_INCREMENT,
+    reactorName TINYTEXT NOT NULL,
+    volume FLOAT DEFAULT 0,
+    atmosphere FLOAT DEFAULT 0,
+    stirring_speed FLOAT DEFAULT 0,
+    reactorMode VARCHAR(50) DEFAULT '', #chemostat, batch, fed-batch,
+    reactorDescription TEXT,
+    PRIMARY KEY (reactorId)
 );
 
-create table if not exists Experiment (
-	experimentId int not null auto_increment,
-    experimentDescription text,
-    experimentDate date default null,
-    reactorId int,
+CREATE TABLE IF NOT EXISTS Experiment (
+	experimentId INT AUTO_INCREMENT,
+    experimentName TINYTEXT,
+    experimentDate DATE DEFAULT NULL,
+    reactorId INT,
+    experimentDescription TEXT,
     PRIMARY KEY (experimentId),
     FOREIGN KEY (reactorId) REFERENCES Reactor (reactorId) ON UPDATE CASCADE ON DELETE SET NULL
 );
 
-create table if not exists CultivationConditions(
-	cultivationId int,
-    cultivationDescription text,
-    experimentId int,
-    precultivationId int,
-    inoculumConcentration int,
-	inoculumVolumen int,
-    monoculture boolean default false,
-    mediaName varchar(50) default '',
-	mediaFile varchar(100),
-    initial_ph float default 0,
-    initial_temperature float default 0,
-    carbonSource boolean default false,
-    antibiotic varchar(100) default null,
-    primary key (cultivationId),
+CREATE TABLE IF NOT EXISTS CultivationConditions(
+	cultivationId INT,
+    experimentId INT,
+    precultivationId INT,
+    inoculumConcentration INT,
+	inoculumVolume INT,
+    monoculture BOOLEAN DEFAULT FALSE,
+    mediaName VARCHAR(50) DEFAULT '',
+	mediaFile VARCHAR(100),
+    initial_ph FLOAT DEFAULT 0,
+    initial_temperature FLOAT DEFAULT 0,
+    carbonSource BOOLEAN DEFAULT FALSE,
+    antibiotic VARCHAR(100) DEFAULT NULL,
+    cultivationDescription TEXT,
+    PRIMARY KEY (cultivationId),
     FOREIGN KEY (experimentId) REFERENCES Experiment (experimentId) ON UPDATE CASCADE ON DELETE CASCADE,
     FOREIGN KEY (precultivationId) REFERENCES Precultivation (precultivationId) ON UPDATE CASCADE ON DELETE SET NULL
 );
 
-create table if not exists BacteriaCommunity (
-    bacteriaId int,
-    cultivationId int,
-    primary key (bacteriaId, cultivationId),
+CREATE TABLE IF NOT EXISTS BacteriaCommunity (
+    bacteriaId INT,
+    cultivationId INT,
+    PRIMARY KEY (bacteriaId, cultivationId),
     FOREIGN KEY (bacteriaId) REFERENCES Bacteria (bacteriaId) ON UPDATE CASCADE ON DELETE CASCADE,
     FOREIGN KEY (cultivationId) REFERENCES CultivationConditions (cultivationId) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
-create table if not exists TechnicalReplicates (
-	replicateId int,
-    replicateDescription text,
-    cultivationId int,
-    bacterialAbundanceMetadataFile varchar(100) default null,
-    bacterialAbundanceFile varchar(100),
-    metabolitesMetadataFile varchar(100) default null,
-    metabolitesFile varchar(100),
-    primary key (replicateId),
+CREATE TABLE IF NOT EXISTS TechnicalReplicates (
+	replicateId VARCHAR(10),
+    cultivationId INT,
+    #bacterialAbundanceMetadataFile VARCHAR(100) DEFAULT NULL,
+    bacterialAbundanceFile VARCHAR(100),
+    #metabolitesMetadataFile VARCHAR(100) DEFAULT NULL,
+    metabolitesFile VARCHAR(100),
+    phFile VARCHAR(100),
+    replicateDescription TEXT,
+    PRIMARY KEY (replicateId),
     FOREIGN KEY (cultivationId) REFERENCES CultivationConditions (cultivationId) ON UPDATE CASCADE ON DELETE CASCADE
 );
