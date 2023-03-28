@@ -1,4 +1,4 @@
-STUDY_DESCRIPTION:
+STUDY_ID:
 
 # Reactor information
 REACTOR:
@@ -28,7 +28,7 @@ MEDIA:
 # Note the indentation on each line
 BACTERIA:
   - SPECIES:
-    STRAIN: ##
+    STRAIN:
   - SPECIES:
     STRAIN:
     
