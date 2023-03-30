@@ -1,0 +1,29 @@
+STUDY_DESCRIPTION: null
+REACTOR:
+  NAME: null
+  VOLUME: null
+EXPERIMENT:
+  PLATE:
+    COLUMN: null
+    ROW: null
+  BLANK: null
+  INOCULUM_CONCENTRATION: null
+  INOCULUM_VOLUME: null
+  INITIAL_PH: null
+  INITIAL_TEMPERATURE: null
+  CARBON_SOURCE: null
+  ANTIBIOTIC: null
+  DESCRIPTION: null
+MEDIA: null
+BACTERIA:
+- SPECIES: null
+  STRAIN: null
+- SPECIES: null
+  STRAIN: null
+PERTURBATION:
+  PROPERTY: null
+  NEW_VALUE: null
+  STARTING_TIME: null
+  ENDING_TIME: null
+  DESCRIPTION: null
+FILES: null
