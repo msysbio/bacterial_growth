@@ -1,20 +1,99 @@
 import yaml
 
-def getExperimentInfo(file):
-    with open(file, 'r') as f:
-        info = yaml.safe_load(f)
+yaml.Dumper.ignore_aliases = lambda self, data: True
 
-        experiment = {
-            'experimentName': info['experiment']['name'],
-            'experimentDate': info['experiment']['date'],
-            'experimentAuthor': info['experiment']['author'],
-            'experimentDescription': info['experiment']['description']
-        }
-        
-        experiment_filtered = {k: v for k, v in experiment.items() if v is not None}
-        return experiment_filtered
+def read_yaml(file):
+    """ A function to read YAML file"""
+    with open(file) as f:
+        info = yaml.safe_load(f)
+    print(info)
+    # return info
+
+def write_yaml(data):
+    """ A function to write YAML file"""
+    with open('myYaml.yaml', "w") as file:
+        file.write('# New data to populate the DB\n# Substitute the null values with your data\n# Do not modify the indentation or remove any field, even if you do not have data for it\n')
+        yaml.dump(data, file, Dumper=yaml.Dumper,sort_keys=False,indent=2)
+
+
+def createStudyYml(num_experiments, num_perturbations, files_dir):
+    yml_dict = {}
+    yml_dict['STUDY_DESCRIPTION'] = None
+    yml_dict = addExperimentYml(yml_dict, num_experiments)
+    yml_dict = addPerturbationYml(yml_dict, num_perturbations)
+    yml_dict['FILES'] = files_dir
+
+    write_yaml(yml_dict)
+
+def createExperimentYml(study_id, num_experiments, num_perturbations, files_dir):
+    yml_dict = {}
+    yml_dict['STUDY_ID'] = study_id
+    yml_dict = addExperimentYml(yml_dict, num_experiments)
+    yml_dict = addPerturbationYml(yml_dict, num_perturbations)
+    yml_dict['FILES'] = files_dir
+
+    write_yaml(yml_dict)
+
+def createPerturbationYml(study_id, experiment_id, num_perturbations, files_dir):
+    yml_dict = {}
+    yml_dict['STUDY_ID'] = study_id
+    yml_dict['EXPERIMENT_ID'] = experiment_id
+    yml_dict = addPerturbationYml(yml_dict, num_perturbations)
+    yml_dict['FILES'] = files_dir
+
+    write_yaml(yml_dict)
+
+
+def addExperimentYml(final_dict, num_experiments):
+    exp_dict = {'NAME': None,
+                'REACTOR': {'NAME': None, 'VOLUME': None},
+                'PLATE': {'ID': None, 'COLUMN': None, 'ROW': None},
+                'MEDIA': None,
+                'BACTERIA': [{'SPECIES': None, 'STRAIN': None},{'SPECIES': None, 'STRAIN': None}],
+                'BLANK': None,
+                'INOCULUM_CONCENTRATION': None,
+                'INOCULUM_VOLUME': None,
+                'INITIAL_PH': None,
+                'INITIAL_TEMPERATURE': None,
+                'CARBON_SOURCE': None,
+                'ANTIBIOTIC': None,
+                'DESCRIPTION': None}
+
+    if num_experiments > 0: final_dict['EXPERIMENT'] = []
+    for i in range(num_experiments):
+        final_dict['EXPERIMENT'].append(exp_dict)
     
-def getCultivationInfo(file):
+    return final_dict
+
+
+def addPerturbationYml(final_dict, num_perturbations):
+    pert_dict = {'PROPERTY': None,
+                 'NEW_VALUE': None,
+                 'STARTING_TIME': None,
+                 'ENDING_TIME': None,
+                 'DESCRIPTION': None}
+    
+    if num_perturbations > 0: final_dict['PERTURBATION'] = []
+    for i in range(num_perturbations):
+        final_dict['PERTURBATION'].append(pert_dict)
+    
+    return final_dict
+
+# def getExperimentInfo(file):
+#     with open(file, 'r') as f:
+#         info = yaml.safe_load(f)
+
+#         experiment = {
+#             'experimentName': info['experiment']['name'],
+#             'experimentDate': info['experiment']['date'],
+#             'experimentAuthor': info['experiment']['author'],
+#             'experimentDescription': info['experiment']['description']
+#         }
+        
+#         experiment_filtered = {k: v for k, v in experiment.items() if v is not None}
+#         return experiment_filtered
+    
+# def getCultivationInfo(file):
     with open(file, 'r') as f:
         info = yaml.safe_load(f)
 
