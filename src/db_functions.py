@@ -33,7 +33,7 @@ def execute(phrase):
     cnx.close()
     return [last_id, res]
 
-def addExperiment(args):
+def addStudy(args):
     """ 
     This function creates a new experiment.
 
@@ -47,30 +47,55 @@ def addExperiment(args):
         values = values + "'" +str(val) + "',"
     fields = fields[:-1] + ')'
     values = values[:-1] + ')'
-    phrase = "INSERT INTO Experiment " + fields + " VALUES " + values
+    phrase = "INSERT INTO Study " + fields + " VALUES " + values
         
     last_id = execute(phrase)[0]
     return last_id
 
-def addCultivation(cultId, expId, args):
+def addExperiment(expId, studyId, args):
     """ 
     This function adds some cultivation conditions to an existing experiment.
 
-    :params: experiment ID, cultivation ID, dictionary of parameters
+    :params: experimentId, studyId, dictionary of parameters
     :return: id of the inserted record
     """
-    fields = "(cultivationId,experimentId,"
-    values = "("+cultId+","+expId+","
+    fields = "(experimentId,studyId,"
+    values = "("+expId+","+studyId+","
     for key, val in args.items():
         fields = fields + key + ','
         values = values + "'" +str(val) + "',"
     fields = fields[:-1] + ')'
     values = values[:-1] + ')'
-    phrase = "INSERT IGNORE INTO CultivationConditions " + fields + " VALUES " + values
+    phrase = "INSERT IGNORE INTO Experiment " + fields + " VALUES " + values
+
+    last_id = execute(phrase)[0]
+    return last_id
+
+def addPerturbation(pertId, expId, args):
+    """ 
+    This function adds some cultivation conditions to an existing experiment.
+
+    :params: experimentId, studyId, dictionary of parameters
+    :return: id of the inserted record
+    """
+    fields = "(perturbationId,experimentId,"
+    values = "("+pertId+","+expId+","
+    for key, val in args.items():
+        fields = fields + key + ','
+        values = values + "'" +str(val) + "',"
+    fields = fields[:-1] + ')'
+    values = values[:-1] + ')'
+    phrase = "INSERT IGNORE INTO Perturbation " + fields + " VALUES " + values
 
     last_id = execute(phrase)[0]
     return last_id
     
+
+
+
+
+
+
 def addReplicate(repId, cultId):
     phrase = "INSERT IGNORE INTO TechnicalReplicates (replicateId, cultivationId) VALUES ('"+repId+"','"+cultId+"')"
     last_id = execute(phrase)[0]
