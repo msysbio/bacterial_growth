@@ -1,0 +1,17 @@
+# New data to populate the DB
+# Substitute the null values with your data
+# Do not modify the indentation or remove any field, even if you do not have data for it
+STUDY_ID: '1'
+EXPERIMENT_ID: '3'
+PERTURBATION:
+- PROPERTY: null
+  NEW_VALUE: null
+  STARTING_TIME: null
+  ENDING_TIME: null
+  DESCRIPTION: null
+- PROPERTY: null
+  NEW_VALUE: null
+  STARTING_TIME: null
+  ENDING_TIME: null
+  DESCRIPTION: null
+FILES: /Users/julia/bacterialGrowth_thesis/MyExperiment/
