@@ -17,7 +17,7 @@ def write_yml(data, yml_file):
 
 def createStudyYml(num_experiments, num_perturbations, **files_dir):
     yml_dict = {}
-    yml_dict['STUDY_DESCRIPTION'] = None
+    yml_dict = addStudyYml(yml_dict)
     yml_dict = addExperimentYml(yml_dict, num_experiments)
     yml_dict = addPerturbationYml(yml_dict, num_perturbations)
     # yml_dict['FILES'] = files_dir
@@ -50,6 +50,15 @@ def createReplicatesYml(study_id, experiment_id, perturbation_id, **files_dir):
     yml_dict['FILES'] = None
 
     write_yml(yml_dict, 'yml_info_files/perturbation_information.yml')
+
+def addStudyYml(final_dict):
+    study_dict = {'NAME': None,
+                  'STUDY_DESCRIPTION': None
+                  }
+    
+    final_dict['STUDY'].append(study_dict)
+    
+    return final_dict
 
 def addExperimentYml(final_dict, num_experiments):
     exp_dict = {'NAME': None,
