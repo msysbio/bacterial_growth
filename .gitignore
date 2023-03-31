@@ -1,11 +1,13 @@
 # Old files and scripts
 00_old/
 
-
 # Laboratory data directories
 Data/
 DataParsed/
 DataParsed.zip
+
+# Files that will be filled in by the user
+src/yml_info_files/
 
 # ========================================================================
 
