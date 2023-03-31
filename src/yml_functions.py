@@ -22,7 +22,7 @@ def createStudyYml(num_experiments, num_perturbations, **files_dir):
     yml_dict = addPerturbationYml(yml_dict, num_perturbations)
     # yml_dict['FILES'] = files_dir
 
-    write_yml(yml_dict, 'yml_info_files/study_information.yml')
+    write_yml(yml_dict, 'yml_info_files/study_information_tmp.yml')
 
 def createExperimentYml(study_id, num_experiments, num_perturbations, **files_dir):
     yml_dict = {}
@@ -31,7 +31,7 @@ def createExperimentYml(study_id, num_experiments, num_perturbations, **files_di
     yml_dict = addPerturbationYml(yml_dict, num_perturbations)
     # yml_dict['FILES'] = files_dir
 
-    write_yml(yml_dict, 'yml_info_files/experiment_information.yml')
+    write_yml(yml_dict, 'yml_info_files/experiment_information_tmp.yml')
 
 def createPerturbationYml(study_id, experiment_id, num_perturbations, **files_dir):
     yml_dict = {}
@@ -40,7 +40,7 @@ def createPerturbationYml(study_id, experiment_id, num_perturbations, **files_di
     yml_dict = addPerturbationYml(yml_dict, num_perturbations)
     # yml_dict['FILES'] = files_dir
 
-    write_yml(yml_dict, 'yml_info_files/perturbation_information.yml')
+    write_yml(yml_dict, 'yml_info_files/perturbation_information_tmp.yml')
 
 def createReplicatesYml(study_id, experiment_id, perturbation_id, **files_dir):
     yml_dict = {}
@@ -49,7 +49,7 @@ def createReplicatesYml(study_id, experiment_id, perturbation_id, **files_dir):
     yml_dict['PERTURBATION_ID'] = perturbation_id
     yml_dict['FILES'] = None
 
-    write_yml(yml_dict, 'yml_info_files/perturbation_information.yml')
+    write_yml(yml_dict, 'yml_info_files/replicates_information_tmp.yml')
 
 def addStudyYml(final_dict):
     study_dict = {'NAME': None,
@@ -62,20 +62,22 @@ def addStudyYml(final_dict):
     return final_dict
 
 def addExperimentYml(final_dict, num_experiments):
-    exp_dict = {'NAME': None,
-                'REACTOR': {'NAME': None, 'VOLUME': None},
-                'PLATE': {'ID': None, 'COLUMN': None, 'ROW': None},
-                'MEDIA': None,
-                'BACTERIA': [{'SPECIES': None, 'STRAIN': None},{'SPECIES': None, 'STRAIN': None}],
-                'BLANK': None,
-                'INOCULUM_CONCENTRATION': None,
-                'INOCULUM_VOLUME': None,
-                'INITIAL_PH': None,
-                'INITIAL_TEMPERATURE': None,
-                'CARBON_SOURCE': None,
-                'ANTIBIOTIC': None,
-                'DESCRIPTION': None,
-                'FILES': None}
+    exp_dict = {
+        'NAME': {'value': None, 'description': 'Name of the experiment'},
+        'REACTOR': {'NAME': {'value': None, 'description': 'Name of the reactor'}, 'VOLUME': {'value': None, 'description': 'Volume in mL'}},
+        'PLATE': {'ID': {'value': None, 'description': 'Number of plate'}, 'COLUMN': {'value': None, 'description': 'Indicated in numbers'}, 'ROW': {'value': None, 'description': 'Indicated in numbers'}},
+        'MEDIA': {'value': None, 'description': 'File path containing the media description'},
+        'BACTERIA': [{'SPECIES': None, 'STRAIN': None},{'SPECIES': None, 'STRAIN': None}],
+        'BLANK': {'value': None, 'description': 'Boolean. True if the experiment is blank. False otherwise.'},
+        'INOCULUM_CONCENTRATION': {'value': None, 'description': 'Indicated in XXX'},
+        'INOCULUM_VOLUME': {'value': None, 'description': 'Indicate in mL'},
+        'INITIAL_PH': None,
+        'INITIAL_TEMPERATURE': {'value': None, 'description': 'Indicated in Celsius'},
+        'CARBON_SOURCE': {'value': None, 'description': 'Boolean. True if the carbon source present. False otherwise.'},
+        'ANTIBIOTIC': {'value': None, 'description': 'Boolean. True if antibiotic present. False otherwise.'},
+        'DESCRIPTION': {'value': None, 'description': 'Description of the experiment'},
+        'FILES': {'value': None, 'description': 'Directory with the files corresponding to this experiment.'}
+        }
 
     if num_experiments > 0: final_dict['EXPERIMENT'] = []
     for i in range(num_experiments):
@@ -84,19 +86,18 @@ def addExperimentYml(final_dict, num_experiments):
     return final_dict
 
 def addPerturbationYml(final_dict, num_perturbations):
-    pert_dict = {'PROPERTY': {
-        'value': None,
-        'description': 'Indicate property'
-    },
-                 'NEW_VALUE': None,
-                 'STARTING_TIME': None,
-                 'ENDING_TIME': None,
-                 'DESCRIPTION': None,
-                 'FILES': None}
+    pert_dict = {
+        'PROPERTY': {'value': None, 'description': 'Indicate which property has been perturbed'},
+        'NEW_VALUE': {'value': None, 'description': 'New value of the perturbed property'},
+        'STARTING_TIME': {'value': None, 'description': 'Time in minutes'},
+        'ENDING_TIME': {'value': None, 'description': 'Time in minutes'},
+        'DESCRIPTION': {'value': None, 'description': 'Description of the perturbation'},
+        'FILES': {'value': None, 'description': 'Directory with the files corresponding to this perturbation.'}
+        }
     
     if num_perturbations > 0: 
         final_dict['PERTURBATION'] = {
-            'description': 'nnn',
+            'description': '',
             'items': []
             }
     for i in range(num_perturbations):
