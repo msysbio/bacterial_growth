@@ -125,6 +125,12 @@ def getAllExperiments(studyId):
     res = execute(phrase)
     return res[1]
 
+def getAllPerturbations(experimentId):
+    phrase = "SELECT * FROM Perturbation WHERE experimentId = '"+experimentId+"';"
+    res = execute(phrase)
+    return res[1]
+
+
 def getBacteria(bacteriaSpecies, *bacteriaStrain):
     bacteriaStrain = bacteriaStrain[0]
     if len(bacteriaStrain) == 0:

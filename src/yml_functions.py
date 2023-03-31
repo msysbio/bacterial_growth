@@ -15,32 +15,41 @@ def write_yml(data, yml_file):
         yaml.dump(data, file, Dumper=yaml.Dumper,sort_keys=False,indent=2)
     print('\n\n{} file created!'.format(yml_file))
 
-def createStudyYml(num_experiments, num_perturbations, files_dir):
+def createStudyYml(num_experiments, num_perturbations, **files_dir):
     yml_dict = {}
     yml_dict['STUDY_DESCRIPTION'] = None
     yml_dict = addExperimentYml(yml_dict, num_experiments)
     yml_dict = addPerturbationYml(yml_dict, num_perturbations)
-    yml_dict['FILES'] = files_dir
+    # yml_dict['FILES'] = files_dir
 
-    write_yml(yml_dict, 'yml_info_files/study_informaion.yml')
+    write_yml(yml_dict, 'yml_info_files/study_information.yml')
 
-def createExperimentYml(study_id, num_experiments, num_perturbations, files_dir):
+def createExperimentYml(study_id, num_experiments, num_perturbations, **files_dir):
     yml_dict = {}
     yml_dict['STUDY_ID'] = study_id
     yml_dict = addExperimentYml(yml_dict, num_experiments)
     yml_dict = addPerturbationYml(yml_dict, num_perturbations)
-    yml_dict['FILES'] = files_dir
+    # yml_dict['FILES'] = files_dir
 
-    write_yml(yml_dict, 'yml_info_files/experiment_informaion.yml')
+    write_yml(yml_dict, 'yml_info_files/experiment_information.yml')
 
-def createPerturbationYml(study_id, experiment_id, num_perturbations, files_dir):
+def createPerturbationYml(study_id, experiment_id, num_perturbations, **files_dir):
     yml_dict = {}
     yml_dict['STUDY_ID'] = study_id
     yml_dict['EXPERIMENT_ID'] = experiment_id
     yml_dict = addPerturbationYml(yml_dict, num_perturbations)
-    yml_dict['FILES'] = files_dir
+    # yml_dict['FILES'] = files_dir
 
-    write_yml(yml_dict, 'yml_info_files/perturbation_informaion.yml')
+    write_yml(yml_dict, 'yml_info_files/perturbation_information.yml')
+
+def createReplicatesYml(study_id, experiment_id, perturbation_id, **files_dir):
+    yml_dict = {}
+    yml_dict['STUDY_ID'] = study_id
+    yml_dict['EXPERIMENT_ID'] = experiment_id
+    yml_dict['PERTURBATION_ID'] = perturbation_id
+    yml_dict['FILES'] = None
+
+    write_yml(yml_dict, 'yml_info_files/perturbation_information.yml')
 
 def addExperimentYml(final_dict, num_experiments):
     exp_dict = {'NAME': None,
@@ -55,7 +64,8 @@ def addExperimentYml(final_dict, num_experiments):
                 'INITIAL_TEMPERATURE': None,
                 'CARBON_SOURCE': None,
                 'ANTIBIOTIC': None,
-                'DESCRIPTION': None}
+                'DESCRIPTION': None,
+                'FILES': None}
 
     if num_experiments > 0: final_dict['EXPERIMENT'] = []
     for i in range(num_experiments):
@@ -63,13 +73,13 @@ def addExperimentYml(final_dict, num_experiments):
     
     return final_dict
 
-
 def addPerturbationYml(final_dict, num_perturbations):
     pert_dict = {'PROPERTY': None,
                  'NEW_VALUE': None,
                  'STARTING_TIME': None,
                  'ENDING_TIME': None,
-                 'DESCRIPTION': None}
+                 'DESCRIPTION': None,
+                 'FILES': None}
     
     if num_perturbations > 0: final_dict['PERTURBATION'] = []
     for i in range(num_perturbations):
@@ -77,23 +87,23 @@ def addPerturbationYml(final_dict, num_perturbations):
     
     return final_dict
 
-# def getExperimentInfo(file):
-#     with open(file, 'r') as f:
-#         info = yml.safe_load(f)
-
-#         experiment = {
-#             'experimentName': info['experiment']['name'],
-#             'experimentDate': info['experiment']['date'],
-#             'experimentAuthor': info['experiment']['author'],
-#             'experimentDescription': info['experiment']['description']
-#         }
-        
-#         experiment_filtered = {k: v for k, v in experiment.items() if v is not None}
-#         return experiment_filtered
-    
-# def getCultivationInfo(file):
+def getExperimentInfo(file):
     with open(file, 'r') as f:
-        info = yml.safe_load(f)
+        info = yaml.safe_load(f)
+
+        experiment = {
+            'experimentName': info['experiment']['name'],
+            'experimentDate': info['experiment']['date'],
+            'experimentAuthor': info['experiment']['author'],
+            'experimentDescription': info['experiment']['description']
+        }
+        
+        experiment_filtered = {k: v for k, v in experiment.items() if v is not None}
+        return experiment_filtered
+    
+def getCultivationInfo(file):
+    with open(file, 'r') as f:
+        info = yaml.safe_load(f)
 
         cultivation = {
             'inoculumConcentration': info['cultivation']['inoculum_concentration'],
