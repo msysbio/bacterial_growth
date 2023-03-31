@@ -13,7 +13,7 @@ import db_functions as db
 # ===========================================================================================
 
 PROJECT_DIRECTORY = '/Users/julia/bacterialGrowth_thesis/'
-LAB_ANALYSIS_FILE = 'Scripts/Lab_files_analysis2.sh'
+LAB_ANALYSIS_FILE = 'src/Lab_files_analysis2.sh'
 
 HEADERS_FILE = 'IntermediateFiles/lab_headers.txt'
 EXPERIMENTS_LIST = 'IntermediateFiles/listOfFiles.list'
@@ -32,28 +32,30 @@ def populate_db(args):
     info = read_yml(info_file)
 
     if 'STUDY' in info:
-        study = 0
+        study = info['STUDY']
         study_id = db.addStudy(study)
     else:
         study_id = info['STUDY_ID']
     
     if 'EXPERIMENT' in info:
-        experiment = 0
-        experiment_id = getExperimentId(study_id)
-        db.addExperiment(experiment_id, study_id, experiment)
-        # db.addReplicates
+        experiments = info['EXPERIMENT']
+        for experiment in experiments:
+            experiment_id = setExperimentId(study_id)
+            db.addExperiment(experiment_id, study_id, experiment)
+            # db.addReplicates
     else:
         exp_id = info['EXPERIMENT_ID']
 
     if 'PERTURBATION' in info:
-        perturbation = 0
-        perturbation_id = getPerturbationId(experiment_id)
-        db.addPerturbation(perturbation_id, experiment_id, perturbation)
-        # db.addReplicates
+        perturbations = info['PERTURBATION']
+        for perturbation in perturbations:
+            perturbation_id = setPerturbationId(experiment_id)
+            db.addPerturbation(perturbation_id, experiment_id, perturbation)
+            # db.addReplicates
     else:
         perturbation_id = info['PERTURBATION_ID']
 
-    if 'FILES' in info:
+    if 'FILES' in info: # I removed FILES
         files = 0 #This does nothing -> remove when I have something inside this if conditon
         # db.addReplicates
 
@@ -95,12 +97,12 @@ def clusterHeaders(file):
 
     return headers    
 
-def getExperimentId(study_id):
+def setExperimentId(study_id):
     number_exp = db.countRecords('Experiment', 'studyId', str(study_id))
     experiment_id = study_id*100 + number_exp + 1
     return experiment_id
 
-def getPerturbationId(experiment_id):
+def setPerturbationId(experiment_id):
     number_pert = db.countRecords('Perturbation', 'experimentId', str(experiment_id))
     perturbation_id = str(experiment_id) + '.' + str(number_pert + 1)
     return perturbation_id

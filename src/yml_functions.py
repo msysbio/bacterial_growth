@@ -63,6 +63,7 @@ def addStudyYml(final_dict):
 
 def addExperimentYml(final_dict, num_experiments):
     exp_dict = {
+        # 'EXPERIMENT_NUMBER': 0,
         'NAME': {'value': None, 'description': 'Name of the experiment'},
         'REACTOR': {'NAME': {'value': None, 'description': 'Name of the reactor'}, 'VOLUME': {'value': None, 'description': 'Volume in mL'}},
         'PLATE': {'ID': {'value': None, 'description': 'Number of plate'}, 'COLUMN': {'value': None, 'description': 'Indicated in numbers'}, 'ROW': {'value': None, 'description': 'Indicated in numbers'}},
@@ -81,12 +82,14 @@ def addExperimentYml(final_dict, num_experiments):
 
     if num_experiments > 0: final_dict['EXPERIMENT'] = []
     for i in range(num_experiments):
+        # exp_dict['EXPERIMENT_NUMBER'] = i+1
         final_dict['EXPERIMENT'].append(exp_dict)
     
     return final_dict
 
 def addPerturbationYml(final_dict, num_perturbations):
     pert_dict = {
+        # 'PERTURBATION_NUMBER': 0,
         'PROPERTY': {'value': None, 'description': 'Indicate which property has been perturbed'},
         'NEW_VALUE': {'value': None, 'description': 'New value of the perturbed property'},
         'STARTING_TIME': {'value': None, 'description': 'Time in minutes'},
@@ -95,13 +98,10 @@ def addPerturbationYml(final_dict, num_perturbations):
         'FILES': {'value': None, 'description': 'Directory with the files corresponding to this perturbation.'}
         }
     
-    if num_perturbations > 0: 
-        final_dict['PERTURBATION'] = {
-            'description': '',
-            'items': []
-            }
+    if num_perturbations > 0: final_dict['PERTURBATION'] = []
     for i in range(num_perturbations):
-        final_dict['PERTURBATION']['items'].append(pert_dict)
+        # pert_dict['PERTURBATION_NUMBER'] = i+1
+        final_dict['PERTURBATION'].append(pert_dict)
     
     return final_dict
 

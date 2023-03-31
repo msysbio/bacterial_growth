@@ -130,7 +130,6 @@ def getAllPerturbations(experimentId):
     res = execute(phrase)
     return res[1]
 
-
 def getBacteria(bacteriaSpecies, *bacteriaStrain):
     bacteriaStrain = bacteriaStrain[0]
     if len(bacteriaStrain) == 0:
