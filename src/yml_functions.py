@@ -56,6 +56,7 @@ def addStudyYml(final_dict):
                   'STUDY_DESCRIPTION': None
                   }
     
+    final_dict['STUDY'] = []
     final_dict['STUDY'].append(study_dict)
     
     return final_dict
@@ -83,16 +84,23 @@ def addExperimentYml(final_dict, num_experiments):
     return final_dict
 
 def addPerturbationYml(final_dict, num_perturbations):
-    pert_dict = {'PROPERTY': None,
+    pert_dict = {'PROPERTY': {
+        'value': None,
+        'description': 'Indicate property'
+    },
                  'NEW_VALUE': None,
                  'STARTING_TIME': None,
                  'ENDING_TIME': None,
                  'DESCRIPTION': None,
                  'FILES': None}
     
-    if num_perturbations > 0: final_dict['PERTURBATION'] = []
+    if num_perturbations > 0: 
+        final_dict['PERTURBATION'] = {
+            'description': 'nnn',
+            'items': []
+            }
     for i in range(num_perturbations):
-        final_dict['PERTURBATION'].append(pert_dict)
+        final_dict['PERTURBATION']['items'].append(pert_dict)
     
     return final_dict
 
