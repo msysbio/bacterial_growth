@@ -85,5 +85,22 @@ def clusterHeaders(file):
 
     return headers
 
+def getFieldsValues(args, fields, values):
+    for key, val in args.items():
+        fields = fields + key + ','
+        values = values + "'" +str(val) + "',"
+    fields = fields[:-1] + ')'
+    values = values[:-1] + ')'
+    return [fields, values]
 
+
+def getFieldsValues(args):
+    fields = "("
+    values = "("
+    for key, val in args.items():
+        fields = fields + key + ','
+        values = values + "'" +str(val) + "',"
+    fields = fields[:-1] + ')'
+    values = values[:-1] + ')'
+    return [fields, values]
     
