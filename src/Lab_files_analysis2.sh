@@ -7,10 +7,6 @@ cd $PROJECT_PATH
 # Create the directory in which all the intermediate files will be placed
 mkdir -p IntermediateFiles/
 
-# Unzip the given data
-# unzip -oq DataParsed.zip
-# rm -r __MACOSX
-
 ## 1) GET THE LABORATORY FILES' NAMES CONTAINED IN THE GIVEN DIRECTORY $FILES_PATH
 ## ==========================================================================================================================================================================
 ls -lt  $FILES_PATH | grep -i .txt | awk '{print $9}' > IntermediateFiles/lab_files_names.txt
@@ -44,6 +40,7 @@ while read -r file; do
     
 done < lab_files_names.txt
 
+
 tail -n +2 experiments_info.txt > experiments_info_mod.txt
 
 cd $PROJECT_PATH
@@ -51,24 +48,24 @@ cd $PROJECT_PATH
 ## 4) CREATE THE DIRECTORIES
 ## ==========================================================================================================================================================================
 mkdir -p Data/
+rm -f $PROJECT_PATH'IntermediateFiles/listOfFiles.list'
 while read -r line; do
 
+    cd $PROJECT_PATH
     experiment=$(echo $line | awk '{print $2}')
     replicate=$(echo $line | awk '{print $3}')
     
     file=$(echo $line | awk '{print $1}')
-    
+    path_origin=$FILES_PATH$file
+
     cd $PROJECT_PATH'Data'
     mkdir -p $experiment
     mkdir -p $experiment/$replicate
 
-    path_origin=$FILES_PATH$file
     path_destination=$PROJECT_PATH'Data/'$experiment/$replicate/
-    
+    final_file=$path_destination$file
+    echo $final_file >> $PROJECT_PATH'IntermediateFiles/listOfFiles.list'
+
     cp $path_origin $path_destination
 
 done < IntermediateFiles/experiments_info_mod.txt
-
-## 5) GET THE FUL PATHS OF THE FILES ON THE NEW DIRECTORIES
-## ==========================================================================================================================================================================
-find $PROJECT_PATH'Data' -type f | sort > $PROJECT_PATH'IntermediateFiles/listOfFiles.list'
