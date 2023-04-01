@@ -79,7 +79,7 @@ CREATE TABLE IF NOT EXISTS Perturbation (
 CREATE TABLE IF NOT EXISTS TechnicalReplicate (
 	replicateId VARCHAR(15),
     experimentId INT,
-    perturbationId VARCHAR(15) DEFAULT 0,
+    perturbationId VARCHAR(15) DEFAULT NULL,
     abundanceFile VARCHAR(100),
     metabolitesFile VARCHAR(100),
     phFile VARCHAR(100),
