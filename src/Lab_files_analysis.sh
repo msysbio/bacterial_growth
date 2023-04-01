@@ -1,7 +1,7 @@
 PROJECT_PATH=$1
 FILES_PATH=$2
 
-echo "---- Starting to analyse the given data"
+echo "\n---- Starting to analyse the given data"
 
 # Main directory of the project
 cd $PROJECT_PATH
@@ -57,6 +57,8 @@ head experiments_info.txt
 echo '...'
 
 tail -n +2 experiments_info.txt > experiments_info_mod.txt
+echo "\n---- Number of experiments inside the file:"
+wc -l experiments_info_mod.txt
 
 cd $PROJECT_PATH
 
@@ -82,10 +84,11 @@ while read -r line; do
 
 done < IntermediateFiles/experiments_info_mod.txt
 
-## 5) GET THE FUL PATHS OF THE FILES ON THE NEW DIRECTORIES
+## 5) GET THE FULL PATHS OF THE FILES ON THE NEW DIRECTORIES
 ## ==========================================================================================================================================================================
 echo "\n---- Getting complete paths of the files..."
-find $PROJECT_PATH'Data' -type f | sort > $PROJECT_PATH'IntermediateFiles/listOfFiles.list'
+FILES_PATH_MOD=${FILES_PATH:0:${#FILES_PATH}-1}
+find $FILES_PATH_MOD -type f | sort > $PROJECT_PATH'IntermediateFiles/listOfFiles.list'
 head $PROJECT_PATH'IntermediateFiles/listOfFiles.list'
 echo '...'
 
