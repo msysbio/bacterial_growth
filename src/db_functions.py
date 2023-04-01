@@ -6,6 +6,8 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import re
 
+from utils import getFieldsValues
+
 user_name = os.environ.get('DB_USER')
 password = os.environ.get('DB_PASSWORD')
 
@@ -24,6 +26,8 @@ def execute(phrase):
         res.append(row)
     
     last_id = 0
+    # What if INSERT IGNORE and it was not inserted?
+    # https://stackoverflow.com/questions/6291405/mysql-after-insert-ignore-get-primary-key
     if "INSERT" in phrase:
         cursor.execute("SELECT LAST_INSERT_ID()")
         last_id = cursor.fetchall()[0][0]
@@ -33,87 +37,29 @@ def execute(phrase):
     cnx.close()
     return [last_id, res]
 
-def addStudy(args):
+def addRecord(table, args):
     """ 
-    This function creates a new experiment.
+    This function adds a new entry into the indicated table.
 
-    :params: dictionary of fields to introduce in the table
+    :table: table of the DB
+    :args: dictionary with the data to insert
     :return: id of the inserted record
     """
-    fields = "("
-    values = "("
-    for key, val in args.items():
-        fields = fields + key + ','
-        values = values + "'" +str(val) + "',"
-    fields = fields[:-1] + ')'
-    values = values[:-1] + ')'
-    phrase = "INSERT INTO Study " + fields + " VALUES " + values
-        
+    fields, values = getFieldsValues(args)
+    phrase = "INSERT IGNORE INTO " + table + fields + " VALUES " + values
     last_id = execute(phrase)[0]
     return last_id
-
-def addExperiment(expId, studyId, args):
-    """ 
-    This function adds some cultivation conditions to an existing experiment.
-
-    :params: experimentId, studyId, dictionary of parameters
-    :return: id of the inserted record
-    """
-    fields = "(experimentId,studyId,"
-    values = "("+expId+","+studyId+","
-    for key, val in args.items():
-        fields = fields + key + ','
-        values = values + "'" +str(val) + "',"
-    fields = fields[:-1] + ')'
-    values = values[:-1] + ')'
-    phrase = "INSERT IGNORE INTO Experiment " + fields + " VALUES " + values
-
-    last_id = execute(phrase)[0]
-    return last_id
-
-def addPerturbation(pertId, expId, args):
-    """ 
-    This function adds some cultivation conditions to an existing experiment.
-
-    :params: experimentId, studyId, dictionary of parameters
-    :return: id of the inserted record
-    """
-    fields = "(perturbationId,experimentId,"
-    values = "("+pertId+","+expId+","
-    for key, val in args.items():
-        fields = fields + key + ','
-        values = values + "'" +str(val) + "',"
-    fields = fields[:-1] + ')'
-    values = values[:-1] + ')'
-    phrase = "INSERT IGNORE INTO Perturbation " + fields + " VALUES " + values
-
-    last_id = execute(phrase)[0]
-    return last_id
-    
-
-
-
-
-
-
-def addReplicate(repId, cultId):
-    phrase = "INSERT IGNORE INTO TechnicalReplicates (replicateId, cultivationId) VALUES ('"+repId+"','"+cultId+"')"
-    last_id = execute(phrase)[0]
-    return last_id
-
-def addReplicateFile(repId, **file):
-    for key, val in file.items():
-        phrase = "UPDATE TechnicalReplicates SET "+key+" = '"+val+"' WHERE replicateId = '"+repId+"'"
-        execute(phrase)
-    
-def addBacteria(bacteriaSpecies, bacteriaStrain):
-    return False
 
 def countRecords(table, field, value):
     phrase = "SELECT COUNT(*) FROM "+table+" WHERE "+field+" = " + value
     res = execute(phrase)
     count = res[1][0][0]
     return count
+
+# def getAllRecords(table):
+#     phrase = "SELECT * FROM " + table
+#     res = execute(phrase)
+#     return res[1]
 
 def getAllStudies():
     phrase = "SELECT * FROM Study"
