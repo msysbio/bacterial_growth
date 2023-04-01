@@ -1,17 +1,13 @@
 PROJECT_PATH=$1
 FILES_PATH=$2
 
-echo "\n---- Starting to analyse the given data"
+echo "\n---- Starting to analyse the given given files"
 
 # Main directory of the project
 cd $PROJECT_PATH
 
 # Create the directory in which all the intermediate files will be placed
 mkdir -p IntermediateFiles/
-
-# Unzip the given data
-# unzip -oq DataParsed.zip
-# rm -r __MACOSX
 
 ## 1) GET THE LABORATORY FILES' NAMES CONTAINED IN THE GIVEN DIRECTORY $FILES_PATH
 ## ==========================================================================================================================================================================
@@ -28,7 +24,7 @@ echo '...'
 ## ==========================================================================================================================================================================
 rm -f lab_files_headers.txt
 
-echo "\n---- Obtaining the files headers..."
+echo "\n---- Obtaining the headers of all the files..."
 while read -r file;
     do
         head -n 1 $FILES_PATH$file >> lab_files_headers.txt
@@ -66,29 +62,31 @@ cd $PROJECT_PATH
 ## ==========================================================================================================================================================================
 echo "\n---- Creating the experiments directories..."
 mkdir -p Data/
+rm -f $PROJECT_PATH'IntermediateFiles/listOfFiles.list'
 while read -r line; do
 
+    cd $PROJECT_PATH
     experiment=$(echo $line | awk '{print $2}')
     replicate=$(echo $line | awk '{print $3}')
     
     file=$(echo $line | awk '{print $1}')
-    
+    path_origin=$FILES_PATH$file
+
     cd $PROJECT_PATH'Data'
     mkdir -p $experiment
     mkdir -p $experiment/$replicate
 
-    path_origin=$FILES_PATH$file
     path_destination=$PROJECT_PATH'Data/'$experiment/$replicate/
-    
+    final_file=$path_destination$file
+    echo $final_file >> $PROJECT_PATH'IntermediateFiles/listOfFiles.list'
+
     cp $path_origin $path_destination
 
 done < IntermediateFiles/experiments_info_mod.txt
 
 ## 5) GET THE FULL PATHS OF THE FILES ON THE NEW DIRECTORIES
 ## ==========================================================================================================================================================================
-echo "\n---- Getting complete paths of the files..."
-FILES_PATH_MOD=${FILES_PATH:0:${#FILES_PATH}-1}
-find $FILES_PATH_MOD -type f | sort > $PROJECT_PATH'IntermediateFiles/listOfFiles.list'
+echo "\n---- Getting complete paths of the files in their new location (lab server)"
 head $PROJECT_PATH'IntermediateFiles/listOfFiles.list'
 echo '...'
 
