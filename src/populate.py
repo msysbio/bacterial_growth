@@ -3,19 +3,37 @@ import pandas as pd
 from utils import findOccurrences
 import db_functions as db
 
-EXP_DESCRIPTION = 'This experiment was done in Brussels.'
-CULT_DESCRIPTION = 'In this perturbation, we kept pH at 5'
-REP_DESCRIPTION = 'Replicate number #'
 
-def addExperiment(experiment):
-    expId = db.addExperiment(experiment)
-    return expId
+# EXP_DESCRIPTION = 'This experiment was done in Brussels.'
+# CULT_DESCRIPTION = 'In this perturbation, we kept pH at 5'
+# REP_DESCRIPTION = 'Replicate number #'
 
-def addCultivation(expId, cultivation):
-    number_cult = db.countRecords('CultivationConditions', 'experimentId', str(expId))
-    cultId = expId*100 + number_cult + 1
-    db.addCultivation(str(cultId),str(expId),cultivation)
-    return cultId
+# def addStudy(study):
+#     study_id = db.addStudy(study)
+#     return study_id
+
+# def addExperiment(study_id, experiment):
+#     number_exp = db.countRecords('Experiment', 'studyId', str(study_id))
+#     experiment_id = study_id*100 + number_exp + 1
+#     db.addExperiment(str(experiment_id),str(study_id),experiment)
+#     return experiment_id
+
+def getExperimentId(study_id):
+    number_exp = db.countRecords('Experiment', 'studyId', str(study_id))
+    experiment_id = study_id*100 + number_exp + 1
+    return experiment_id
+
+# def addPerturbation(experiment_id, perturbation):
+#     number_pert = db.countRecords('Perturbation', 'experimentId', str(experiment_id))
+#     perturbation_id = str(experiment_id) + '.' + str(number_pert + 1)
+#     db.addPerturbation(str(perturbation_id),str(experiment_id),perturbation)
+#     return perturbation_id
+
+def getPerturbationId(experiment_id):
+    number_pert = db.countRecords('Perturbation', 'experimentId', str(experiment_id))
+    perturbation_id = str(experiment_id) + '.' + str(number_pert + 1)
+    return perturbation_id
+
 
 def addReplicates(cultId, headers, files):
     number_rep = db.countRecords('TechnicalReplicates', 'cultivationId', str(cultId))
