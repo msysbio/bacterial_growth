@@ -53,7 +53,7 @@ def createReplicatesYml(study_id, experiment_id, perturbation_id, **files_dir):
 
 def addStudyYml(final_dict):
     study_dict = {'NAME': None,
-                  'STUDY_DESCRIPTION': None
+                  'DESCRIPTION': None
                   }
     
     final_dict['STUDY'] = []
@@ -62,15 +62,24 @@ def addStudyYml(final_dict):
     return final_dict
 
 def addExperimentYml(final_dict, num_experiments):
+
+    reactor_dict = {
+        'NAME': {'value': None, 'description': 'Name of the reactor'}, 
+        'VOLUME': {'value': None, 'description': 'Volume in mL'},
+        'ATMOSPHERE': {'value': None, 'description': 'Atmospheres in XXX'},
+        'STIRRING_SPEED': {'value': None, 'description': 'Speed in rpm'},
+        'MODE': {'value': None, 'description': 'chemostat/batch/fed-batch'},
+        'DESCRIPTION': {'value': None, 'description': 'Description of the reactor'}
+        }
     exp_dict = {
         # 'EXPERIMENT_NUMBER': 0,
         'NAME': {'value': None, 'description': 'Name of the experiment'},
-        'REACTOR': {'NAME': {'value': None, 'description': 'Name of the reactor'}, 'VOLUME': {'value': None, 'description': 'Volume in mL'}},
-        'PLATE': {'ID': {'value': None, 'description': 'Number of plate'}, 'COLUMN': {'value': None, 'description': 'Indicated in numbers'}, 'ROW': {'value': None, 'description': 'Indicated in numbers'}},
+        'REACTOR': reactor_dict,
+        'PLATE': {'ID': {'value': None, 'description': 'Number of plate'}, 'COLUMN': {'value': None, 'description': 'Indicated in numbers'}, 'ROW': {'value': None, 'description': 'Indicated in letters'}},
         'MEDIA': {'NAME': {'value': None, 'description': 'Name of the media'}, 'MEDIA_PATH': {'value': None, 'description': 'File path containing the media description'}},
-        'BACTERIA': [{'SPECIES': None, 'STRAIN': None},{'SPECIES': None, 'STRAIN': None}],
+        'BACTERIA': [{'GENUS': None, 'SPECIES': None, 'STRAIN': None},{'GENUS': None, 'SPECIES': None, 'STRAIN': None}],
         'BLANK': {'value': None, 'description': 'Boolean (numerical). 1 if the experiment is blank. 0 otherwise.'},
-        'INOCULUM_CONCENTRATION': {'value': None, 'description': 'Indicated in XXX'},
+        'INOCULUM_CONCENTRATION': {'value': None, 'description': 'Indicated in cells per mL'},
         'INOCULUM_VOLUME': {'value': None, 'description': 'Indicate in mL'},
         'INITIAL_PH': None,
         'INITIAL_TEMPERATURE': {'value': None, 'description': 'Indicated in Celsius'},
