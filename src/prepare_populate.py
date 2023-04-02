@@ -8,7 +8,7 @@ from utils import (
 )
 
 PROJECT_DIRECTORY = '/Users/julia/bacterialGrowth_thesis/'
-MODIFY_YML_FILE = 'src/modify_yml_files.sh'
+MODIFY_YML_FILE = 'src/bash_scripts/modify_yml_files.sh'
 modifyYml = PROJECT_DIRECTORY + MODIFY_YML_FILE
 
 def prepare_populate(args):
@@ -129,7 +129,7 @@ def prepare_populate(args):
             exit()
         
         studies_table = PrettyTable()
-        studies_table.field_names = ["ID", "Description"]
+        studies_table.field_names = ["ID", "Name", "Description"]
         studies_table.align["Description"] = "l"
 
         studies_id = []
