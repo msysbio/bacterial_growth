@@ -85,13 +85,13 @@ def clusterHeaders(file):
 
     return headers
 
-def getFieldsValues(args, fields, values):
-    for key, val in args.items():
-        fields = fields + key + ','
-        values = values + "'" +str(val) + "',"
-    fields = fields[:-1] + ')'
-    values = values[:-1] + ')'
-    return [fields, values]
+# def getFieldsValues(args, fields, values):
+#     for key, val in args.items():
+#         fields = fields + key + ','
+#         values = values + "'" +str(val) + "',"
+#     fields = fields[:-1] + ')'
+#     values = values[:-1] + ')'
+#     return [fields, values]
 
 
 def getFieldsValues(args):
@@ -103,4 +103,11 @@ def getFieldsValues(args):
     fields = fields[:-1] + ')'
     values = values[:-1] + ')'
     return [fields, values]
+
+def getWhereClause(args):
+    clause = "WHERE ("
+    for key, val in args.items():
+        clause = clause + key + "= '" + str(val) + "' AND "
+    clause = clause[:-5] + ')'
+    return clause
     

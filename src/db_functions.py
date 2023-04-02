@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import re
 
-from utils import getFieldsValues
+from utils import getFieldsValues, getWhereClause
 
 user_name = os.environ.get('DB_USER')
 password = os.environ.get('DB_PASSWORD')
@@ -24,18 +24,11 @@ def execute(phrase):
     res = []
     for row in cursor:
         res.append(row)
-    
-    last_id = 0
-    # What if INSERT IGNORE and it was not inserted?
-    # https://stackoverflow.com/questions/6291405/mysql-after-insert-ignore-get-primary-key
-    if "INSERT" in phrase:
-        cursor.execute("SELECT LAST_INSERT_ID()")
-        last_id = cursor.fetchall()[0][0]
 
     cursor.close()
     cnx.commit()
     cnx.close()
-    return [last_id, res]
+    return res
 
 def addRecord(table, args):
     """ 
@@ -45,15 +38,30 @@ def addRecord(table, args):
     :args: dictionary with the data to insert
     :return: id of the inserted record
     """
+    # Insert into table
     fields, values = getFieldsValues(args)
-    phrase = "INSERT IGNORE INTO " + table + fields + " VALUES " + values
-    last_id = execute(phrase)[0]
+    phrase = "INSERT IGNORE INTO " +table+" "+fields+" VALUES "+values
+    res = execute(phrase)
+    
+    # Get the name of the primary key field
+    phrase = "SHOW KEYS FROM "+table+" WHERE Key_name = 'PRIMARY'"
+    res = execute(phrase)
+    pk = res[0][4]
+    
+    # Get the value of the primary key (this will return the value both if it was inserted or ignored)
+    where_clause = getWhereClause(args)
+    phrase = "SELECT "+pk+" FROM "+table+" "+where_clause
+    res = execute(phrase)
+    last_id = res[0][0]
+    
     return last_id
+
+
 
 def countRecords(table, field, value):
     phrase = "SELECT COUNT(*) FROM "+table+" WHERE "+field+" = " + value
     res = execute(phrase)
-    count = res[1][0][0]
+    count = res[0][0]
     return count
 
 # def getAllRecords(table):
@@ -64,17 +72,17 @@ def countRecords(table, field, value):
 def getAllStudies():
     phrase = "SELECT * FROM Study"
     res = execute(phrase)
-    return res[1]
+    return res
 
 def getAllExperiments(studyId):
     phrase = "SELECT * FROM Experiment WHERE studyId = '"+studyId+"';"
     res = execute(phrase)
-    return res[1]
+    return res
 
 def getAllPerturbations(experimentId):
     phrase = "SELECT * FROM Perturbation WHERE experimentId = '"+experimentId+"';"
     res = execute(phrase)
-    return res[1]
+    return res
 
 def getBacteria(bacteriaSpecies, *bacteriaStrain):
     bacteriaStrain = bacteriaStrain[0]
