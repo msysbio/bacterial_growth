@@ -1,4 +1,4 @@
-from parser_julia import bacterial_parser
+from bacterial_parser import bacterial_parser
 from prepare_populate import prepare_populate
 from populate_db import populate_db
 
