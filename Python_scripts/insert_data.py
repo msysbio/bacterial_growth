@@ -4,7 +4,7 @@ from mysql.connector import errorcode
 
 def insert():
 
-    cnx = mysql.connector.connect(user='root', password='Pozuelo99.',host='localhost',database='bacteria_trial')
+    cnx = mysql.connector.connect(user='root', password='',host='localhost',database='bacteria_trial')
     cursor = cnx.cursor()
 
     # FORMAT 1
