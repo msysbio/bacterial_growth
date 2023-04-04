@@ -69,3 +69,10 @@ while read -r line; do
     cp $path_origin $path_destination
 
 done < IntermediateFiles/experiments_info_mod.txt
+
+cd $PROJECT_PATH'IntermediateFiles'
+rm experiments_info.txt
+rm experiments_info_mod.txt
+rm lab_experiment_names.txt
+rm lab_files_headers.txt
+rm lab_files_names.txt

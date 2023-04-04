@@ -1,11 +1,9 @@
 import os
 from prettytable import PrettyTable
 
-from yml_functions import (createStudyYml, createExperimentYml, createPerturbationYml, createReplicatesYml)
+from yml_functions import createStudyYml, createExperimentYml, createPerturbationYml, createReplicatesYml
 import db_functions as db
-from utils import (
-    runBash
-)
+from bash_functions import runBash
 
 PROJECT_DIRECTORY = '/Users/julia/bacterialGrowth_thesis/'
 MODIFY_YML_FILE = 'src/bash_scripts/modify_yml_files.sh'
