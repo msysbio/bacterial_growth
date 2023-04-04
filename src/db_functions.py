@@ -18,18 +18,26 @@ def execute(phrase):
     :param phrase: str SQL sentence to execute
     :return: list of str received from the database after command execution.
     """
-    cnx = mysql.connector.connect(user=user_name, password=password,host='localhost',database=DB_NAME)
-    cursor = cnx.cursor()
-    cursor.execute(phrase)
-    res = []
-    for row in cursor:
-        res.append(row)
+    try:
+        cnx = mysql.connector.connect(user=user_name, password=password,host='localhost',database=DB_NAME)
+        cnx.get_warnings = True
+        cursor = cnx.cursor()
+        cursor.execute(phrase)
+        res = []
+        for row in cursor:
+            res.append(row)
 
-    cursor.close()
-    cnx.commit()
-    cnx.close()
-    return res
-
+        warnings = cursor.fetchwarnings()
+        if warnings: 
+            for i in range(len(warnings)):
+                print("Warning - "+warnings[i][2])
+        cursor.close()
+        cnx.commit()
+        cnx.close()
+        return res
+    except mysql.connector.Error as err:
+        print("Something went wrong: {}".format(err))
+        
 def addRecord(table, args):
     """ 
     This function adds a new entry into the indicated table.
