@@ -37,7 +37,7 @@ def execute(phrase):
         return res
     except mysql.connector.Error as err:
         print("Something went wrong: {}".format(err))
-        
+
 def addRecord(table, args):
     """ 
     This function adds a new entry into the indicated table.
@@ -64,33 +64,19 @@ def addRecord(table, args):
     
     return last_id
 
-
-
 def countRecords(table, field, value):
     phrase = "SELECT COUNT(*) FROM "+table+" WHERE "+field+" = " + value
     res = execute(phrase)
     count = res[0][0]
     return count
 
-# def getAllRecords(table):
-#     phrase = "SELECT * FROM " + table
-#     res = execute(phrase)
-#     return res[1]
-
-def getAllStudies():
-    phrase = "SELECT * FROM Study"
+def getAllRecords(table, **args):
+    phrase = "SELECT * FROM " + table
+    if args:
+        where_clause = getWhereClause(args)
+        phrase = phrase+" "+where_clause
     res = execute(phrase)
-    return res
-
-def getAllExperiments(studyId):
-    phrase = "SELECT * FROM Experiment WHERE studyId = '"+studyId+"';"
-    res = execute(phrase)
-    return res
-
-def getAllPerturbations(experimentId):
-    phrase = "SELECT * FROM Perturbation WHERE experimentId = '"+experimentId+"';"
-    res = execute(phrase)
-    return res
+    return res[0]
 
 def getBacteria(bacteriaSpecies, *bacteriaStrain):
     bacteriaStrain = bacteriaStrain[0]

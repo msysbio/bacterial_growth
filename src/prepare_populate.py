@@ -34,7 +34,7 @@ def prepare_populate(args):
     elif num_experiments > 0:
         print('\nYou have to choose a study in which your experiments (and perturbations if indicated) will be added:')
         # ==========================================================================================
-        studies = db.getAllStudies()
+        studies = db.getAllRecords('Study')
 
         if len(studies) == 0:
             print('\n\tERROR: There are no studies yet in the DB')
@@ -64,7 +64,7 @@ def prepare_populate(args):
     elif num_perturbations > 0:
         print('\nYou have to choose a study and experiment in which your perturbations will be added:')
         # ==========================================================================================
-        studies = db.getAllStudies()
+        studies = db.getAllRecords('Study')
         
         if len(studies) == 0:
             print('\n\tThere are no studies yet in the DB')
@@ -88,7 +88,7 @@ def prepare_populate(args):
             exit()
 
         # ==========================================================================================
-        experiments = db.getAllExperiments(study_id)
+        experiments = db.getAllRecords('Experiment', studyId=study_id)
 
         if len(experiments) == 0:
             print('\n\tERROR: There are no experiments with id {}:'.format(study_id))
@@ -119,7 +119,7 @@ def prepare_populate(args):
     else:
         print('\nYou have to choose a study, experiment and perturbation in which your replicates files will be added:')
         # ==========================================================================================
-        studies = db.getAllStudies()
+        studies = db.getAllRecords('Study')
         
         if len(studies) == 0:
             print('\n\tThere are no studies yet in the DB')
@@ -143,7 +143,7 @@ def prepare_populate(args):
             exit()
 
         # ==========================================================================================
-        experiments = db.getAllExperiments(study_id)
+        experiments = db.getAllRecords('Experiment', studyId=study_id)
 
         if len(experiments) == 0:
             print('\n\tERROR: There are no experiments with study id {}:'.format(study_id))
@@ -166,7 +166,7 @@ def prepare_populate(args):
             exit()
 
         # ==========================================================================================
-        perturbations = db.getAllPerturbations(experiment_id)
+        perturbations = db.getAllRecords('Perturbation', experimentId=experiment_id)
 
         if len(perturbations) == 0:
             print('\n\tERROR: There are no perturbations with experiment id {}:'.format(experiment_id))
