@@ -1,5 +1,14 @@
 PROJECT_PATH=$1
 FILES_PATH=$2
+EXPERIMENT_NAME=$3
+PERTURBATION_NAME=$4
+
+echo '--->'
+echo $PROJECT_PATH
+echo $FILES_PATH
+echo $EXPERIMENT_NAME
+echo $PERTURBATION_NAME
+echo '--->'
 
 # Main directory of the project
 cd $PROJECT_PATH
@@ -48,21 +57,32 @@ cd $PROJECT_PATH
 ## 4) CREATE THE DIRECTORIES
 ## ==========================================================================================================================================================================
 mkdir -p Data/
+mkdir -p Data/experiments/
 rm -f $PROJECT_PATH'IntermediateFiles/listOfFiles.list'
 while read -r line; do
 
     cd $PROJECT_PATH
-    experiment=$(echo $line | awk '{print $2}')
+
+    experiment=$EXPERIMENT_NAME
     replicate=$(echo $line | awk '{print $3}')
     
     file=$(echo $line | awk '{print $1}')
     path_origin=$FILES_PATH$file
 
-    cd $PROJECT_PATH'Data'
+    cd $PROJECT_PATH'Data/experiments'
     mkdir -p $experiment
-    mkdir -p $experiment/$replicate
 
-    path_destination=$PROJECT_PATH'Data/'$experiment/$replicate/
+    if [ ! -z "$PERTURBATION_NAME" ]
+    then
+        perturbation=$PERTURBATION_NAME
+        mkdir -p $experiment/$perturbation
+        mkdir -p $experiment/$perturbation/$replicate
+        path_destination=$PROJECT_PATH'Data/experiments/'$experiment/$perturbation/$replicate/
+    else
+        mkdir -p $experiment/$replicate
+        path_destination=$PROJECT_PATH'Data/experiments/'$experiment/$replicate/
+    fi
+    
     final_file=$path_destination$file
     echo $final_file >> $PROJECT_PATH'IntermediateFiles/listOfFiles.list'
 

@@ -56,13 +56,9 @@ def populate_db(args):
                 path_end = max(findOccurrences(media_file, "/"))
                 media_file_name = media_file[path_end+1:]
 
-                media_analysis_file = PROJECT_DIRECTORY + MEDIA_ANALYSIS_FILE
-                media_args = [PROJECT_DIRECTORY, media_file, media_file_name]
+                media_analysis_file = PROJECT_DIRECTORY + MEDIA_ANALYSIS_FILE ##SERVER_DIRECTORY
+                media_args = [PROJECT_DIRECTORY, media_file, media_file_name] ##LOCAL_DIRECTORY
                 mediaFiles = getFiles(media_analysis_file, media_args, MEDIA_LIST)
-
-                exp_analysis_file = PROJECT_DIRECTORY + EXPERIMENT_ANALYSIS_FILE
-                exp_args = [PROJECT_DIRECTORY, dir]
-                expFiles = getFiles(exp_analysis_file, exp_args, EXPERIMENTS_LIST)
                 
                 for i, f in enumerate(mediaFiles):
                     media = {
@@ -121,11 +117,11 @@ def populate_db(args):
             if experiment['FILES']['value']:
                 files_dir = os.path.abspath(experiment['FILES']['value']) + '/'
 
-                exp_analysis_file = PROJECT_DIRECTORY + EXPERIMENT_ANALYSIS_FILE
-                exp_args = [PROJECT_DIRECTORY, files_dir]
+                exp_analysis_file = PROJECT_DIRECTORY + EXPERIMENT_ANALYSIS_FILE ##SERVER_DIRECTORY
+                exp_args = [PROJECT_DIRECTORY, files_dir] ##LOCAL_DIRECTORY
                 exp_files = getFiles(exp_analysis_file, exp_args, EXPERIMENTS_LIST) #this will generate the new HEADERS_FILE
 
-                headers_dict = clusterHeaders(PROJECT_DIRECTORY + HEADERS_FILE)
+                headers_dict = clusterHeaders(PROJECT_DIRECTORY + HEADERS_FILE) ##SERVER_DIRECTORY
                 
                 addReplicates(headers_dict, exp_files, experiment_id=experiment_id, perturbation_id=None)
             

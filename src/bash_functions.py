@@ -15,8 +15,8 @@ def runBash(file, arguments=[]):
     bash_script_command = " ".join(bash_script_params)
             
     if os.system(bash_script_command) != 0:
-        print("The bash script failed to run.")
-        print("Exit")
+        print("! The bash script failed to run.")
+        print("! Exit")
         exit()
 
 def getFiles(bash_file, bash_args, list_files):

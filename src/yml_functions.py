@@ -20,7 +20,6 @@ def createStudyYml(num_experiments, num_perturbations, **files_dir):
     yml_dict = addStudyYml(yml_dict)
     yml_dict = addExperimentYml(yml_dict, num_experiments)
     yml_dict = addPerturbationYml(yml_dict, num_perturbations)
-    # yml_dict['FILES'] = files_dir
 
     write_yml(yml_dict, 'yml_info_files/study_information_tmp.yml')
 
@@ -29,7 +28,6 @@ def createExperimentYml(study_id, num_experiments, num_perturbations, **files_di
     yml_dict['STUDY_ID'] = study_id
     yml_dict = addExperimentYml(yml_dict, num_experiments)
     yml_dict = addPerturbationYml(yml_dict, num_perturbations)
-    # yml_dict['FILES'] = files_dir
 
     write_yml(yml_dict, 'yml_info_files/experiment_information_tmp.yml')
 
@@ -38,7 +36,6 @@ def createPerturbationYml(study_id, experiment_id, num_perturbations, **files_di
     yml_dict['STUDY_ID'] = study_id
     yml_dict['EXPERIMENT_ID'] = experiment_id
     yml_dict = addPerturbationYml(yml_dict, num_perturbations)
-    # yml_dict['FILES'] = files_dir
 
     write_yml(yml_dict, 'yml_info_files/perturbation_information_tmp.yml')
 
