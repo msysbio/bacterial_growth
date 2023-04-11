@@ -35,6 +35,8 @@ def bacterial_parser():
         '-i', '--info_file', dest='info_file', help="Directory with the YML with the experiment information for the DB", required=False, type=isFile
     )
 
+    subparser3 = subparsers.add_parser('plot', help='Plot measurements from one/several replicates')
+
     
     args = parser.parse_args()
 
