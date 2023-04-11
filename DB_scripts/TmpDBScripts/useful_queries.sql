@@ -29,4 +29,7 @@ SELECT * FROM Experiment;
 SELECT * FROM Perturbation;
 SELECT * FROM TechnicalReplicate;
 
-INSERT IGNORE INTO Experiment (studyId,experimentId,reactorId,precultivationId,mediaId,plateId,plateColumn,plateRow,blank,inoculumConcentration,inoculumVolume,initialPh,initialTemperature,carbonSource,antibiotic,experimentDescription) VALUES ('1','101','1','1','1','1','1','A','0','1000000','10','5','20','0','0','Work?')
+
+
+
+SELECT * FROM Experiment WHERE (studyId= '1')

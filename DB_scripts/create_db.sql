@@ -47,6 +47,7 @@ CREATE TABLE IF NOT EXISTS Media (
 
 CREATE TABLE IF NOT EXISTS Experiment (
 	experimentId INT AUTO_INCREMENT,
+    experimentName VARCHAR(20),
     studyId INT NOT NULL,
     precultivationId INT,
     reactorId INT NOT NULL,
