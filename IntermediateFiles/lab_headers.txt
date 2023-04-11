@@ -1,0 +1,12 @@
+Acetate
+Formate
+Glucose
+Lactate
+Neu5Ac
+OD
+Pyruvate
+Succinate
+liquidactivecount
+liquidtotalcount
+pH
+time
