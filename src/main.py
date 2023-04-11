@@ -1,6 +1,7 @@
 from bacterial_parser import bacterial_parser
 from prepare_populate import prepare_populate
 from populate_db import populate_db
+from plot import *
 
 def main():
 
@@ -10,6 +11,8 @@ def main():
         prepare_populate(args)
     elif args.option == 'populateDB':
         populate_db(args)
+    elif args.option == 'plot':
+        plotMeanStdSeveralReplicates()
 
 
 

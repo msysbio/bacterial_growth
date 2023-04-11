@@ -77,12 +77,18 @@ def getAllRecords(table, **args):
         where_clause = getWhereClause(args)
         phrase = phrase+" "+where_clause
     res = execute(phrase)
-    return res[0]
+    return res
 
-def getBacteria(bacteriaSpecies, *bacteriaStrain):
-    bacteriaStrain = bacteriaStrain[0]
-    if len(bacteriaStrain) == 0:
-        phrase = "SELECT * FROM Bacteria WHERE bacteriaSpecies = '"+bacteriaSpecies+"';"
-    else:
-        phrase = "SELECT * FROM Bacteria WHERE bacteriaSpecies = '"+bacteriaSpecies+"' AND bacteriaStrain = '"+bacteriaStrain+"';"
-    execute(phrase)
+# def getBacteria(bacteriaSpecies, *bacteriaStrain):
+#     bacteriaStrain = bacteriaStrain[0]
+#     if len(bacteriaStrain) == 0:
+#         phrase = "SELECT * FROM Bacteria WHERE bacteriaSpecies = '"+bacteriaSpecies+"';"
+#     else:
+#         phrase = "SELECT * FROM Bacteria WHERE bacteriaSpecies = '"+bacteriaSpecies+"' AND bacteriaStrain = '"+bacteriaStrain+"';"
+#     execute(phrase)
+
+def getFiles(field, args):
+    where_clause = getWhereClause(args)
+    phrase = "SELECT "+field+" FROM TechnicalReplicate "+where_clause
+    res = execute(phrase)
+    return res
