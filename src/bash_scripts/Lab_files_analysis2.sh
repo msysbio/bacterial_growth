@@ -3,13 +3,6 @@ FILES_PATH=$2
 EXPERIMENT_NAME=$3
 PERTURBATION_NAME=$4
 
-echo '--->'
-echo $PROJECT_PATH
-echo $FILES_PATH
-echo $EXPERIMENT_NAME
-echo $PERTURBATION_NAME
-echo '--->'
-
 # Main directory of the project
 cd $PROJECT_PATH
 
