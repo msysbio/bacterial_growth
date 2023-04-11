@@ -1,5 +1,4 @@
 import os
-import re
 import pandas as pd
 from constants import *
 
@@ -18,9 +17,14 @@ def populate_db(args):
             'studyName': info['STUDY'][0]['NAME'],
             'studyDescription': info['STUDY'][0]['DESCRIPTION']
         }
-        study_id = db.addRecord('Study', study)
-        print('\nSTUDY ID: ', study_id)
-    
+        study_filtered = {k: v for k, v in study.items() if v is not None}
+        if len(study_filtered)>0: 
+            study_id = db.addRecord('Study', study_filtered)
+            print('\nSTUDY ID: ', study_id)
+        else: 
+            print('You must introduce some study information')
+            exit()
+         
     elif 'STUDY_ID' in info:
         study_id = info['STUDY_ID']
         print('\nSTUDY ID: ', study_id)
@@ -41,12 +45,13 @@ def populate_db(args):
                 'reactorDescription': experiment['REACTOR']['DESCRIPTION']['value'],
             }
             reactor_filtered = {k: v for k, v in reactor.items() if v is not None}
-            reactor_id = db.addRecord('Reactor',reactor_filtered)
+            if len(reactor_filtered)>0: reactor_id = db.addRecord('Reactor',reactor_filtered)
+            else: reactor_id=None
             print('\tREACTOR ID: ', reactor_id)
             
             # ------------------------------------------------------------------------------------
             # PRECULTIVATION ==> PRECULTIVATION_ID        
-            precultivation_id = 1
+            precultivation_id = None
             print('\tPRECULTIVATION ID: ', precultivation_id)
             
             # ------------------------------------------------------------------------------------
@@ -66,7 +71,10 @@ def populate_db(args):
                         'mediaFile': f
                     }
                     media_filtered = {k: v for k, v in media.items() if v is not None}
-                    media_id = db.addRecord('Media',media_filtered)
+                    
+                    if len(media_filtered)>0: media_id = db.addRecord('Media',media_filtered)
+                    else: media_id=None
+                    
                     print('\tMEDIA ID: ', media_id)
 
             # ------------------------------------------------------------------------------------
@@ -76,6 +84,7 @@ def populate_db(args):
                 'reactorId': reactor_id,
                 'precultivationId': precultivation_id,
                 'mediaId': media_id,
+                'experimentName': experiment['NAME']['value'],
                 'plateId': experiment['PLATE']['ID']['value'],
                 'plateColumn': experiment['PLATE']['COLUMN']['value'],
                 'plateRow': experiment['PLATE']['ROW']['value'],
@@ -103,22 +112,22 @@ def populate_db(args):
                         'bacteriaStrain': bacteria['STRAIN']
                     }
                     bacteria_filtered = {k: v for k, v in bact.items() if v is not None}
-                    bacteria_id = db.addRecord('Bacteria',bacteria_filtered)
-                    print('\tBACTERIA ID: ', bacteria_id)
 
-                    community = {
-                        'bacteriaId': bacteria_id,
-                        'experimentId': experiment_id
-                    }
-                    community_filtered = {k: v for k, v in community.items() if v is not None}
-                    db.addRecord('BacteriaCommunity',community_filtered)
+                    if len(bacteria_filtered)>0: 
+                        bacteria_id = db.addRecord('Bacteria',bacteria_filtered)
+                        community = {
+                            'bacteriaId': bacteria_id,
+                            'experimentId': experiment_id
+                        }
+                        community_filtered = {k: v for k, v in community.items() if v is not None}
+                        db.addRecord('BacteriaCommunity',community_filtered)                   
             
             ### Files analysis
             if experiment['FILES']['value']:
                 files_dir = os.path.abspath(experiment['FILES']['value']) + '/'
 
                 exp_analysis_file = PROJECT_DIRECTORY + EXPERIMENT_ANALYSIS_FILE ##SERVER_DIRECTORY
-                exp_args = [PROJECT_DIRECTORY, files_dir] ##LOCAL_DIRECTORY
+                exp_args = [PROJECT_DIRECTORY, files_dir, experiment_id] ##LOCAL_DIRECTORY
                 exp_files = getFiles(exp_analysis_file, exp_args, EXPERIMENTS_LIST) #this will generate the new HEADERS_FILE
 
                 headers_dict = clusterHeaders(PROJECT_DIRECTORY + HEADERS_FILE) ##SERVER_DIRECTORY
@@ -153,7 +162,7 @@ def populate_db(args):
                 files_dir = os.path.abspath(perturbation['FILES']['value']) + '/'
                 
                 exp_analysis_file = PROJECT_DIRECTORY + EXPERIMENT_ANALYSIS_FILE
-                exp_args = [PROJECT_DIRECTORY, files_dir]
+                exp_args = [PROJECT_DIRECTORY, files_dir, experiment_id, perturbation_id]
                 exp_files = getFiles(exp_analysis_file, exp_args, EXPERIMENTS_LIST) #this will generate the new HEADERS_FILE
 
                 headers_dict = clusterHeaders(PROJECT_DIRECTORY + HEADERS_FILE)
@@ -164,6 +173,7 @@ def populate_db(args):
         perturbation_id = info['PERTURBATION_ID']
         print('\nPERTURBATION ID: ', perturbation_id)
      
+    
     if 'FILES' in info:
         files_dir = os.path.abspath(info['FILES']) + '/'
 
@@ -230,9 +240,6 @@ def addReplicates(headers, files, experiment_id, perturbation_id):
             m_path = path+'metabolites_file.txt'
             metabolites_data.to_csv(m_path, sep=" ", index=False)
         else: m_path = None
-
-        # print(i, replicate_id)
-        # print(g_path,'\n',m_path,'\n',p_path,'\n\n')
 
         rep = {
             'replicateId': replicate_id,
