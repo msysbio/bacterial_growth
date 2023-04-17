@@ -67,7 +67,8 @@ CREATE TABLE IF NOT EXISTS Experiment (
     FOREIGN KEY (studyId) REFERENCES Study (studyId) ON UPDATE CASCADE ON DELETE CASCADE,
     #FOREIGN KEY (precultivationId) REFERENCES Precultivation (precultivationId) ON UPDATE CASCADE ON DELETE CASCADE,
     FOREIGN KEY (reactorId) REFERENCES Reactor (reactorId) ON UPDATE CASCADE ON DELETE CASCADE,
-    FOREIGN KEY (mediaId) REFERENCES Media (mediaId) ON UPDATE CASCADE ON DELETE CASCADE
+    FOREIGN KEY (mediaId) REFERENCES Media (mediaId) ON UPDATE CASCADE ON DELETE CASCADE,
+    UNIQUE (experimentName, studyId, reactorId, plateId, plateColumn, plateRow, mediaId, blank, inoculumConcentration, inoculumVolume, initialPh, initialTemperature, carbonSource, antibiotic)
 );
 
 CREATE TABLE IF NOT EXISTS Perturbation (

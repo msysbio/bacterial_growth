@@ -29,7 +29,12 @@ SELECT * FROM Experiment;
 SELECT * FROM Perturbation;
 SELECT * FROM TechnicalReplicate;
 
+SELECT * FROM TechnicalReplicate where experimentId = 105;
 
 
 
-SELECT * FROM Experiment WHERE (studyId= '1')
+
+SELECT * FROM Experiment WHERE (studyId= '1');
+SELECT * FROM Perturbation WHERE (experimentId= '101');
+SELECT * FROM TechnicalReplicate WHERE (experimentId= '101');
+SELECT perturbationId FROM Perturbation WHERE (experimentId= '101'); 
