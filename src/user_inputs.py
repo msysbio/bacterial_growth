@@ -2,8 +2,6 @@ from prettytable import PrettyTable
 import db_functions as db
 
 def chooseStudy():
-    print('\nYou have to choose a study in which your experiments (and perturbations if indicated) will be added:')
-    # ==========================================================================================
     studies = db.getAllRecords('Study')
 
     if len(studies) == 0:
@@ -114,3 +112,11 @@ def chooseReplicate(experiment_id, perturbation_id):
         exit()
 
     return replicate_id
+
+def choosePlotOption():
+    print('Choose the plotting option:')
+    print('\t1: Plot one technical replicate.')
+    print('\t2: Plot mean and deviation from several replicates from the same perturbation/experiment.')
+    print('\t3: Plot mean and deviation from several replicates from one experiment (with all its perturbations).')
+    option = input("\n Option: ")
+    return option
