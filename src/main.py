@@ -12,7 +12,8 @@ def main():
     elif args.option == 'populateDB':
         populate_db(args)
     elif args.option == 'plot':
-        plotMeanStdSeveralReplicates()
+        option = choosePlotOption()
+        plotReplicates(option)
 
 
 
