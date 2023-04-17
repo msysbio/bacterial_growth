@@ -92,3 +92,9 @@ def getFiles(field, args):
     phrase = "SELECT "+field+" FROM TechnicalReplicate "+where_clause
     res = execute(phrase)
     return res
+
+def getRecords(table, field, args):
+    where_clause = getWhereClause(args)
+    phrase = "SELECT "+field+" FROM "+table+" "+where_clause
+    res = execute(phrase)
+    return res
