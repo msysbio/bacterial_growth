@@ -60,7 +60,10 @@ def getFieldsValues(args):
 def getWhereClause(args):
     clause = "WHERE ("
     for key, val in args.items():
-        clause = clause + key + "= '" + str(val) + "' AND "
+        if val != 'null':
+            clause = clause + key + "= '" + str(val) + "' AND "
+        if val == 'null':
+            clause = clause + key + " IS NULL AND "
     clause = clause[:-5] + ')'
     return clause
     
