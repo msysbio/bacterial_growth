@@ -149,6 +149,7 @@ def plotExperimentPerturbation(args, regex='', db_field=''):
         # =================================================================
         
         ax.set_xlabel('time')
+        ax.set_ylabel(db_field[:-4])
         plt.show()
         # ========================================================================================================================
         
@@ -178,6 +179,7 @@ def plotExperimentPerturbation(args, regex='', db_field=''):
             # =================================================================
             
             ax.set_xlabel('time')
+            ax.set_ylabel(db_field[:-4])
             plt.show()
             # ========================================================================================================================
             
@@ -204,16 +206,19 @@ def plotExperimentPerturbation(args, regex='', db_field=''):
             # =================================================================
             
             ax.set_xlabel('time')
+            ax.set_ylabel(db_field[:-4])
             plt.show()
             # ========================================================================================================================
 
-def plotOneReplicate(files, regex):
+def plotOneReplicate(files, regex='', db_field=''):
     df = pd.read_csv(files[0][0], sep=" ")
+    
     if regex != '': headers = getMatchingList(regex, df)
     else: headers = df.columns
+    
     data = getIntersectionColumns(df, headers)
             
-    # Plot: ==================================================================================================================
+    # plot
     fig = plt.figure()
     ax = fig.add_subplot()
     if len(data.columns)>1: 
@@ -227,9 +232,10 @@ def plotOneReplicate(files, regex):
         handles, labels = ax.get_legend_handles_labels()
         ax.legend(labels, loc='upper right')
     # =================================================================
-
+    
+    ax.set_xlabel('time')
+    ax.set_ylabel(db_field[:-4])
     plt.show()
-    # ========================================================================================================================
     
     return plot, vec
 
