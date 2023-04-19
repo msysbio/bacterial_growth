@@ -208,7 +208,6 @@ def addReplicates(headers, files, experiment_id, perturbation_id):
     print('- The number of replicates already in that id: ',number_rep)
     for i, f in enumerate(files):
         replicate_id = str(id) + '_' + str(number_rep + i + 1)
-        # print('\n\tREPLICATE ID: ', replicate_id)
         
         #Get directory of the provided paths
         path_end = max(findOccurrences(f, "/"))
