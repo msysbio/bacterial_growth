@@ -5,6 +5,7 @@
 Data/
 DataParsed/
 DataParsed.zip
+MyExperiment*/
 
 # Files that will be filled in by the user
 src/yml_info_files/
