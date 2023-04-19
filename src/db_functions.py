@@ -65,11 +65,13 @@ def addRecord(table, args):
     
     return last_id
 
-def countRecords(table, field, value):
-    phrase = "SELECT COUNT(*) FROM "+table+" WHERE "+field+" = " + value
+def countRecords(table, args):
+    phrase = "SELECT COUNT(*) FROM " + table
+    if args:
+        where_clause = getWhereClause(args)
+        phrase = phrase+" "+where_clause
     res = execute(phrase)
-    count = res[0][0]
-    return count
+    return res
 
 def getAllRecords(table, **args):
     phrase = "SELECT * FROM " + table
@@ -78,14 +80,6 @@ def getAllRecords(table, **args):
         phrase = phrase+" "+where_clause
     res = execute(phrase)
     return res
-
-# def getBacteria(bacteriaSpecies, *bacteriaStrain):
-#     bacteriaStrain = bacteriaStrain[0]
-#     if len(bacteriaStrain) == 0:
-#         phrase = "SELECT * FROM Bacteria WHERE bacteriaSpecies = '"+bacteriaSpecies+"';"
-#     else:
-#         phrase = "SELECT * FROM Bacteria WHERE bacteriaSpecies = '"+bacteriaSpecies+"' AND bacteriaStrain = '"+bacteriaStrain+"';"
-#     execute(phrase)
 
 def getFiles(field, args):
     where_clause = getWhereClause(args)
