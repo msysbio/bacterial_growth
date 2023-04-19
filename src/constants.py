@@ -1,3 +1,5 @@
+import re
+
 global LOCAL_PROJECT_DIRECTORY
 global SERVER_PROJECT_DIRECTORY
 global PROJECT_DIRECTORY 
@@ -6,6 +8,13 @@ global MEDIA_ANALYSIS_FILE
 global HEADERS_FILE
 global EXPERIMENTS_LIST
 global MEDIA_LIST
+
+global od_regex
+global counts_regex
+global qpcr_regex
+global rnaseq_regex
+
+global abundance_options
 
 
 LOCAL_PROJECT_DIRECTORY = '/Users/julia/bacterialGrowth_thesis/'
@@ -21,3 +30,13 @@ MEDIA_ANALYSIS_FILE = 'src/bash_scripts/media_file_analysis.sh'
 HEADERS_FILE = 'IntermediateFiles/lab_headers.txt'
 EXPERIMENTS_LIST = 'IntermediateFiles/listOfFiles.list'
 MEDIA_LIST = 'IntermediateFiles/listOfMedia.list'
+
+# Abundance options
+abundance_options = ['od', 'counts', 'qpcr', 'rnaseq']
+
+# Regex options
+od_regex = re.compile(r'.*time.* | .*OD.*', flags=re.I | re.X)
+counts_regex = re.compile(r'.*time.* | .*count.*', flags=re.I | re.X)
+qpcr_regex = re.compile(r'.*time.* | .*qpcr.*', flags=re.I | re.X)
+rnaseq_regex = re.compile(r'.*time.* | .*rna.*', flags=re.I | re.X)
+

@@ -1,5 +1,4 @@
 import re
-from prettytable import PrettyTable
 import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib.legend import Legend
@@ -8,11 +7,7 @@ import db_functions as db
 from user_inputs import *
 from utils import getMatchingList, getIntersectionColumns, getMeanStd
 
-abundance_options = ['od', 'counts', 'qpcr', 'rnaseq']
-od_regex = re.compile(r'.*time.* | .*OD.*', flags=re.I | re.X)
-counts_regex = re.compile(r'.*time.* | .*count.*', flags=re.I | re.X)
-qpcr_regex = re.compile(r'.*time.* | .*qpcr.*', flags=re.I | re.X)
-rnaseq_regex = re.compile(r'.*time.* | .*rna.*', flags=re.I | re.X)
+from constants import *
 
 def plot(option):
     '''
@@ -218,7 +213,7 @@ def plotOneReplicate(files, regex='', db_field=''):
     
     data = getIntersectionColumns(df, headers)
             
-    # plot
+    # Plot: ==================================================================================================================
     fig = plt.figure()
     ax = fig.add_subplot()
     if len(data.columns)>1: 
@@ -236,6 +231,7 @@ def plotOneReplicate(files, regex='', db_field=''):
     ax.set_xlabel('time')
     ax.set_ylabel(db_field[:-4])
     plt.show()
+    # ========================================================================================================================
     
     return plot, vec
 
@@ -260,7 +256,6 @@ def plotDf(df, ax, style_count=0):
         vec = range(1,len(df.columns),2)
         for i in vec:
             plot = ax.errorbar(df.iloc[:,0], df.iloc[:,i], yerr = df.iloc[:,i+1], fmt=styles[style_count], color = cmap(i-1), label=df.columns[i][:-5])
-            #plot.set_linestyle(styles[style_count])
     else:
         vec = range(1,len(df.columns))
         for i in vec:
