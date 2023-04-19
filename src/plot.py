@@ -2,155 +2,269 @@ import re
 from prettytable import PrettyTable
 import pandas as pd
 import matplotlib.pyplot as plt
+from matplotlib.legend import Legend
 
 import db_functions as db
 from user_inputs import *
-from utils import getMatchingList, getIntersectionColumns
+from utils import getMatchingList, getIntersectionColumns, getMeanStd
 
-def chooseReplicates():
-    study_id = chooseStudy()
-    experiment_id = chooseExperiment(study_id)
-    perturbation_id = choosePerturbation(experiment_id)
+abundance_options = ['od', 'counts', 'qpcr', 'rnaseq']
+od_regex = re.compile(r'.*time.* | .*OD.*', flags=re.I | re.X)
+counts_regex = re.compile(r'.*time.* | .*count.*', flags=re.I | re.X)
+qpcr_regex = re.compile(r'.*time.* | .*qpcr.*', flags=re.I | re.X)
+rnaseq_regex = re.compile(r'.*time.* | .*rna.*', flags=re.I | re.X)
 
-def plotOneReplicate():
-    study_id = chooseStudy()
-    experiment_id = chooseExperiment(study_id)
-    perturbation_id = choosePerturbation(experiment_id)
-    replicate_id = chooseReplicate(experiment_id=experiment_id, perturbation_id=perturbation_id)
+def plot(option):
+    '''
+    This function takes the user plot choice, makes the user choose the data to plot (form the args dictionary) and call the corresponding functions
+    '''
+    fields = ['abundance', 'metabolites', 'ph']
+    if option == '1':
+        # Only one replicate
+        # --------------------------------------------------------------------------------------------------------
+        study_id = chooseStudy()
+        experiment_id = chooseExperiment(study_id)
+        perturbation_id = choosePerturbation(experiment_id)
+        replicate_id = chooseReplicate(experiment_id=experiment_id, perturbation_id=perturbation_id)
 
-    args = {
-        'replicateId': replicate_id
-        }
+        args = {'replicateId': replicate_id}
+        
     
-    # Abundance file
-    # =====================================================================================
-    abundance_file = db.getFiles('abundanceFile', args)
-    abundance_df = pd.read_csv(abundance_file[0][0], sep=" ")
+    if option == '2':
+        # Several replicates from same perturbation
+        # --------------------------------------------------------------------------------------------------------
+        study_id = chooseStudy()
+        experiment_id = chooseExperiment(study_id)
+        perturbation_id = choosePerturbation(experiment_id)
 
-    od_regex = re.compile(r'.*time.* | .*OD.*', flags=re.I | re.X)
-    count_regex = re.compile(r'.*time.* | .*count.*', flags=re.I | re.X)
-    qpcr_regex = re.compile(r'.*time.* | .*qpcr.*', flags=re.I | re.X)
-    rnaseq_regex = re.compile(r'.*time.* | .*rna.*', flags=re.I | re.X)
+        args = {'perturbationId': perturbation_id}
 
-    od_headers = getMatchingList(od_regex, abundance_df)
-    count_headers = getMatchingList(count_regex, abundance_df)
-    qpcr_headers = getMatchingList(qpcr_regex, abundance_df)
-    rnaseq_headers = getMatchingList(rnaseq_regex, abundance_df)
-
-    od_data = getIntersectionColumns(abundance_df, od_headers)
-    count_data = getIntersectionColumns(abundance_df, count_headers)
-    qpcr_data = getIntersectionColumns(abundance_df, qpcr_headers)
-    rnaseq_data = getIntersectionColumns(abundance_df, rnaseq_headers)
-
-    plotSeveralColumns(od_data)
-    plotSeveralColumns(count_data)
-    plotSeveralColumns(qpcr_data)
-    plotSeveralColumns(rnaseq_data)
-
-    # Metabolites file
-    # =====================================================================================
-    metabolites_file = db.getFiles('metabolitesFile', args)
-    metabolites_df = pd.read_csv(metabolites_file[0][0], sep=" ")
-
-    plotSeveralColumns(metabolites_df)
-
-    # pH file
-    # =====================================================================================
-    ph_file = db.getFiles('phFile', args)
-    ph_df = pd.read_csv(ph_file[0][0], sep=" ")
-
-    plotSeveralColumns(ph_df)
-
-def plotMeanStdSeveralReplicates():
-    study_id = chooseStudy()
-    experiment_id = chooseExperiment(study_id)
-    perturbation_id = choosePerturbation(experiment_id)
-
-    args = {
-        'perturbationId': perturbation_id
-        }
-
-    # Abundance file
-    # =====================================================================================
-    abundance_files = db.getFiles('abundanceFile', args)
-
-    od_regex = re.compile(r'.*time.* | .*OD.*', flags=re.I | re.X)
-    count_regex = re.compile(r'.*time.* | .*count.*', flags=re.I | re.X)
-    qpcr_regex = re.compile(r'.*time.* | .*qpcr.*', flags=re.I | re.X)
-    rnaseq_regex = re.compile(r'.*time.* | .*rna.*', flags=re.I | re.X)
-
-    od_msd = getMeanStd(abundance_files, regex=od_regex)
-    count_msd = getMeanStd(abundance_files, regex=count_regex)
-    qpcr_msd = getMeanStd(abundance_files, regex=qpcr_regex)
-    rnaseq_msd = getMeanStd(abundance_files, regex=rnaseq_regex)
-
-    plotSeveralMeanStd(od_msd)
-    plotSeveralMeanStd(count_msd)
-    plotSeveralMeanStd(qpcr_msd)
-    plotSeveralMeanStd(rnaseq_msd)
-
-    # Metabolites file
-    # =====================================================================================
-    metabolites_files = db.getFiles('metabolitesFile', args)
-    metabolites_msd = getMeanStd(metabolites_files, regex='')
-    plotSeveralMeanStd(metabolites_msd)
-
-    # pH file
-    # =====================================================================================
-    ph_files = db.getFiles('phFile', args)
-    ph_msd = getMeanStd(ph_files, regex='')
-    plotSeveralMeanStd(ph_msd)
-
-def plotSeveralColumns(df):
-    if len(df.columns) > 1:
-        for column in df:
-            if column != 'time':
-                plt.plot('time', column, data=df, linestyle='-')
-        plt.legend()
-        plt.show()
-
-def plotSeveralMeanStd(dfs):
-    if len(dfs.columns) > 1:
-        fig = plt.figure()
-        ax = fig.add_subplot(111)
-        # ax.set_xlabel('time', fontsize = 16)
-        # ax.set_ylabel('abundance', fontsize = 16)
-
-        cmap = plt.get_cmap(name='tab10')
-
-        for i in range(1,len(dfs.columns),2):
-            ax.errorbar(dfs.iloc[:,0], dfs.iloc[:,i], yerr = dfs.iloc[:,i+1], color = cmap(i-1))
-
-        plt.show()
-
-def getMeanStd(records, regex=''):
-    record = pd.read_csv(records[0][0], sep=" ")
     
-    if regex != '':
-        headers = getMatchingList(regex, record)
+    if option == '3':
+        # Several replicates from same experiment and different perturbations
+        # --------------------------------------------------------------------------------------------------------
+        study_id = chooseStudy()
+        experiment_id = chooseExperiment(study_id)
+
+        args = {'experimentId': experiment_id}
+        
+    
+    if 'abundance' in fields:
+        files = db.getFiles('abundanceFile', args)
+        plotAbundances(files, args)
+    
+    if 'metabolites' in fields:
+        files = db.getFiles('metabolitesFile', args)
+        plotMetabolites(files, args)
+
+    if 'ph' in fields:
+        files = db.getFiles('phFile', args)
+        plotPh(files, args)
+    
+
+def plotAbundances(files, args):
+    '''
+    Plot abundances.
+    As there are different measurements, it plots them separately
+    '''
+    if len(files) == 1:
+        for opt in abundance_options:
+            regex = globals()['%s_regex' % opt]
+            plot = plotOneReplicate(files, regex)
+            
+    elif len(files) > 1:
+        for opt in abundance_options:
+            regex = globals()['%s_regex' % opt]
+            plotExperimentPerturbation(args, regex, 'abundanceFile')
+                
+    
+def plotMetabolites(files, args):
+    '''
+    Plot metabolites
+    '''
+    if len(files) == 1:
+        plotOneReplicate(files, '')
+            
+    elif len(files) > 1:
+        plotExperimentPerturbation(args, '', 'metabolitesFile')
+    
+    
+def plotPh(files, args):
+    '''
+    Plot ph
+    '''
+    if len(files) == 1:
+        plotOneReplicate(files, '')
+            
+    elif len(files) > 1:
+        plotExperimentPerturbation(args, '', 'phFile')
+
+
+def plotExperimentPerturbation(args, regex='', db_field=''):
+    '''
+    Plot if there are several replicates
+    Analyzes the data. It can be only from experiment, only from perturbations, or both
+    '''
+    
+    label_ids = []
+    
+    if 'experimentId' in args:
+        exp_with_null = db.countRecords('TechnicalReplicate', {'experimentId': args['experimentId']})[0][0]
+        exp_without_null = db.countRecords('TechnicalReplicate', {'experimentId': args['experimentId'], 'perturbationId': 'null'})[0][0]
     else:
-        headers = record.columns
+        exp_with_null = 0
+        exp_without_null = 0
     
-    dfs = pd.DataFrame(columns=range(1))
-    dfs.set_axis(['time'], axis='columns', inplace=True)
-    dfs['time'] = record['time']
+    if exp_with_null != exp_without_null and exp_with_null > 0 and exp_without_null > 0:
+        perturbation_ids = db.getRecords('Perturbation', 'perturbationId', args)
+        
+        cnt = 0
+        # Plot: ==================================================================================================================
+        fig = plt.figure()
+        ax = fig.add_subplot()
+        
+        # Experiment data
+        args2 = args.copy()
+        args2['perturbationId'] = 'null'
+        files = db.getFiles(db_field, args2)
+        plot, vec = plotSetReplicates(files, regex, ax, cnt)
+        cnt = cnt + 1
+        label = 'Experiment id ' + args['experimentId']
+        label_ids.append(label)
+        
+         # Perturbation data
+        for perturbation_id in perturbation_ids:
+            files = db.getFiles(db_field, {'perturbationId': perturbation_id[0]})
+            plot, vec = plotSetReplicates(files, regex, ax, cnt)
+            cnt = cnt + 1
+            label = 'Perturbation id ' + perturbation_id[0]
+            label_ids.append(label)
+            
+        # Legend: =========================================================
+        if plot != None:
+            handles, labels = ax.get_legend_handles_labels()
+            legend1 = ax.legend(labels[0:len([*vec])], loc='upper right')
+            legend2 = getExperimentLegend(ax, handles, label_ids, vec)
+            ax.add_artist(legend2)
+        # =================================================================
+        
+        ax.set_xlabel('time')
+        plt.show()
+        # ========================================================================================================================
+        
+    else:
+        perturbation_ids = db.getRecords('Perturbation', 'perturbationId', args)
+        
+        if len(perturbation_ids) == 0:
+            files = db.getFiles(db_field, args)
+            
+            cnt = 0
+            # Plot: ==================================================================================================================
+            fig = plt.figure()
+            ax = fig.add_subplot()
+            
+            # Experiment data
+            plot, vec = plotSetReplicates(files, regex, ax, cnt)
+            cnt = cnt + 1
+            label = 'Experiment id ' + args['experimentId']
+            label_ids.append(label)
+            
+            # Legend: =========================================================
+            if plot != None:
+                handles, labels = ax.get_legend_handles_labels()
+                legend1 = ax.legend(labels[0:len([*vec])], loc='upper right')
+                legend2 = getExperimentLegend(ax, handles, label_ids, vec)
+                ax.add_artist(legend2)
+            # =================================================================
+            
+            ax.set_xlabel('time')
+            plt.show()
+            # ========================================================================================================================
+            
+        else:
+            cnt = 0
+            # Plot: ==================================================================================================================
+            fig = plt.figure()
+            ax = fig.add_subplot()
+            
+            # Perturbation data
+            for perturbation_id in perturbation_ids:
+                files = db.getFiles(db_field, {'perturbationId': perturbation_id[0]})
+                plot, vec = plotSetReplicates(files, regex, ax, cnt)
+                cnt = cnt + 1
+                label = 'Perturbation id ' + perturbation_id[0]
+                label_ids.append(label)
+            
+            # Legend: =========================================================
+            if plot != None:
+                handles, labels = ax.get_legend_handles_labels()
+                legend1 = ax.legend(labels[0:len([*vec])], loc='upper right')
+                legend2 = getExperimentLegend(ax, handles, label_ids, vec)
+                ax.add_artist(legend2)
+            # =================================================================
+            
+            ax.set_xlabel('time')
+            plt.show()
+            # ========================================================================================================================
+
+def plotOneReplicate(files, regex):
+    df = pd.read_csv(files[0][0], sep=" ")
+    if regex != '': headers = getMatchingList(regex, df)
+    else: headers = df.columns
+    data = getIntersectionColumns(df, headers)
+            
+    # Plot: ==================================================================================================================
+    fig = plt.figure()
+    ax = fig.add_subplot()
+    if len(data.columns)>1: 
+        plot, vec = plotDf(data, ax)
+    else: 
+        plot = plt.close()
+        vec = range(0,0,1)
     
-    for header in headers:
-        if header != 'time':
-            df = pd.DataFrame(columns=range(len(records)+1)) #Each column will be the value of each record
+    # Legend: =========================================================
+    if plot != None:
+        handles, labels = ax.get_legend_handles_labels()
+        ax.legend(labels, loc='upper right')
+    # =================================================================
 
-            # Fill the df parsing all the records' files
-            for i, record in enumerate(records, 1):
-                record_df = pd.read_csv(record[0], sep=" ")
-                df.iloc[:,i] = record_df[header]
-
-            # Calculate and keep mean and std
-            df_res = pd.DataFrame(columns=range(3))
-            df_res.set_axis(['time', header+'_mean', header+'_std'], axis='columns', inplace=True)
-            df_res['time'] = record_df['time']
-            df_res[header+'_mean'] = df.iloc[:,1:].mean(axis=1, numeric_only=True)
-            df_res[header+'_std'] = df.iloc[:,1:].std(axis=1, numeric_only=True)
-
-            dfs = pd.merge(dfs, df_res, on='time')
+    plt.show()
+    # ========================================================================================================================
     
-    return dfs
+    return plot, vec
+
+def plotSetReplicates(files, regex, ax, count):
+    data = getMeanStd(files, regex)
+        
+    if len(data.columns)>1: 
+        plot, vec = plotDf(data, ax, count)
+    else: 
+        plot = plt.close()
+        vec = range(0,0,1)
+    
+    return plot, vec
+
+def plotDf(df, ax, style_count=0):
+    cmap = plt.get_cmap(name='tab10')
+    styles = ['-', '--', '-.', ':', '-x', '-o', '-<', '->']
+    
+    msd_regex = re.compile(r'.*mean.* | .*std.*', flags=re.I | re.X)
+    
+    if len(getMatchingList(msd_regex, df)) > 0:
+        vec = range(1,len(df.columns),2)
+        for i in vec:
+            plot = ax.errorbar(df.iloc[:,0], df.iloc[:,i], yerr = df.iloc[:,i+1], fmt=styles[style_count], color = cmap(i-1), label=df.columns[i][:-5])
+            #plot.set_linestyle(styles[style_count])
+    else:
+        vec = range(1,len(df.columns))
+        for i in vec:
+            plot = ax.plot(df.iloc[:,0], df.iloc[:,i], linestyle=styles[style_count], color = cmap(i-1), label=df.columns[i])
+    return plot, vec
+
+
+def getExperimentLegend(ax, handles, labels, vec):
+    vec1 = [*range(0,len(labels))]
+    vec2 = [x * len(vec) for x in vec1]
+    new_handles = [handles[i] for i in vec2]
+    leg = Legend(ax, new_handles, labels, frameon=False, bbox_to_anchor=(1.04, 1), loc='lower right')
+    return leg
