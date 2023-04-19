@@ -58,27 +58,50 @@ def getFieldsValues(args):
     return [fields, values]
 
 def getWhereClause(args):
-    clause = "WHERE ("
-    for key, val in args.items():
-        if val != 'null':
-            clause = clause + key + "= '" + str(val) + "' AND "
-        if val == 'null':
-            clause = clause + key + " IS NULL AND "
-    clause = clause[:-5] + ')'
+    if len(args) == 0:
+        clause = ''
+    else:
+        clause = "WHERE ("
+        for key, val in args.items():
+            if val != 'null':
+                clause = clause + key + "= '" + str(val) + "' AND "
+            if val == 'null':
+                clause = clause + key + " IS NULL AND "
+        clause = clause[:-5] + ')'
     return clause
     
-def getMeanStd(records, header):
-    df = pd.DataFrame(columns=range(len(records)+1)) #Each column will be the value of each record
-    # Fill the df parsing all the records' files
-    for i, record in enumerate(records, 1):
-        record_df = pd.read_csv(record[0], sep=" ")
-        df.iloc[:,i] = record_df[header]
-
-    # Calculate and keep mean and std
-    df_res = pd.DataFrame(columns=range(3))
-    df_res.set_axis(['time', 'mean', 'std'], axis='columns', inplace=True)
-    df_res['time'] = record_df['time']
-    df_res['mean'] = df.iloc[:,1:].mean(axis=1, numeric_only=True)
-    df_res['std'] = df.iloc[:,1:].std(axis=1, numeric_only=True)
+def getMeanStd(files, regex=''):
+    '''
+    This function gets a df and the columns (regex or all columns) in which mean and std are going to be calculated
+    For each header, 
+    '''
+    df = pd.read_csv(files[0][0], sep=" ")
     
-    return df_res
+    if regex != '':
+        headers = getMatchingList(regex, df)
+    else:
+        headers = df.columns
+    
+    msd = pd.DataFrame(columns=range(1))
+    msd.set_axis(['time'], axis='columns', inplace=True)
+    msd['time'] = df['time']
+    
+    for header in headers:
+        if header != 'time':
+            df_header = pd.DataFrame(columns=range(len(files)+1)) #Each column will be the value from each file
+
+            # Fill the df parsing all the records' files
+            for i, file in enumerate(files, 1):
+                file_df = pd.read_csv(file[0], sep=" ")
+                df_header.iloc[:,i] = file_df[header]
+
+            # Calculate and keep mean and std
+            msd_header = pd.DataFrame(columns=range(3))
+            msd_header.set_axis(['time', header+'_mean', header+'_std'], axis='columns', inplace=True)
+            msd_header['time'] = file_df['time']
+            msd_header[header+'_mean'] = df_header.iloc[:,1:].mean(axis=1, numeric_only=True)
+            msd_header[header+'_std'] = df_header.iloc[:,1:].std(axis=1, numeric_only=True)
+
+            msd = pd.merge(msd, msd_header, on='time')
+    
+    return msd
