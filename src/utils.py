@@ -46,29 +46,6 @@ def saveFile(data, path):
 def getIntersectionColumns(df, columns):
     res = df[df.columns.intersection(columns)]
     return res
-
-def getFieldsValues(args):
-    fields = "("
-    values = "("
-    for key, val in args.items():
-        fields = fields + key + ','
-        values = values + "'" +str(val) + "',"
-    fields = fields[:-1] + ')'
-    values = values[:-1] + ')'
-    return [fields, values]
-
-def getWhereClause(args):
-    if len(args) == 0:
-        clause = ''
-    else:
-        clause = "WHERE ("
-        for key, val in args.items():
-            if val != 'null':
-                clause = clause + key + "= '" + str(val) + "' AND "
-            if val == 'null':
-                clause = clause + key + " IS NULL AND "
-        clause = clause[:-5] + ')'
-    return clause
     
 def getMeanStd(files, regex=''):
     '''
