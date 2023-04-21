@@ -2,7 +2,7 @@ from prettytable import PrettyTable
 import db_functions as db
 
 def chooseStudy():
-    studies = db.getAllRecords('Study')
+    studies = db.getAllRecords('Study', {})
 
     if len(studies) == 0:
         print('\n\tERROR: There are no studies yet in the DB')
@@ -29,7 +29,7 @@ def chooseStudy():
     return study_id
 
 def chooseExperiment(study_id):
-    experiments = db.getAllRecords('Experiment', studyId=study_id)
+    experiments = db.getAllRecords('Experiment', {'studyId':study_id})
      
     if len(experiments) == 0:
         print('\n\tERROR: There are no experiments with id {}:'.format(study_id))
@@ -44,7 +44,7 @@ def chooseExperiment(study_id):
         experiments_table.add_row(experiment)
         experiments_id.append(str(experiment[0]))
     
-    print(experiments_table)    
+    print(experiments_table)
 
     experiment_id = input("-- Choose experiment ID: ")
     if experiment_id not in experiments_id:
@@ -54,12 +54,15 @@ def chooseExperiment(study_id):
     return experiment_id
 
 def choosePerturbation(experiment_id):
-    perturbations = db.getAllRecords('Perturbation', experimentId=experiment_id)
+    perturbations = db.getAllRecords('Perturbation', {'experimentId':experiment_id})
 
     if len(perturbations) == 0:
-        print('\n\tERROR: There are no perturbations with experiment id {}:'.format(experiment_id))
-        print('\t- Select another experiment ID\n\t- Create perturbation with this experiment ID before introducing replicates files into it.\n')
-        exit()
+        print('\n\tThere are no perturbations with experiment id {}:'.format(experiment_id), '=> check for technical replicates')
+        perturbation_id = 0
+        return perturbation_id
+        # print('\n\tERROR: There are no perturbations with experiment id {}:'.format(experiment_id))
+        # print('\t- Select another experiment ID\n\t- Create perturbation with this experiment ID before introducing replicates files into it.\n')
+        # exit()
 
     perturbations_table = PrettyTable()
     perturbations_table.field_names = ["ID","Experiment ID","Property","New Value","Starting time (min)","Ending time (min)","Description"]
@@ -70,9 +73,10 @@ def choosePerturbation(experiment_id):
         perturbations_id.append(str(perturbation[0]))
     
     print(perturbations_table)    
-
+    print("If you do not want to choose any perturbation, press 0")
+    
     perturbation_id = input("-- Choose perturbation ID: ")
-    if perturbation_id not in perturbations_id:
+    if perturbation_id not in perturbations_id and perturbation_id != '0':
         print('\n\tERROR: You have not selected a valid perturbation ID. Check the table above.\n')
         exit()
 
@@ -81,7 +85,7 @@ def choosePerturbation(experiment_id):
 def chooseReplicate(experiment_id, perturbation_id):
     if perturbation_id == None:
         id = experiment_id
-        replicates = db.getAllRecords('TechnicalReplicate', experimentId=id)
+        replicates = db.getAllRecords('TechnicalReplicate', {'experimentId':id, 'perturbationID':'null'})
         if len(replicates) == 0:
             print('\n\tERROR: There are no replicates with experiment_id {}'.format(id))
             print('\t- Select another experiment ID\n\t- Create perturbation with this experiment ID before introducing replicates files into it.\n')
@@ -89,7 +93,7 @@ def chooseReplicate(experiment_id, perturbation_id):
 
     else:
         id = perturbation_id
-        replicates = db.getAllRecords('TechnicalReplicate', perturbationId=id)
+        replicates = db.getAllRecords('TechnicalReplicate', {'perturbationId':id})
         if len(replicates) == 0:
             print('\n\tERROR: There are no replicates with perturbation_id {}'.format(id))
             print('\t- Select another experiment ID\n\t- Create perturbation with this experiment ID before introducing replicates files into it.\n')
