@@ -20,7 +20,10 @@ def plot(option):
         study_id = chooseStudy()
         experiment_id = chooseExperiment(study_id)
         perturbation_id = choosePerturbation(experiment_id)
-        replicate_id = chooseReplicate(experiment_id=experiment_id, perturbation_id=perturbation_id)
+        if perturbation_id == '0':
+            replicate_id = chooseReplicate(experiment_id=experiment_id, perturbation_id=None)
+        else:
+            replicate_id = chooseReplicate(experiment_id=experiment_id, perturbation_id=perturbation_id)
 
         args = {'replicateId': replicate_id}
         
@@ -65,7 +68,7 @@ def plotAbundances(files, args):
     if len(files) == 1:
         for opt in abundance_options:
             regex = globals()['%s_regex' % opt]
-            plot = plotOneReplicate(files, regex)
+            plot = plotOneReplicate(files, regex=regex, db_field='abundanceFile')
             
     elif len(files) > 1:
         for opt in abundance_options:
@@ -78,7 +81,7 @@ def plotMetabolites(files, args):
     Plot metabolites
     '''
     if len(files) == 1:
-        plotOneReplicate(files, '')
+        plotOneReplicate(files, regex='', db_field='metabolitesFile')
             
     elif len(files) > 1:
         plotExperimentPerturbation(args, '', 'metabolitesFile')
@@ -89,7 +92,7 @@ def plotPh(files, args):
     Plot ph
     '''
     if len(files) == 1:
-        plotOneReplicate(files, '')
+        plotOneReplicate(files, regex='', db_field='phFile')
             
     elif len(files) > 1:
         plotExperimentPerturbation(args, '', 'phFile')
