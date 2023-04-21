@@ -48,7 +48,7 @@ def addRecord(table, args):
     :return: id of the inserted record
     """
     # Insert into table
-    fields, values = getFieldsValues(args)
+    fields, values = getInsertFieldsValues(args)
     phrase = "INSERT IGNORE INTO " +table+" "+fields+" VALUES "+values
     res = execute(phrase)
     
@@ -81,14 +81,73 @@ def getAllRecords(table, **args):
     res = execute(phrase)
     return res
 
-def getFiles(field, args):
+def getFiles(fields, args):
     where_clause = getWhereClause(args)
-    phrase = "SELECT "+field+" FROM TechnicalReplicate "+where_clause
+    fields_clause = getSelectFields(fields)
+    
+    phrase = "SELECT "+fields_clause+" FROM TechnicalReplicate "+where_clause
     res = execute(phrase)
     return res
 
-def getRecords(table, field, args):
+def getRecords(table, fields, args):
     where_clause = getWhereClause(args)
-    phrase = "SELECT "+field+" FROM "+table+" "+where_clause
+    fields_clause = getSelectFields(fields)
+    
+    phrase = "SELECT "+fields_clause+" FROM "+table+" "+where_clause
     res = execute(phrase)
     return res
+
+# DATABASE SUPPLEMENTARY FUNCTIONS
+# =================================
+
+def getInsertFieldsValues(args):
+    fields = "("
+    values = "("
+    for key, val in args.items():
+        fields = fields + key + ','
+        values = values + "'" +str(val) + "',"
+    fields = fields[:-1] + ')'
+    values = values[:-1] + ')'
+    return [fields, values]
+
+def getSelectFields(args):
+    clause = ""
+    for field in args: 
+        clause = clause + field + ", "
+    clause = clause[:-2]
+    return clause
+
+def getWhereClause(args):
+    if len(args) == 0:
+        clause = ''
+    else:
+        clause = "WHERE ("
+        for key, val in args.items():
+            if key == 'bacteriaSpecies':
+                clause = clause + key +" IN "+ str(val) + " AND "
+            elif val == 'null':
+                clause = clause + key + " IS NULL AND "
+            elif val == 'not null':
+                clause = clause + key + " IS NOT NULL AND "
+            else:
+                clause = clause + key + "= '" + str(val) + "' AND "
+        
+        clause = clause[:-5] + ')'
+    
+    return clause
+
+def getJoinClause(table_from, table_to, field):
+    clause = "JOIN "+table_to+" ON "+table_to+"."+field+" = "+table_from+"."+field
+    return clause
+
+def getGroupByClause(field):
+    clause = "GROUP BY " + field
+    return clause
+
+def getHavingClause(agg_function, field, operator, quant, distinct=False):
+    clause = "HAVING "+agg_function
+    if distinct == False:
+        clause = clause + "("+field+") "+operator+" "+str(quant)
+    elif distinct == True:
+        clause = clause +"(DISTINCT "+field+") "+operator+" "+str(quant)
+    return clause
