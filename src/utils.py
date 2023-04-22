@@ -27,6 +27,23 @@ def findOccurrences(string, ch):
     '''
     return [i for i, letter in enumerate(string) if letter == ch]
 
+def transformStringIntoList(string, ch):
+    positions = findOccurrences(string, ch)
+    list = []
+    start = 0
+    for i, pos in enumerate(positions):
+        end = pos
+        elem = string[start:end]
+        list.append(elem)
+        
+        start = end + 1
+        if string[start] == ' ':
+            start = end + 2
+    
+    elem = string[start:]
+    list.append(elem)
+    
+    return list
 
 def getMatchingList (regex, lst):
     '''
