@@ -1,12 +1,5 @@
 import os
 import mysql.connector
-import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-import seaborn as sns
-import re
-
-from utils import getFieldsValues, getWhereClause
 
 user_name = os.environ.get('DB_USER')
 password = os.environ.get('DB_PASSWORD')
