@@ -57,43 +57,43 @@ def plotAbundances(args):
     Plot abundances.
     As there are different measurements, it plots them separately
     '''
-    files = db.getFiles('abundanceFile', args)
+    files = db.getFiles({'abundanceFile'}, args)
     if len(files) == 1:
         for opt in abundance_options:
             regex = globals()['%s_regex' % opt]
-            plotOneReplicate(files, regex=regex, db_field='abundanceFile')
+            plotOneReplicate(files, regex=regex, db_field={'abundanceFile'})
             
     elif len(files) > 1:
         for opt in abundance_options:
             regex = globals()['%s_regex' % opt]
-            plotExperimentPerturbation(args, regex=regex, db_field='abundanceFile')
+            plotExperimentPerturbation(args, regex=regex, db_field={'abundanceFile'})
                 
     
 def plotMetabolites(args):
     '''
     Plot metabolites
     '''
-    files = db.getFiles('metabolitesFile', args)
+    files = db.getFiles({'metabolitesFile'}, args)
     if len(files) == 1:
-        plotOneReplicate(files, regex='', db_field='metabolitesFile')
+        plotOneReplicate(files, regex='', db_field={'metabolitesFile'})
             
     elif len(files) > 1:
-        plotExperimentPerturbation(args, regex='', db_field='metabolitesFile')
+        plotExperimentPerturbation(args, regex='', db_field={'metabolitesFile'})
     
     
 def plotPh(args):
     '''
     Plot ph
     '''
-    files = db.getFiles('phFile', args)
+    files = db.getFiles({'phFile'}, args)
     if len(files) == 1:
-        plotOneReplicate(files, regex='', db_field='phFile')
+        plotOneReplicate(files, regex='', db_field={'phFile'})
             
     elif len(files) > 1:
-        plotExperimentPerturbation(args, regex='', db_field='phFile')
+        plotExperimentPerturbation(args, regex='', db_field={'phFile'})
 
 
-def plotExperimentPerturbation(args, regex='', db_field=''):
+def plotExperimentPerturbation(args, regex='', db_field={}):
     '''
     Plot if there are several replicates
     Analyzes the data. Replicates can be from experiments and/or perturbation
@@ -142,7 +142,7 @@ def plotExperimentPerturbation(args, regex='', db_field=''):
         # =================================================================
         
         ax.set_xlabel('time')
-        ax.set_ylabel(db_field[:-4])
+        ax.set_ylabel(list(db_field)[0][:-4])
         plt.show()
         # ========================================================================================================================
         
@@ -172,7 +172,7 @@ def plotExperimentPerturbation(args, regex='', db_field=''):
             # =================================================================
             
             ax.set_xlabel('time')
-            ax.set_ylabel(db_field[:-4])
+            ax.set_ylabel(list(db_field)[0][:-4])
             plt.show()
             # ========================================================================================================================
             
@@ -199,7 +199,7 @@ def plotExperimentPerturbation(args, regex='', db_field=''):
             # =================================================================
             
             ax.set_xlabel('time')
-            ax.set_ylabel(db_field[:-4])
+            ax.set_ylabel(list(db_field)[0][:-4])
             plt.show()
             # ========================================================================================================================
 
@@ -227,7 +227,7 @@ def plotOneReplicate(files, regex='', db_field=''):
     # =================================================================
     
     ax.set_xlabel('time')
-    ax.set_ylabel(db_field[:-4])
+    ax.set_ylabel(list(db_field)[0][:-4])
     plt.show()
     # ========================================================================================================================
     
