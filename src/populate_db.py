@@ -1,5 +1,6 @@
 import os
 import pandas as pd
+
 from constants import *
 
 from utils import findOccurrences
@@ -8,7 +9,11 @@ from bash_functions import clusterHeaders, getFiles
 import db_functions as db
 
 def populate_db(args):
-
+    '''
+    This function reads the yml file with the information to populate the database and parses it depending on the keys of the values.
+    It calls functions to set the experiment/perturbation/replicate ids or gets them from the yml file
+    It calls db functions to introduce the information in the corresponding db tables
+    '''
     info_file = args.info_file
     info = read_yml(info_file)
 
@@ -130,7 +135,7 @@ def populate_db(args):
                 exp_args = [PROJECT_DIRECTORY, files_dir, experiment_id]
                 exp_files = getFiles(exp_analysis_file, exp_args, EXPERIMENTS_LIST)
 
-                headers_dict = clusterHeaders(PROJECT_DIRECTORY + HEADERS_FILE) ##SERVER_DIRECTORY
+                headers_dict = clusterHeaders(PROJECT_DIRECTORY + HEADERS_FILE)
                 
                 addReplicates(headers_dict, exp_files, experiment_id=experiment_id, perturbation_id=None)
             
@@ -186,23 +191,30 @@ def populate_db(args):
         addReplicates(headers_dict, exp_files, experiment_id=experiment_id, perturbation_id=perturbation_id)
 
 def setExperimentId(study_id):
-    number_exp = db.countRecords('Experiment', 'studyId', str(study_id))
+    '''This function sets up the experiment id depending on the study id'''
+    number_exp = db.countRecords('Experiment', {'studyId': str(study_id)})
     experiment_id = str(int(study_id)*100 + number_exp + 1)
     return experiment_id
 
 def setPerturbationId(experiment_id):
-    number_pert = db.countRecords('Perturbation', 'experimentId', str(experiment_id))
+    '''This function sets up the perturbation id depending on the experiment id'''
+    number_pert = db.countRecords('Perturbation', {'experimentId': str(experiment_id)})
     perturbation_id = experiment_id + '.' + str(number_pert + 1)
     return perturbation_id
 
 def addReplicates(headers, files, experiment_id, perturbation_id):
-
+    '''
+    This function saves each file as a technical replicate
+    For this, it calculates the replicate id with the experiment_id providad (and the perturbation_id)
+    Separates the file data into abundances/ph/metabolites
+    Saves in txt file and in the db table
+    '''
     if perturbation_id == None:
         id = experiment_id
-        number_rep = db.countRecords('TechnicalReplicate', 'experimentId', str(id))
+        number_rep = db.countRecords('TechnicalReplicate', {'experimentId': str(id)})
     else:
         id = perturbation_id
-        number_rep = db.countRecords('TechnicalReplicate', 'perturbationId', str(id))
+        number_rep = db.countRecords('TechnicalReplicate', {'perturbationId': str(id)})
 
     print('\n- The ID in which the replicate files will be added is: ',id)
     print('- The number of replicates already in that id: ',number_rep)
@@ -252,4 +264,4 @@ def addReplicates(headers, files, experiment_id, perturbation_id):
         replicate_filtered = {k: v for k, v in rep.items() if v is not None}
         db.addRecord('TechnicalReplicate', replicate_filtered)
             
-    print('- Last replicate id: ',replicate_id)
+    # print('- Last replicate id: ',replicate_id)

@@ -46,69 +46,64 @@ def plot(option):
 
         args = {'experimentId': experiment_id}
         
-    
-    if 'abundance' in fields:
-        files = db.getFiles('abundanceFile', args)
-        plotAbundances(files, args)
-    
-    if 'metabolites' in fields:
-        files = db.getFiles('metabolitesFile', args)
-        plotMetabolites(files, args)
 
-    if 'ph' in fields:
-        files = db.getFiles('phFile', args)
-        plotPh(files, args)
+    plotAbundances(args)
+    plotMetabolites(args)
+    plotPh(args)
     
 
-def plotAbundances(files, args):
+def plotAbundances(args):
     '''
     Plot abundances.
     As there are different measurements, it plots them separately
     '''
+    files = db.getFiles('abundanceFile', args)
     if len(files) == 1:
         for opt in abundance_options:
             regex = globals()['%s_regex' % opt]
-            plot = plotOneReplicate(files, regex=regex, db_field='abundanceFile')
+            plotOneReplicate(files, regex=regex, db_field='abundanceFile')
             
     elif len(files) > 1:
         for opt in abundance_options:
             regex = globals()['%s_regex' % opt]
-            plotExperimentPerturbation(args, regex, 'abundanceFile')
+            plotExperimentPerturbation(args, regex=regex, db_field='abundanceFile')
                 
     
-def plotMetabolites(files, args):
+def plotMetabolites(args):
     '''
     Plot metabolites
     '''
+    files = db.getFiles('metabolitesFile', args)
     if len(files) == 1:
         plotOneReplicate(files, regex='', db_field='metabolitesFile')
             
     elif len(files) > 1:
-        plotExperimentPerturbation(args, '', 'metabolitesFile')
+        plotExperimentPerturbation(args, regex='', db_field='metabolitesFile')
     
     
-def plotPh(files, args):
+def plotPh(args):
     '''
     Plot ph
     '''
+    files = db.getFiles('phFile', args)
     if len(files) == 1:
         plotOneReplicate(files, regex='', db_field='phFile')
             
     elif len(files) > 1:
-        plotExperimentPerturbation(args, '', 'phFile')
+        plotExperimentPerturbation(args, regex='', db_field='phFile')
 
 
 def plotExperimentPerturbation(args, regex='', db_field=''):
     '''
     Plot if there are several replicates
-    Analyzes the data. It can be only from experiment, only from perturbations, or both
+    Analyzes the data. Replicates can be from experiments and/or perturbation
     '''
     
     label_ids = []
     
     if 'experimentId' in args:
-        exp_with_null = db.countRecords('TechnicalReplicate', {'experimentId': args['experimentId']})[0][0]
-        exp_without_null = db.countRecords('TechnicalReplicate', {'experimentId': args['experimentId'], 'perturbationId': 'null'})[0][0]
+        exp_with_null = db.countRecords('TechnicalReplicate', {'experimentId': args['experimentId']})
+        exp_without_null = db.countRecords('TechnicalReplicate', {'experimentId': args['experimentId'], 'perturbationId': 'null'})
     else:
         exp_with_null = 0
         exp_without_null = 0

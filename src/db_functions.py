@@ -64,7 +64,7 @@ def countRecords(table, args):
         where_clause = getWhereClause(args)
         phrase = phrase+" "+where_clause
     res = execute(phrase)
-    return res
+    return res[0][0]
 
 def getAllRecords(table, **args):
     phrase = "SELECT * FROM " + table
