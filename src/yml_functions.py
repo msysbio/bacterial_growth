@@ -4,12 +4,6 @@ from constants import *
 
 yaml.Dumper.ignore_aliases = lambda self, data: True
 
-# def read_yml(file):
-#     """ A function to read yml file"""
-#     with open(file) as f:
-#         info = yaml.safe_load(f)
-#     return info
-
 def read_yml(file):
     """ A function to read yml file"""
     try:
