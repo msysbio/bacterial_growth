@@ -1,19 +1,30 @@
 import yaml
 
+from constants import *
+
 yaml.Dumper.ignore_aliases = lambda self, data: True
+
+# def read_yml(file):
+#     """ A function to read yml file"""
+#     with open(file) as f:
+#         info = yaml.safe_load(f)
+#     return info
 
 def read_yml(file):
     """ A function to read yml file"""
-    with open(file) as f:
-        info = yaml.safe_load(f)
-    return info
+    try:
+        with open(file) as f:
+            info = yaml.safe_load(f)
+        return info
+    except yaml.YAMLError as exc:
+        print('\n\tERROR: Check your YAML file, maybe you used forbidden characters (i.e., :)\n')
+        exit()
 
 def write_yml(data, yml_file):
     """ A function to write yml file"""
     with open(yml_file, "w") as file:
         file.write('# New data to populate the DB\n# Substitute the null values with your data\n# Do not modify the indentation or remove any field, even if you do not have data for it\n')
         yaml.dump(data, file, Dumper=yaml.Dumper,sort_keys=False,indent=2)
-    print('\n\n{} file created!'.format(yml_file))
 
 def createStudyYml(num_experiments, num_perturbations, **files_dir):
     yml_dict = {}
@@ -21,7 +32,7 @@ def createStudyYml(num_experiments, num_perturbations, **files_dir):
     yml_dict = addExperimentYml(yml_dict, num_experiments)
     yml_dict = addPerturbationYml(yml_dict, num_perturbations)
 
-    write_yml(yml_dict, 'yml_info_files/study_information_tmp.yml')
+    write_yml(yml_dict, LOCAL_DIRECTORY+'yml_files/study_information_tmp.yml')
 
 def createExperimentYml(study_id, num_experiments, num_perturbations, **files_dir):
     yml_dict = {}
@@ -29,7 +40,7 @@ def createExperimentYml(study_id, num_experiments, num_perturbations, **files_di
     yml_dict = addExperimentYml(yml_dict, num_experiments)
     yml_dict = addPerturbationYml(yml_dict, num_perturbations)
 
-    write_yml(yml_dict, 'yml_info_files/experiment_information_tmp.yml')
+    write_yml(yml_dict, LOCAL_DIRECTORY+'yml_files/experiment_information_tmp.yml')
 
 def createPerturbationYml(study_id, experiment_id, num_perturbations, **files_dir):
     yml_dict = {}
@@ -37,7 +48,7 @@ def createPerturbationYml(study_id, experiment_id, num_perturbations, **files_di
     yml_dict['EXPERIMENT_ID'] = experiment_id
     yml_dict = addPerturbationYml(yml_dict, num_perturbations)
 
-    write_yml(yml_dict, 'yml_info_files/perturbation_information_tmp.yml')
+    write_yml(yml_dict, LOCAL_DIRECTORY+'yml_files/perturbation_information_tmp.yml')
 
 def createReplicatesYml(study_id, experiment_id, perturbation_id, **files_dir):
     yml_dict = {}
@@ -46,7 +57,7 @@ def createReplicatesYml(study_id, experiment_id, perturbation_id, **files_dir):
     yml_dict['PERTURBATION_ID'] = perturbation_id
     yml_dict['FILES'] = None
 
-    write_yml(yml_dict, 'yml_info_files/replicates_information_tmp.yml')
+    write_yml(yml_dict, LOCAL_DIRECTORY+'yml_files/replicates_information_tmp.yml')
 
 def addStudyYml(final_dict):
     study_dict = {'NAME': None,
