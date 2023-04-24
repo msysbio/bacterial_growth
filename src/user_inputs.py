@@ -60,9 +60,6 @@ def choosePerturbation(experiment_id):
         print('\n\tThere are no perturbations with experiment id {}:'.format(experiment_id), '=> check for technical replicates')
         perturbation_id = 0
         return perturbation_id
-        # print('\n\tERROR: There are no perturbations with experiment id {}:'.format(experiment_id))
-        # print('\t- Select another experiment ID\n\t- Create perturbation with this experiment ID before introducing replicates files into it.\n')
-        # exit()
 
     perturbations_table = PrettyTable()
     perturbations_table.field_names = ["ID","Experiment ID","Property","New Value","Starting time (min)","Ending time (min)","Description"]
