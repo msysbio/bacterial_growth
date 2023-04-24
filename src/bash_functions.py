@@ -34,10 +34,6 @@ def clusterHeaders(file):
     with open(file) as f:
         lst = f.read().splitlines()
 
-    abundance_regex = re.compile(r'.*time.* | .*liquid.* | .*active.* | .*OD.*', flags=re.I | re.X)
-    # abundance_regex = re.compile(r'time | liquid | active | OD', flags=re.I | re.X)
-    ph_regex = re.compile(r'.*time.* | .*ph.*', flags=re.I | re.X)
-
     abundance_headers = getMatchingList(abundance_regex, lst)
     ph_headers = getMatchingList(ph_regex, lst)
 
