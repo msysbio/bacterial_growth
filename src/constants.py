@@ -36,8 +36,14 @@ file_types = ['abundanceFile', 'metabolitesFile', 'phFile']
 abundance_options = ['od', 'counts', 'qpcr', 'rnaseq']
 
 # Regex options
+abundance_regex = re.compile(r'.*time.* | .*liquid.* | .*active.* | .*OD.*', flags=re.I | re.X)
+# abundance_regex = re.compile(r'time | liquid | active | OD', flags=re.I | re.X)
+ph_regex = re.compile(r'.*time.* | .*ph.*', flags=re.I | re.X)
 od_regex = re.compile(r'.*time.* | .*OD.*', flags=re.I | re.X)
 counts_regex = re.compile(r'.*time.* | .*count.*', flags=re.I | re.X)
 qpcr_regex = re.compile(r'.*time.* | .*qpcr.*', flags=re.I | re.X)
 rnaseq_regex = re.compile(r'.*time.* | .*rna.*', flags=re.I | re.X)
+
+exp_metadata_fields = ['plateId', 'plateColumn', 'plateRow', 'initialPh', 'initialTemperature', 'inoculumConcentration', 'inoculumVolume', 'carbonSource', 'antibiotic']
+pert_metadata_fields = ['property', 'newValue', 'startTime', 'endTime']
 
