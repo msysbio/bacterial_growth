@@ -38,7 +38,7 @@ def plot(option):
         if perturbation_id == '0':
             args = {'experimentId': experiment_id, 'perturbationId': 'null'}
         else:
-            args = {'experimentId': experiment_id, 'perturbationId': perturbation_id}
+            args = {'perturbationId': perturbation_id}
 
     
     if option == '3':
@@ -50,6 +50,7 @@ def plot(option):
         args = {'experimentId': experiment_id}
         
 
+    print('\n', args, '\n')
     plotAbundances(args)
     plotMetabolites(args)
     plotPh(args)
