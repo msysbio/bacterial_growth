@@ -152,6 +152,9 @@ def populate_db(args):
             pert = {
                 'perturbationId': perturbation_id,
                 'experimentId': experiment_id,
+                'plateId': perturbation['PLATE']['ID']['value'],
+                'plateColumn': perturbation['PLATE']['COLUMN']['value'],
+                'plateRow': perturbation['PLATE']['ROW']['value'],
                 'property': perturbation['PROPERTY']['value'],
                 'newValue': perturbation['NEW_VALUE']['value'],
                 'startTime': perturbation['STARTING_TIME']['value'],

@@ -100,7 +100,7 @@ def addExperimentYml(final_dict, num_experiments):
 
 def addPerturbationYml(final_dict, num_perturbations):
     pert_dict = {
-        # 'PERTURBATION_NUMBER': 0,
+        'PLATE': {'ID': {'value': None, 'description': 'Number of plate'}, 'COLUMN': {'value': None, 'description': 'Indicated in numbers'}, 'ROW': {'value': None, 'description': 'Indicated in letters'}},
         'PROPERTY': {'value': None, 'description': 'Indicate which property has been perturbed'},
         'NEW_VALUE': {'value': None, 'description': 'New value of the perturbed property'},
         'STARTING_TIME': {'value': None, 'description': 'Time in minutes'},
@@ -111,7 +111,6 @@ def addPerturbationYml(final_dict, num_perturbations):
     
     if num_perturbations > 0: final_dict['PERTURBATION'] = []
     for i in range(num_perturbations):
-        # pert_dict['PERTURBATION_NUMBER'] = i+1
         final_dict['PERTURBATION'].append(pert_dict)
     
     return final_dict
