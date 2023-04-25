@@ -66,7 +66,7 @@ def countRecords(table, args):
     res = execute(phrase)
     return res[0][0]
 
-def getAllRecords(table, **args):
+def getAllRecords(table, args):
     phrase = "SELECT * FROM " + table
     if args:
         where_clause = getWhereClause(args)
@@ -116,7 +116,25 @@ def getWhereClause(args):
     else:
         clause = "WHERE ("
         for key, val in args.items():
+            if val == 'null':
+                clause = clause + key + " IS NULL AND "
+            elif val == 'not null':
+                clause = clause + key + " IS NOT NULL AND "
+            else:
+                clause = clause + key + "= '" + str(val) + "' AND "
+        
+        clause = clause[:-5] + ')'
+    
+    return clause
+
+def getWhereInClause(args):
+    if len(args) == 0:
+        clause = ''
+    else:
+        clause = "WHERE ("
+        for key, val in args.items():
             if key == 'bacteriaSpecies':
+                val = str(val).replace(",)",")")
                 clause = clause + key +" IN "+ str(val) + " AND "
             elif val == 'null':
                 clause = clause + key + " IS NULL AND "
@@ -128,6 +146,7 @@ def getWhereClause(args):
         clause = clause[:-5] + ')'
     
     return clause
+
 
 def getJoinClause(table_from, table_to, field):
     clause = "JOIN "+table_to+" ON "+table_to+"."+field+" = "+table_from+"."+field
