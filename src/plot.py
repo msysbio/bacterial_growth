@@ -50,7 +50,6 @@ def plot(option):
         args = {'experimentId': experiment_id}
         
 
-    print('\n', args, '\n')
     plotAbundances(args)
     plotMetabolites(args)
     plotPh(args)
