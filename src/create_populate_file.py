@@ -49,8 +49,11 @@ def create_yml_file(args):
         study_id = chooseStudy()
         experiment_id = chooseExperiment(study_id)
         perturbation_id = choosePerturbation(experiment_id)
-        
-        createReplicatesYml(study_id, experiment_id, perturbation_id)
+
+        if perturbation_id == '0':
+            createReplicatesYml(study_id, experiment_id, perturbation_id=None)    
+        else:
+            createReplicatesYml(study_id, experiment_id, perturbation_id)
         runBash(modifyYml, [yml_files_dir+'replicates_information_tmp.yml', yml_files_dir+'replicates_information.yml'])
         print('\n\replicates_information.yml created!')
     
