@@ -68,7 +68,9 @@ def choosePerturbation(experiment_id):
     
     perturbations_id = []
     for perturbation in perturbations:
-        perturbations_table.add_row(perturbation)
+        difference_result = [item for item in [*range(0, len(perturbation))] if item not in [2,3,4]]
+        perturbation_tuple = tuple(perturbation[i] for i in difference_result)
+        perturbations_table.add_row(perturbation_tuple)
         perturbations_id.append(str(perturbation[0]))
     
     print(perturbations_table)    
