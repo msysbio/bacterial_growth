@@ -19,6 +19,9 @@ def main():
         option = choosePlotOption()
         plot(option)
     elif args.option == 'getResultsFile':
+        if args.bacteria == None and args.metabolites == None:
+            print('\n\tERROR: You did not select any parameter. Write --help to see the options.\n')
+            exit()
         getInformationFile(args)
 
 
