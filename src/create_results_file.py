@@ -165,11 +165,11 @@ def writeResultsTxt(dictionary):
     
     zip_file = ZipFile(LOCAL_DIRECTORY+"000_myZip.zip", mode="w")
 
-    with open(LOCAL_DIRECTORY+'README.md', 'w') as out_file:
+    with open(LOCAL_DIRECTORY+'README.txt', 'w') as out_file:
         for key, val in dictionary.items():
             experiment_id = key
             header = 'EXPERIMENT '+str(experiment_id)
-            out_file.write('-'*80+'\n'+header+'\n'+'-'*80+'\n')
+            out_file.write('-'*100+'\n'+header+'\n'+'-'*100+'\n')
             
             for key2, val2 in dictionary[experiment_id].items():
                 # Experiment metadata
@@ -181,7 +181,7 @@ def writeResultsTxt(dictionary):
                 else:
                     perturbation_id = key2
                     pert = 'Perturbation '+key2
-                    out_file.write('\n'+pert+'\n'+'-'*80+'\n')
+                    out_file.write('\n'+pert+'\n'+'-'*100+'\n')
 
                     for key3, val3 in dictionary[experiment_id][perturbation_id].items():
                         # Perturbation metadata (if corresponds)
@@ -204,11 +204,11 @@ def writeResultsTxt(dictionary):
                                 zip_file.write(file[2], re.findall(regex, file[2])[0])
 
     if len(dictionary) == 0:
-        with open(LOCAL_DIRECTORY+'README.md', 'w') as out_file:
+        with open(LOCAL_DIRECTORY+'README.txt', 'w') as out_file:
             out_file.write('This parameters returned no experiment!')
 
-    # Save README.md in ZIP
-    zip_file.write(LOCAL_DIRECTORY+'README.md', 'README.md')
+    # Save README.txt in ZIP
+    zip_file.write(LOCAL_DIRECTORY+'README.txt', 'README.txt')
     zip_file.close()
         
         
