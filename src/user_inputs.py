@@ -37,11 +37,13 @@ def chooseExperiment(study_id):
         exit()
 
     experiments_table = PrettyTable()
-    experiments_table.field_names = ["ID","Name","Study ID","Precult","Reactor","Plate ID","Column","Row","Media","Blank","inoculumConc","inoculumVol","initPh","initTemp","carbonSource","antibiotic","Description"]
-    
+    experiments_table.field_names = ["ID","Name","Study ID","Precult","Reactor","Media","Blank","inoculumConc","inoculumVol","initPh","initTemp","carbonSource","antibiotic"]
+
     experiments_id = []
     for experiment in experiments:
-        experiments_table.add_row(experiment)
+        difference_result = [item for item in [*range(0, len(experiment))] if item not in [5, 6, 7, 16]]
+        experiment_tuple = tuple(experiment[i] for i in difference_result)
+        experiments_table.add_row(experiment_tuple)
         experiments_id.append(str(experiment[0]))
     
     print(experiments_table)
