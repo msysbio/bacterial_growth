@@ -112,14 +112,10 @@ def writeResultsDictionary(experiment_ids, met_list):
     dictionary = {}
     for experiment_id in experiment_ids:
         
-        dictionary[experiment_id[0]] = {'metadata':{}}
-        
-        exp_metadata = db.getRecords('Experiment', exp_metadata_fields, {'experimentId':experiment_id[0]})
-        exp_metadata_dict = dict(zip(exp_metadata_fields, exp_metadata[0]))
-        dictionary[experiment_id[0]]['metadata'] = exp_metadata_dict
-        
         perturbation_ids = db.getRecords('Perturbation', ['perturbationId'], {'experimentId':experiment_id[0]})
         
+        id_args = {}
+        # If metabolites are indicated
         if len(met_list) != 0:
             res = db.getFiles({'metabolitesFile'}, {'experimentId':experiment_id[0], 'perturbationId': 'null'})
             for i, files in enumerate(res):
@@ -128,14 +124,22 @@ def writeResultsDictionary(experiment_ids, met_list):
                     id_args = {'experimentId':experiment_id[0], 'perturbationId': 'null'}
         else:
             id_args = {'experimentId':experiment_id[0], 'perturbationId': 'null'}
-            
-        files_res = db.getFiles(file_types, id_args)
-        dictionary[experiment_id[0]]['0'] = {'files': ''}
-        dictionary[experiment_id[0]]['0']['files'] = files_res
+        
+        if 'experimentId' in id_args:
+            files_res = db.getFiles(file_types, id_args)
+            exp_metadata = db.getRecords('Experiment', exp_metadata_fields, {'experimentId':experiment_id[0]})
+            exp_metadata_dict = dict(zip(exp_metadata_fields, exp_metadata[0]))
+
+            dictionary[experiment_id[0]] = {'metadata':{}}
+            dictionary[experiment_id[0]]['metadata'] = exp_metadata_dict
+
+            dictionary[experiment_id[0]]['0'] = {'files': ''}
+            dictionary[experiment_id[0]]['0']['files'] = files_res
         
         # Each perturbations
         for perturbation_id in perturbation_ids:
             
+            id_args = {}
             if len(met_list) != 0:
                 res = db.getFiles({'metabolitesFile'}, {'experimentId':experiment_id[0], 'perturbationId': perturbation_id[0]})
                 for i, files in enumerate(res):
@@ -145,15 +149,15 @@ def writeResultsDictionary(experiment_ids, met_list):
             else:
                 id_args = {'experimentId':experiment_id[0], 'perturbationId': perturbation_id[0]}
                 
-        
-            files_res = db.getFiles(file_types, id_args)
-            pert_metadata = db.getRecords('Perturbation', pert_metadata_fields, {'perturbationId':id_args['perturbationId']})
-            pert_metadata_dict = dict(zip(pert_metadata_fields, pert_metadata[0]))
+            if 'perturbationId' in id_args:
+                files_res = db.getFiles(file_types, id_args)
+                pert_metadata = db.getRecords('Perturbation', pert_metadata_fields, {'perturbationId':id_args['perturbationId']})
+                pert_metadata_dict = dict(zip(pert_metadata_fields, pert_metadata[0]))
 
-            dictionary[experiment_id[0]][perturbation_id[0]] = {'metadata': '', 'files': ''}
-            dictionary[experiment_id[0]][perturbation_id[0]]['metadata'] = pert_metadata_dict
-            dictionary[experiment_id[0]][perturbation_id[0]]['files'] = files_res
-    
+                dictionary[experiment_id[0]][perturbation_id[0]] = {'metadata': '', 'files': ''}
+                dictionary[experiment_id[0]][perturbation_id[0]]['metadata'] = pert_metadata_dict
+                dictionary[experiment_id[0]][perturbation_id[0]]['files'] = files_res
+
     return dictionary
 
 def writeResultsTxt(dictionary):
