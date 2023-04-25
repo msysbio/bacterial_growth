@@ -42,7 +42,8 @@ def getInformationFile(args):
 
         where_args['metabolitesFile'] = 'not null'
         join_args.append({'table_from': 'Experiment', 'table_to': 'TechnicalReplicate', 'field': 'experimentId'})
-
+    
+    
     if 'bacteriaSpecies' in where_args:
         experiment_ids = getExperimentsWithBacteria(join_args, where_args)
     elif 'metabolitesFile' in where_args:
@@ -71,7 +72,7 @@ def getExperimentsWithBacteria(join_args, where_args):
         phrase = phrase+join_clause + " "
     
     # Where, groupby and having clauses
-    where_clause = db.getWhereClause(where_args)
+    where_clause = db.getWhereInClause(where_args)
     groupby_clause = db.getGroupByClause(field)
     for key, val in where_args.items():
         if key == 'bacteriaSpecies':
@@ -79,7 +80,6 @@ def getExperimentsWithBacteria(join_args, where_args):
     
     #Final query
     phrase = phrase +where_clause+" "+groupby_clause+" "+having_clause
-
     res = db.execute(phrase)
     return res
 
@@ -100,17 +100,17 @@ def getExperimentsWithMetabolites(join_args, where_args):
         phrase = phrase+join_clause + " "
 
     
-    where_clause = db.getWhereClause(where_args)
+    where_clause = db.getWhereInClause(where_args)
     
     phrase = phrase +where_clause
     res = db.execute(phrase)
     
     return res
 
-def writeResultsDictionary(identifiers, met_list):
+def writeResultsDictionary(experiment_ids, met_list):
     '''Builds the dictionary from the ids list'''
     dictionary = {}
-    for experiment_id in identifiers:
+    for experiment_id in experiment_ids:
         
         dictionary[experiment_id[0]] = {'metadata':{}}
         
@@ -158,8 +158,8 @@ def writeResultsDictionary(identifiers, met_list):
 
 def writeResultsTxt(dictionary):
     ''' Write txt and zip from the data dictionary'''
-    with ZipFile(LOCAL_DIRECTORY+"000_myZip.zip", mode="w"):
-        print('ZIP file created!')
+    
+    zip_file = ZipFile(LOCAL_DIRECTORY+"000_myZip.zip", mode="w")
 
     with open(LOCAL_DIRECTORY+'README.md', 'w') as out_file:
         for key, val in dictionary.items():
@@ -190,20 +190,25 @@ def writeResultsTxt(dictionary):
                         if key3 == 'files':
                             out_file.write('Files:\n')
                             for file in dictionary[experiment_id][perturbation_id]['files']:
-                                out_file.write('\t'+file[0]+'\n')
+                                out_file.write('\t'+file[0]+'\n') #abundance
+                                out_file.write('\t'+file[1]+'\n') #metabolites
+                                out_file.write('\t'+file[2]+'\n') #ph
                                 
-                                # Save them in ZIP
-                                with ZipFile(LOCAL_DIRECTORY+'000_myZip.zip', 'a') as archive:
-                                    regex = PROJECT_DIRECTORY+'(.*)'
-                                    file_mod = re.findall(regex, file[0])[0]
-                                    print(file_mod)
-                                    archive.write(file[0], file_mod)
-            out_file.write('\n'*3)
+                                regex = PROJECT_DIRECTORY+'(.*)'
+                                zip_file.write(file[0], re.findall(regex, file[0])[0])
+                                zip_file.write(file[1], re.findall(regex, file[1])[0])
+                                zip_file.write(file[2], re.findall(regex, file[2])[0])
+
+    if len(dictionary) == 0:
+        with open(LOCAL_DIRECTORY+'README.md', 'w') as out_file:
+            out_file.write('This parameters returned no experiment!')
 
     # Save README.md in ZIP
-    with ZipFile(LOCAL_DIRECTORY+'000_myZip.zip', 'a') as archive:
-        archive.write(LOCAL_DIRECTORY+'README.md', 'README.md')
-        # archive.printdir()
+    zip_file.write(LOCAL_DIRECTORY+'README.md', 'README.md')
+    zip_file.close()
+        
+        
+
 
 def writeMetadataTxt(dict, type):
     ''' Writes the metadata part of the dictionary, as it is repeated several times'''
