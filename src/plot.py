@@ -35,7 +35,10 @@ def plot(option):
         experiment_id = chooseExperiment(study_id)
         perturbation_id = choosePerturbation(experiment_id)
 
-        args = {'perturbationId': perturbation_id}
+        if perturbation_id == '0':
+            args = {'experimentId': experiment_id, 'perturbationId': 'null'}
+        else:
+            args = {'experimentId': experiment_id, 'perturbationId': perturbation_id}
 
     
     if option == '3':
@@ -109,7 +112,7 @@ def plotExperimentPerturbation(args, regex='', db_field={}):
         exp_without_null = 0
     
     if exp_with_null != exp_without_null and exp_with_null > 0 and exp_without_null > 0:
-        perturbation_ids = db.getRecords('Perturbation', 'perturbationId', args)
+        perturbation_ids = db.getRecords('Perturbation', {'perturbationId'}, args)
         
         cnt = 0
         # Plot: ==================================================================================================================
@@ -147,7 +150,7 @@ def plotExperimentPerturbation(args, regex='', db_field={}):
         # ========================================================================================================================
         
     else:
-        perturbation_ids = db.getRecords('Perturbation', 'perturbationId', args)
+        perturbation_ids = db.getRecords('Perturbation', {'perturbationId'}, args)
         
         if len(perturbation_ids) == 0:
             files = db.getFiles(db_field, args)
