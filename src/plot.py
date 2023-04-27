@@ -20,36 +20,36 @@ def plot(option):
         # Only one replicate
         # --------------------------------------------------------------------------------------------------------
         study_id = chooseStudy()
-        experiment_id = chooseExperiment(study_id)
-        perturbation_id = choosePerturbation(experiment_id)
+        biological_id = chooseBiologicalReplicate(study_id)
+        perturbation_id = choosePerturbation(biological_id)
         if perturbation_id == '0':
-            replicate_id = chooseReplicate(experiment_id=experiment_id, perturbation_id=None)
+            technical_id = chooseReplicate(biological_id=biological_id, perturbation_id=None)
         else:
-            replicate_id = chooseReplicate(experiment_id=experiment_id, perturbation_id=perturbation_id)
+            technical_id = chooseReplicate(biological_id=biological_id, perturbation_id=perturbation_id)
 
-        args = {'replicateId': replicate_id}
+        args = {'technicalReplicateId': technical_id}
         
     
     if option == '2':
         # Several replicates from same perturbation
         # --------------------------------------------------------------------------------------------------------
         study_id = chooseStudy()
-        experiment_id = chooseExperiment(study_id)
-        perturbation_id = choosePerturbation(experiment_id)
+        biological_id = chooseBiologicalReplicate(study_id)
+        perturbation_id = choosePerturbation(biological_id)
 
         if perturbation_id == '0':
-            args = {'experimentId': experiment_id, 'perturbationId': 'null'}
+            args = {'biologicalReplicateId': biological_id, 'perturbationId': 'null'}
         else:
             args = {'perturbationId': perturbation_id}
 
     
     if option == '3':
-        # Several replicates from same experiment and different perturbations
+        # Several replicates from same biological replicate and different perturbations
         # --------------------------------------------------------------------------------------------------------
         study_id = chooseStudy()
-        experiment_id = chooseExperiment(study_id)
+        biological_id = chooseBiologicalReplicate(study_id)
 
-        args = {'experimentId': experiment_id}
+        args = {'biologicalReplicateId': biological_id}
         
 
     plotAbundances(args)
@@ -71,7 +71,7 @@ def plotAbundances(args):
     elif len(files) > 1:
         for opt in abundance_options:
             regex = globals()['%s_regex' % opt]
-            plotExperimentPerturbation(args, regex=regex, db_field={'abundanceFile'})
+            plotBiologicalReplicatePerturbation(args, regex=regex, db_field={'abundanceFile'})
                     
 def plotMetabolites(args):
     '''
@@ -84,7 +84,7 @@ def plotMetabolites(args):
         plotOneReplicate(files, regex='', db_field={'metabolitesFile'})
             
     elif len(files) > 1:
-        plotExperimentPerturbation(args, regex='', db_field={'metabolitesFile'})
+        plotBiologicalReplicatePerturbation(args, regex='', db_field={'metabolitesFile'})
         
 def plotPh(args):
     '''
@@ -97,12 +97,12 @@ def plotPh(args):
         plotOneReplicate(files, regex='', db_field={'phFile'})
             
     elif len(files) > 1:
-        plotExperimentPerturbation(args, regex='', db_field={'phFile'})
+        plotBiologicalReplicatePerturbation(args, regex='', db_field={'phFile'})
 
-def plotExperimentPerturbation(args, regex='', db_field={}):
+def plotBiologicalReplicatePerturbation(args, regex='', db_field={}):
     '''
     Plot if there are several replicates
-    Analyzes the data. Replicates can be from experiments and/or perturbation
+    Analyzes the data. Replicates can be from biological replicates and/or perturbation
 
     :param args: user input to plot
     :param regex. if abundance, to separate in the different measurements
@@ -111,14 +111,14 @@ def plotExperimentPerturbation(args, regex='', db_field={}):
     
     label_ids = []
     
-    if 'experimentId' in args:
-        exp_with_null = db.countRecords('TechnicalReplicate', {'experimentId': args['experimentId']})
-        exp_without_null = db.countRecords('TechnicalReplicate', {'experimentId': args['experimentId'], 'perturbationId': 'null'})
+    if 'biologicalReplicateId' in args:
+        biol_rep_with_null = db.countRecords('TechnicalReplicate', {'biologicalReplicateId': args['biologicalReplicateId']})
+        biol_rep_without_null = db.countRecords('TechnicalReplicate', {'biologicalReplicateId': args['biologicalReplicateId'], 'perturbationId': 'null'})
     else:
-        exp_with_null = 0
-        exp_without_null = 0
+        biol_rep_with_null = 0
+        biol_rep_without_null = 0
     
-    if exp_with_null != exp_without_null and exp_with_null > 0 and exp_without_null > 0:
+    if biol_rep_with_null != biol_rep_without_null and biol_rep_with_null > 0 and biol_rep_without_null > 0:
         perturbation_ids = db.getRecords('Perturbation', {'perturbationId'}, args)
         
         cnt = 0
@@ -126,13 +126,13 @@ def plotExperimentPerturbation(args, regex='', db_field={}):
         fig = plt.figure()
         ax = fig.add_subplot()
         
-        # Experiment data
+        # BiologicalReplicate data
         args2 = args.copy()
         args2['perturbationId'] = 'null'
         files = db.getFiles(db_field, args2)
         plot, vec = plotSetReplicates(files, regex, ax, cnt)
         cnt = cnt + 1
-        label = 'Experiment id ' + args['experimentId']
+        label = 'BiologicalReplicate id ' + args['biologicalReplicateId']
         label_ids.append(label)
         
          # Perturbation data
@@ -147,7 +147,7 @@ def plotExperimentPerturbation(args, regex='', db_field={}):
         if plot != None:
             handles, labels = ax.get_legend_handles_labels()
             legend1 = ax.legend(labels[0:len([*vec])], loc='upper right')
-            legend2 = getExperimentLegend(ax, handles, label_ids, vec)
+            legend2 = getBiologicalReplicateLegend(ax, handles, label_ids, vec)
             ax.add_artist(legend2)
         # =================================================================
         
@@ -167,17 +167,17 @@ def plotExperimentPerturbation(args, regex='', db_field={}):
             fig = plt.figure()
             ax = fig.add_subplot()
             
-            # Experiment data
+            # BiologicalReplicate data
             plot, vec = plotSetReplicates(files, regex, ax, cnt)
             cnt = cnt + 1
-            label = 'Experiment id ' + args['experimentId']
+            label = 'BiologicalReplicate id ' + args['biologicalReplicateId']
             label_ids.append(label)
             
             # Legend: =========================================================
             if plot != None:
                 handles, labels = ax.get_legend_handles_labels()
                 legend1 = ax.legend(labels[0:len([*vec])], loc='upper right')
-                legend2 = getExperimentLegend(ax, handles, label_ids, vec)
+                legend2 = getBiologicalReplicateLegend(ax, handles, label_ids, vec)
                 ax.add_artist(legend2)
             # =================================================================
             
@@ -204,7 +204,7 @@ def plotExperimentPerturbation(args, regex='', db_field={}):
             if plot != None:
                 handles, labels = ax.get_legend_handles_labels()
                 legend1 = ax.legend(labels[0:len([*vec])], loc='upper right')
-                legend2 = getExperimentLegend(ax, handles, label_ids, vec)
+                legend2 = getBiologicalReplicateLegend(ax, handles, label_ids, vec)
                 ax.add_artist(legend2)
             # =================================================================
             
@@ -293,7 +293,7 @@ def plotDf(df, ax, style_count=0):
     return plot, vec
 
 
-def getExperimentLegend(ax, handles, labels, vec):
+def getBiologicalReplicateLegend(ax, handles, labels, vec):
     '''
     Add legend
 

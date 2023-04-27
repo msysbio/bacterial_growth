@@ -33,55 +33,55 @@ def chooseStudy():
     
     return study_id
 
-def chooseExperiment(study_id):
+def chooseBiologicalReplicate(study_id):
     '''
-    Print the existing experiments with study_id and waits a user input
+    Print the existing biological replicates with study_id and waits a user input
     
     :param study_id
-    :return experiment_id
+    :return biological_id
     '''
-    experiments = db.getAllRecords('Experiment', {'studyId':study_id})
+    biological_replicates = db.getAllRecords('BiologicalReplicate', {'studyId':study_id})
      
-    if len(experiments) == 0:
-        print('\n\tERROR: There are no experiments with id {}:'.format(study_id))
-        print('\t- Select another study ID\n\t- Create experiments with this study ID before introducing perturbations/replicates files into it.\n')
+    if len(biological_replicates) == 0:
+        print('\n\tERROR: There are no biological replicates with id {}:'.format(study_id))
+        print('\t- Select another study ID\n\t- Create biological replicates with this study ID before introducing perturbations/replicates files into it.\n')
         exit()
 
-    experiments_table = PrettyTable()
-    experiments_table.field_names = ["ID","Name","Study ID","Precult","Reactor","Media","Blank","inoculumConc","inoculumVol","initPh","initTemp","carbonSource","antibiotic"]
+    biological_replicates_table = PrettyTable()
+    biological_replicates_table.field_names = ["ID","Name","Study ID","Precult","Reactor","Media","Blank","inoculumConc","inoculumVol","initPh","initTemp","carbonSource","antibiotic"]
 
-    experiments_id = []
-    for experiment in experiments:
-        difference_result = [item for item in [*range(0, len(experiment))] if item not in [5, 6, 7, 16]]
-        experiment_tuple = tuple(experiment[i] for i in difference_result)
-        experiments_table.add_row(experiment_tuple)
-        experiments_id.append(str(experiment[0]))
+    biological_replicates_id = []
+    for biological_replicate in biological_replicates:
+        difference_result = [item for item in [*range(0, len(biological_replicate))] if item not in [5, 6, 7, 16]]
+        biological_replicate_tuple = tuple(biological_replicate[i] for i in difference_result)
+        biological_replicates_table.add_row(biological_replicate_tuple)
+        biological_replicates_id.append(str(biological_replicate[0]))
     
-    print(experiments_table)
+    print(biological_replicates_table)
 
-    experiment_id = input("-- Choose experiment ID: ")
-    if experiment_id not in experiments_id:
-        print('\n\tERROR: You have not selected a valid experiment ID. Check the table above.\n')
+    biological_id = input("-- Choose biological replicate ID: ")
+    if biological_id not in biological_replicates_id:
+        print('\n\tERROR: You have not selected a valid biological replicate ID. Check the table above.\n')
         exit()
 
-    return experiment_id
+    return biological_id
 
-def choosePerturbation(experiment_id):
+def choosePerturbation(biological_id):
     '''
-    Print the existing experiments with study_id and waits a user input
+    Print the existing biological replicates with study_id and waits a user input
     
     :param study_id
-    :return experiment_id
+    :return biological_id
     '''
-    perturbations = db.getAllRecords('Perturbation', {'experimentId':experiment_id})
+    perturbations = db.getAllRecords('Perturbation', {'biologicalReplicateId':biological_id})
 
     if len(perturbations) == 0:
-        print('\n\tThere are no perturbations with experiment id {}:'.format(experiment_id), '=> check for technical replicates')
+        print('\n\tThere are no perturbations with biological replicate id {}:'.format(biological_id), '=> check for technical replicates')
         perturbation_id = 0
         return perturbation_id
 
     perturbations_table = PrettyTable()
-    perturbations_table.field_names = ["ID","Experiment ID","Property","New Value","Starting time (min)","Ending time (min)","Description"]
+    perturbations_table.field_names = ["ID","BiologicalReplicate ID","Property","New Value","Starting time (min)","Ending time (min)","Description"]
     
     perturbations_id = []
     for perturbation in perturbations:
@@ -100,19 +100,19 @@ def choosePerturbation(experiment_id):
 
     return perturbation_id
 
-def chooseReplicate(experiment_id, perturbation_id):
+def chooseReplicate(biological_id, perturbation_id):
     '''
-    Print the existing replicates with experiment_id and perturbation_id and waits a user input
+    Print the existing replicates with biological_id and perturbation_id and waits a user input
     
-    :param experiment_id, perturbation_id
-    :return replicate_id
+    :param biological_id, perturbation_id
+    :return technical_id
     '''
     if perturbation_id == None:
-        id = experiment_id
-        replicates = db.getAllRecords('TechnicalReplicate', {'experimentId':id, 'perturbationID':'null'})
+        id = biological_id
+        replicates = db.getAllRecords('TechnicalReplicate', {'biologicalReplicateId':id, 'perturbationID':'null'})
         if len(replicates) == 0:
-            print('\n\tERROR: There are no replicates with experiment_id {}'.format(id))
-            print('\t- Select another experiment ID\n\t- Create perturbation with this experiment ID before introducing replicates files into it.\n')
+            print('\n\tERROR: There are no replicates with biological_id {}'.format(id))
+            print('\t- Select another biological replicate ID\n\t- Create perturbation with this biological replicate ID before introducing replicates files into it.\n')
             exit()
 
     else:
@@ -120,11 +120,11 @@ def chooseReplicate(experiment_id, perturbation_id):
         replicates = db.getAllRecords('TechnicalReplicate', {'perturbationId':id})
         if len(replicates) == 0:
             print('\n\tERROR: There are no replicates with perturbation_id {}'.format(id))
-            print('\t- Select another experiment ID\n\t- Create perturbation with this experiment ID before introducing replicates files into it.\n')
+            print('\t- Select another biological replicate ID\n\t- Create perturbation with this biological replicate ID before introducing replicates files into it.\n')
             exit()
 
     replicates_table = PrettyTable()
-    replicates_table.field_names = ["ID","Experiment ID","Perturbation ID"]
+    replicates_table.field_names = ["ID","BiologicalReplicate ID","Perturbation ID"]
     
     replicates_id = []
     for replicate in replicates:
@@ -134,12 +134,12 @@ def chooseReplicate(experiment_id, perturbation_id):
     
     print(replicates_table)    
 
-    replicate_id = input("-- Choose replicate ID: ")
-    if replicate_id not in replicates_id:
+    technical_id = input("-- Choose replicate ID: ")
+    if technical_id not in replicates_id:
         print('\n\tERROR: You have not selected a valid replicate ID. Check the table above.\n')
         exit()
 
-    return replicate_id
+    return technical_id
 
 def choosePlotOption():
     '''Choose between the plotting options
@@ -148,7 +148,7 @@ def choosePlotOption():
     '''
     print('Choose the plotting option:')
     print('\t1: Plot one technical replicate.')
-    print('\t2: Plot mean and deviation from several replicates from the same perturbation/experiment.')
-    print('\t3: Plot mean and deviation from several replicates from one experiment (with all its perturbations).')
+    print('\t2: Plot mean and deviation from several replicates from the same perturbation/biological replicate.')
+    print('\t3: Plot mean and deviation from several replicates from one biological replicate (with all its perturbations).')
     option = input("\n Option: ")
     return option
