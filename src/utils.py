@@ -1,6 +1,6 @@
 import os
-import re
 import pandas as pd
+from datetime import date
 
 def isDir(string):
     '''
@@ -21,6 +21,29 @@ def isFile(string):
         a = 0
         # Put warning or something here
 
+def getZipName(dir_path):
+    '''
+    This function calculates the name of the new zip file depending on the already existing ones
+    '''
+    today = date.today()
+    res = []
+
+    for path in os.listdir(dir_path):
+        if 'zip' in path and 'Results' in path: res.append(path)
+
+    if len(res) == 0:
+        new_zip = 'Results_'+str(today)+'_0.zip'
+    else:
+        sorted_res = sorted(res)
+        old_zip = sorted_res[-1]
+
+        if old_zip[8:18] == str(today):
+            new_zip = old_zip[:-5]+str(int(old_zip[-5])+1)+old_zip[-4:]
+        else:
+            new_zip = 'Results_'+str(today)+'_0.zip'
+
+    return new_zip
+
 def findOccurrences(string, ch):
     '''
     This function returns a list with all the positions of the string that contain the character ch
@@ -28,6 +51,9 @@ def findOccurrences(string, ch):
     return [i for i, letter in enumerate(string) if letter == ch]
 
 def transformStringIntoList(string, ch):
+    '''
+    Gets a tring with values separated by ch and places them into a list
+    '''
     positions = findOccurrences(string, ch)
     list = []
     start = 0
@@ -56,18 +82,24 @@ def getMatchingList (regex, lst):
     return res
 
 def saveFile(data, path):
+    '''
+    Saves the data into the indicated path
+    '''
     if len(data.columns) > 1:
         data.to_csv(path, sep=" ", index=False)
 
 
 def getIntersectionColumns(df, columns):
+    '''
+    This function returns a new df formed only by the indicated columns
+    '''
     res = df[df.columns.intersection(columns)]
     return res
     
 def getMeanStd(files, regex=''):
     '''
-    This function gets a df and the columns (regex or all columns) in which mean and std are going to be calculated
-    For each header, 
+    This function gets a set of files and the columns (regex or all columns) in which mean and std are going to be calculated
+    For each header, a tmp df is created with the data from all the files. Then mean and std are calulcated and placed in a final df.
     '''
     df = pd.read_csv(files[0][0], sep=" ")
     
