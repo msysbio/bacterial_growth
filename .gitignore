@@ -1,6 +1,10 @@
 # Database files
 src/*.sql
 
+# Server files
+Data/
+IntermediateFiles/
+
 # ========================================================================
 
 src/__pycache__/
