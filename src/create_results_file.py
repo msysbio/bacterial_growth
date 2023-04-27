@@ -1,11 +1,8 @@
 from zipfile import ZipFile
 import pandas as pd
 import db_functions as db
-from utils import transformStringIntoList
+from utils import transformStringIntoList, getZipName
 from constants import *
-
-# Bacteroides thetaiotaomicron, Faecalibacterium prausnitzii
-# Glucose, Pyruvate
 
 def getInformationFile(args):
     '''
@@ -14,6 +11,8 @@ def getInformationFile(args):
     It gets a list with the experiment ids that meet the requirements
     With this ids it builds a dictionary with the desired information with which a txt info file is written
     Everything is placed in a zip file
+
+    :param: args from parser
     '''
     metabolites_list = []
     join_args = []
@@ -58,8 +57,8 @@ def getExperimentsWithBacteria(join_args, where_args):
     '''
     This function builds the query if we look for specific bacteria
 
-    args: join_args, to build the join clause with variable number of joins, and where_args, conditions to the query
-    return: list with experiment ids
+    :param join_args where_args: args necessary for the db query
+    :return: list with experiment ids
     '''
     field = 'BacteriaCommunity.experimentId'
     table = 'BacteriaCommunity'
@@ -87,8 +86,8 @@ def getExperimentsWithMetabolites(join_args, where_args):
     '''
     This function builds the query if we look for metabolites files
 
-    args: where_args, conditions to the query
-    return: list with experiment ids
+    :param join_args where_args: args necessary for the db query
+    :return: list with experiment ids
     '''
     field = 'Experiment.experimentId'
     table = 'Experiment'
@@ -108,7 +107,12 @@ def getExperimentsWithMetabolites(join_args, where_args):
     return res
 
 def writeResultsDictionary(experiment_ids, met_list):
-    '''Builds the dictionary from the ids list'''
+    '''Builds the dictionary from the ids list
+    
+    :param experiment_ids: ids of the results for the user input
+    :param met_list: metabolites list in case indicated by the user
+    :return: dictionary with the data for the ids
+    '''
     dictionary = {}
     for experiment_id in experiment_ids:
         
@@ -161,61 +165,72 @@ def writeResultsDictionary(experiment_ids, met_list):
     return dictionary
 
 def writeResultsTxt(dictionary):
-    ''' Write txt and zip from the data dictionary'''
+    ''' Write txt and zip from the data dictionary
     
-    zip_file = ZipFile(LOCAL_DIRECTORY+"000_myZip.zip", mode="w")
+    :param: dictionary
+    '''
 
-    with open(LOCAL_DIRECTORY+'README.txt', 'w') as out_file:
-        for key, val in dictionary.items():
-            experiment_id = key
-            header = 'EXPERIMENT '+str(experiment_id)
-            out_file.write('-'*100+'\n'+header+'\n'+'-'*100+'\n')
-            
-            for key2, val2 in dictionary[experiment_id].items():
-                # Experiment metadata
-                if key2 == 'metadata':
-                    out_file.write('Metadata:\n')
-                    lines = writeMetadataTxt(dictionary[experiment_id][key2], 'experiment')
-                    out_file.write(lines)
-                # Experiment perturbations
-                else:
-                    perturbation_id = key2
-                    pert = 'Perturbation '+key2
-                    out_file.write('\n'+pert+'\n'+'-'*100+'\n')
+    zip_file_name = getZipName(LOCAL_DIRECTORY)
+    zip_file = ZipFile(LOCAL_DIRECTORY+zip_file_name, mode="w")
 
-                    for key3, val3 in dictionary[experiment_id][perturbation_id].items():
-                        # Perturbation metadata (if corresponds)
-                        if key3 == 'metadata':
-                            out_file.write('Metadata:\n')
-                            lines = writeMetadataTxt(dictionary[experiment_id][perturbation_id]['metadata'], 'perturbation')
-                            out_file.write(lines)
-                        
-                        # Perturbation files
-                        if key3 == 'files':
-                            out_file.write('Files:\n')
-                            for file in dictionary[experiment_id][perturbation_id]['files']:
-                                out_file.write('\t'+file[0]+'\n') #abundance
-                                out_file.write('\t'+file[1]+'\n') #metabolites
-                                out_file.write('\t'+file[2]+'\n') #ph
-                                
-                                regex = PROJECT_DIRECTORY+'(.*)'
-                                zip_file.write(file[0], re.findall(regex, file[0])[0])
-                                zip_file.write(file[1], re.findall(regex, file[1])[0])
-                                zip_file.write(file[2], re.findall(regex, file[2])[0])
-
-    if len(dictionary) == 0:
-        with open(LOCAL_DIRECTORY+'README.txt', 'w') as out_file:
+    with open(PROJECT_DIRECTORY+'IntermediateFiles/README.txt', 'w') as out_file:
+        if len(dictionary) == 0:
             out_file.write('This parameters returned no experiment!')
+        else:
+            for key, val in dictionary.items():
+                experiment_id = key
+                print('\nEXPERIMENT ID: ', experiment_id)
+                
+                exp = 'EXPERIMENT '+str(experiment_id)
+                out_file.write('-'*100+'\n'+exp+'\n'+'-'*100+'\n')
+                
+                for key2, val2 in dictionary[experiment_id].items():
+                    # Experiment metadata
+                    if key2 == 'metadata':
+                        out_file.write('Metadata:\n')
+                        lines = writeMetadataTxt(dictionary[experiment_id][key2], 'experiment')
+                        out_file.write(lines)
+                    # Experiment perturbations
+                    else:
+                        perturbation_id = key2
+                        print('\tPERTURBATION ID: ', perturbation_id)
+                        
+                        pert = 'Perturbation '+key2
+                        out_file.write('\n'+pert+'\n'+'-'*100+'\n')
+
+                        for key3, val3 in dictionary[experiment_id][perturbation_id].items():
+                            # Perturbation metadata (if corresponds)
+                            if key3 == 'metadata':
+                                out_file.write('Metadata:\n')
+                                lines = writeMetadataTxt(dictionary[experiment_id][perturbation_id]['metadata'], 'perturbation')
+                                out_file.write(lines)
+                            
+                            # Perturbation files
+                            if key3 == 'files':
+                                out_file.write('Files:\n')
+                                for file in dictionary[experiment_id][perturbation_id]['files']:
+                                    out_file.write('\t'+file[0]+'\n') #abundance
+                                    out_file.write('\t'+file[1]+'\n') #metabolites
+                                    out_file.write('\t'+file[2]+'\n') #ph
+                                    
+                                    regex = PROJECT_DIRECTORY+'(.*)'
+                                    zip_file.write(file[0], re.findall(regex, file[0])[0])
+                                    zip_file.write(file[1], re.findall(regex, file[1])[0])
+                                    zip_file.write(file[2], re.findall(regex, file[2])[0])
 
     # Save README.txt in ZIP
-    zip_file.write(LOCAL_DIRECTORY+'README.txt', 'README.txt')
+    zip_file.write(PROJECT_DIRECTORY+'IntermediateFiles/README.txt', 'README.txt')
     zip_file.close()
+    print('\nZIP file created: '+zip_file_name+'\n')
         
-        
-
-
 def writeMetadataTxt(dict, type):
-    ''' Writes the metadata part of the dictionary, as it is repeated several times'''
+    ''' 
+    Writes the metadata part of the dictionary
+    
+    :param dict: dictionary with the metadata
+    :param type: metadata from experiment/perturbation
+    :return: lines: str 
+    '''
     if type == 'experiment':
         lines = '\tPlate id: '+str(dict['plateId'])+'\n'
         lines = lines + '\tPlate location: '+str(dict['plateColumn'])+dict['plateRow']+'\n'
