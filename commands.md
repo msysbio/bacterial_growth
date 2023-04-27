@@ -1,16 +1,16 @@
 ## Conda environment
 
 ```
-conda create --name master_thesis23
+conda create --name growth_curves_env
 source ~/miniconda3/etc/profile.d/conda.sh
-conda activate master_thesis23
-conda install -n master_thesis23 python=3.6 mysql-connector-python r-essentials r-base
+conda activate growth_curves_env
+conda install -n growth_curves_env python=3.6 mysql-connector-python r-essentials r-base
 ```
 
 To work with jupyter: 
 ```
-conda create -n master_thesis23         # creates new virtual env
-conda activate master_thesis23          # activate environment in terminal
+conda create -n growth_curves_env         # creates new virtual env
+conda activate growth_curves_env          # activate environment in terminal
 conda install jupyter                # install jupyter + notebook
 jupyter notebook                     # start server + kernel inside my-conda-env
 ```
@@ -19,7 +19,7 @@ jupyter notebook                     # start server + kernel inside my-conda-env
 Just do:
 ```
 source ~/miniconda3/etc/profile.d/conda.sh
-conda activate master_thesis23
+conda activate growth_curves_env
 jupyter notebook
 
 ```
