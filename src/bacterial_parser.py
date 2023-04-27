@@ -35,20 +35,20 @@ def bacterial_parser():
         '-i', '--info_file', dest='info_file', required=False, type=isFile, help="Directory with the YML with the experiment information for the DB"
     )
 
-    # create the parser for the "plot" command
-    subparser3 = subparsers.add_parser('plot', help='Plot data that is in the database')
-
     # create the parser for the "populateDB" command
-    subparser4 = subparsers.add_parser('getResultsFile', help='Pass the YML file to create the database')
-    subparser4.add_argument(
+    subparser3 = subparsers.add_parser('getResultsFile', help='Pass the YML file to create the database')
+    subparser3.add_argument(
         '-b', '--bacteria', dest='bacteria', required=False, type=str, nargs='*', help="List of bacteria to look for experiments containing them"
     )
 
-    subparser4.add_argument(
+    subparser3.add_argument(
         '-m', '--metabolites', dest='metabolites', required=False, type=str, nargs='*', 
         help='List of metabolites to look for experiments containing them: 1) Just write the flag, look for experiments in which metabolites where measured. i.e., --metabolites --bacteria ... 2) Write a list of metabolites, look for experiments in which that metabolites were measured. i.e., -metabolites Glucose Pyruvate --bacteria ...'
         
     )
+    
+    # create the parser for the "plot" command
+    subparser4 = subparsers.add_parser('plot', help='Plot data that is in the database')
 
     args = parser.parse_args()
 
