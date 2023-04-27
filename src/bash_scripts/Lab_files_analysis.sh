@@ -1,7 +1,7 @@
 PROJECT_PATH=$1
 FILES_PATH=$2
-
-echo "\n---- Starting to analyse the given given files"
+EXPERIMENT_NAME=$3
+PERTURBATION_NAME=$4
 
 # Main directory of the project
 cd $PROJECT_PATH
@@ -15,29 +15,22 @@ ls -lt  $FILES_PATH | grep -i .txt | awk '{print $9}' > IntermediateFiles/lab_fi
 
 cd $PROJECT_PATH'IntermediateFiles'
 
-echo "\n---- Obtaining the experiments names..."
 awk '{print substr($1,1,length($1)-6)}' lab_files_names.txt | sort | uniq > lab_experiment_names.txt
-head lab_experiment_names.txt
-echo '...'
 
 ## 2) GET THE HEADERS THAT ARE ON ALL THE GIVEN FILES
 ## ==========================================================================================================================================================================
 rm -f lab_files_headers.txt
 
-echo "\n---- Obtaining the headers of all the files..."
 while read -r file;
     do
         head -n 1 $FILES_PATH$file >> lab_files_headers.txt
 done < lab_files_names.txt
 
 cat lab_files_headers.txt | tr " " "\n" | sort | uniq > lab_headers.txt
-head lab_headers.txt
-echo '...'
 
 ## 3) GET EXPERIMENT INFORMATION TO CREATE THE DIRECTORIES
 ## ==========================================================================================================================================================================
 rm -f experiments_info.txt
-echo "\n---- Obtaining the experiments information..."
 echo 'file_name,experiment_name,replicate_number' | column -t -s "," > experiments_info.txt
 
 while read -r file; do
@@ -49,25 +42,21 @@ while read -r file; do
     
 done < lab_files_names.txt
 
-head experiments_info.txt
-echo '...'
 
 tail -n +2 experiments_info.txt > experiments_info_mod.txt
-echo "\n---- Number of experiments inside the file:"
-wc -l experiments_info_mod.txt
 
 cd $PROJECT_PATH
 
 ## 4) CREATE THE DIRECTORIES
 ## ==========================================================================================================================================================================
-echo "\n---- Creating the experiments directories..."
 mkdir -p Data/
 mkdir -p Data/experiments/
 rm -f $PROJECT_PATH'IntermediateFiles/listOfFiles.list'
 while read -r line; do
 
     cd $PROJECT_PATH
-    experiment=$(echo $line | awk '{print $2}')
+
+    experiment=$EXPERIMENT_NAME
     replicate=$(echo $line | awk '{print $3}')
     
     file=$(echo $line | awk '{print $1}')
@@ -75,9 +64,18 @@ while read -r line; do
 
     cd $PROJECT_PATH'Data/experiments'
     mkdir -p $experiment
-    mkdir -p $experiment/$replicate
 
-    path_destination=$PROJECT_PATH'Data/experiments/'$experiment/$replicate/
+    if [ ! -z "$PERTURBATION_NAME" ]
+    then
+        perturbation=$PERTURBATION_NAME
+        mkdir -p $experiment/$perturbation
+        mkdir -p $experiment/$perturbation/$replicate
+        path_destination=$PROJECT_PATH'Data/experiments/'$experiment/$perturbation/$replicate/
+    else
+        mkdir -p $experiment/$replicate
+        path_destination=$PROJECT_PATH'Data/experiments/'$experiment/$replicate/
+    fi
+    
     final_file=$path_destination$file
     echo $final_file >> $PROJECT_PATH'IntermediateFiles/listOfFiles.list'
 
@@ -85,10 +83,9 @@ while read -r line; do
 
 done < IntermediateFiles/experiments_info_mod.txt
 
-## 5) GET THE FULL PATHS OF THE FILES ON THE NEW DIRECTORIES
-## ==========================================================================================================================================================================
-echo "\n---- Getting complete paths of the files in their new location (lab server)"
-head $PROJECT_PATH'IntermediateFiles/listOfFiles.list'
-echo '...'
-
-# echo "\nDONE!\n"
+cd $PROJECT_PATH'IntermediateFiles'
+rm experiments_info.txt
+rm experiments_info_mod.txt
+rm lab_experiment_names.txt
+rm lab_files_headers.txt
+rm lab_files_names.txt
