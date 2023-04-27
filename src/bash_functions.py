@@ -1,9 +1,12 @@
-import re
 import os
 from constants import *
 from utils import getMatchingList
 
 def runBash(file, arguments=[]):
+    '''
+    :param file: .sh file to run
+    :param arguments: list with all the arguments for the bash order
+    '''
     bash_script_params = ['sh', file]
     
     if type(arguments) == list:
@@ -20,6 +23,12 @@ def runBash(file, arguments=[]):
         exit()
 
 def getFiles(bash_file, bash_args, list_files):
+    '''
+    :param bash_file: .sh to run to get the wanted files
+    :param bash_args: list with all the arguments for the bash order
+    :param list_files: name of the file created by the .sh file with a list of files
+    :return list of files
+    '''
     # Analyse the provided files and get the necessary information from them
     runBash(bash_file, bash_args)
 
@@ -29,7 +38,12 @@ def getFiles(bash_file, bash_args, list_files):
     return files
 
 def clusterHeaders(file):
-    """ This function separates the received list of headers into categories: abundance, metaboites, ph"""
+    """ 
+    Read the file headers and cluster them into known categories
+
+    :param file
+    :return headers: dictionary with categories as keys
+    """
 
     with open(file) as f:
         lst = f.read().splitlines()
