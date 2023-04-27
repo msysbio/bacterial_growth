@@ -20,7 +20,7 @@ global abundance_options
 PROJECT_DIRECTORY = '/Users/julia/bacterialGrowth_thesis/'
 LOCAL_DIRECTORY = '/Users/julia/Desktop/local_thesis_files/'
 # Bash files needed to run the code
-EXPERIMENT_ANALYSIS_FILE = 'src/bash_scripts/Lab_files_analysis2.sh'
+EXPERIMENT_ANALYSIS_FILE = 'src/bash_scripts/lab_files_analysis.sh'
 MEDIA_ANALYSIS_FILE = 'src/bash_scripts/media_file_analysis.sh'
 MODIFY_YML_FILE = 'src/bash_scripts/modify_yml_files.sh'
 
