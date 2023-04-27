@@ -5,7 +5,12 @@ from constants import *
 yaml.Dumper.ignore_aliases = lambda self, data: True
 
 def read_yml(file):
-    """ A function to read yml file"""
+    """ 
+    A function to read yml file
+    
+    :param file: yml
+    :return info (if ok)
+    """
     try:
         with open(file) as f:
             info = yaml.safe_load(f)
@@ -15,12 +20,22 @@ def read_yml(file):
         exit()
 
 def write_yml(data, yml_file):
-    """ A function to write yml file"""
+    """ 
+    A function to write yml file
+    
+    :param data to write
+    :param wml_file path
+    """
     with open(yml_file, "w") as file:
         file.write('# New data to populate the DB\n# Substitute the null values with your data\n# Do not modify the indentation or remove any field, even if you do not have data for it\n')
         yaml.dump(data, file, Dumper=yaml.Dumper,sort_keys=False,indent=2)
 
-def createStudyYml(num_experiments, num_perturbations, **files_dir):
+def createStudyYml(num_experiments, num_perturbations):
+    """
+    Create the study yml file for the user to fill in
+
+    :param num_experiments, num_perturbations: int
+    """
     yml_dict = {}
     yml_dict = addStudyYml(yml_dict)
     yml_dict = addExperimentYml(yml_dict, num_experiments)
@@ -28,7 +43,12 @@ def createStudyYml(num_experiments, num_perturbations, **files_dir):
 
     write_yml(yml_dict, LOCAL_DIRECTORY+'yml_files/study_information_tmp.yml')
 
-def createExperimentYml(study_id, num_experiments, num_perturbations, **files_dir):
+def createExperimentYml(study_id, num_experiments, num_perturbations):
+    """
+    Create the experiment yml file for the user to fill in
+
+    :param study_id, num_experiments, num_perturbations: int
+    """
     yml_dict = {}
     yml_dict['STUDY_ID'] = study_id
     yml_dict = addExperimentYml(yml_dict, num_experiments)
@@ -36,7 +56,12 @@ def createExperimentYml(study_id, num_experiments, num_perturbations, **files_di
 
     write_yml(yml_dict, LOCAL_DIRECTORY+'yml_files/experiment_information_tmp.yml')
 
-def createPerturbationYml(study_id, experiment_id, num_perturbations, **files_dir):
+def createPerturbationYml(study_id, experiment_id, num_perturbations):
+    """
+    Create the perturbation yml file for the user to fill in
+
+    :param study_id, experiment_id, num_perturbations: int
+    """
     yml_dict = {}
     yml_dict['STUDY_ID'] = study_id
     yml_dict['EXPERIMENT_ID'] = experiment_id
@@ -44,7 +69,12 @@ def createPerturbationYml(study_id, experiment_id, num_perturbations, **files_di
 
     write_yml(yml_dict, LOCAL_DIRECTORY+'yml_files/perturbation_information_tmp.yml')
 
-def createReplicatesYml(study_id, experiment_id, perturbation_id, **files_dir):
+def createReplicatesYml(study_id, experiment_id, perturbation_id):
+    """
+    Create the replicates yml file for the user to fill in
+
+    :param study_id, experiment_id, perturbation_id: int
+    """
     yml_dict = {}
     yml_dict['STUDY_ID'] = study_id
     yml_dict['EXPERIMENT_ID'] = experiment_id
@@ -54,6 +84,11 @@ def createReplicatesYml(study_id, experiment_id, perturbation_id, **files_dir):
     write_yml(yml_dict, LOCAL_DIRECTORY+'yml_files/replicates_information_tmp.yml')
 
 def addStudyYml(final_dict):
+    '''
+    Add study dictionary to final_dict
+
+    :param and return final_dict
+    '''
     study_dict = {'NAME': None,
                   'DESCRIPTION': None
                   }
@@ -64,7 +99,12 @@ def addStudyYml(final_dict):
     return final_dict
 
 def addExperimentYml(final_dict, num_experiments):
+    '''
+    Add experiment dictionary to final_dict
 
+    :param and return final_dict
+    :param num_experiments: int. It will add as much dicts as num_experiments
+    '''
     reactor_dict = {
         'NAME': {'value': None, 'description': 'Name of the reactor'}, 
         'VOLUME': {'value': None, 'description': 'Volume in mL'},
@@ -99,6 +139,12 @@ def addExperimentYml(final_dict, num_experiments):
     return final_dict
 
 def addPerturbationYml(final_dict, num_perturbations):
+    '''
+    Add perturbation dictionary to final_dict
+
+    :param and return final_dict
+    :param num_perturbations: int. It will add as much dicts as num_perturbations
+    '''
     pert_dict = {
         'PLATE': {'ID': {'value': None, 'description': 'Number of plate'}, 'COLUMN': {'value': None, 'description': 'Indicated in numbers'}, 'ROW': {'value': None, 'description': 'Indicated in letters'}},
         'PROPERTY': {'value': None, 'description': 'Indicate which property has been perturbed'},
@@ -116,6 +162,12 @@ def addPerturbationYml(final_dict, num_perturbations):
     return final_dict
 
 def getExperimentInfo(file):
+    """
+    Get info from yml experiemnt file
+    
+    :param file
+    :return dictionary
+    """
     with open(file, 'r') as f:
         info = yaml.safe_load(f)
 
@@ -130,6 +182,12 @@ def getExperimentInfo(file):
         return experiment_filtered
     
 def getCultivationInfo(file):
+    """
+    Get info from yml experiemnt file
+    
+    :param file
+    :return dictionary
+    """
     with open(file, 'r') as f:
         info = yaml.safe_load(f)
 
