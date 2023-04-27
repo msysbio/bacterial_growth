@@ -1,37 +1,37 @@
 import os
-import re
 import pandas as pd
-from utils import (
-    runBash, 
-    getMatchingList
-)
+
+from constants import *
+
 from utils import findOccurrences
-from yml_functions import (read_yml)
+from yml_functions import read_yml
+from bash_functions import clusterHeaders, getFiles
 import db_functions as db
 
-# ===========================================================================================
-# Variables:
-# ===========================================================================================
-
-PROJECT_DIRECTORY = '/Users/julia/bacterialGrowth_thesis/'
-LAB_ANALYSIS_FILE = 'src/Lab_files_analysis2.sh'
-
-HEADERS_FILE = 'IntermediateFiles/lab_headers.txt'
-EXPERIMENTS_LIST = 'IntermediateFiles/listOfFiles.list'
-
-# ===========================================================================================
-# ===========================================================================================
-
 def populate_db(args):
+    '''
+    This function reads the yml file with the information to populate the database and parses it depending on the keys of the values.
+    It calls functions to set the experiment/perturbation/replicate ids or gets them from the yml file
+    It calls db functions to introduce the information in the corresponding db tables
 
+    :param args: user input choice
+    '''
     info_file = args.info_file
     info = read_yml(info_file)
 
     if 'STUDY' in info:
-        study = info['STUDY']
-        study_id = db.addRecord('Study', study)
-        print('\nSTUDY ID: ', study_id)
-    
+        study = {
+            'studyName': info['STUDY'][0]['NAME'],
+            'studyDescription': info['STUDY'][0]['DESCRIPTION']
+        }
+        study_filtered = {k: v for k, v in study.items() if v is not None}
+        if len(study_filtered)>0: 
+            study_id = db.addRecord('Study', study_filtered)
+            print('\nSTUDY ID: ', study_id)
+        else: 
+            print('You must introduce some study information')
+            exit()
+         
     elif 'STUDY_ID' in info:
         study_id = info['STUDY_ID']
         print('\nSTUDY ID: ', study_id)
@@ -40,40 +40,58 @@ def populate_db(args):
     if 'EXPERIMENT' in info:
         experiments = info['EXPERIMENT']    
         for experiment in experiments:
+            experiment_id = setExperimentId(study_id)
             # ------------------------------------------------------------------------------------
             # REACTOR ==> REACTOR_ID
             reactor = {
                 'reactorName': experiment['REACTOR']['NAME']['value'],
-                'volume': experiment['REACTOR']['VOLUME']['value']
+                'volume': experiment['REACTOR']['VOLUME']['value'],
+                'atmosphere': experiment['REACTOR']['ATMOSPHERE']['value'],
+                'stirring_speed': experiment['REACTOR']['STIRRING_SPEED']['value'],
+                'reactorMode': experiment['REACTOR']['MODE']['value'],
+                'reactorDescription': experiment['REACTOR']['DESCRIPTION']['value'],
             }
             reactor_filtered = {k: v for k, v in reactor.items() if v is not None}
-            # reactor_id = db.addReactor(reactor_filtered)
-            reactor_id = db.addRecord('Reactor',reactor_filtered)
+            if len(reactor_filtered)>0: reactor_id = db.addRecord('Reactor',reactor_filtered)
+            else: reactor_id=None
             print('\tREACTOR ID: ', reactor_id)
             
             # ------------------------------------------------------------------------------------
             # PRECULTIVATION ==> PRECULTIVATION_ID        
-            precultivation_id = 1
+            precultivation_id = None
             print('\tPRECULTIVATION ID: ', precultivation_id)
             
             # ------------------------------------------------------------------------------------
             # MEDIA ==> MEDIA_ID
-            media = {
-                'mediaName': experiment['MEDIA']['NAME']['value'],
-                'mediaFile': experiment['MEDIA']['MEDIA_PATH']['value']
-            }
-            media_filtered = {k: v for k, v in media.items() if v is not None}
-            media_id = db.addRecord('Media',media_filtered)
-            print('\tMEDIA ID: ', media_id)
+            if experiment['MEDIA']['MEDIA_PATH']['value']:
+                media_file = os.path.abspath(experiment['MEDIA']['MEDIA_PATH']['value'])
+                path_end = max(findOccurrences(media_file, "/"))
+                media_file_name = media_file[path_end+1:]
+
+                media_analysis_file = PROJECT_DIRECTORY + MEDIA_ANALYSIS_FILE
+                media_args = [PROJECT_DIRECTORY, media_file, media_file_name]
+                mediaFiles = getFiles(media_analysis_file, media_args, MEDIA_LIST)
+                
+                for i, f in enumerate(mediaFiles):
+                    media = {
+                        'mediaName': experiment['MEDIA']['NAME']['value'],
+                        'mediaFile': f
+                    }
+                    media_filtered = {k: v for k, v in media.items() if v is not None}
+                    
+                    if len(media_filtered)>0: media_id = db.addRecord('Media',media_filtered)
+                    else: media_id=None
+                    
+                    print('\tMEDIA ID: ', media_id)
 
             # ------------------------------------------------------------------------------------
-            experiment_id = setExperimentId(study_id)
             exp = {
                 'studyId': study_id,
                 'experimentId': experiment_id,
                 'reactorId': reactor_id,
                 'precultivationId': precultivation_id,
                 'mediaId': media_id,
+                'experimentName': experiment['NAME']['value'],
                 'plateId': experiment['PLATE']['ID']['value'],
                 'plateColumn': experiment['PLATE']['COLUMN']['value'],
                 'plateRow': experiment['PLATE']['ROW']['value'],
@@ -88,15 +106,41 @@ def populate_db(args):
             }
             experiment_filtered = {k: v for k, v in exp.items() if v is not None}
             db.addRecord('Experiment', experiment_filtered)
+            print('EXPERIMENT ID: ', experiment_id)
+
+            # ------------------------------------------------------------------------------------
+            # BACTERIA ==> if BLANK=False
+            if experiment['BLANK']['value'] == 0:
+                bacterias = experiment['BACTERIA']
+                for bacteria in bacterias:
+                    bact = {
+                        'bacteriaGenus': bacteria['GENUS'],
+                        'bacteriaSpecies': bacteria['SPECIES'],
+                        'bacteriaStrain': bacteria['STRAIN']
+                    }
+                    bacteria_filtered = {k: v for k, v in bact.items() if v is not None}
+
+                    if len(bacteria_filtered)>0: 
+                        bacteria_id = db.addRecord('Bacteria',bacteria_filtered)
+                        community = {
+                            'bacteriaId': bacteria_id,
+                            'experimentId': experiment_id
+                        }
+                        community_filtered = {k: v for k, v in community.items() if v is not None}
+                        db.addRecord('BacteriaCommunity',community_filtered)                   
             
-            ### Files analysis 
-            files_dir = os.path.abspath(experiment['FILES']['value']) + '/'
-            files = analyzeLabDir(files_dir)
-            headers_dict = clusterHeaders(PROJECT_DIRECTORY + HEADERS_FILE)
+            ### Files analysis
+            if experiment['FILES']['value']:
+                files_dir = os.path.abspath(experiment['FILES']['value']) + '/'
 
-            addReplicates(headers_dict, files, experiment_id=experiment_id, perturbation_id=None)
-            print('\nEXPERIMENT ID: ', experiment_id)
+                exp_analysis_file = PROJECT_DIRECTORY + EXPERIMENT_ANALYSIS_FILE
+                exp_args = [PROJECT_DIRECTORY, files_dir, experiment_id]
+                exp_files = getFiles(exp_analysis_file, exp_args, EXPERIMENTS_LIST)
 
+                headers_dict = clusterHeaders(PROJECT_DIRECTORY + HEADERS_FILE)
+                
+                addReplicates(headers_dict, exp_files, experiment_id=experiment_id, perturbation_id=None)
+            
     elif 'EXPERIMENT_ID' in info:
         experiment_id = info['EXPERIMENT_ID']
         print('\nEXPERIMENT ID: ', experiment_id)
@@ -110,6 +154,9 @@ def populate_db(args):
             pert = {
                 'perturbationId': perturbation_id,
                 'experimentId': experiment_id,
+                'plateId': perturbation['PLATE']['ID']['value'],
+                'plateColumn': perturbation['PLATE']['COLUMN']['value'],
+                'plateRow': perturbation['PLATE']['ROW']['value'],
                 'property': perturbation['PROPERTY']['value'],
                 'newValue': perturbation['NEW_VALUE']['value'],
                 'startTime': perturbation['STARTING_TIME']['value'],
@@ -118,81 +165,81 @@ def populate_db(args):
             }
             perturbation_filtered = {k: v for k, v in pert.items() if v is not None}
             db.addRecord('Perturbation', perturbation_filtered)
-            # db.addPerturbation(perturbation_id, experiment_id, perturbation_filtered)
-            
-            ### Files analysis 
-            files_dir = os.path.abspath(perturbation['FILES']['value']) + '/'
-            print('-->', files_dir)
-            files = analyzeLabDir(files_dir)
-            headers_dict = clusterHeaders(PROJECT_DIRECTORY + HEADERS_FILE)
-
-            addReplicates(headers_dict, files, experiment_id=experiment_id, perturbation_id=perturbation_id)
             print('\nPERTURBATION ID: ', perturbation_id)
-    
+
+            ### Files analysis
+            if perturbation['FILES']['value']:
+                files_dir = os.path.abspath(perturbation['FILES']['value']) + '/'
+                
+                exp_analysis_file = PROJECT_DIRECTORY + EXPERIMENT_ANALYSIS_FILE
+                exp_args = [PROJECT_DIRECTORY, files_dir, experiment_id, perturbation_id]
+                exp_files = getFiles(exp_analysis_file, exp_args, EXPERIMENTS_LIST) #this will generate the new HEADERS_FILE
+
+                headers_dict = clusterHeaders(PROJECT_DIRECTORY + HEADERS_FILE)
+
+                addReplicates(headers_dict, exp_files, experiment_id=experiment_id, perturbation_id=perturbation_id)
+                        
     elif 'PERTURBATION_ID' in info:
         perturbation_id = info['PERTURBATION_ID']
         print('\nPERTURBATION ID: ', perturbation_id)
+     
     
-    
+    if 'FILES' in info:
+        files_dir = os.path.abspath(info['FILES']) + '/'
 
-def analyzeLabDir(dir):
-    labAnalysisFile = PROJECT_DIRECTORY + LAB_ANALYSIS_FILE
+        exp_analysis_file = PROJECT_DIRECTORY + EXPERIMENT_ANALYSIS_FILE
+        exp_args = [PROJECT_DIRECTORY, files_dir]
+        exp_files = getFiles(exp_analysis_file, exp_args, EXPERIMENTS_LIST) #this will generate the new HEADERS_FILE
 
-    # Analyse the provided files and get the necessary information from them
-    runBash(labAnalysisFile, [PROJECT_DIRECTORY, dir])
-
-    # experimentName = [x.split(' ')[1] for x in open(PROJECT_DIRECTORY + 'IntermediateFiles/experiments_info.txt').readlines()][1]
-    experimentFiles = open(PROJECT_DIRECTORY + EXPERIMENTS_LIST, "r").readlines()
-    experimentFiles = list(map(lambda s: s.strip(), experimentFiles))
-    
-    return experimentFiles
-
-def clusterHeaders(file):
-    """ This function separates the received list of headers into categories: abundance, metaboites, ph"""
-
-    with open(file) as f:
-        lst = f.read().splitlines()
-
-    abundance_regex = re.compile(r'.*time.* | .*liquid.* | .*active.* | .*OD.*', flags=re.I | re.X)
-    # abundance_regex = re.compile(r'time | liquid | active | OD', flags=re.I | re.X)
-    ph_regex = re.compile(r'.*time.* | .*ph.*', flags=re.I | re.X)
-
-    abundance_headers = getMatchingList(abundance_regex, lst)
-    ph_headers = getMatchingList(ph_regex, lst)
-
-    not_metabolites_list = list(set(abundance_headers) | set(ph_headers))
-    metabolites_headers = set(lst) - set(not_metabolites_list)
-    metabolites_headers = list(metabolites_headers)
-    metabolites_headers.append('time')
-
-    headers = {'abundance': abundance_headers,'metabolites': metabolites_headers,'ph': ph_headers}
-
-    return headers    
+        headers_dict = clusterHeaders(PROJECT_DIRECTORY + HEADERS_FILE)
+        
+        addReplicates(headers_dict, exp_files, experiment_id=experiment_id, perturbation_id=perturbation_id)
 
 def setExperimentId(study_id):
-    number_exp = db.countRecords('Experiment', 'studyId', str(study_id))
+    '''
+    This function sets up the experiment id depending on the study id
+    
+    :parama study_id in which the experiment is added
+    :return experiment_id
+    '''
+    number_exp = db.countRecords('Experiment', {'studyId': str(study_id)})
     experiment_id = str(int(study_id)*100 + number_exp + 1)
     return experiment_id
 
 def setPerturbationId(experiment_id):
-    number_pert = db.countRecords('Perturbation', 'experimentId', str(experiment_id))
+    '''
+    This function sets up the perturbation id depending on the experiment id
+    
+    :parama experiment_id in which the perturbation is added
+    :return perturbation_id
+    '''
+    number_pert = db.countRecords('Perturbation', {'experimentId': str(experiment_id)})
     perturbation_id = experiment_id + '.' + str(number_pert + 1)
     return perturbation_id
 
 def addReplicates(headers, files, experiment_id, perturbation_id):
+    '''
+    This function saves each file as a technical replicate
+    For this, it calculates the replicate id with the experiment_id providad (and the perturbation_id)
+    Separates the file data into abundances/ph/metabolites
+    Saves in txt file and in the db table
 
+    :param headers: dict with categories as keys to separate df into sub_dfs
+    :param files
+    :param experiment_id where replicates are added
+    :param perturbation_id where replicates are added
+    '''
     if perturbation_id == None:
         id = experiment_id
-        number_rep = db.countRecords('TechnicalReplicate', 'experimentId', str(id))
+        number_rep = db.countRecords('TechnicalReplicate', {'experimentId': str(id)})
     else:
         id = perturbation_id
-        number_rep = db.countRecords('TechnicalReplicate', 'perturbationId', str(id))
+        number_rep = db.countRecords('TechnicalReplicate', {'perturbationId': str(id)})
 
-    print('\nThe ID in which the replicate files will be added is: ',id)
-    print('The number of replicates already in that id: ',number_rep)
+    print('\n- The ID in which the replicate files will be added is: ',id)
+    print('- The number of replicates already in that id: ',number_rep)
     for i, f in enumerate(files):
         replicate_id = str(id) + '_' + str(number_rep + i + 1)
-        # print('\n\tREPLICATE ID: ', replicate_id)
         
         #Get directory of the provided paths
         path_end = max(findOccurrences(f, "/"))
@@ -225,9 +272,6 @@ def addReplicates(headers, files, experiment_id, perturbation_id):
             metabolites_data.to_csv(m_path, sep=" ", index=False)
         else: m_path = None
 
-        # print(i, replicate_id)
-        # print(g_path,'\n',m_path,'\n',p_path,'\n\n')
-
         rep = {
             'replicateId': replicate_id,
             'experimentId': experiment_id,
@@ -239,6 +283,3 @@ def addReplicates(headers, files, experiment_id, perturbation_id):
         
         replicate_filtered = {k: v for k, v in rep.items() if v is not None}
         db.addRecord('TechnicalReplicate', replicate_filtered)
-            
-        # db.addReplicate(str(replicate_id), str(experiment_id), str(perturbation_id))
-    print('\nLast replicate id: ',replicate_id)

@@ -1,9 +1,0 @@
-BT_batch_mucin1_1.txt
-BT_batch_mucin1_2.txt
-BT_batch_mucin1_3.txt
-BT_batch_mucin1_4.txt
-BT_batch_mucin1_5.txt
-BT_batch_mucin1_6.txt
-BT_batch_mucin1_7.txt
-BT_batch_mucin1_8.txt
-BT_batch_mucin1_9.txt

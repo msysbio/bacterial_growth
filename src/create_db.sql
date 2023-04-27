@@ -4,8 +4,10 @@ USE BacterialGrowth;
 
 CREATE TABLE IF NOT EXISTS Study (
 	studyId INT AUTO_INCREMENT,
+    studyName VARCHAR(20) DEFAULT NULL, 
     studyDescription TEXT DEFAULT NULL,
-    PRIMARY KEY (studyId)
+    PRIMARY KEY (studyId),
+    UNIQUE (studyName)
 );
 
 CREATE TABLE IF NOT EXISTS Precultivation (
@@ -16,32 +18,36 @@ CREATE TABLE IF NOT EXISTS Precultivation (
 
 CREATE TABLE IF NOT EXISTS Reactor (
 	reactorId INT AUTO_INCREMENT,
-    reactorName TINYTEXT NOT NULL,
+    reactorName VARCHAR(50) NOT NULL,
     volume FLOAT DEFAULT 0,
     atmosphere FLOAT DEFAULT 0,
     stirring_speed FLOAT DEFAULT 0,
     reactorMode VARCHAR(50) DEFAULT '', #chemostat, batch, fed-batch,
     reactorDescription TEXT,
-    PRIMARY KEY (reactorId)
+    PRIMARY KEY (reactorId),
+    UNIQUE (reactorName, volume, atmosphere, stirring_speed, reactorMode)
 );
 
 CREATE TABLE IF NOT EXISTS Bacteria (
-	bacteriaId INT NOT NULL UNIQUE,
-    bacteriaGenus VARCHAR(100) DEFAULT '',
+	bacteriaId INT AUTO_INCREMENT,
+    bacteriaGenus VARCHAR(100) DEFAULT NULL,
 	bacteriaSpecies VARCHAR(100),
 	bacteriaStrain VARCHAR(100),
-    PRIMARY KEY (bacteriaSpecies, bacteriaStrain)
+    PRIMARY KEY (bacteriaId),
+    UNIQUE (bacteriaSpecies, bacteriaStrain)
 );
 
 CREATE TABLE IF NOT EXISTS Media (
-    mediaId INT NOT NULL UNIQUE,
+    mediaId INT AUTO_INCREMENT,
     mediaName VARCHAR(20),
     mediaFile VARCHAR(100),
-    PRIMARY KEY (mediaName)
+    PRIMARY KEY (mediaId),
+    UNIQUE (mediaName)
 );
 
 CREATE TABLE IF NOT EXISTS Experiment (
 	experimentId INT AUTO_INCREMENT,
+    experimentName VARCHAR(20),
     studyId INT NOT NULL,
     precultivationId INT,
     reactorId INT NOT NULL,
@@ -59,9 +65,10 @@ CREATE TABLE IF NOT EXISTS Experiment (
     experimentDescription TEXT,
     PRIMARY KEY (experimentId),
     FOREIGN KEY (studyId) REFERENCES Study (studyId) ON UPDATE CASCADE ON DELETE CASCADE,
-    FOREIGN KEY (precultivationId) REFERENCES Precultivation (precultivationId) ON UPDATE CASCADE ON DELETE CASCADE,
+    #FOREIGN KEY (precultivationId) REFERENCES Precultivation (precultivationId) ON UPDATE CASCADE ON DELETE CASCADE,
     FOREIGN KEY (reactorId) REFERENCES Reactor (reactorId) ON UPDATE CASCADE ON DELETE CASCADE,
-    FOREIGN KEY (mediaId) REFERENCES Media (mediaId) ON UPDATE CASCADE ON DELETE CASCADE
+    FOREIGN KEY (mediaId) REFERENCES Media (mediaId) ON UPDATE CASCADE ON DELETE CASCADE,
+    UNIQUE (experimentName, studyId, reactorId, plateId, plateColumn, plateRow, mediaId, blank, inoculumConcentration, inoculumVolume, initialPh, initialTemperature, carbonSource, antibiotic)
 );
 
 CREATE TABLE IF NOT EXISTS Perturbation (
@@ -80,9 +87,9 @@ CREATE TABLE IF NOT EXISTS TechnicalReplicate (
 	replicateId VARCHAR(15),
     experimentId INT,
     perturbationId VARCHAR(15) DEFAULT NULL,
-    abundanceFile VARCHAR(100),
-    metabolitesFile VARCHAR(100),
-    phFile VARCHAR(100),
+    abundanceFile VARCHAR(100) DEFAULT NULL,
+    metabolitesFile VARCHAR(100) DEFAULT NULL,
+    phFile VARCHAR(100) DEFAULT NULL,
     PRIMARY KEY (replicateId),
     FOREIGN KEY (experimentId) REFERENCES Experiment (experimentId) ON UPDATE CASCADE ON DELETE CASCADE,
     FOREIGN KEY (perturbationId) REFERENCES Perturbation (perturbationId) ON UPDATE CASCADE ON DELETE CASCADE
