@@ -2,6 +2,11 @@ from prettytable import PrettyTable
 import db_functions as db
 
 def chooseStudy():
+    '''
+    Print the existing study and waits a user input
+    
+    :return study_id
+    '''
     studies = db.getAllRecords('Study', {})
 
     if len(studies) == 0:
@@ -29,6 +34,12 @@ def chooseStudy():
     return study_id
 
 def chooseExperiment(study_id):
+    '''
+    Print the existing experiments with study_id and waits a user input
+    
+    :param study_id
+    :return experiment_id
+    '''
     experiments = db.getAllRecords('Experiment', {'studyId':study_id})
      
     if len(experiments) == 0:
@@ -56,6 +67,12 @@ def chooseExperiment(study_id):
     return experiment_id
 
 def choosePerturbation(experiment_id):
+    '''
+    Print the existing experiments with study_id and waits a user input
+    
+    :param study_id
+    :return experiment_id
+    '''
     perturbations = db.getAllRecords('Perturbation', {'experimentId':experiment_id})
 
     if len(perturbations) == 0:
@@ -84,6 +101,12 @@ def choosePerturbation(experiment_id):
     return perturbation_id
 
 def chooseReplicate(experiment_id, perturbation_id):
+    '''
+    Print the existing replicates with experiment_id and perturbation_id and waits a user input
+    
+    :param experiment_id, perturbation_id
+    :return replicate_id
+    '''
     if perturbation_id == None:
         id = experiment_id
         replicates = db.getAllRecords('TechnicalReplicate', {'experimentId':id, 'perturbationID':'null'})
@@ -119,6 +142,10 @@ def chooseReplicate(experiment_id, perturbation_id):
     return replicate_id
 
 def choosePlotOption():
+    '''Choose between the plotting options
+    
+    :return option
+    '''
     print('Choose the plotting option:')
     print('\t1: Plot one technical replicate.')
     print('\t2: Plot mean and deviation from several replicates from the same perturbation/experiment.')

@@ -12,6 +12,8 @@ from constants import *
 def plot(option):
     '''
     This function takes the user plot choice, makes the user choose the data to plot (form the args dictionary) and call the corresponding functions
+
+    :param option: str
     '''
     fields = ['abundance', 'metabolites', 'ph']
     if option == '1':
@@ -54,11 +56,11 @@ def plot(option):
     plotMetabolites(args)
     plotPh(args)
     
-
 def plotAbundances(args):
     '''
-    Plot abundances.
-    As there are different measurements, it plots them separately
+    Plot abundances. As there are different measurements, it plots them separately
+
+    :param args: user input to plot
     '''
     files = db.getFiles({'abundanceFile'}, args)
     if len(files) == 1:
@@ -70,11 +72,12 @@ def plotAbundances(args):
         for opt in abundance_options:
             regex = globals()['%s_regex' % opt]
             plotExperimentPerturbation(args, regex=regex, db_field={'abundanceFile'})
-                
-    
+                    
 def plotMetabolites(args):
     '''
     Plot metabolites
+
+    :param args: user input to plot
     '''
     files = db.getFiles({'metabolitesFile'}, args)
     if len(files) == 1:
@@ -82,11 +85,12 @@ def plotMetabolites(args):
             
     elif len(files) > 1:
         plotExperimentPerturbation(args, regex='', db_field={'metabolitesFile'})
-    
-    
+        
 def plotPh(args):
     '''
     Plot ph
+
+    :param args: user input to plot
     '''
     files = db.getFiles({'phFile'}, args)
     if len(files) == 1:
@@ -95,11 +99,14 @@ def plotPh(args):
     elif len(files) > 1:
         plotExperimentPerturbation(args, regex='', db_field={'phFile'})
 
-
 def plotExperimentPerturbation(args, regex='', db_field={}):
     '''
     Plot if there are several replicates
     Analyzes the data. Replicates can be from experiments and/or perturbation
+
+    :param args: user input to plot
+    :param regex. if abundance, to separate in the different measurements
+    :param db_field: abundanceFile, metabolitesFile or phFile
     '''
     
     label_ids = []
@@ -207,6 +214,13 @@ def plotExperimentPerturbation(args, regex='', db_field={}):
             # ========================================================================================================================
 
 def plotOneReplicate(files, regex='', db_field=''):
+    '''
+    If plotting a single file
+
+    :param files corresponding to user choice
+    :param regex. if abundance, to separate in the different measurements
+    :param db_field: abundanceFile, metabolitesFile or phFile
+    '''
     df = pd.read_csv(files[0][0], sep=" ")
     
     if regex != '': headers = getMatchingList(regex, df)
@@ -237,6 +251,14 @@ def plotOneReplicate(files, regex='', db_field=''):
     return plot, vec
 
 def plotSetReplicates(files, regex, ax, count):
+    '''
+    If plottig several files
+
+    :param files corresponding to user choice
+    :param regex. if abundance, to separate in the different measurements
+    :param ax: matplotlib axis to hold on plot
+    :param count: as we plot several files count to differentiate line styles
+    '''
     data = getMeanStd(files, regex)
         
     if len(data.columns)>1: 
@@ -248,6 +270,13 @@ def plotSetReplicates(files, regex, ax, count):
     return plot, vec
 
 def plotDf(df, ax, style_count=0):
+    '''
+    Finally plot into the axis
+
+    :param df
+    :param ax: matplotlib axis
+    :param style_count: int to select the line style
+    '''
     cmap = plt.get_cmap(name='tab10')
     styles = ['-', '--', '-.', ':', '-x', '-o', '-<', '->']
     
@@ -265,6 +294,15 @@ def plotDf(df, ax, style_count=0):
 
 
 def getExperimentLegend(ax, handles, labels, vec):
+    '''
+    Add legend
+
+    :param ax: matplotlib axis
+    :param handles: list of elements that have been plotted in ax
+    :param labels: list of labels of the plotted elements (handles)
+    :param vec: vector to select which labels to add in the legend
+    :return legend
+    '''
     vec1 = [*range(0,len(labels))]
     vec2 = [x * len(vec) for x in vec1]
     new_handles = [handles[i] for i in vec2]

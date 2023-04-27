@@ -5,6 +5,9 @@ from datetime import date
 def isDir(string):
     '''
     This function checks if the given string is a directory path
+
+    :param string
+    :return string (if ok)
     '''
     if os.path.isdir(string):
         return string
@@ -14,6 +17,9 @@ def isDir(string):
 def isFile(string):
     '''
     This function checks if the given string is a directory path
+
+    :param string
+    :return string (if ok)
     '''
     if os.path.isfile(string):
         return string
@@ -24,6 +30,9 @@ def isFile(string):
 def getZipName(dir_path):
     '''
     This function calculates the name of the new zip file depending on the already existing ones
+
+    :param dir_path
+    :return new_zip name
     '''
     today = date.today()
     res = []
@@ -47,12 +56,19 @@ def getZipName(dir_path):
 def findOccurrences(string, ch):
     '''
     This function returns a list with all the positions of the string that contain the character ch
+
+    :param string
+    :param ch: character to look for
+    :return list with positions
     '''
     return [i for i, letter in enumerate(string) if letter == ch]
 
 def transformStringIntoList(string, ch):
     '''
     Gets a tring with values separated by ch and places them into a list
+
+    :param stirng
+    :param ch: separating character
     '''
     positions = findOccurrences(string, ch)
     list = []
@@ -74,6 +90,10 @@ def transformStringIntoList(string, ch):
 def getMatchingList (regex, lst):
     '''
     This function takes a regex expression and returns a list with all the matching words in the given lst
+
+    :param regex
+    :param lst
+    :return res: list with matching elements
     '''
     res = []
     for word in lst:
@@ -84,6 +104,9 @@ def getMatchingList (regex, lst):
 def saveFile(data, path):
     '''
     Saves the data into the indicated path
+
+    :param data
+    :param path
     '''
     if len(data.columns) > 1:
         data.to_csv(path, sep=" ", index=False)
@@ -92,6 +115,10 @@ def saveFile(data, path):
 def getIntersectionColumns(df, columns):
     '''
     This function returns a new df formed only by the indicated columns
+
+    :param df
+    :param columns to keep
+    :return res new df 
     '''
     res = df[df.columns.intersection(columns)]
     return res
@@ -100,6 +127,10 @@ def getMeanStd(files, regex=''):
     '''
     This function gets a set of files and the columns (regex or all columns) in which mean and std are going to be calculated
     For each header, a tmp df is created with the data from all the files. Then mean and std are calulcated and placed in a final df.
+
+    :param fies
+    :param regex
+    :return msd: df with column 0 (time) and alternating columns with mean and std for all the headers
     '''
     df = pd.read_csv(files[0][0], sep=" ")
     

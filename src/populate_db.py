@@ -13,6 +13,8 @@ def populate_db(args):
     This function reads the yml file with the information to populate the database and parses it depending on the keys of the values.
     It calls functions to set the experiment/perturbation/replicate ids or gets them from the yml file
     It calls db functions to introduce the information in the corresponding db tables
+
+    :param args: user input choice
     '''
     info_file = args.info_file
     info = read_yml(info_file)
@@ -194,13 +196,23 @@ def populate_db(args):
         addReplicates(headers_dict, exp_files, experiment_id=experiment_id, perturbation_id=perturbation_id)
 
 def setExperimentId(study_id):
-    '''This function sets up the experiment id depending on the study id'''
+    '''
+    This function sets up the experiment id depending on the study id
+    
+    :parama study_id in which the experiment is added
+    :return experiment_id
+    '''
     number_exp = db.countRecords('Experiment', {'studyId': str(study_id)})
     experiment_id = str(int(study_id)*100 + number_exp + 1)
     return experiment_id
 
 def setPerturbationId(experiment_id):
-    '''This function sets up the perturbation id depending on the experiment id'''
+    '''
+    This function sets up the perturbation id depending on the experiment id
+    
+    :parama experiment_id in which the perturbation is added
+    :return perturbation_id
+    '''
     number_pert = db.countRecords('Perturbation', {'experimentId': str(experiment_id)})
     perturbation_id = experiment_id + '.' + str(number_pert + 1)
     return perturbation_id
@@ -211,6 +223,11 @@ def addReplicates(headers, files, experiment_id, perturbation_id):
     For this, it calculates the replicate id with the experiment_id providad (and the perturbation_id)
     Separates the file data into abundances/ph/metabolites
     Saves in txt file and in the db table
+
+    :param headers: dict with categories as keys to separate df into sub_dfs
+    :param files
+    :param experiment_id where replicates are added
+    :param perturbation_id where replicates are added
     '''
     if perturbation_id == None:
         id = experiment_id
@@ -266,5 +283,3 @@ def addReplicates(headers, files, experiment_id, perturbation_id):
         
         replicate_filtered = {k: v for k, v in rep.items() if v is not None}
         db.addRecord('TechnicalReplicate', replicate_filtered)
-            
-    # print('- Last replicate id: ',replicate_id)

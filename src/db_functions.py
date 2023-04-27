@@ -7,9 +7,11 @@ password = os.environ.get('DB_PASSWORD')
 DB_NAME = 'BacterialGrowth'
 
 def execute(phrase):
-    """This function create a connection to the database and execute a command.
+    """
+    This function create a connection to the database and execute a command.
+
     :param phrase: str SQL sentence to execute
-    :return: list of str received from the database after command execution.
+    :return: list of str received from the database
     """
     try:
         cnx = mysql.connector.connect(user=user_name, password=password,host='localhost',database=DB_NAME)
@@ -34,10 +36,10 @@ def execute(phrase):
 
 def addRecord(table, args):
     """ 
-    This function adds a new entry into the indicated table.
+    Add new entry into the db
 
-    :table: table of the DB
-    :args: dictionary with the data to insert
+    :param table: table of the DB
+    :param args: dictionary with the data to insert (key = db field name. value = insert value)
     :return: id of the inserted record
     """
     # Insert into table
@@ -59,6 +61,13 @@ def addRecord(table, args):
     return last_id
 
 def countRecords(table, args):
+    '''
+    Count the records in one table for specific args
+
+    :param table
+    :param args: dictionary with the data to find and count (key = db field name. value = insert value)
+    :return count int
+    '''
     phrase = "SELECT COUNT(*) FROM " + table
     if args:
         where_clause = getWhereClause(args)
@@ -67,6 +76,13 @@ def countRecords(table, args):
     return res[0][0]
 
 def getAllRecords(table, args):
+    '''
+    Return all the records in one table for specific args
+
+    :param table
+    :param args: dictionary with the data to return (key = db field name. value = insert value)
+    :return list of records
+    '''
     phrase = "SELECT * FROM " + table
     if args:
         where_clause = getWhereClause(args)
@@ -94,6 +110,12 @@ def getRecords(table, fields, args):
 # =================================
 
 def getInsertFieldsValues(args):
+    '''
+    Create the fields and values strings to be inserted in the db
+    
+    :param args: dictionary with the data to return (key = db field name. value = insert value)
+    :return str with part of query
+    '''
     fields = "("
     values = "("
     for key, val in args.items():
@@ -104,6 +126,12 @@ def getInsertFieldsValues(args):
     return [fields, values]
 
 def getSelectFields(args):
+    '''
+    Create the str with the fields to be returned from db
+
+    :args list or dictionary with fields to look for
+    :return str clause
+    '''
     clause = ""
     for field in args: 
         clause = clause + field + ", "
@@ -111,6 +139,12 @@ def getSelectFields(args):
     return clause
 
 def getWhereClause(args):
+    '''
+    Create the str with the where clause
+
+    :args dictionary with the data to return (key = db field name. value = insert value)
+    :return str clause
+    '''
     if len(args) == 0:
         clause = ''
     else:
@@ -128,6 +162,12 @@ def getWhereClause(args):
     return clause
 
 def getWhereInClause(args):
+    '''
+    Create the str with the where clause when it must contain and IN operator
+
+    :args dictionary with the data to return (key = db field name. value = insert value)
+    :return str clause
+    '''
     if len(args) == 0:
         clause = ''
     else:
@@ -149,14 +189,36 @@ def getWhereInClause(args):
 
 
 def getJoinClause(table_from, table_to, field):
+    '''
+    Create the str with the join clause
+
+    :param table_from and table_to: tables to be joined
+    :param field: common field
+    :return str clause
+    '''
     clause = "JOIN "+table_to+" ON "+table_to+"."+field+" = "+table_from+"."+field
     return clause
 
 def getGroupByClause(field):
+    '''
+    Get the str with the group by clause
+    
+    :param field
+    :return str clause
+    '''
     clause = "GROUP BY " + field
     return clause
 
 def getHavingClause(agg_function, field, operator, quant, distinct=False):
+    '''
+    Get the str with the having clause
+    
+    :param agg_function: MIN(), MAX(), SUM(), AVG() or COUNT()
+    :param field
+    :param operator and quant: to build up the having condition. i.e. having id > 5
+    :param distint: boolean if distinct must be added
+    :return str clause
+    '''
     clause = "HAVING "+agg_function
     if distinct == False:
         clause = clause + "("+field+") "+operator+" "+str(quant)

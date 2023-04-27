@@ -4,6 +4,11 @@ from user_inputs import *
 from constants import *
 
 def create_yml_file(args):
+    '''
+    Create yml file with user instructions
+
+    :param args: user input
+    '''
 
     yml_files_dir = LOCAL_DIRECTORY+'yml_files/'
     modifyYml = PROJECT_DIRECTORY + MODIFY_YML_FILE
