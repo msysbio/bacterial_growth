@@ -117,7 +117,7 @@ def addExperimentYml(final_dict, num_experiments):
         # 'EXPERIMENT_NUMBER': 0,
         'NAME': {'value': None, 'description': 'Name of the experiment'},
         'REACTOR': reactor_dict,
-        'PLATE': {'ID': {'value': None, 'description': 'Number of plate'}, 'COLUMN': {'value': None, 'description': 'Indicated in numbers'}, 'ROW': {'value': None, 'description': 'Indicated in letters'}},
+        'PLATE': {'ID': {'value': None, 'description': 'Number of plate'}, 'POSITION': {'value': None, 'description': 'Location of all the biological replicates with this parameters, i.e., 1A, 1B, 2C (column in numbers and row in letters)'}},
         'MEDIA': {'NAME': {'value': None, 'description': 'Name of the media'}, 'MEDIA_PATH': {'value': None, 'description': 'File path containing the media description'}},
         'BACTERIA': [{'GENUS': None, 'SPECIES': None, 'STRAIN': None},{'GENUS': None, 'SPECIES': None, 'STRAIN': None}],
         'BLANK': {'value': None, 'description': 'Boolean (numerical). 1 if the experiment is blank. 0 otherwise.'},
@@ -146,7 +146,7 @@ def addPerturbationYml(final_dict, num_perturbations):
     :param num_perturbations: int. It will add as much dicts as num_perturbations
     '''
     pert_dict = {
-        'PLATE': {'ID': {'value': None, 'description': 'Number of plate'}, 'COLUMN': {'value': None, 'description': 'Indicated in numbers'}, 'ROW': {'value': None, 'description': 'Indicated in letters'}},
+        'PLATE': {'ID': {'value': None, 'description': 'Number of plate'}, 'POSITION': {'value': None, 'description': 'Location of all the biological replicates with this parameters, i.e., 1A, 1B, 2C (column in numbers and row in letters)'}},
         'PROPERTY': {'value': None, 'description': 'Indicate which property has been perturbed'},
         'NEW_VALUE': {'value': None, 'description': 'New value of the perturbed property'},
         'STARTING_TIME': {'value': None, 'description': 'Time in minutes'},
