@@ -17,17 +17,12 @@ def bacterial_parser():
     )
     
     subparser1.add_argument(
-        '-e', '--num_biological_replicates', dest='num_biological_replicates', required=False, type=int, help="Number of new biological replicates to introduce in the DB"
+        '-br', '--num_biological_replicates', dest='num_biological_replicates', required=False, type=int, help="Number of new biological replicates to introduce in the DB"
     )
 
     subparser1.add_argument(
         '-p', '--num_perturbations', dest='num_perturbations', required=False, type=int, help="Number of new perturbations to introduce in the DB"
     )
-
-    subparser1.add_argument(
-        '-f', '--files_dir', dest='files_dir', required=False, type=isDir, help="Directory containing the files to introduce in the DB"
-    )
-    
     
     # create the parser for the "populateDB" command
     subparser2 = subparsers.add_parser('populateDB', help='Pass the YML file to create the database')
