@@ -117,7 +117,6 @@ def addBiologicalReplicateYml(final_dict, num_biological_replicates):
         # 'BIOLOGICAL_REPLICATE_NUMBER': 0,
         'NAME': {'value': None, 'description': 'Name of the biological replicate'},
         'REACTOR': reactor_dict,
-        'PLATE': {'ID': {'value': None, 'description': 'Number of plate'}, 'COLUMN': {'value': None, 'description': 'Indicated in numbers'}, 'ROW': {'value': None, 'description': 'Indicated in letters'}},
         'MEDIA': {'NAME': {'value': None, 'description': 'Name of the media'}, 'MEDIA_PATH': {'value': None, 'description': 'File path containing the media description'}},
         'BACTERIA': [{'GENUS': None, 'SPECIES': None, 'STRAIN': None},{'GENUS': None, 'SPECIES': None, 'STRAIN': None}],
         'BLANK': {'value': None, 'description': 'Boolean (numerical). 1 if the biological replicate is blank. 0 otherwise.'},
@@ -128,7 +127,8 @@ def addBiologicalReplicateYml(final_dict, num_biological_replicates):
         'CARBON_SOURCE': {'value': None, 'description': 'Boolean (numerical). 1 if the carbon source present. 0 otherwise.'},
         'ANTIBIOTIC': {'value': None, 'description': 'Boolean (numerical). 1 if antibiotic present. 0 otherwise.'},
         'DESCRIPTION': {'value': None, 'description': 'Description of the biological replicate'},
-        'FILES': {'value': None, 'description': 'Directory with the files corresponding to this biological replicate.'}
+        'PLATE': {'ID': {'value': None, 'description': 'Number of plate'}, 'POSITION': {'value': None, 'description': 'List of locations in the plate, i.e., 1A, 1B, 2C'}},
+        'FILES': {'value': None, 'description': 'Comma separated list of directories.', 'description_2': 'CAREFUL: the order must be the same as in the plate positions'}
         }
 
     if num_biological_replicates > 0: final_dict['BIOLOGICAL_REPLICATE'] = []
@@ -146,13 +146,13 @@ def addPerturbationYml(final_dict, num_perturbations):
     :param num_perturbations: int. It will add as much dicts as num_perturbations
     '''
     pert_dict = {
-        'PLATE': {'ID': {'value': None, 'description': 'Number of plate'}, 'COLUMN': {'value': None, 'description': 'Indicated in numbers'}, 'ROW': {'value': None, 'description': 'Indicated in letters'}},
         'PROPERTY': {'value': None, 'description': 'Indicate which property has been perturbed'},
         'NEW_VALUE': {'value': None, 'description': 'New value of the perturbed property'},
         'STARTING_TIME': {'value': None, 'description': 'Time in minutes'},
         'ENDING_TIME': {'value': None, 'description': 'Time in minutes'},
         'DESCRIPTION': {'value': None, 'description': 'Description of the perturbation'},
-        'FILES': {'value': None, 'description': 'Directory with the files corresponding to this perturbation.'}
+        'PLATE': {'ID': {'value': None, 'description': 'Number of plate'}, 'POSITION': {'value': None, 'description': 'List of locations in the plate, i.e., 1A, 1B, 2C'}},
+        'FILES': {'value': None, 'description': 'Comma separated list of directories.', 'description_2': 'CAREFUL: the order must be the same as in the plate positions'}
         }
     
     if num_perturbations > 0: final_dict['PERTURBATION'] = []

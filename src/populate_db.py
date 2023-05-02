@@ -3,7 +3,7 @@ import pandas as pd
 
 from constants import *
 
-from utils import findOccurrences
+from utils import findOccurrences, transformStringIntoList
 from yml_functions import read_yml
 from bash_functions import clusterHeaders, getFiles
 import db_functions as db
@@ -25,7 +25,7 @@ def populate_db(args):
             'studyDescription': info['STUDY'][0]['DESCRIPTION']
         }
         study_filtered = {k: v for k, v in study.items() if v is not None}
-        if len(study_filtered)>0: 
+        if len(study_filtered)>0:
             study_id = db.addRecord('Study', study_filtered)
             print('\nSTUDY ID: ', study_id)
         else: 
@@ -40,14 +40,13 @@ def populate_db(args):
     if 'BIOLOGICAL_REPLICATE' in info:
         biological_replicates = info['BIOLOGICAL_REPLICATE']    
         for biological_replicate in biological_replicates:
-            biological_id = setBiologicalReplicateId(study_id)
             # ------------------------------------------------------------------------------------
             # REACTOR ==> REACTOR_ID
             reactor = {
                 'reactorName': biological_replicate['REACTOR']['NAME']['value'],
-                'volume': biological_replicate['REACTOR']['VOLUME']['value'],
-                'atmosphere': biological_replicate['REACTOR']['ATMOSPHERE']['value'],
-                'stirring_speed': biological_replicate['REACTOR']['STIRRING_SPEED']['value'],
+                'volume': "{:.2f}".format(biological_replicate['REACTOR']['VOLUME']['value']),
+                'atmosphere': "{:.2f}".format(biological_replicate['REACTOR']['ATMOSPHERE']['value']),
+                'stirring_speed': "{:.2f}".format(biological_replicate['REACTOR']['STIRRING_SPEED']['value']),
                 'reactorMode': biological_replicate['REACTOR']['MODE']['value'],
                 'reactorDescription': biological_replicate['REACTOR']['DESCRIPTION']['value'],
             }
@@ -83,63 +82,75 @@ def populate_db(args):
                     else: media_id=None
                     
                     print('\tMEDIA ID: ', media_id)
-
-            # ------------------------------------------------------------------------------------
-            biol_rep = {
-                'studyId': study_id,
-                'biologicalReplicateId': biological_id,
-                'reactorId': reactor_id,
-                'precultivationId': precultivation_id,
-                'mediaId': media_id,
-                'biologicalReplicateName': biological_replicate['NAME']['value'],
-                'plateId': biological_replicate['PLATE']['ID']['value'],
-                'plateColumn': biological_replicate['PLATE']['COLUMN']['value'],
-                'plateRow': biological_replicate['PLATE']['ROW']['value'],
-                'blank': biological_replicate['BLANK']['value'],
-                'inoculumConcentration': biological_replicate['INOCULUM_CONCENTRATION']['value'],
-                'inoculumVolume': biological_replicate['INOCULUM_VOLUME']['value'],
-                'initialPh': biological_replicate['INITIAL_PH'],
-                'initialTemperature': biological_replicate['INITIAL_TEMPERATURE']['value'],
-                'carbonSource': biological_replicate['CARBON_SOURCE']['value'],
-                'antibiotic': biological_replicate['ANTIBIOTIC']['value'],
-                'biologicalReplicateDescription': biological_replicate['DESCRIPTION']['value']   
-            }
-            biological_replicate_filtered = {k: v for k, v in biol_rep.items() if v is not None}
-            db.addRecord('BiologicalReplicate', biological_replicate_filtered)
-            print('BIOLOGICAL_REPLICATE ID: ', biological_id)
-
-            # ------------------------------------------------------------------------------------
-            # BACTERIA ==> if BLANK=False
-            if biological_replicate['BLANK']['value'] == 0:
-                bacterias = biological_replicate['BACTERIA']
-                for bacteria in bacterias:
-                    bact = {
-                        'bacteriaGenus': bacteria['GENUS'],
-                        'bacteriaSpecies': bacteria['SPECIES'],
-                        'bacteriaStrain': bacteria['STRAIN']
-                    }
-                    bacteria_filtered = {k: v for k, v in bact.items() if v is not None}
-
-                    if len(bacteria_filtered)>0: 
-                        bacteria_id = db.addRecord('Bacteria',bacteria_filtered)
-                        community = {
-                            'bacteriaId': bacteria_id,
-                            'biologicalReplicateId': biological_id
-                        }
-                        community_filtered = {k: v for k, v in community.items() if v is not None}
-                        db.addRecord('BacteriaCommunity',community_filtered)                   
             
-            ### Files analysis
-            if biological_replicate['FILES']['value']:
-                files_dir = os.path.abspath(biological_replicate['FILES']['value']) + '/'
+            # ------------------------------------------------------------------------------------
+            # ==> BiologicalReplicate table
+            biol_rep_positions = transformStringIntoList(biological_replicate['PLATE']['POSITION']['value'], ',')
+            biol_rep_dir = transformStringIntoList(biological_replicate['FILES']['value'], ',')
 
-                biol_rep_analysis_file = PROJECT_DIRECTORY + BIOLOGICAL_REPLICATE_ANALYSIS_FILE
-                biol_rep_args = [PROJECT_DIRECTORY, files_dir, biological_id]
-                biol_rep_files = getFiles(biol_rep_analysis_file, biol_rep_args, BIOLOGICAL_REPLICATES_LIST)
-
-                headers_dict = clusterHeaders(PROJECT_DIRECTORY + HEADERS_FILE)
+            for i, biol_rep_position in enumerate(biol_rep_positions):
                 
-                addReplicates(headers_dict, biol_rep_files, biological_id=biological_id, perturbation_id=None)
+                biological_id = setBiologicalReplicateId(study_id)
+                print(i, biol_rep_position, biological_id)
+                print('='*100)
+            
+                biol_rep = {
+                    'studyId': study_id,
+                    'biologicalReplicateId': biological_id,
+                    'reactorId': reactor_id,
+                    'precultivationId': precultivation_id,
+                    'mediaId': media_id,
+                    'biologicalReplicateName': biological_replicate['NAME']['value'],
+                    'plateId': biological_replicate['PLATE']['ID']['value'],
+                    'platePosition': biol_rep_position,
+                    'blank': biological_replicate['BLANK']['value'],
+                    'inoculumConcentration': "{:.2f}".format(biological_replicate['INOCULUM_CONCENTRATION']['value']),
+                    'inoculumVolume': "{:.2f}".format(biological_replicate['INOCULUM_VOLUME']['value']),
+                    'initialPh': "{:.2f}".format(biological_replicate['INITIAL_PH']),
+                    'initialTemperature': "{:.2f}".format(biological_replicate['INITIAL_TEMPERATURE']['value']),
+                    'carbonSource': biological_replicate['CARBON_SOURCE']['value'],
+                    'antibiotic': biological_replicate['ANTIBIOTIC']['value'],
+                    'biologicalReplicateDescription': biological_replicate['DESCRIPTION']['value']
+                }
+            
+                biological_replicate_filtered = {k: v for k, v in biol_rep.items() if v is not None}
+                print(biological_replicate_filtered)
+                db.addRecord('BiologicalReplicate', biological_replicate_filtered)
+                print('BIOLOGICAL_REPLICATE ID: ', biological_id)
+
+                # ------------------------------------------------------------------------------------
+                # BACTERIA ==> if BLANK=False
+                if biological_replicate['BLANK']['value'] == 0:
+                    bacterias = biological_replicate['BACTERIA']
+                    for bacteria in bacterias:
+                        bact = {
+                            'bacteriaGenus': bacteria['GENUS'],
+                            'bacteriaSpecies': bacteria['SPECIES'],
+                            'bacteriaStrain': bacteria['STRAIN']
+                        }
+                        bacteria_filtered = {k: v for k, v in bact.items() if v is not None}
+
+                        if len(bacteria_filtered)>0: 
+                            bacteria_id = db.addRecord('Bacteria',bacteria_filtered)
+                            community = {
+                                'bacteriaId': bacteria_id,
+                                'biologicalReplicateId': biological_id
+                            }
+                            community_filtered = {k: v for k, v in community.items() if v is not None}
+                            db.addRecord('BacteriaCommunity',community_filtered)                   
+
+                ### Files analysis
+                print(biol_rep_dir[i])
+                if biol_rep_dir[i]:
+                    files_dir = os.path.abspath(biol_rep_dir[i]) + '/'
+
+                    biol_rep_analysis_file = PROJECT_DIRECTORY + BIOLOGICAL_REPLICATE_ANALYSIS_FILE
+                    biol_rep_args = [PROJECT_DIRECTORY, files_dir, biological_id]
+                    biol_rep_files = getFiles(biol_rep_analysis_file, biol_rep_args, BIOLOGICAL_REPLICATES_LIST)
+
+                    headers_dict = clusterHeaders(PROJECT_DIRECTORY + HEADERS_FILE)
+                    
+                    addReplicates(headers_dict, biol_rep_files, biological_id=biological_id, perturbation_id=None)
             
     elif 'BIOLOGICAL_ID' in info:
         biological_id = info['BIOLOGICAL_ID']
@@ -150,34 +161,39 @@ def populate_db(args):
         perturbations = info['PERTURBATION']
         for perturbation in perturbations:
 
-            perturbation_id = setPerturbationId(biological_id)
-            pert = {
-                'perturbationId': perturbation_id,
-                'biologicalReplicateId': biological_id,
-                'plateId': perturbation['PLATE']['ID']['value'],
-                'plateColumn': perturbation['PLATE']['COLUMN']['value'],
-                'plateRow': perturbation['PLATE']['ROW']['value'],
-                'property': perturbation['PROPERTY']['value'],
-                'newValue': perturbation['NEW_VALUE']['value'],
-                'startTime': perturbation['STARTING_TIME']['value'],
-                'endTime': perturbation['ENDING_TIME']['value'],
-                'perturbationDescription': perturbation['DESCRIPTION']['value']
-            }
-            perturbation_filtered = {k: v for k, v in pert.items() if v is not None}
-            db.addRecord('Perturbation', perturbation_filtered)
-            print('\nPERTURBATION ID: ', perturbation_id)
+            pert_positions = transformStringIntoList(perturbation['PLATE']['POSITION']['value'], ',')
+            pert_dir = transformStringIntoList(perturbation['FILES']['value'], ',')
 
-            ### Files analysis
-            if perturbation['FILES']['value']:
-                files_dir = os.path.abspath(perturbation['FILES']['value']) + '/'
+            for i, pert_position in enumerate(pert_positions):
                 
-                biol_rep_analysis_file = PROJECT_DIRECTORY + BIOLOGICAL_REPLICATE_ANALYSIS_FILE
-                biol_rep_args = [PROJECT_DIRECTORY, files_dir, biological_id, perturbation_id]
-                biol_rep_files = getFiles(biol_rep_analysis_file, biol_rep_args, BIOLOGICAL_REPLICATES_LIST) #this will generate the new HEADERS_FILE
+                perturbation_id = setPerturbationId(biological_id)
+                pert = {
+                    'perturbationId': perturbation_id,
+                    'biologicalReplicateId': biological_id,
+                    'plateId': perturbation['PLATE']['ID']['value'],
+                    'platePosition': pert_position,
+                    'property': perturbation['PROPERTY']['value'],
+                    'newValue': perturbation['NEW_VALUE']['value'],
+                    'startTime': perturbation['STARTING_TIME']['value'],
+                    'endTime': perturbation['ENDING_TIME']['value'],
+                    'perturbationDescription': perturbation['DESCRIPTION']['value']
+                }
+                perturbation_filtered = {k: v for k, v in pert.items() if v is not None}
+                db.addRecord('Perturbation', perturbation_filtered)
+                print('\nPERTURBATION ID: ', perturbation_id)
 
-                headers_dict = clusterHeaders(PROJECT_DIRECTORY + HEADERS_FILE)
+                ### Files analysis
+                print(pert_dir[i])
+                if pert_dir[i]:
+                    files_dir = os.path.abspath(pert_dir[i]) + '/'
+                    
+                    biol_rep_analysis_file = PROJECT_DIRECTORY + BIOLOGICAL_REPLICATE_ANALYSIS_FILE
+                    biol_rep_args = [PROJECT_DIRECTORY, files_dir, biological_id, perturbation_id]
+                    biol_rep_files = getFiles(biol_rep_analysis_file, biol_rep_args, BIOLOGICAL_REPLICATES_LIST) #this will generate the new HEADERS_FILE
 
-                addReplicates(headers_dict, biol_rep_files, biological_id=biological_id, perturbation_id=perturbation_id)
+                    headers_dict = clusterHeaders(PROJECT_DIRECTORY + HEADERS_FILE)
+
+                    addReplicates(headers_dict, biol_rep_files, biological_id=biological_id, perturbation_id=perturbation_id)
                         
     elif 'PERTURBATION_ID' in info:
         perturbation_id = info['PERTURBATION_ID']

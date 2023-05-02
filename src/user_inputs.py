@@ -48,11 +48,11 @@ def chooseBiologicalReplicate(study_id):
         exit()
 
     biological_replicates_table = PrettyTable()
-    biological_replicates_table.field_names = ["ID","Name","Study ID","Precult","Reactor","Media","Blank","inoculumConc","inoculumVol","initPh","initTemp","carbonSource","antibiotic"]
+    biological_replicates_table.field_names = ["ID","Name","Study ID","Precult","Reactor","Plate","Pos","Media","Blank","inoculumConc","inoculumVol","initPh","initTemp","carbonSource","antibiotic"]
 
     biological_replicates_id = []
     for biological_replicate in biological_replicates:
-        difference_result = [item for item in [*range(0, len(biological_replicate))] if item not in [5, 6, 7, 16]]
+        difference_result = [item for item in [*range(0, len(biological_replicate))] if item not in [15]]
         biological_replicate_tuple = tuple(biological_replicate[i] for i in difference_result)
         biological_replicates_table.add_row(biological_replicate_tuple)
         biological_replicates_id.append(str(biological_replicate[0]))
@@ -81,11 +81,12 @@ def choosePerturbation(biological_id):
         return perturbation_id
 
     perturbations_table = PrettyTable()
-    perturbations_table.field_names = ["ID","BiologicalReplicate ID","Property","New Value","Starting time (min)","Ending time (min)","Description"]
+    perturbations_table.field_names = ["ID","BR ID","Plate","Pos","Property","New Value","Starting time (min)","Ending time (min)"]
     
     perturbations_id = []
     for perturbation in perturbations:
-        difference_result = [item for item in [*range(0, len(perturbation))] if item not in [2,3,4]]
+        print(perturbation)
+        difference_result = [item for item in [*range(0, len(perturbation))] if item not in [8]]
         perturbation_tuple = tuple(perturbation[i] for i in difference_result)
         perturbations_table.add_row(perturbation_tuple)
         perturbations_id.append(str(perturbation[0]))

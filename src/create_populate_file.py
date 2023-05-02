@@ -63,4 +63,4 @@ def create_yml_file(args):
         print('\n\replicates_information.yml created!')
     
     
-    print('Go to yml_info_files/ and complete the created file with the information you want to introduce in the DB.\n\n')
+    print('Go to yml_files/ and complete the created file with the information you want to introduce in the DB.\n\n')
