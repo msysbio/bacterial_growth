@@ -30,54 +30,54 @@ def write_yml(data, yml_file):
         file.write('# New data to populate the DB\n# Substitute the null values with your data\n# Do not modify the indentation or remove any field, even if you do not have data for it\n')
         yaml.dump(data, file, Dumper=yaml.Dumper,sort_keys=False,indent=2)
 
-def createStudyYml(num_experiments, num_perturbations):
+def createStudyYml(num_biological_replicates, num_perturbations):
     """
     Create the study yml file for the user to fill in
 
-    :param num_experiments, num_perturbations: int
+    :param num_biological_replicates, num_perturbations: int
     """
     yml_dict = {}
     yml_dict = addStudyYml(yml_dict)
-    yml_dict = addExperimentYml(yml_dict, num_experiments)
+    yml_dict = addBiologicalReplicateYml(yml_dict, num_biological_replicates)
     yml_dict = addPerturbationYml(yml_dict, num_perturbations)
 
     write_yml(yml_dict, LOCAL_DIRECTORY+'yml_files/study_information_tmp.yml')
 
-def createExperimentYml(study_id, num_experiments, num_perturbations):
+def createBiologicalReplicateYml(study_id, num_biological_replicates, num_perturbations):
     """
-    Create the experiment yml file for the user to fill in
+    Create the biological replicate yml file for the user to fill in
 
-    :param study_id, num_experiments, num_perturbations: int
+    :param study_id, num_biological_replicates, num_perturbations: int
     """
     yml_dict = {}
     yml_dict['STUDY_ID'] = study_id
-    yml_dict = addExperimentYml(yml_dict, num_experiments)
+    yml_dict = addBiologicalReplicateYml(yml_dict, num_biological_replicates)
     yml_dict = addPerturbationYml(yml_dict, num_perturbations)
 
-    write_yml(yml_dict, LOCAL_DIRECTORY+'yml_files/experiment_information_tmp.yml')
+    write_yml(yml_dict, LOCAL_DIRECTORY+'yml_files/biological_replicate_information_tmp.yml')
 
-def createPerturbationYml(study_id, experiment_id, num_perturbations):
+def createPerturbationYml(study_id, biological_id, num_perturbations):
     """
     Create the perturbation yml file for the user to fill in
 
-    :param study_id, experiment_id, num_perturbations: int
+    :param study_id, biological_id, num_perturbations: int
     """
     yml_dict = {}
     yml_dict['STUDY_ID'] = study_id
-    yml_dict['EXPERIMENT_ID'] = experiment_id
+    yml_dict['BIOLOGICAL_ID'] = biological_id
     yml_dict = addPerturbationYml(yml_dict, num_perturbations)
 
     write_yml(yml_dict, LOCAL_DIRECTORY+'yml_files/perturbation_information_tmp.yml')
 
-def createReplicatesYml(study_id, experiment_id, perturbation_id):
+def createReplicatesYml(study_id, biological_id, perturbation_id):
     """
     Create the replicates yml file for the user to fill in
 
-    :param study_id, experiment_id, perturbation_id: int
+    :param study_id, biological_id, perturbation_id: int
     """
     yml_dict = {}
     yml_dict['STUDY_ID'] = study_id
-    yml_dict['EXPERIMENT_ID'] = experiment_id
+    yml_dict['BIOLOGICAL_ID'] = biological_id
     yml_dict['PERTURBATION_ID'] = perturbation_id
     yml_dict['FILES'] = None
 
@@ -98,12 +98,12 @@ def addStudyYml(final_dict):
     
     return final_dict
 
-def addExperimentYml(final_dict, num_experiments):
+def addBiologicalReplicateYml(final_dict, num_biological_replicates):
     '''
-    Add experiment dictionary to final_dict
+    Add biological replicate dictionary to final_dict
 
     :param and return final_dict
-    :param num_experiments: int. It will add as much dicts as num_experiments
+    :param num_biological_replicates: int. It will add as much dicts as num_biological_replicates
     '''
     reactor_dict = {
         'NAME': {'value': None, 'description': 'Name of the reactor'}, 
@@ -113,28 +113,28 @@ def addExperimentYml(final_dict, num_experiments):
         'MODE': {'value': None, 'description': 'chemostat/batch/fed-batch'},
         'DESCRIPTION': {'value': None, 'description': 'Description of the reactor'}
         }
-    exp_dict = {
-        # 'EXPERIMENT_NUMBER': 0,
-        'NAME': {'value': None, 'description': 'Name of the experiment'},
+    biol_rep_dict = {
+        # 'BIOLOGICAL_REPLICATE_NUMBER': 0,
+        'NAME': {'value': None, 'description': 'Name of the biological replicate'},
         'REACTOR': reactor_dict,
         'PLATE': {'ID': {'value': None, 'description': 'Number of plate'}, 'POSITION': {'value': None, 'description': 'Location of all the biological replicates with this parameters, i.e., 1A, 1B, 2C (column in numbers and row in letters)'}},
         'MEDIA': {'NAME': {'value': None, 'description': 'Name of the media'}, 'MEDIA_PATH': {'value': None, 'description': 'File path containing the media description'}},
         'BACTERIA': [{'GENUS': None, 'SPECIES': None, 'STRAIN': None},{'GENUS': None, 'SPECIES': None, 'STRAIN': None}],
-        'BLANK': {'value': None, 'description': 'Boolean (numerical). 1 if the experiment is blank. 0 otherwise.'},
+        'BLANK': {'value': None, 'description': 'Boolean (numerical). 1 if the biological replicate is blank. 0 otherwise.'},
         'INOCULUM_CONCENTRATION': {'value': None, 'description': 'Indicated in cells per mL'},
         'INOCULUM_VOLUME': {'value': None, 'description': 'Indicate in mL'},
         'INITIAL_PH': None,
         'INITIAL_TEMPERATURE': {'value': None, 'description': 'Indicated in Celsius'},
         'CARBON_SOURCE': {'value': None, 'description': 'Boolean (numerical). 1 if the carbon source present. 0 otherwise.'},
         'ANTIBIOTIC': {'value': None, 'description': 'Boolean (numerical). 1 if antibiotic present. 0 otherwise.'},
-        'DESCRIPTION': {'value': None, 'description': 'Description of the experiment'},
-        'FILES': {'value': None, 'description': 'Directory with the files corresponding to this experiment.'}
+        'DESCRIPTION': {'value': None, 'description': 'Description of the biological replicate'},
+        'FILES': {'value': None, 'description': 'Directory with the files corresponding to this biological replicate.'}
         }
 
-    if num_experiments > 0: final_dict['EXPERIMENT'] = []
-    for i in range(num_experiments):
-        # exp_dict['EXPERIMENT_NUMBER'] = i+1
-        final_dict['EXPERIMENT'].append(exp_dict)
+    if num_biological_replicates > 0: final_dict['BIOLOGICAL_REPLICATE'] = []
+    for i in range(num_biological_replicates):
+        # biol_rep_dict['BIOLOGICAL_REPLICATE_NUMBER'] = i+1
+        final_dict['BIOLOGICAL_REPLICATE'].append(biol_rep_dict)
     
     return final_dict
 
@@ -161,9 +161,9 @@ def addPerturbationYml(final_dict, num_perturbations):
     
     return final_dict
 
-def getExperimentInfo(file):
+def getBiologicalReplicateInfo(file):
     """
-    Get info from yml experiemnt file
+    Get info from yml biological replicate file
     
     :param file
     :return dictionary
@@ -171,19 +171,19 @@ def getExperimentInfo(file):
     with open(file, 'r') as f:
         info = yaml.safe_load(f)
 
-        experiment = {
-            'experimentName': info['experiment']['name'],
-            'experimentDate': info['experiment']['date'],
-            'experimentAuthor': info['experiment']['author'],
-            'experimentDescription': info['experiment']['description']
+        biological_replicate = {
+            'biologicalReplicateName': info['biological_replicate']['name'],
+            'biologicalReplicateDate': info['biological_replicate']['date'],
+            'biologicalReplicateAuthor': info['biological_replicate']['author'],
+            'biologicalReplicateDescription': info['biological_replicate']['description']
         }
         
-        experiment_filtered = {k: v for k, v in experiment.items() if v is not None}
-        return experiment_filtered
+        biological_replicate_filtered = {k: v for k, v in biological_replicate.items() if v is not None}
+        return biological_replicate_filtered
     
 def getCultivationInfo(file):
     """
-    Get info from yml experiemnt file
+    Get info from yml biological replicate file
     
     :param file
     :return dictionary

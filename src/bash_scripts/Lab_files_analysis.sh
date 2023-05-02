@@ -1,6 +1,6 @@
 PROJECT_PATH=$1
 FILES_PATH=$2
-EXPERIMENT_NAME=$3
+BIOLOGICAL_REPLICATE_NAME=$3
 PERTURBATION_NAME=$4
 
 # Main directory of the project
@@ -28,7 +28,7 @@ done < lab_files_names.txt
 
 cat lab_files_headers.txt | tr " " "\n" | sort | uniq > lab_headers.txt
 
-## 3) GET EXPERIMENT INFORMATION TO CREATE THE DIRECTORIES
+## 3) GET BIOLOGICAL_REPLICATE INFORMATION TO CREATE THE DIRECTORIES
 ## ==========================================================================================================================================================================
 rm -f experiments_info.txt
 echo 'file_name,experiment_name,replicate_number' | column -t -s "," > experiments_info.txt
@@ -56,7 +56,7 @@ while read -r line; do
 
     cd $PROJECT_PATH
 
-    experiment=$EXPERIMENT_NAME
+    experiment=$BIOLOGICAL_REPLICATE_NAME
     replicate=$(echo $line | awk '{print $3}')
     
     file=$(echo $line | awk '{print $1}')
