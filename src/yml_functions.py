@@ -127,8 +127,8 @@ def addBiologicalReplicateYml(final_dict, num_biological_replicates):
         'CARBON_SOURCE': {'value': None, 'description': 'Boolean (numerical). 1 if the carbon source present. 0 otherwise.'},
         'ANTIBIOTIC': {'value': None, 'description': 'Boolean (numerical). 1 if antibiotic present. 0 otherwise.'},
         'DESCRIPTION': {'value': None, 'description': 'Description of the biological replicate'},
-        'PLATE': {'ID': {'value': None, 'description': 'Number of plate'}, 'POSITION': {'value': None, 'description': 'Location of all the biological replicates with this parameters, i.e., 1A, 1B, 2C (column in numbers and row in letters)'}},
-        'FILES': {'value': None, 'description': 'Comma separated list of directory with the files corresponding to this biological replicate. CAREFUL: the order must be the same as in the plate positions'}
+        'PLATE': {'ID': {'value': None, 'description': 'Number of plate'}, 'POSITION': {'value': None, 'description': 'List of locations in the plate, i.e., 1A, 1B, 2C'}},
+        'FILES': {'value': None, 'description': 'Comma separated list of directories.', 'description_2': 'CAREFUL: the order must be the same as in the plate positions'}
         }
 
     if num_biological_replicates > 0: final_dict['BIOLOGICAL_REPLICATE'] = []
@@ -151,8 +151,8 @@ def addPerturbationYml(final_dict, num_perturbations):
         'STARTING_TIME': {'value': None, 'description': 'Time in minutes'},
         'ENDING_TIME': {'value': None, 'description': 'Time in minutes'},
         'DESCRIPTION': {'value': None, 'description': 'Description of the perturbation'},
-        'PLATE': {'ID': {'value': None, 'description': 'Number of plate'}, 'POSITION': {'value': None, 'description': 'Location of all the biological replicates with this parameters, i.e., 1A, 1B, 2C (column in numbers and row in letters)'}},
-        'FILES': {'value': None, 'description': 'Comma separated list of directory with the files corresponding to this biological replicate. CAREFUL: the order must be the same as in the plate positions'}
+        'PLATE': {'ID': {'value': None, 'description': 'Number of plate'}, 'POSITION': {'value': None, 'description': 'List of locations in the plate, i.e., 1A, 1B, 2C'}},
+        'FILES': {'value': None, 'description': 'Comma separated list of directories.', 'description_2': 'CAREFUL: the order must be the same as in the plate positions'}
         }
     
     if num_perturbations > 0: final_dict['PERTURBATION'] = []
