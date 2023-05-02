@@ -161,34 +161,39 @@ def populate_db(args):
         perturbations = info['PERTURBATION']
         for perturbation in perturbations:
 
-            perturbation_id = setPerturbationId(biological_id)
-            pert = {
-                'perturbationId': perturbation_id,
-                'biologicalReplicateId': biological_id,
-                'plateId': perturbation['PLATE']['ID']['value'],
-                'plateColumn': perturbation['PLATE']['COLUMN']['value'],
-                'plateRow': perturbation['PLATE']['ROW']['value'],
-                'property': perturbation['PROPERTY']['value'],
-                'newValue': perturbation['NEW_VALUE']['value'],
-                'startTime': perturbation['STARTING_TIME']['value'],
-                'endTime': perturbation['ENDING_TIME']['value'],
-                'perturbationDescription': perturbation['DESCRIPTION']['value']
-            }
-            perturbation_filtered = {k: v for k, v in pert.items() if v is not None}
-            db.addRecord('Perturbation', perturbation_filtered)
-            print('\nPERTURBATION ID: ', perturbation_id)
+            pert_positions = transformStringIntoList(perturbation['PLATE']['POSITION']['value'], ',')
+            pert_dir = transformStringIntoList(perturbation['FILES']['value'], ',')
 
-            ### Files analysis
-            if perturbation['FILES']['value']:
-                files_dir = os.path.abspath(perturbation['FILES']['value']) + '/'
+            for i, pert_position in enumerate(pert_positions):
                 
-                biol_rep_analysis_file = PROJECT_DIRECTORY + BIOLOGICAL_REPLICATE_ANALYSIS_FILE
-                biol_rep_args = [PROJECT_DIRECTORY, files_dir, biological_id, perturbation_id]
-                biol_rep_files = getFiles(biol_rep_analysis_file, biol_rep_args, BIOLOGICAL_REPLICATES_LIST) #this will generate the new HEADERS_FILE
+                perturbation_id = setPerturbationId(biological_id)
+                pert = {
+                    'perturbationId': perturbation_id,
+                    'biologicalReplicateId': biological_id,
+                    'plateId': perturbation['PLATE']['ID']['value'],
+                    'platePosition': pert_position,
+                    'property': perturbation['PROPERTY']['value'],
+                    'newValue': perturbation['NEW_VALUE']['value'],
+                    'startTime': perturbation['STARTING_TIME']['value'],
+                    'endTime': perturbation['ENDING_TIME']['value'],
+                    'perturbationDescription': perturbation['DESCRIPTION']['value']
+                }
+                perturbation_filtered = {k: v for k, v in pert.items() if v is not None}
+                db.addRecord('Perturbation', perturbation_filtered)
+                print('\nPERTURBATION ID: ', perturbation_id)
 
-                headers_dict = clusterHeaders(PROJECT_DIRECTORY + HEADERS_FILE)
+                ### Files analysis
+                print(pert_dir[i])
+                if pert_dir[i]:
+                    files_dir = os.path.abspath(pert_dir[i]) + '/'
+                    
+                    biol_rep_analysis_file = PROJECT_DIRECTORY + BIOLOGICAL_REPLICATE_ANALYSIS_FILE
+                    biol_rep_args = [PROJECT_DIRECTORY, files_dir, biological_id, perturbation_id]
+                    biol_rep_files = getFiles(biol_rep_analysis_file, biol_rep_args, BIOLOGICAL_REPLICATES_LIST) #this will generate the new HEADERS_FILE
 
-                addReplicates(headers_dict, biol_rep_files, biological_id=biological_id, perturbation_id=perturbation_id)
+                    headers_dict = clusterHeaders(PROJECT_DIRECTORY + HEADERS_FILE)
+
+                    addReplicates(headers_dict, biol_rep_files, biological_id=biological_id, perturbation_id=perturbation_id)
                         
     elif 'PERTURBATION_ID' in info:
         perturbation_id = info['PERTURBATION_ID']
