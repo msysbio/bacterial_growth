@@ -85,7 +85,6 @@ def choosePerturbation(biological_id):
     
     perturbations_id = []
     for perturbation in perturbations:
-        print(perturbation)
         difference_result = [item for item in [*range(0, len(perturbation))] if item not in [8]]
         perturbation_tuple = tuple(perturbation[i] for i in difference_result)
         perturbations_table.add_row(perturbation_tuple)
@@ -102,6 +101,7 @@ def choosePerturbation(biological_id):
     return perturbation_id
 
 def chooseReplicate(biological_id, perturbation_id):
+    print(biological_id, perturbation_id)
     '''
     Print the existing replicates with biological_id and perturbation_id and waits a user input
     

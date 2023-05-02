@@ -22,7 +22,7 @@ def plot(option):
         study_id = chooseStudy()
         biological_id = chooseBiologicalReplicate(study_id)
         perturbation_id = choosePerturbation(biological_id)
-        if perturbation_id == '0':
+        if perturbation_id == 0:
             technical_id = chooseReplicate(biological_id=biological_id, perturbation_id=None)
         else:
             technical_id = chooseReplicate(biological_id=biological_id, perturbation_id=perturbation_id)
@@ -37,7 +37,7 @@ def plot(option):
         biological_id = chooseBiologicalReplicate(study_id)
         perturbation_id = choosePerturbation(biological_id)
 
-        if perturbation_id == '0':
+        if perturbation_id == 0:
             args = {'biologicalReplicateId': biological_id, 'perturbationId': 'null'}
         else:
             args = {'perturbationId': perturbation_id}
