@@ -233,7 +233,7 @@ def writeMetadataTxt(dict, type):
     '''
     if type == 'biological_replicate':
         lines = '\tPlate id: '+str(dict['plateId'])+'\n'
-        lines = lines + '\tPlate location: '+str(dict['plateColumn'])+dict['plateRow']+'\n'
+        lines = lines + '\tPlate location: '+str(dict['platePosition'])+'\n'
         lines = lines + '\tInitial pH: '+str(dict['initialPh'])+'\n'
         lines = lines + '\tInitial temperature: '+str(dict['initialTemperature'])+'\n'
     elif type == 'perturbation':
