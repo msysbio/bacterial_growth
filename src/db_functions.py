@@ -25,14 +25,14 @@ def execute(phrase):
         warnings = cursor.fetchwarnings()
         if warnings: 
             for i in range(len(warnings)):
-                print("\t ** Warning - "+warnings[i][2])
+                print("\t\t ** Warning - "+warnings[i][2])
         cursor.close()
         cnx.commit()
         cnx.close()
         return res
     except mysql.connector.Error as err:
-        print("Something went wrong: {}".format(err))
-        print(phrase)
+        print("\nSomething went wrong: {}".format(err),'\n')
+        exit()
 
 def addRecord(table, args):
     """ 
