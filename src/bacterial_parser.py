@@ -1,5 +1,5 @@
 import argparse
-from utils import (isDir,isFile)
+from utils import isFile
 
 def bacterial_parser():
     

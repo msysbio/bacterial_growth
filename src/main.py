@@ -1,9 +1,9 @@
 from bacterial_parser import bacterial_parser
 
-from create_populate_file import create_yml_file
-from populate_db import populate_db
-from plot import plot
-from create_results_file import getInformationFile
+from import_into_database.create_populate_file import create_yml_file
+from import_into_database.populate_db import populate_db
+from export_from_database.plot import plot
+from export_from_database.create_results_file import getInformationFile
 
 from user_inputs import choosePlotOption
 

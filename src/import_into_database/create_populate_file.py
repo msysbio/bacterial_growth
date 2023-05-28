@@ -1,5 +1,5 @@
-from yml_functions import createStudyYml, createBiologicalReplicateYml, createPerturbationYml, createReplicatesYml
-from bash_functions import runBash
+from import_into_database.yml_functions import createStudyYml, createBiologicalReplicateYml, createPerturbationYml, createReplicatesYml
+from import_into_database.bash_functions import runBash
 from user_inputs import *
 from constants import *
 

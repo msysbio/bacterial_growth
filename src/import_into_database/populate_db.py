@@ -4,8 +4,8 @@ import pandas as pd
 from constants import *
 
 from utils import findOccurrences, transformStringIntoList
-from yml_functions import read_yml
-from bash_functions import clusterHeaders, getFiles
+from import_into_database.yml_functions import read_yml
+from import_into_database.bash_functions import clusterHeaders, getFiles
 import db_functions as db
 
 def populate_db(args):
@@ -91,8 +91,6 @@ def populate_db(args):
             for i, biol_rep_position in enumerate(biol_rep_positions):
                 
                 biological_id = setBiologicalReplicateId(study_id)
-                print(i, biol_rep_position, biological_id)
-                print('='*100)
             
                 biol_rep = {
                     'studyId': study_id,
@@ -114,9 +112,8 @@ def populate_db(args):
                 }
             
                 biological_replicate_filtered = {k: v for k, v in biol_rep.items() if v is not None}
-                print(biological_replicate_filtered)
                 db.addRecord('BiologicalReplicate', biological_replicate_filtered)
-                print('BIOLOGICAL_REPLICATE ID: ', biological_id)
+                print('\nBIOLOGICAL_REPLICATE ID: ', biological_id)
 
                 # ------------------------------------------------------------------------------------
                 # BACTERIA ==> if BLANK=False
