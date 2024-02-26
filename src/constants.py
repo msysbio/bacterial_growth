@@ -17,8 +17,8 @@ global rnaseq_regex
 global abundance_options
 
 # This directory MUST BE the one where the core is in the server
-PROJECT_DIRECTORY = '/Users/julia/bacterialGrowth_thesis/'
-LOCAL_DIRECTORY = '/Users/julia/Desktop/local_thesis_files/'
+PROJECT_DIRECTORY = 'C:/Users/sofia/Desktop/thesis/bacterial_growth/'
+LOCAL_DIRECTORY = 'C:/Users/sofia/Desktop/local_thesis_files/'
 # Bash files needed to run the code
 BIOLOGICAL_REPLICATE_ANALYSIS_FILE = 'src/bash_scripts/lab_files_analysis.sh'
 MEDIA_ANALYSIS_FILE = 'src/bash_scripts/media_file_analysis.sh'

@@ -1,8 +1,12 @@
 import os
 import mysql.connector
+import warnings
 
-user_name = os.environ.get('DB_USER')
-password = os.environ.get('DB_PASSWORD')
+#user_name = os.environ.get('DB_USER')
+user_name = 'root'
+#password = os.environ.get('DB_PASSWORD')
+password = 'Amartemucho123-'
+
 
 DB_NAME = 'BacterialGrowth'
 
@@ -14,18 +18,18 @@ def execute(phrase):
     :return: list of str received from the database
     """
     try:
-        cnx = mysql.connector.connect(user=user_name, password=password,host='localhost',database=DB_NAME)
-        cnx.get_warnings = True
+        cnx = mysql.connector.connect(user=user_name, password=password, host='localhost', database=DB_NAME)
         cursor = cnx.cursor()
         cursor.execute(phrase)
         res = []
         for row in cursor:
             res.append(row)
-
+        # Fetch and handle warnings
         warnings = cursor.fetchwarnings()
-        if warnings: 
-            for i in range(len(warnings)):
-                print("\t\t ** Warning - "+warnings[i][2])
+        if warnings:
+            for warning in warnings:
+                print("\t\t ** Warning - ", warning)
+        
         cursor.close()
         cnx.commit()
         cnx.close()
@@ -45,7 +49,9 @@ def addRecord(table, args):
     # Insert into table
     fields, values = getInsertFieldsValues(args)
     phrase = "INSERT IGNORE INTO " +table+" "+fields+" VALUES "+values
+    print(phrase)
     res = execute(phrase)
+    print(res)
     
     # Get the name of the primary key field
     phrase = "SHOW KEYS FROM "+table+" WHERE Key_name = 'PRIMARY'"
