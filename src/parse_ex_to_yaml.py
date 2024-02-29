@@ -4,28 +4,28 @@ from constants import LOCAL_DIRECTORY
 
 template_filename = LOCAL_DIRECTORY + 'submission_excel_template.xlsx'
 # Read the completed Excel file
-df = pd.read_excel(template_filename)
-
+df_excel_1 = pd.read_excel(template_filename, sheet_name='STUDY_DATA')
+df_excel_2 = pd.read_excel(template_filename, sheet_name='COMUNITY_MEMBERS')
+df_merged_12 = pd.concat([df_excel_1, df_excel_2], ignore_index=True, sort=False)
 # Initialize dictionaries for each prefix
 data_dicts = {}
-headers = df.columns.tolist()
 
-grouped_prefixs = ['Reactor','Media','Bacteria','Blank','Inoculum','Initial','Plate','Files','Antibiotic','Carbon']
+grouped_prefixs = ['Reactor','Media','Bacteria','Blank','Inoculum','Initial','Plate','Files','Antibiotic','Carbon','Comunity']
 # Iterate over the columns of the DataFrame
 
-for column in df.columns:
+for column in df_merged_12.columns:
     prefix = column.split("_")[0]  # Get the prefix of the column
 
     if prefix in grouped_prefixs:
         if prefix not in data_dicts['BiologicalReplicate']:
             data_dicts['BiologicalReplicate'][prefix] = {}
-        data_dicts['BiologicalReplicate'][prefix][column] = df[column].tolist()
+        data_dicts['BiologicalReplicate'][prefix][column] = df_merged_12[column].tolist()
 
     # If the prefix dictionary doesn't exist, create it
     if prefix not in grouped_prefixs:
         if prefix not in data_dicts:
             data_dicts[prefix] = {}
-        data_dicts[prefix][column] = df[column].tolist()
+        data_dicts[prefix][column] = df_merged_12[column].tolist()
 
 
 
