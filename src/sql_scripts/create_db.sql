@@ -59,9 +59,23 @@ CREATE TABLE IF NOT EXISTS Media (
     UNIQUE (mediaName)
 );
 
+CREATE TABLE IF NOT EXISTS Metabolites (
+    cheb_id VARCHAR(255), 
+    metabo_name VARCHAR(255) DEFAULT NULL,
+    PRIMARY KEY (cheb_id)
+);
+
+CREATE TABLE IF NOT EXISTS MetaboliteSynonym (
+    syn_id INT AUTO_INCREMENT PRIMARY KEY, 
+    synonym_value VARCHAR(255) DEFAULT NULL,
+    cheb_id VARCHAR(255),
+    FOREIGN KEY (cheb_id) REFERENCES Metabolites(cheb_id)
+);
+
 CREATE TABLE IF NOT EXISTS BiologicalReplicate (
 	biologicalReplicateId INT AUTO_INCREMENT,
     biologicalReplicateName VARCHAR(20),
+    cheb_id VARCHAR(255), 
     studyId INT NOT NULL,
     precultivationId INT,
     reactorId INT NOT NULL,
@@ -80,7 +94,8 @@ CREATE TABLE IF NOT EXISTS BiologicalReplicate (
     FOREIGN KEY (studyId) REFERENCES Study (studyId) ON UPDATE CASCADE ON DELETE CASCADE,
     FOREIGN KEY (precultivationId) REFERENCES Precultivation (precultivationId) ON UPDATE CASCADE ON DELETE CASCADE,
     FOREIGN KEY (reactorId) REFERENCES Reactor (reactorId) ON UPDATE CASCADE ON DELETE CASCADE,
-    FOREIGN KEY (mediaId) REFERENCES Media (mediaId) ON UPDATE CASCADE ON DELETE CASCADE
+    FOREIGN KEY (mediaId) REFERENCES Media (mediaId) ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY (cheb_id) REFERENCES Metabolites (cheb_id) ON UPDATE CASCADE ON DELETE CASCADE
     ##UNIQUE (biologicalReplicateName, studyId, reactorId, plateId, plateColumn, plateRow, mediaId, blank, inoculumConcentration, inoculumVolume, initialPh, initialTemperature, carbonSource, antibiotic)
 );
 
@@ -117,5 +132,6 @@ CREATE TABLE IF NOT EXISTS BacteriaCommunity (
     FOREIGN KEY (bacteriaId) REFERENCES Bacteria (bacteriaId) ON UPDATE CASCADE ON DELETE CASCADE,
     FOREIGN KEY (biologicalReplicateId) REFERENCES BiologicalReplicate (biologicalReplicateId) ON UPDATE CASCADE ON DELETE CASCADE
 );
+
 
 
