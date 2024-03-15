@@ -34,7 +34,8 @@ data_readme = {
     'Reactor_Name': "Name of the reactor used for the biological replicate. Adding spaces is allowed.",
     'Reactor_Description': "Description of the reactor used for the biological replicate. Adding spaces is allowed.",
     'Reactor_Volume':"Fill in with the Volume used for the reactor. Volume in mL. Numerical values ONLY.",
-    'Reactor_Atmosphere': "Atmosphere in XX. Numerical values ONLY.",
+    'Reactor_Pressure': "Pressure of the reactor in atm. Numerical values ONLY.",
+    'Reactor_StirringMode':'Stirring mode used. Complete with one of the options: linear, orbital, vibrational. OPTIONAL.',
     'Reactor_StirringSpeed': "Stirring speed used in rpm. Numerical values ONLY.",
     'Reactor_Mode': 'Complete with the following options: chemostat/batch/fed-batch. Do NOT use any other options. Do NOT add spaces.',
     'Reactor_ContainersNumber' : 'Complete with the number of containers. Numerical values ONLY.',
@@ -45,6 +46,10 @@ data_readme = {
     ' For example, if you used two for a given biological replicate, Strain 1 will be A and Strain 2 will be B. Fill in as: A,B'
     ' IF in another biological replicate you use only Strain 1, fill in the second row as: A. Do NOT add spaces.',
     'Blank':'Fill in with 1 if the biological replicate is blank. 0 otherwise. DO NOT leave in blank.',
+    'Inoculum_Concentration': 'Indicated in cells per mL. If in a biological replicate (row) was used different inoculum concentrations per strain,'
+    ' fill in both. i.e: 0.5, 0.3.',
+    'Inoculum_Volume': 'Indicated in mL. If in a biological replicate (row) was used different inoculum volumes per strain,'
+    ' fill in both. i.e: 1, 1.5',
     'Initial_pH' : 'Complete with the initial pH used. Numerical values ONLY.',
     'Initial_Temperature': 'Initial temperature in Celsius. Numerical values ONLY.',
     'Carbon_Sourced': 'Fill in with 1 if carbon sourced. 0 otherwise. DO NOT leave in blank.',
@@ -101,7 +106,8 @@ headers_1 = {
     'Reactor_Name': 'Name of the reactor.',
     'Reactor_Description': 'Description of the reactor.',
     'Reactor_Volume':'Volume in mL.',
-    'Reactor_Atmosphere': 'Atmosphere in XX.',
+    'Reactor_Pressure': 'Preassure in atm.',
+    'Reactor_StirringMode': 'Stirring mode used. Complete with one of the options: linear, orbital, vibrational.',
     'Reactor_StirringSpeed': 'Stirring speed used in rpm.',
     'Reactor_Mode': 'Complete with the following options: chemostat/batch/fed-batch.',
     'Reactor_ContainersNumber' : 'Complete with the number of containers.',
