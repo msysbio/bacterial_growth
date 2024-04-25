@@ -1,6 +1,10 @@
 # Database files
 src/*.sql
 
+src/names.dmp
+src/taxonomy_names.csv
+src/filtered_names.json
+
 # Server files
 Data/
 IntermediateFiles/

@@ -57,12 +57,18 @@ def addRecord(table, args):
     phrase = "SHOW KEYS FROM "+table+" WHERE Key_name = 'PRIMARY'"
     res = execute(phrase)
     pk = res[0][4]
+    print(pk)
     
     # Get the value of the primary key (this will return the value both if it was inserted or ignored)
     where_clause = getWhereClause(args)
+    print(where_clause)
     phrase = "SELECT "+pk+" FROM "+table+" "+where_clause
     res = execute(phrase)
-    last_id = res[0][0]
+    print(res)
+    if not res:
+        last_id = 'WARNING'
+    else:
+        last_id = res[0][0]
     
     return last_id
 
@@ -96,6 +102,13 @@ def getAllRecords(table, args):
     res = execute(phrase)
     return res
 
+def getChebiId(metabolite):
+
+    phrase = f"SELECT cheb_id FROM Metabolites WHERE metabo_name = '{metabolite}' ;"
+    res = execute(phrase)
+    print(res)
+    return res[0][0]
+
 def getFiles(fields, args):
     where_clause = getWhereClause(args)
     fields_clause = getSelectFields(fields)
@@ -110,6 +123,16 @@ def getRecords(table, fields, args):
     
     phrase = "SELECT "+fields_clause+" FROM "+table+" "+where_clause
     res = execute(phrase)
+    return res
+
+def getMetaboliteID(metabolite):
+    phrase = f"SELECT Metabolites.cheb_id, Metabolites.metabo_name FROM Metabolites WHERE Metabolites.metabo_name = '{metabolite}';"
+    res = execute(phrase)
+    if not res:
+        phrase = "SELECT Metabolites.cheb_id, Metabolites.metabo_name FROM Metabolites JOIN MetaboliteSynonym ON Metabolites.cheb_id = MetaboliteSynonym.cheb_id "
+        where = f"WHERE MetaboliteSynonym.synonym_value = '{metabolite}';"
+        query= phrase +where
+        res = execute(query)
     return res
 
 # DATABASE SUPPLEMENTARY FUNCTIONS

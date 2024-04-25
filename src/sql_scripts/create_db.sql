@@ -4,59 +4,61 @@ USE BacterialGrowth;
 
 CREATE TABLE IF NOT EXISTS Study (
 	studyId INT AUTO_INCREMENT,
-    studyName VARCHAR(20) DEFAULT NULL, 
+    studyName VARCHAR(100) DEFAULT NULL, 
     studyDescription TEXT DEFAULT NULL,
+    studyURL VARCHAR(100) DEFAULT NULL,
+    studyUniqueID VARCHAR(100) DEFAULT NULL,
     PRIMARY KEY (studyId),
     UNIQUE (studyName)
 );
 
-CREATE TABLE IF NOT EXISTS Precultivation (
-	precultivationId INT AUTO_INCREMENT,
-    precultivationDescription TEXT,
-    PRIMARY KEY (precultivationId)
+CREATE TABLE IF NOT EXISTS Events (
+	EventUniqueId INT AUTO_INCREMENT,
+    EventId VARCHAR(20), 
+    studyId INT NOT NULL,
+    blank BOOLEAN DEFAULT FALSE,
+    EventDescription TEXT,
+    PRIMARY KEY (EventUniqueId),
+    FOREIGN KEY (studyId) REFERENCES Study (studyId) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS Reactor (
-	reactorId INT AUTO_INCREMENT,
-    reactorName VARCHAR(50) NOT NULL,
+CREATE TABLE IF NOT EXISTS Compartments (
+    compartmentUniqueId INT AUTO_INCREMENT PRIMARY KEY,
+    compartmentId VARCHAR(50) NOT NULL,
     volume FLOAT(7,2) DEFAULT 0,
-    atmosphere FLOAT(7,2) DEFAULT 0,
+    pressure FLOAT(7,2) DEFAULT 0,
     stirring_speed FLOAT(7,2) DEFAULT 0,
-    stirring_mode VARCHAR(50) DEFAULT '', #linear motion, orbital, etc
-    reactorMode VARCHAR(50) DEFAULT '', #chemostat, batch, fed-batch,
-    reactorDescription TEXT,
-    PRIMARY KEY (reactorId),
-    UNIQUE (reactorName, volume, atmosphere, stirring_speed, reactorMode)
+    stirring_mode VARCHAR(50) DEFAULT '',
+    O2 FLOAT(7,2) DEFAULT 0,
+    CO2 FLOAT(7,2) DEFAULT 0,
+    H2  FLOAT(7,2) DEFAULT 0,
+    N2 FLOAT(7,2) DEFAULT 0,
+    inoculumConcentration FLOAT(7,2) DEFAULT 0,
+	inoculumVolume FLOAT(7,2) DEFAULT 0,
+    initialPh FLOAT(7,2) DEFAULT NULL,
+    initialTemperature FLOAT(7,2) DEFAULT NULL,
+    carbonSource BOOLEAN DEFAULT FALSE,
+    mediaName VARCHAR(20) NOT NULL,
+    mediaLink VARCHAR(100) NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS Bacteria (
-	bacteriaId INT AUTO_INCREMENT,
-    bacteriaGenus VARCHAR(100) DEFAULT NULL,
-	bacteriaSpecies VARCHAR(100),
-	bacteriaStrain VARCHAR(100),
-    PRIMARY KEY (bacteriaId),
-    UNIQUE (bacteriaSpecies, bacteriaStrain)
+CREATE TABLE Strains (
+    strainId INT AUTO_INCREMENT PRIMARY KEY,
+    genus VARCHAR(50),
+    species VARCHAR(50),
+    NCBISpeciesId INT,
+    strain VARCHAR(50),
+    NCBIStrainId INT,
+    UNIQUE(genus,species,NCBISpeciesId,strain,NCBIStrainId)
 );
 
-CREATE TABLE IF NOT EXISTS Taxon (
-	taxonId INT AUTO_INCREMENT,
-    phylum VARCHAR(100) DEFAULT NULL,
-    class VARCHAR(100) DEFAULT NULL,
-    order_txn VARCHAR(100) DEFAULT NULL,
-    family VARCHAR(100) DEFAULT NULL,
-    genus VARCHAR(100) DEFAULT NULL,
-	species VARCHAR(100),
-	strain VARCHAR(100),
-    PRIMARY KEY (taxonId),
-    UNIQUE (species, strain)
-);
+CREATE TABLE IF NOT EXISTS Comunity (
+    comunityUniqueId INT AUTO_INCREMENT PRIMARY KEY,
+    comunityId VARCHAR(50) NOT NULL,
+    strainId INT,
+    UNIQUE(comunityId,strainId),
+    FOREIGN KEY (strainId) REFERENCES Strains (strainId)
 
-CREATE TABLE IF NOT EXISTS Media (
-    mediaId INT AUTO_INCREMENT,
-    mediaName VARCHAR(20),
-    mediaFile VARCHAR(100),
-    PRIMARY KEY (mediaId),
-    UNIQUE (mediaName)
 );
 
 CREATE TABLE IF NOT EXISTS Metabolites (
@@ -65,6 +67,13 @@ CREATE TABLE IF NOT EXISTS Metabolites (
     PRIMARY KEY (cheb_id)
 );
 
+CREATE TABLE IF NOT EXISTS Taxa (
+    tax_id VARCHAR(255), 
+    tax_names VARCHAR(255),
+    PRIMARY KEY (tax_id)
+);
+
+/*
 CREATE TABLE IF NOT EXISTS MetaboliteSynonym (
     syn_id INT AUTO_INCREMENT PRIMARY KEY, 
     synonym_value VARCHAR(255) DEFAULT NULL,
@@ -72,66 +81,94 @@ CREATE TABLE IF NOT EXISTS MetaboliteSynonym (
     FOREIGN KEY (cheb_id) REFERENCES Metabolites(cheb_id)
 );
 
-CREATE TABLE IF NOT EXISTS BiologicalReplicate (
-	biologicalReplicateId INT AUTO_INCREMENT,
-    biologicalReplicateName VARCHAR(20),
-    cheb_id VARCHAR(255), 
-    studyId INT NOT NULL,
-    precultivationId INT,
-    reactorId INT NOT NULL,
-    plateId INT DEFAULT NULL,
-    platePosition VARCHAR(4) DEFAULT NULL,
-    mediaId INT NOT NULL,
-    blank BOOLEAN DEFAULT FALSE,
-    inoculumConcentration FLOAT(7,2) DEFAULT 0,
-	inoculumVolume FLOAT(7,2) DEFAULT 0,
-    initialPh FLOAT(7,2) DEFAULT NULL,
-    initialTemperature FLOAT(7,2) DEFAULT NULL,
-    carbonSource VARCHAR(100) DEFAULT NULL,
-    antibiotic VARCHAR(100) DEFAULT NULL,
-    biologicalReplicateDescription TEXT,
-    PRIMARY KEY (biologicalReplicateId),
-    FOREIGN KEY (studyId) REFERENCES Study (studyId) ON UPDATE CASCADE ON DELETE CASCADE,
-    FOREIGN KEY (precultivationId) REFERENCES Precultivation (precultivationId) ON UPDATE CASCADE ON DELETE CASCADE,
-    FOREIGN KEY (reactorId) REFERENCES Reactor (reactorId) ON UPDATE CASCADE ON DELETE CASCADE,
-    FOREIGN KEY (mediaId) REFERENCES Media (mediaId) ON UPDATE CASCADE ON DELETE CASCADE,
-    FOREIGN KEY (cheb_id) REFERENCES Metabolites (cheb_id) ON UPDATE CASCADE ON DELETE CASCADE
-    ##UNIQUE (biologicalReplicateName, studyId, reactorId, plateId, plateColumn, plateRow, mediaId, blank, inoculumConcentration, inoculumVolume, initialPh, initialTemperature, carbonSource, antibiotic)
+*/
+
+
+CREATE TABLE CompartmentsPerEvent (
+    EventUniqueId INT,
+    EventId VARCHAR(20) NOT NULL,
+    compartmentUniqueId INT,
+    compartmentId VARCHAR(50) NOT NULL,
+    comunityUniqueId INT,
+    comunityId VARCHAR(50) NOT NULL,
+    PRIMARY KEY (EventUniqueId, compartmentUniqueId),
+    FOREIGN KEY (EventUniqueId) REFERENCES Events(EventUniqueId),
+    FOREIGN KEY (compartmentUniqueId) REFERENCES Compartments(compartmentUniqueId),
+    FOREIGN KEY (comunityUniqueId) REFERENCES Comunity(comunityUniqueId)
 );
+
+
+CREATE TABLE TechniquesPerEvent (
+    EventUniqueId INT,
+    EventId VARCHAR(20) NOT NULL,
+    technique VARCHAR(20),
+    techniqueUnit VARCHAR(20),
+    PRIMARY KEY (EventUniqueId, technique, techniqueUnit),
+    FOREIGN KEY (EventUniqueId) REFERENCES Events(EventUniqueId)
+);
+
+CREATE TABLE BioReplicatesPerEvent (
+    bioreplicateUniqueId INT AUTO_INCREMENT PRIMARY KEY,
+    bioreplicateId VARCHAR(20),
+    EventUniqueId INT,
+    EventId VARCHAR(20) NOT NULL,
+    plateNumber INT DEFAULT NULL,
+    platePosition VARCHAR(4) DEFAULT NULL,
+    OD BOOLEAN DEFAULT FALSE,
+    OD_std BOOLEAN DEFAULT FALSE,
+    FC BOOLEAN DEFAULT FALSE,
+    FC_std BOOLEAN DEFAULT FALSE,
+    Plate_counts BOOLEAN DEFAULT FALSE,
+    Plate_counts_std BOOLEAN DEFAULT FALSE,
+    pH BOOLEAN DEFAULT FALSE,
+    FOREIGN KEY (EventUniqueId) REFERENCES Events(EventUniqueId)
+);
+
 
 CREATE TABLE IF NOT EXISTS Perturbation (
-	perturbationId VARCHAR(15),
-    biologicalReplicateId INT NOT NULL,
-    plateId INT DEFAULT NULL,
-    platePosition VARCHAR(4) DEFAULT NULL,
-    property VARCHAR(20),
-    newValue VARCHAR(20),
-    startTime INT,
-    endTime INT DEFAULT NULL,
-    perturbationDescription TEXT,
-    PRIMARY KEY (perturbationId),
-    FOREIGN KEY (biologicalReplicateId) REFERENCES BiologicalReplicate (biologicalReplicateId) ON UPDATE CASCADE ON DELETE CASCADE
+    perturbationUniqueid INT AUTO_INCREMENT,
+    perturbationId VARCHAR(15),
+    bioreplicateUniqueId INT,
+    bioreplicateId VARCHAR(20) NOT NULL,
+    OLDCompartmentId VARCHAR(20),
+    OLDComunityId VARCHAR(20),
+    NEWCompartmentId VARCHAR(20),
+    NEWComunityId VARCHAR(20),
+    perturbationDescription VARCHAR(255),
+    perturbationMinimumValue DECIMAL(10, 2),
+    perturbationMaximumValue DECIMAL(10, 2),
+    perturbationStartTime TIME,
+    perturbationEndTime TIME,
+    perturbationFilesDirectory VARCHAR(255),
+    PRIMARY KEY (perturbationUniqueid),
+    FOREIGN KEY (bioreplicateUniqueId) REFERENCES BioReplicatesPerEvent(bioreplicateUniqueId)
 );
 
-CREATE TABLE IF NOT EXISTS TechnicalReplicate (
-	technicalReplicateId VARCHAR(15),
-    biologicalReplicateId INT,
-    perturbationId VARCHAR(15) DEFAULT NULL,
-    abundanceFile VARCHAR(100) DEFAULT NULL,
-    metabolitesFile VARCHAR(100) DEFAULT NULL,
-    phFile VARCHAR(100) DEFAULT NULL,
-    PRIMARY KEY (technicalReplicateId),
-    FOREIGN KEY (biologicalReplicateId) REFERENCES BiologicalReplicate (biologicalReplicateId) ON UPDATE CASCADE ON DELETE CASCADE,
-    FOREIGN KEY (perturbationId) REFERENCES Perturbation (perturbationId) ON UPDATE CASCADE ON DELETE CASCADE
+
+CREATE TABLE IF NOT EXISTS MetabolitePerEvent (
+    EventUniqueId INT,
+    EventId VARCHAR(20) NOT NULL,
+    bioreplicateUniqueId INT,
+    bioreplicateId VARCHAR(20),
+    metabo_name VARCHAR(255) DEFAULT NULL,
+    cheb_id VARCHAR(255),
+    PRIMARY KEY  (bioreplicateId, cheb_id),
+    FOREIGN KEY (cheb_id) REFERENCES Metabolites(cheb_id),
+    FOREIGN KEY (EventUniqueId) REFERENCES Events(EventUniqueId)
 );
 
-CREATE TABLE IF NOT EXISTS BacteriaCommunity (
-    bacteriaId INT,
-    biologicalReplicateId INT,
-    PRIMARY KEY (bacteriaId, biologicalReplicateId),
-    FOREIGN KEY (bacteriaId) REFERENCES Bacteria (bacteriaId) ON UPDATE CASCADE ON DELETE CASCADE,
-    FOREIGN KEY (biologicalReplicateId) REFERENCES BiologicalReplicate (biologicalReplicateId) ON UPDATE CASCADE ON DELETE CASCADE
+CREATE TABLE IF NOT EXISTS Abundances (
+    EventUniqueId INT,
+    EventId VARCHAR(20) NOT NULL,
+    bioreplicateUniqueId INT,
+    bioreplicateId VARCHAR(20),
+    strainId INT,
+    memberId VARCHAR(255),
+    PRIMARY KEY  (bioreplicateId, memberId),
+    FOREIGN KEY (EventUniqueId) REFERENCES Events(EventUniqueId),
+    FOREIGN KEY (strainId) REFERENCES Strains (strainId)
 );
+
 
 
 
