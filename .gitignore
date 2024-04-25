@@ -4,6 +4,8 @@ src/*.sql
 src/names.dmp
 src/taxonomy_names.csv
 src/filtered_names.json
+.venv/
+__pycache__/
 
 # Server files
 Data/
