@@ -11,7 +11,7 @@ def get_techniques_metabolites(list_growth, list_metabolites, raw_data_template)
             df_excel_abundances = pd.read_excel(raw_data_template, sheet_name='Sequencing_Read_Adundances')
             columns_abundances = df_excel_abundances.columns
             assert 'Time' in columns_abundances, "ERROR, 'Time' missing in Sequencing_Read_Adundances"
-            assert'Replicate_id' in columns_abundances, "ERROR, 'Replicate_id' missing in Sequencing_Read_Adundances"
+            assert'Biological_Replicate_ID' in columns_abundances, "ERROR, 'Replicate_id' missing in Sequencing_Read_Adundances"
             empty_columns_abundances = df_excel_abundances.columns[df_excel_abundances.isnull().all()].tolist()
             assert len(empty_columns_abundances) ==  0, "ERROR: missing columns in Sequencing_Read_Adundances"
 
@@ -44,9 +44,9 @@ def get_measures_growth(raw_data_template):
     measures_per_replicate = {}
     
     # Iterate over groups based on Replicate_id
-    for replicate_id, group_df in df_excel_growth.groupby('Replicate_id'):
+    for replicate_id, group_df in df_excel_growth.groupby('Biological_Replicate_ID'):
         # Drop the Replicate_id column and check for non-empty values in each column
-        non_empty_columns = group_df.drop(['Replicate_id', 'Time'], axis=1).columns[group_df.drop(['Replicate_id', 'Time'], axis=1).notnull().any()]
+        non_empty_columns = group_df.drop(['Biological_Replicate_ID', 'Time'], axis=1).columns[group_df.drop(['Biological_Replicate_ID', 'Time'], axis=1).notnull().any()]
         # Convert the result to a list and store it in the dictionary
         measures_per_replicate[replicate_id] = non_empty_columns.tolist()
 
@@ -61,9 +61,9 @@ def get_measures_abundances(raw_data_template):
     abundances_per_replicate = {}
     
     # Iterate over groups based on Replicate_id
-    for replicate_id, group_df in df_excel_abundances.groupby('Replicate_id'):
+    for replicate_id, group_df in df_excel_abundances.groupby('Biological_Replicate_ID'):
         # Drop the Replicate_id column and check for non-empty values in each column
-        non_empty_columns = group_df.drop(['Replicate_id', 'Time'], axis=1).columns[group_df.drop(['Replicate_id', 'Time'], axis=1).notnull().any()]
+        non_empty_columns = group_df.drop(['Biological_Replicate_ID', 'Time'], axis=1).columns[group_df.drop(['Biological_Replicate_ID', 'Time'], axis=1).notnull().any()]
         # Convert the result to a list and store it in the dictionary
         abundances_per_replicate[replicate_id] = non_empty_columns.tolist()
     return abundances_per_replicate

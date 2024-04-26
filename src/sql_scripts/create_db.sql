@@ -2,8 +2,18 @@ DROP DATABASE BacterialGrowth;
 CREATE DATABASE BacterialGrowth;
 USE BacterialGrowth;
 
+CREATE TABLE IF NOT EXISTS Project (
+	projectId INT AUTO_INCREMENT,
+    projectName VARCHAR(100) DEFAULT NULL, 
+    projectDescription TEXT DEFAULT NULL,
+    projectUniqueID VARCHAR(100),
+    PRIMARY KEY (projectId),
+    UNIQUE (projectName)
+);
+
 CREATE TABLE IF NOT EXISTS Study (
 	studyId INT AUTO_INCREMENT,
+    projectUniqueID VARCHAR(100),
     studyName VARCHAR(100) DEFAULT NULL, 
     studyDescription TEXT DEFAULT NULL,
     studyURL VARCHAR(100) DEFAULT NULL,
@@ -15,9 +25,10 @@ CREATE TABLE IF NOT EXISTS Study (
 CREATE TABLE IF NOT EXISTS Events (
 	EventUniqueId INT AUTO_INCREMENT,
     EventId VARCHAR(20), 
-    studyId INT NOT NULL,
-    blank BOOLEAN DEFAULT FALSE,
+    studyId INT,
     EventDescription TEXT,
+    cultivationMode  VARCHAR(50),
+    controlDescription TEXT,
     PRIMARY KEY (EventUniqueId),
     FOREIGN KEY (studyId) REFERENCES Study (studyId) ON UPDATE CASCADE ON DELETE CASCADE
 );
@@ -43,13 +54,12 @@ CREATE TABLE IF NOT EXISTS Compartments (
 );
 
 CREATE TABLE Strains (
+    memberId VARCHAR(50),
+    defined BOOLEAN DEFAULT FALSE,
+    memberName VARCHAR(50),
     strainId INT AUTO_INCREMENT PRIMARY KEY,
-    genus VARCHAR(50),
-    species VARCHAR(50),
-    NCBISpeciesId INT,
-    strain VARCHAR(50),
-    NCBIStrainId INT,
-    UNIQUE(genus,species,NCBISpeciesId,strain,NCBIStrainId)
+    NCBId INT,
+    descriptionMember VARCHAR(100)
 );
 
 CREATE TABLE IF NOT EXISTS Comunity (
@@ -112,8 +122,6 @@ CREATE TABLE BioReplicatesPerEvent (
     bioreplicateId VARCHAR(20),
     EventUniqueId INT,
     EventId VARCHAR(20) NOT NULL,
-    plateNumber INT DEFAULT NULL,
-    platePosition VARCHAR(4) DEFAULT NULL,
     OD BOOLEAN DEFAULT FALSE,
     OD_std BOOLEAN DEFAULT FALSE,
     FC BOOLEAN DEFAULT FALSE,
@@ -139,7 +147,6 @@ CREATE TABLE IF NOT EXISTS Perturbation (
     perturbationMaximumValue DECIMAL(10, 2),
     perturbationStartTime TIME,
     perturbationEndTime TIME,
-    perturbationFilesDirectory VARCHAR(255),
     PRIMARY KEY (perturbationUniqueid),
     FOREIGN KEY (bioreplicateUniqueId) REFERENCES BioReplicatesPerEvent(bioreplicateUniqueId)
 );

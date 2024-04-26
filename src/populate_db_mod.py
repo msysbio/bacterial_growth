@@ -33,20 +33,18 @@ if not errors:
 
 
     LOCAL_DIRECTORY = 'C:/Users/sofia/Desktop/local_thesis_files/'
+    info_file_study = LOCAL_DIRECTORY + 'STUDY.yaml'
+    info_file_experiments = LOCAL_DIRECTORY + 'EXPERIMENTS.yaml'
+    info_compart_file = LOCAL_DIRECTORY + 'COMPARTMENTS.yaml'
+    info_mem_file = LOCAL_DIRECTORY + 'COMMUNITY_MEMBERS.yaml'
+    info_comu_file = LOCAL_DIRECTORY + 'COMMUNITIES.yaml'
+    info_pert_file = LOCAL_DIRECTORY + 'PERTURBATIONS.yaml'
 
-    info_file = LOCAL_DIRECTORY + 'submission_yaml.yaml'
-    info = read_yml(info_file)
-
-    info_compart_file = LOCAL_DIRECTORY + 'submission_yaml_compart.yaml'
+    info_study = read_yml(info_file_study)
+    info = read_yml(info_file_experiments)
     info_compart = read_yml(info_compart_file)
-
-    info_pertu_file = LOCAL_DIRECTORY + 'submission_yaml_pertu.yaml'
-    info_pertu = read_yml(info_pertu_file)
-
-    info_mem_file = LOCAL_DIRECTORY + 'submission_yaml_mem.yaml'
+    info_pertu = read_yml(info_pert_file)
     info_mem = read_yml(info_mem_file)
-
-    info_comu_file = LOCAL_DIRECTORY + 'submission_yaml_comu.yaml'
     info_comu = read_yml(info_comu_file)
 
 
@@ -61,23 +59,29 @@ if not errors:
         else:
             return [celd.strip()]
 
-    study_name_list = info['Study_Name']
-    num_items = len(study_name_list)
+    study_name_list = info_study['Study_Name']
+    num_items_study = len(study_name_list)
+    experiment_name_list = info['Experiment_ID']
+    num_experiment = len(experiment_name_list)
     num_compart = len(info_compart['Compartment_ID'])
     num_pertu = len(info_pertu['Perturbation_ID'])
     num_mem = len(info_mem['Member_ID'])
-    num_comu = len(info_comu['Comunity_ID'])
+    num_comu = len(info_comu['Community_ID'])
 
 
-    if 'Study_Name' in info:
+    if 'Study_Name' in info_study:
         study = {
-            'studyName': info['Study_Name'][0],
-            'studyDescription': info['Study_Description'][0],
-            'studyURL': info['Study_PublicationURL'][0], #new
-            'studyUniqueID': info['Study_UniqueID'][0]
+            'studyName': info_study['Study_Name'][0],
+            'studyDescription': info_study['Study_Description'][0],
+            'studyURL': info_study['Study_PublicationURL'][0],
+            'studyUniqueID': info_study['Study_UniqueID'][0],
+            'projectUniqueID':  info_study['Project_UniqueID'][0]
             }
         if np.isnan(study['studyUniqueID']) :
             study['studyUniqueID'] = generate_unique_id()
+
+        if np.isnan(study['projectUniqueID']) :
+            study['projectUniqueID'] = generate_unique_id()
 
         study_filtered = {k: v for k, v in study.items() if v is not None}
         #print(study_filtered)
@@ -106,11 +110,11 @@ if not errors:
         for i in range(num_mem):
             mem_id = info_mem['Member_ID'][i]
             members = {
-                'genus' : info_mem['Genus'][i],
-                'species': info_mem['Species'][i],
-                'NCBISpeciesId': info_mem['NCBISpeciesID'][i],
-                'strain': info_mem['Strain'][i],
-                'NCBIStrainId': info_mem['NCBIStrainID'][i]
+                'memberId' : info_mem['Member_ID'][i],
+                'defined': info_mem['Defined'][i],
+                'memberName': info_mem['Member_Name'][i],
+                'NCBId': info_mem['NCBI_ID'][i],
+                'descriptionMember': info_mem['Description'][i]
                 }
             members_filtered = {k: v for k, v in members.items() if v is not None}
             if len(members_filtered)>0:
@@ -137,9 +141,9 @@ if not errors:
                 'inoculumVolume': info_compart['Inoculum_Volume'][i],
                 'initialPh': info_compart['Initial_pH'][i],
                 'initialTemperature': info_compart['Initial_Temperature'][i],
-                'carbonSource': info_compart['Carbon_Sourced'][i],
-                'mediaName': info_compart['Media_Name'][i],
-                'mediaLink': info_compart['Media_Link'][i]
+                'carbonSource': info_compart['Carbon_Source'][i],
+                'mediaName': info_compart['Medium_Name'][i],
+                'mediaLink': info_compart['Medium_Link'][i]
                 }
             compartments_filtered = {k: v for k, v in compartments.items() if v is not None}
             if len(compartments_filtered)>0:
@@ -150,18 +154,19 @@ if not errors:
                 print('You must introduce some study information')
                 exit()
 
-    if 'Event_ID' in info:
-        for i in range(num_items):
+    if 'Experiment_ID' in info:
+        for i in range(num_experiment):
             biologicalreplicates = {
-                'EventId': info['Event_ID'][i],
+                'EventId': info['Experiment_ID'][i],
                 'studyId': study_id,
-                'blank':info['Blank'][i],
-                'EventDescription':info['Event_Description'][i]    
+                'EventDescription': info['Experiment_Description'][i],  
+                'cultivationMode': info['Cultivation_Mode'][i],
+                'controlDescription': info['Control_Description'][i]
             }
             biologicalreplicates_filtered = {k: v for k, v in biologicalreplicates.items() if v is not None}
             if len(biologicalreplicates_filtered)>0:
                 biologicalReplicate_id = db.addRecord('Events', biologicalreplicates_filtered)
-                biorep_id_list.append((info['Event_ID'][i],biologicalReplicate_id))
+                biorep_id_list.append((info['Experiment_ID'][i],biologicalReplicate_id))
                 print('\nEVENT ID: ', biologicalReplicate_id)
             else:
                 print('You must introduce some study information')
@@ -171,7 +176,7 @@ if not errors:
 
     if 'Perturbation_ID' in info_pertu:
         for i in range(num_pertu):
-            biological_id_spec =  search_id(info_pertu['BiologicalReplicate_ID'][i],biorep_id_list)
+            biological_id_spec =  search_id(info_pertu['Experiment_ID'][i],biorep_id_list)
             perturbations = {
                 'perturbationId': info_pertu['Perturbation_ID'][i],
                 'bioreplicateUniqueId': biological_id_spec,
@@ -184,8 +189,7 @@ if not errors:
                 'perturbationMinimumValue': info_pertu['Perturbation_MinimumValue'][i],
                 'perturbationMaximumValue': info_pertu['Perturbation_MaximumValue'][i],
                 'perturbationStartTime': info_pertu['Perturbation_StartTime'][i],
-                'perturbationEndTime': info_pertu['Perturbation_EndTime'][i],
-                'perturbationFilesDirectory': info_pertu['Perturbation_FilesDirectory'][i],
+                'perturbationEndTime': info_pertu['Perturbation_EndTime'][i]
                 }
             perturbation_filtered = {k: v for k, v in perturbations.items() if v is not None}
             if len(perturbation_filtered)>0:
@@ -194,31 +198,33 @@ if not errors:
             else:
                 print('No perturbations reported')
 
-    if 'Comunity_ID' in info_comu:
+    if 'Community_ID' in info_comu:
         for i in range(num_comu):
-            strain_id = search_id(info_comu['Member_ID'][i],mem_id_list)
-            comunities = {
-                'comunityId': info_comu['Comunity_ID'][i],
-                'strainId': strain_id
-            }
-            comunities_filtered = {k: v for k, v in comunities.items() if v is not None}
-            if len(comunities_filtered)>0:
-                comunities_id = db.addRecord('Comunity', comunities_filtered)
-                comu_id_list.append((info_comu['Comunity_ID'][i],comunities_id))
-                print('\nCOMUNITY UNIQUE ID: ', comunities_id)
-            else:
-                print('You must introduce some study information')
-                exit()
+            member = stripping_method(info_comu['Member_ID'][i])
+            for j in member:
+                strain_id = search_id(j,mem_id_list)
+                comunities = {
+                    'comunityId': info_comu['Community_ID'][i],
+                    'strainId': strain_id
+                }
+                comunities_filtered = {k: v for k, v in comunities.items() if v is not None}
+                if len(comunities_filtered)>0:
+                    comunities_id = db.addRecord('Comunity', comunities_filtered)
+                    comu_id_list.append((info_comu['Community_ID'][i],comunities_id))
+                    print('\nCOMUNITY UNIQUE ID: ', comunities_id)
+                else:
+                    print('You must introduce some study information')
+                    exit()
 
 
-    if 'Event_ID' in info:
-        for i in range(num_items):
+    if 'Experiment_ID' in info:
+        for i in range(num_experiment):
             comp_biorep = stripping_method(info['Compartment_ID'][i])
-            comu_biorep = stripping_method(info['Comunity_ID'][i])
+            comu_biorep = stripping_method(info['Community_ID'][i])
             for j,k in zip(comp_biorep, itertools.cycle(comu_biorep)):
                 comp_per_biorep={
-                    'EventUniqueId': search_id(info['Event_ID'][i],biorep_id_list),
-                    'EventId': info['Event_ID'][i],
+                    'EventUniqueId': search_id(info['Experiment_ID'][i],biorep_id_list),
+                    'EventId': info['Experiment_ID'][i],
                     'compartmentUniqueId': search_id(j, compartments_id_list),
                     'compartmentId': j,
                     'comunityUniqueId': search_id(k,comu_id_list),
@@ -227,22 +233,20 @@ if not errors:
                 if len(comp_per_biorep)>0:
                     db.addRecord('CompartmentsPerEvent', comp_per_biorep)
                     print('\CompartmentsPerEvent Populated')
-            tech_biorep = stripping_method(info['Growth_Technique'][i])
-            unit_biorep = stripping_method(info['Growth_Units'][i])
+            tech_biorep = stripping_method(info['Measurement_Technique'][i])
+            unit_biorep = stripping_method(info['Measurement_Unit'][i])
             for j, k in zip(tech_biorep, unit_biorep):
                 tech_per_biorep={
-                    'EventUniqueId': search_id(info['Event_ID'][i],biorep_id_list),
-                    'EventId': info['Event_ID'][i],
+                    'EventUniqueId': search_id(info['Experiment_ID'][i],biorep_id_list),
+                    'EventId': info['Experiment_ID'][i],
                     'technique': j,
                     'techniqueUnit': k
                 }
                 if len(tech_per_biorep)>0:
                     db.addRecord('TechniquesPerEvent', tech_per_biorep)
                     print('\TechniquesPerEvent Populated')
-            rep_biorep = stripping_method(info['BiologicalReplicate_IDs'][i])
-            plate_number = stripping_method(str(info['Plate_Number'][i]))
-            position = stripping_method(info['Plate_Position'][i])
-            for j, k, h in zip(rep_biorep,plate_number,position):
+            rep_biorep = stripping_method(info['Biological_Replicate_IDs'][i])
+            for j in range(len(rep_biorep)):
                 list_measures = measures[j]
                 od = 0
                 od_std = 0
@@ -266,11 +270,9 @@ if not errors:
                 if 'pH' in list_measures:
                     ph = 1
                 rep_per_biorep = {
-                    'EventUniqueId': search_id(info['Event_ID'][i],biorep_id_list),
-                    'EventId': info['Event_ID'][i],
+                    'EventUniqueId': search_id(info['Experiment_ID'][i],biorep_id_list),
+                    'EventId': info['Experiment_ID'][i],
                     'bioreplicateId': j,
-                    'plateNumber': k,
-                    'platePosition': h,
                     'OD': od,
                     'OD_std': od_std, 
                     'FC': fc, 
@@ -290,8 +292,8 @@ if not errors:
                 for k in list_metabo:
                     cheb_id = db.getChebiId(k)
                     metabo_rep = {
-                        'EventUniqueId': search_id(info['Event_ID'][i],biorep_id_list),
-                        'EventId': info['Event_ID'][i],
+                        'EventUniqueId': search_id(info['Experiment_ID'][i],biorep_id_list),
+                        'EventId': info['Experiment_ID'][i],
                         'bioreplicateId': j,
                         'bioreplicateUniqueId' : search_id(j,rep_id_list) ,
                         'metabo_name' : k,
