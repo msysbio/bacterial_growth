@@ -7,7 +7,7 @@ def parse_excel(df_excel_1,df_excel_2,df_excel_3,df_excel_4):
     # Initialize dictionaries for each prefix
     data_dicts = {}
 
-    grouped_prefixs = ['Reactors','Blank','Inoculum','Initial','Plate','Files','Antibiotic','Carbon','Comunity','Growth']
+    grouped_prefixs = ['Replicate', 'Compartment', 'TechnicalReplicate', 'Cultivation' , 'Blank','Plate','Comunity','Growth']
     # Iterate over the columns of the DataFrame
 
     for column in df_excel_1.columns:
@@ -62,10 +62,10 @@ def parse_excel(df_excel_1,df_excel_2,df_excel_3,df_excel_4):
     yaml_data3 = yaml.dump(data_dicts3)
     yaml_data4 = yaml.dump(data_dicts4)
 
-    template_filename_yaml = LOCAL_DIRECTORY + 'submission_yaml_app.yaml'
-    template_filename_yaml_compart = LOCAL_DIRECTORY + 'submission_yaml_compart_app.yaml'
-    template_filename_yaml_bact = LOCAL_DIRECTORY + 'submission_yaml_bact_app.yaml'
-    template_filename_yaml_pertu = LOCAL_DIRECTORY + 'submission_yaml_pertu_app.yaml'
+    template_filename_yaml = LOCAL_DIRECTORY + 'submission_yaml.yaml'
+    template_filename_yaml_compart = LOCAL_DIRECTORY + 'submission_yaml_compart.yaml'
+    template_filename_yaml_bact = LOCAL_DIRECTORY + 'submission_yaml_bact.yaml'
+    template_filename_yaml_pertu = LOCAL_DIRECTORY + 'submission_yaml_pertu.yaml'
     # Write YAML data to a file
     with open(template_filename_yaml, "w") as yaml_file:
         yaml_file.write(yaml_data)

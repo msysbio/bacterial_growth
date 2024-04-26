@@ -1,0 +1,895 @@
+MF0001	arabinoxylan degradation
+cpd	[arabinoxylan]	[arabinose, xylose]
+K01209	K15921	K01181	K01198	K15531	K18205
+pos	input
+hier	carbohydrate degradation	polysaccharide degradation
+ref	PMID:24239877
+///
+MF0002	fructan degradation
+cpd	[fructan]	[fructose]
+K03332	K01193
+pos	input
+hier	carbohydrate degradation	polysaccharide degradation
+ref	MetaCyc Pathway: fructan degradation
+///
+MF0003	pectin degradation I
+cpd	[pectin]	[methanol, galacturonate]
+K01051
+K01184,K01213	K18650
+pos	input
+hier	carbohydrate degradation	polysaccharide degradation
+ref	MetaCyc Pathway: pectin degradation III	Kegg M00081
+///
+MF0004	pectine degradation II
+cpd	[pectine]	[galacturonate, glyceraldehyde 3-phosphate, pyruvate, methanol]
+K01051
+K18650
+K01728	K19551	K01731
+K01730
+K01815
+K00874
+K01625	K17463
+pos	input
+hier	carbohydrate degradation	polysaccharide degradation
+ref	MetaCyc Pathway: pectin degradation II	MetaCyc Pathway: 4-deoxy-L-threo-hex-4-enopyranuronate degradation	Kegg Pathway Pentose and glucuronate interconversions
+///
+MF0005	starch degradation
+cpd	[starch, glycogen]	[glucose]
+cpd	[starch, glycogen]	[glucose, glucose 1-phosphate]
+K01176	K07405	K05343
+K01200	K01208
+K00688	K16153	K00705	K01187	K15922	K01178	K01182
+pos	input
+hier	carbohydrate degradation	polysaccharide degradation
+ref	Kegg Pathway Starch and sucrose metabolism
+///
+MF0006	lactose degradation
+cpd	[lactose]	[galactose, glucose]
+K12111	K01190	K12308
+pos	input
+hier	carbohydrate degradation	disaccharide degradation
+ref	MetaCyc Pathway: lactose degradation II
+///
+MF0007	lactose and galactose degradation
+cpd	[lactose]	[glucose, glyceraldehyde 3-phosphate]
+K02786,K02787,K02788
+K01220
+K01819
+K00917
+K08302	K01635
+pos	input
+hier	carbohydrate degradation	disaccharide degradation
+ref	PMID:11976750	Kegg M00281
+///
+MF0008	maltose degradation
+cpd	[maltose]	[glucose, glucose 6-phosphate]
+K00691
+K01838
+pos	input
+hier	carbohydrate degradation	disaccharide degradation
+ref	MetaCyc Pathway: maltose degradation
+///
+MF0009	melibiose degradation
+cpd	[melibiose]	[galactose, glucose]
+K07406	K07407
+pos	input
+hier	carbohydrate degradation	disaccharide degradation
+ref	MetaCyc Pathway: melibiose degradation
+///
+MF0010	sucrose degradation I
+cpd	[sucrose]	[fructose 6-phosphate, glucose 6-phosphate]
+K01193
+K00847
+pos	input
+hier	carbohydrate degradation	disaccharide degradation
+ref	MetaCyc Pathway: sucrose degradation I (sucrose phosphotransferase)
+///
+MF0011	sucrose degradation II
+cpd	[sucrose]	[fructose 6-phosphate]
+K00690
+K00847
+K01792
+K01835	K15778,K15779
+pos	input
+hier	carbohydrate degradation	disaccharide degradation
+ref	MetaCyc Pathway: sucrose degradation IV (sucrose phosphorylase)
+///
+MF0012	trehalose degradation
+cpd	[trehalose]	[glucose]
+K03731	K01226	K01194	K05342
+pos	input
+hier	carbohydrate degradation	disaccharide degradation
+ref	MetaCyc Pathway: trehalose degradation I (low osmolarity)	MetaCyc Pathway: trehalose degradation II (trehalase)	MetaCyc Pathway: trehalose degradation III	MetaCyc Pathway: trehalose degradation IV	MetaCyc Pathway: trehalose degradation VIriplasmic)
+///
+MF0013	allose degradation
+cpd	[allose]	[fructose 6-phosphate]
+K00881
+K01807,K01808
+pos	input
+hier	carbohydrate degradation	monosaccharide degradation
+ref	MetaCyc Pathway: D-allose degradation
+///
+MF0014	arabinose degradation
+cpd	[arabinose]	[ribulose 5-phosphate]
+K01804
+K00853
+pos	input
+hier	carbohydrate degradation	monosaccharide degradation
+ref	MetaCyc Pathway: L-arabinose degradation I
+///
+MF0015	fructose degradation
+cpd	[fructose 1-phosphate]	[fructose 1,6-bisphosphate]
+K00882
+pos	input
+hier	carbohydrate degradation	monosaccharide degradation
+ref	MetaCyc Pathway: fructose degradation
+///
+MF0016	fucose degradation
+cpd	[fucose]	[lactaldehyde, glyceraldehyde 3-phosphate]
+K02431
+K01818
+K00879
+K01628
+K01803
+pos	output
+hier	organic acid metabolism	propionate metabolism
+ref	MetaCyc Pathway: fucose degradation
+///
+MF0017	galactose degradation
+cpd	[galactose]	[glucose 6-phosphate]
+K01785
+K00849
+K00965
+K01784	K17716
+K01838
+pos	input
+hier	carbohydrate degradation	monosaccharide degradation
+ref	MetaCyc Pathway: D-galactose degradation I (Leloir pathway)
+///
+MF0018	mannose degradation
+cpd	[mannose 6-phosphate]	[fructose 6-phosphate]
+K01809	K15916	K16011
+pos	input
+hier	carbohydrate degradation	monosaccharide degradation
+ref	MetaCyc Pathway: D-mannose degradation
+///
+MF0019	rhamnose degradation
+cpd	[rhamnose]	[lactaldehyde, glyceraldehyde 3-phosphate]
+K03534
+K01813	K01820
+K00848
+K01629
+K01803
+pos	input
+hier	carbohydrate degradation	monosaccharide degradation
+ref	MetaCyc Pathway: L-rhamnose degradation I
+///
+MF0020	ribose degradation
+cpd	[ribose]	[ribose 5-phosphate]
+K06726
+K00852
+pos	input
+hier	carbohydrate degradation	monosaccharide degradation
+ref	MetaCyc Pathway: ribose degradation
+///
+MF0021	xylose degradation
+cpd	[xylose]	[xylulose 5-phosphate]
+K01805
+K00854
+pos	input
+hier	carbohydrate degradation	monosaccharide degradation
+ref	MetaCyc Pathway: xylose degradation I
+///
+MF0022	galacturonate degradation I
+cpd	[galacturonate]	[glyceraldehyde 3-phosphate, pyruvate]
+K01812
+K00041
+K01685	K16849,K16850
+K00874
+K17463	K01625	K11395
+pos	input
+hier	carbohydrate degradation	sugar acid degradation
+ref	MetaCyc Pathway: D-galacturonate degradation I
+///
+MF0023	galacturonate degradation II
+cpd	[galacturonate]	[CO2, 2-oxoglutarate]
+K18981
+K01707
+K13877	K19588
+pos	input
+hier	carbohydrate degradation	sugar acid degradation
+ref	MetaCyc Pathway: D-galacturonate degradation II
+///
+MF0024	phenylalanine degradation
+cpd	[phenylalanine, 2-oxoglutarate]	[CO2, phenylacetate, glutamate]
+K00832	K00812	K00813	K11358	K00817
+K04103
+K00146	K00129
+pos	input
+hier	amino acid degradation	aromatic amino acid degradation
+ref	MetaCyc Pathway: L-phenylalanine degradation II (anaerobic)	Kegg Pathway Phenylalanine metabolism
+///
+MF0025	tryptophan degradation
+cpd	[tryptophan]	[indole, NH3, pyruvate]
+K01667
+pos	input
+hier	amino acid degradation	aromatic amino acid degradation
+ref	Metacyc Pathway: tryptophan degradation II
+///
+MF0026	tyrosine degradation I
+cpd	[tyrosine, 2-oxoglutarate, pyruvate]	[CO2, 4-hydroxyphenylacetate, 4-hydroxyphenylethanol, glutamate, alanine]
+K00832	K00812	K00813	K11358	K00817
+K00129	K00055
+pos	input
+hier	amino acid degradation	aromatic amino acid degradation
+ref	Kegg Pathway Tyrosine metabolism
+///
+MF0027	tyrosine degradation II
+cpd	[tyrosine]	[phenol, pyruvate, NH3]
+K01668
+pos	input
+hier	amino acid degradation	aromatic amino acid degradation
+ref	Kegg Pathway Tyrosine metabolism
+///
+MF0028	aspartate degradation I
+cpd	[aspartate, 2-oxoglutarate]	[glutamate, oxaloacetate]
+K00812	K00813	K11358
+pos	input
+hier	amino acid degradation	negatively charged amino acid degradation
+ref	Metacyc Pathway: aspartate degradation I
+///
+MF0029	aspartate degradation II
+cpd	[aspartate]	[NH3, fumarate]
+K01744
+pos	input
+hier	amino acid degradation	negatively charged amino acid degradation
+ref	Metacyc Pathway: glutamate degradation II
+///
+MF0030	glutamate degradation I
+cpd	[glutamate, acetyl-CoA]	[NH3, CO2, crotonyl-CoA, acetate]
+K00260	K15371	K00261	
+K00109
+K01039,K01040
+K01615
+pos	input
+hier	amino acid degradation	negatively charged amino acid degradation
+ref	MetaCyc Pathway: L-glutamate degradation I	MetaCyc Pathway: L-glutamate degradation V (via hydroxyglutarate)
+///
+MF0031	glutamate degradation II
+cpd	[glutamate]	[CO2, 4-aminobutanoate]
+K01580
+pos	input
+hier	amino acid degradation	negatively charged amino acid degradation
+ref	MetaCyc Pathway: L-glutamate degradation IV
+///
+MF0032	glutamate degradation III
+cpd	[glutamate]	[NH3, pyruvate, acetate]
+K01846,K19268
+K04835
+pos	input
+hier	amino acid degradation	negatively charged amino acid degradation
+ref	MetaCyc Pathway: L-glutamate degradation VI (to pyruvate)
+///
+MF0033	alanine degradation I
+cpd	[alanine]	[NH3, pyruvate]
+K01775
+K00285
+pos	input
+hier	amino acid degradation	nonpolar, aliphatic amino acid degradation
+ref	Metacyc Pathway: alanine degradation I
+///
+MF0034	alanine degradation II
+cpd	[2-oxoglutarate, alanine]	[glutamate, pyruvate]
+cpd	[alanine]	[pyruvate, NH3]
+K00814	K00259	K19244
+pos	input
+hier	amino acid degradation	nonpolar, aliphatic amino acid degradation
+ref	Metacyc Pathway: alanine degradation II	Metacyc Pathway: alanine degradation IV
+///
+MF0035	glycine degradation
+cpd	[glycine, tetrahydrofolate]	[CO2, NH3, 5,10-methylenetetrahydrofolate]
+K00281	K00282,K00283
+K00605
+K00382
+pos	input
+hier	amino acid degradation	nonpolar, aliphatic amino acid degradation
+ref	MetaCyc Pathway: glycine cleavage
+///
+MF0036	isoleucine degradation
+cpd	[isoleucine, 2-oxoglutarate]	[glutamate, CO2, propanoyl-CoA, acetyl-CoA]
+K00826
+K00166,K00167,K09699,K00382	K11381,K09699,K00382
+K00248	K00249	K09478	K11410
+K01692	K01782	K01825
+K01782	K01825	K07547,K07548	K12405	K15016
+K00626	K00632	K07508
+pos	input
+hier	amino acid degradation	nonpolar, aliphatic amino acid degradation
+ref	Metacyc Pathway: isoleucine degradation I	Kegg Pathway Valine, leucine and isoleucine degradation - Reference pathway
+///
+MF0037	leucine degradation
+cpd	[leucine, 2-oxoglutarate]	[glutamate, acetoacetate, CO2, acetyl-CoA]
+K00826
+K00166,K00167,K09699,K00382	K11381,K09699,K00382
+K00249	K00253
+K01968,K01969
+K13766
+K01640
+pos	input
+hier	amino acid degradation	nonpolar, aliphatic amino acid degradation
+ref	MetaCyc Pathway: L-leucine degradation I	Kegg M00036	Kegg Pathway Valine, leucine and isoleucine degradation - Reference pathway
+///
+MF0038	methionine degradation I
+cpd	[methionine]	[homocysteine]
+K00789
+K00558	K19398	K17399
+K01251
+pos	input
+hier	amino acid degradation	nonpolar, aliphatic amino acid degradation
+ref	MetaCyc Pathway: L-methionine degradation I (to L-homocysteine)	Kegg M00035
+///
+MF0039	methionine degradation II
+cpd	[methionine]	[methanethiol, 2-oxobutanoate, NH3]
+K01761
+pos	input
+hier	amino acid degradation	nonpolar, aliphatic amino acid degradation
+ref	MetaCyc Pathway: L-methionine degradation II
+///
+MF0040	proline degradation
+cpd	[proline]	[glutamate]
+K00318,K00294	K13821
+pos	input
+hier	amino acid degradation	nonpolar, aliphatic amino acid degradation
+ref	MetaCyc Pathway: proline degradation
+///
+MF0041	valine degradation
+cpd	[valine, 2-oxoglutarate]	[propanoyl-CoA, glutamate, 3-amino-isobutanoate, CO2]
+K00826
+K00166,K00167,K09699,K00382	K11381,K09699,K00382
+K00249	K00248	K09478	K11410
+K01692	K01715	K01782	K01825	K13767	K15016
+K05605
+K00020	K01782	K01825	K07547,K07548	K12405	K15016
+K00140,K00822	K00140,K13524	K00140,K07250
+pos	input
+hier	amino acid degradation	nonpolar, aliphatic amino acid degradation
+ref	MetaCyc Pathway: valine degradation I	Kegg M00036	Kegg Pathway Valine, leucine and isoleucine degradation - Reference pathway
+///
+MF0042	asparagine degradation
+cpd	[asparagine]	[aspartate, NH3]
+K05597
+pos	input
+hier	amino acid degradation	polar, uncharged amino acid degradation
+ref	MetaCyc Pathway: L-asparagine degradation I
+///
+MF0043	cysteine biosynthesis/homocysteine degradation
+cpd	[serine, homocysteine]	[cysteine, 2-oxobutanoate, NH3]
+K01697	K10150
+K01758
+pos	input
+hier	amino acid degradation	 polar, uncharged amino acid degradation
+ref	Metacyc Pathway: cysteine biosynthesis/homocysteine degradation	Kegg M00338
+///
+MF0044	cysteine degradation I
+cpd	[cysteine]	[NH3, H2S, pyruvate]
+K01758	K01760	K14155
+pos	input
+hier	amino acid degradation	polar, uncharged amino acid degradation
+ref	Metacyc Pathway: L-cysteine degradation II
+///
+MF0045	cysteine degradation II
+cpd	[cysteine, 2-oxoglutarate, hydrogen cyanide]	[pyruvate, glutamate, thiocyanate]
+K00812	K00813	K11358
+K01011
+pos	input
+hier	amino acid degradation	polar, uncharged amino acid degradation
+ref	Metacyc Pathway: L-cysteine degradation III
+///
+MF0046	glutamine degradation I
+cpd	[glutamine]	[glutamate, NH3]
+K01425	
+pos	input
+hier	amino acid degradation	polar, uncharged amino acid degradation
+ref	MetaCyc Pathway: glutamine degradation I
+///
+MF0047	glutamine degradation II
+cpd	[glutamine, 2-oxoglutarate]	[glutamate]
+K00265,K00266
+pos	input
+hier	amino acid degradation	polar, uncharged amino acid degradation
+ref	MetaCyc Pathway: glutamine degradation II
+///
+MF0048	serine degradation
+cpd	[serine]	[pyruvate, NH3]
+K01752	K01753
+pos	input
+hier	amino acid degradation	polar, uncharged amino acid degradation
+ref	MetaCyc Pathway: L-serine degradation
+///
+MF0049	threonine degradation I
+cpd	[threonine]	[NH3, formate, propanoyl-CoA]
+K01754	K17989
+K00656
+pos	input
+hier	amino acid degradation	polar, uncharged amino acid degradation
+ref	MetaCyc Pathway: L-threonine degradation I
+///
+MF0050	threonine degradation II
+cpd	[threonine]	[glycine, acetyl-CoA]
+K00060,K00639	K01620,K00132	K01620,K04072	K01620,K04073	K01620,K18366
+pos	input
+hier	amino acid degradation	polar, uncharged amino acid degradation
+ref	MetaCyc Pathway: L-threonine degradation IV	MetaCyc Pathway: L-threonine degradation II
+///
+MF0051	arginine degradation I
+cpd	[arginine]	[CO2, NH3, putrescine]
+cpd	[arginine]	[CO2, urea, putrescine]
+K01583	K01584	K01585	K02626	K01476,K01581
+K10536,K12251	K01480	K01476,K01581
+pos	input
+hier	amino acid degradation	positively charged amino acid degradation
+ref	MetaCyc Pathway: L-arginine degradation IV (arginine decarboxylase/agmatine deiminase pathway)	MetaCyc Pathway: L-arginine degradation III (arginine decarboxylase/agmatinase pathway)	Kegg M00134
+///
+MF0052	arginine degradation II
+cpd	[arginine, succinyl-CoA, 2-oxoglutarate]	[CO2, NH3, glutamate, succinate]
+K00673
+K01484
+K00840
+K06447
+K05526
+pos	input
+hier	amino acid degradation	positively charged amino acid degradation
+ref	MetaCyc Pathway: L-arginine degradation II (AST pathway)
+///
+MF0053	arginine degradation III
+cpd	[arginine, pyruvate]	[alanine, CO2, 4-aminobutanoate, urea]
+K12252
+K12253
+K12254
+K12255
+pos	input
+hier	amino acid degradation	positively charged amino acid degradation
+ref	MetaCyc Pathway: L-arginine degradation IX (arginine:pyruvate transaminase pathway)
+///
+MF0054	arginine degradation IV
+cpd	[arginine, 2-oxoglutarate]	[urea, glutamate]
+cpd	[arginine, 2-oxoglutarate]	[urea, glutamate, proline]
+cpd	[arginine]	[NH3, urea, proline]
+K01476
+K00819,K00294	K00819,K13821	K00819,K00286	K01750
+pos	input
+hier	amino acid degradation	positively charged amino acid degradation
+ref	MetaCyc Pathway: L-arginine degradation I (arginase pathway)	MetaCyc Pathway: L-arginine degradation VI (arginase 2 pathway)	MetaCyc Pathway: L-arginine degradation VII (arginase 3 pathway)
+///
+MF0055	arginine degradation V
+cpd	[arginine]	[NH3,ornithine,CO2]
+K01478
+K00611
+K00926
+pos	input
+hier	amino acid degradation	positively charged amino acid degradation
+ref	MetaCyc Pathway: L-arginine degradation V (arginine deiminase pathway)
+///
+MF0056	histidine degradation
+cpd	[histidine]	[NH3, formate, glutamate]
+cpd	[histidine]	[NH3, formamide, glutamate]
+K01745
+K01712
+K01468
+K01479	K05603,K01458
+pos	input
+hier	amino acid degradation	positively charged amino acid degradation
+ref	MetaCyc Pathway: L-histidine degradation I	MetaCyc Pathway: L-histidine degradation II	Kegg M00045
+///
+MF0057	lysine degradation I
+cpd	[lysine, acetyl-CoA]	[NH3, butanoate, acetoacetyl-CoA]
+K01843
+K01844,K18011
+K18012
+K00248
+K18014
+K01036	K01034,K01035
+pos	input
+hier	amino acid degradation	positively charged amino acid degradation
+ref	MetaCyc Pathway: L-lysine fermentation to acetate and butanoate
+///
+MF0058	lysine degradation II
+cpd	[lysine]	[CO2, cadaverine]
+K01582
+pos	input
+hier	amino acid degradation	positively charged amino acid degradation
+ref	MetaCyc Pathway: L-lysine degradation I
+///
+MF0059	anaerobic fatty acid beta-oxidation
+cpd	[fatty acid]	[acetyl-CoA]
+K06076
+K12507
+K06445
+K01782
+pos	input
+hier	lipid degradation	beta-oxidation
+ref	PMID:12535077	MetaCyc Pathway: fatty acid β-oxidation I
+///
+MF0060	glycerol degradation I
+cpd	[glycerol]	[glyceraldehyde 3-phosphate]
+K00005
+K00863
+K01803
+pos	input
+hier	lipid degradation	glycerol degradation
+ref	MetaCyc Pathway: glycerol degradation II
+///
+MF0061	glycerol degradation II
+cpd	[glycerol]	[glyceraldehyde 3-phosphate]
+K00864
+K00111,K00112,K00113
+K01803
+pos	input
+hier	lipid degradation	glycerol degradation
+ref	MetaCyc Pathway: glycerol degradation I
+///
+MF0062	glycerol degradation III
+cpd	[glycerol]	[propane-1,3-diol]
+K06120,K06121,K06122
+K00086
+pos	input
+hier	lipid degradation	glycerol degradation
+ref	MetaCyc Pathway: glycerol degradation III
+///
+MF0063	glyoxylate bypass
+cpd	[acetyl-CoA]	[CO2, phosphoenolpyruvate]
+K01647
+K01681	K01682
+K01637
+K01638
+K00024
+pos	central
+hier	lipid degradation	glyoxylate bypass
+ref	MetaCyc Pathway: glyoxylate cycle	Kegg M00012
+///
+MF0064	triacylglycerol degradation
+cpd	[triacylglycerol]	[glycerol, fatty acid]
+K01046
+K01054
+pos	input
+hier	lipid degradation	triacylglycerol degradation
+ref	MetaCyc Pathway: triacylglycerol degradation
+///
+MF0065	Bifidobacterium shunt
+cpd	[fructose 6-phosphate]	[acetyl phosphate, glyceraldehyde 3-phosphate]
+K01621	K01632
+K00616	K13810
+K00615
+K01807	K01808
+K01783
+K01621
+pos	central
+hier	central metabolism	energy metabolism
+ref	MetaCyc Pathway: Bifidobacterium shunt
+///
+MF0066	Entner-Doudoroff pathway
+cpd	[glucose-6-phosphate]	[glyceraldehyde 3-phosphate, pyruvate]
+K00036
+K01057	K07404
+K01690
+K01625
+pos	central
+hier	central metabolism	energy metabolism
+ref	MetaCyc Pathway: Entner-Doudoroff pathway I	Kegg M00008
+///
+MF0067	glycolysis (preparatory phase)
+cpd	[glucose]	[glyceraldehyde 3-phosphate]
+K00844	K00845
+K01810	K06859	K13810	K15916
+K00850	K16370
+K01622	K01623	K01624	K11645	K16305	K16306
+K01803
+pos	central
+hier	central metabolism	energy metabolism
+ref	MetaCyc Pathway: glycolysis III (from glucose)	Kegg M00001
+///
+MF0068	glycolysis (pay-off phase)
+cpd	[glyceraldehyde 3-phosphate]	[pyruvate]
+K00134	K00150
+K00927
+K01834
+K01689
+K00873
+pos	central
+hier	central metabolism	energy metabolism
+ref	MetaCyc Pathway: glycolysis III (from glucose)
+///
+MF0069	NADH:ferredoxin oxidoreductase
+cpd	[oxidized ferredoxin, NADH]	[reduced ferredoxin, H+, NAD+]
+K00529	K15758	K15765	K18088	K18090	K18227	K18254	K18293
+pos	central
+hier	gas metabolism	hydrogen metabolism
+ref	Kegg
+///
+MF0070	pentose phosphate pathway (oxidative phase)
+cpd	[glucose 6-phosphate]	[CO2, ribulose 5-phosphate]
+K00036	K19243
+K01057	K07404
+K00033
+pos	central
+hier	central metabolism	energy metabolism
+ref	MetaCyc Pathway: pentose phosphate pathway (oxidative branch)
+///
+MF0071	pentose phosphate pathway (non-oxidative branch)
+cpd	[ribulose 5-phosphate]	[glyceraldehyde 3-phosphate, fructose 6-phosphate]
+K01807	K01808
+K01783
+K00615
+K00616	K13810
+pos	central
+hier	central metabolism	energy metabolism
+ref	MetaCyc Pathway: pentose phosphate pathway (non-oxidative branch)
+///
+MF0072	pyruvate dehydrogenase complex
+cpd	[pyruvate]	[CO2, acetyl-CoA]
+K00161,K00162,K00163
+K00382
+K00627
+pos	central
+hier	central metabolism	energy metabolism
+ref	Kegg M00307
+///
+MF0073	pyruvate:ferredoxin oxidoreductase
+cpd	[pyruvate, oxidized ferredoxin]	[acetyl-CoA, CO2, reduced ferredoxin]
+K00169,K00170,K00171,K00172	K03737
+pos	central
+hier	central metabolism	energy metabolism
+ref	Kegg M00307
+///
+MF0074	pyruvate:formate lyase
+cpd	[pyruvate]	[formate, acetyl-CoA]
+K00656
+pos	central
+hier	central metabolism	energy metabolism
+ref	Kegg
+///
+MF0075	acetate to acetyl-CoA
+cpd	[acetate]	[acetyl-CoA]
+K01895	K01905
+pos	input
+hier	organic acid metabolism	acetate metabolism
+ref	MetaCyc Pathway: acetate conversion to acetyl-CoA	Kegg Pathway Pyruvate metabolism
+///
+MF0076	4-aminobutyrate degradation
+cpd	[4-aminobutanoate, 2-oxoglutarate]	[succinate, NAD(P)H, glutamate]
+cpd	[4-aminobutanoate, acetyl-CoA, 2-oxoglutarate]	[crotonyl-CoA, acetate, glutamate]
+K00823	K07250	K13524	K14268
+K00043,K14534	K08318,K14534	K18120,K14534	K00135	K08324
+pos	input
+hier	amino acid degradation	positively charged amino acid degradation
+ref	MetaCyc Pathway: 4-aminobutanoate degradation II	MetaCyc Pathway: 4-aminobutanoate degradation III	MetaCyc Pathway: 4-aminobutanoate degradation V
+///
+MF0077	formate conversion
+cpd	[formate]	[CO2, H2]
+K00122	K00123,K00125,K00126
+pos	input
+hier	organic acid metabolism	formate metabolism
+ref	MetaCyc Pathway: formate oxidation to CO2
+///
+MF0078	lactaldehyde degradation
+cpd	[lactaldehyde]	[propane-1,2-diol]
+K00048
+pos	input
+hier	organic acid metabolism	propionate metabolism
+ref	MetaCyc Pathway: L-lactaldehyde degradation (anaerobic)
+///
+MF0079	lactate consumption I
+cpd	[lactate]	[pyruvate]
+K00101	K00102
+pos	input
+hier	organic acid metabolism	lactate metabolism
+ref	Kegg Pathway Pyruvate metabolism
+///
+MF0080	lactate consumption II
+cpd	[lactate]	[propanoyl-CoA]
+K01026
+K00249
+pos	input
+hier	organic acid metabolism	propionate metabolism
+ref	MetaCyc Pathway: pyruvate fermentation to propanoate II (acrylate pathway)	Kegg Pathway Propanoate metabolism
+///
+MF0081	methanol conversion
+cpd	[methanol]	[methyl-CoM]
+K04480
+K14080,K14081
+pos	input
+hier	gas metabolism	methanogenesis
+ref	MetaCyc Pathway: methanogenesis from methanol	Kegg M00356
+///
+MF0082	putrescine degradation
+cpd	[putrescine]	[4-aminobutanoate]
+K09251	K12256	K03343
+K00137
+pos	input
+hier	amines and polyamines degradation	biogenic amine degradation
+ref	MetaCyc Pathway: putrescine degradation I	MetaCyc Pathway: putrescine degradation IV	MetaCyc Pathway: putrescine degradation V
+///
+MF0083	succinate consumption
+cpd	[succinate, acetyl-CoA]	[crotonyl-CoA, acetate]
+K18118
+K15017	K15038	K18119
+K00043	K08318	K18120
+K18122
+K14534
+pos	input
+hier	organic acid metabolism	butyrate metabolism
+ref	MetaCyc Pathway: succinate fermentation to butanoate
+///
+MF0084	succinate conversion to propionate
+cpd	[succinate]	[CO2, propionate]
+K11264
+pos	input
+hier	organic acid metabolism	succinate metabolism
+ref	MetaCyc Pathway: conversion of succinate to propanoate
+///
+MF0085	urea degradation
+cpd	[urea]	[CO2, NH3]
+K01941,K01457	K01428,K01429,K01430,K14048	K01427
+pos	input
+hier	amines and polyamines degradation	urea degradation
+ref	MetaCyc Pathway: urea degradation I	MetaCyc Pathway: urea degradation II
+///
+MF0086	acetyl-CoA to acetate
+cpd	[acetyl-CoA]	[acetate]
+K00625,K00925	K13788,K00925	K15024,K00925	K01905	K01067	K18118
+pos	output
+hier	organic acid metabolism	acetate metabolism
+ref	MetaCyc Pathway: acetate formation from acetyl-CoA	MetaCyc Pathway: acetate formation from acetyl-CoA II	MetaCyc Pathway: acetate formation from acetyl-CoA III (succinate)	Kegg Pathway Pyruvate metabolism
+///
+MF0087	acetyl-CoA to crotonyl-CoA
+cpd	[ccetyl-CoA]	[crotonyl-CoA]
+K00626
+K00023	K01782	K01825	K07516	K07547,K07548	K12405	K15016
+K01715	K01692	K01782	K01825	K13767	K15016
+pos	output
+hier	organic acid metabolism	butyrate metabolism
+ref	MetaCyc Pathway: pyruvate fermentation to butanoate	Kegg Pathway Butanoate metabolism
+///
+MF0088	butyrate production I
+cpd	[crotonyl-CoA]	[butanoate]
+K00248
+K00634
+K00929
+pos	output
+hier	organic acid metabolism	butyrate metabolism
+ref	MetaCyc Pathway: pyruvate fermentation to butanoate
+///
+MF0089	butyrate production II
+cpd	[crotonyl-CoA, acetate]	[butanoate]
+K00248
+K01034,K01035	K19709
+pos	output
+hier	organic acid metabolism	butyrate metabolism
+ref	MetaCyc Pathway: acetyl-CoA fermentation to butanoate II
+///
+MF0090	ethanol production I
+cpd	[pyruvate]	[formate, ethanol]
+K00656
+K00132	K04072	K04073	K18366
+K00001	K00121	K04072	K11440	K13953	K13954
+pos	output
+hier	alcohol metabolism	ethanol metabolism
+ref	MetaCyc Pathway: pyruvate fermentation to ethanol I
+///
+MF0091	ethanol production II
+cpd	[pyruvate]	[CO2, ethanol]
+K01568
+K00001	K00121	K04072	K11440	K13953	K13954
+pos	output
+hier	alcohol metabolism	ethanol metabolism
+ref	MetaCyc Pathway: pyruvate fermentation to ethanol II
+///
+MF0092	lactate production
+cpd	[pyruvate]	[lactate]
+K00016	K03777	K03778
+pos	output
+hier	organic acid metabolism	lactate metabolism
+ref	MetaCyc Pathway: pyruvate fermentation to lactate
+///
+MF0093	propionate production I
+cpd	[propanoyl-CoA]	[propanoate]
+K13923
+K00932
+pos	output
+hier	organic acid metabolism	propionate metabolism
+ref	Kegg Pathway Propanoate metabolism
+///
+MF0094	propionate production II
+cpd	[propanoyl-CoA, acetate]	[propanoate]
+K01026
+pos	output
+hier	organic acid metabolism	propionate metabolism
+ref	MetaCyc Pathway: pyruvate fermentation to propanoate II (acrylate pathway)
+///
+MF0095	propionate production III
+cpd	[pyruvate, succinyl-CoA]	[propanoyl-CoA, oxaloacetate]
+K01847	K01849,K01848	K11942
+K05606
+K03416,K17489,K17490
+pos	output
+hier	organic acid metabolism	propionate metabolism
+ref	MetaCyc Pathway: pyruvate fermentation to propionate I
+///
+MF0096	succinate production
+cpd	[phosphoenolpyruvate, CO2]	[succinate]
+K01596,K01595
+K00024
+K01676	K01677,K01678	K01679
+K00239,K00240,K00241,K00242	
+pos	output
+hier	organic acid metabolism	succinate metabolism
+ref	MetaCyc Pathway: pyruvate fermentation to propanoate I	Kegg M00149
+///
+MF0097	homoacetogenesis
+cpd	[CO2, H2]	[Acetyl-CoA]
+K05299,K15022
+K01938
+K01491
+K00297
+K15023
+K00198
+K14138,K00197,K00194
+pos	input
+hier	gas metabolism	acetogenesis
+ref	MetaCyc Pathway: reductive acetyl coenzyme A pathway	Kegg M00377
+///
+MF0098	hydrogen metabolism
+cpd	[H+]	[H2]
+K00532	K00533,K00534,K06441	K18016,K18017,K18023	K00436,K18005,K18006,K18007
+pos	output
+hier	gas metabolism	hydrogen metabolism
+ref	Kegg
+///
+MF0099	methanogenesis - methyl-coM
+cpd	[methyl-CoM]	[methane]
+K00399,K00401,K00402
+pos	output
+hier	gas metabolism	methanogenesis
+ref	MetaCyc Pathway: methyl-coenzyme M reduction to methane
+///
+MF0100	methanogenesis from carbon dioxide
+cpd	[CO2, H2]	[methyl-CoM]
+K00200,K00201,K00202,K00203,K11261
+K00204	K00205	K11260
+K00672
+K01499
+K00319	K13942
+K00320
+K00577,K00578,K00579,K00580,K00581,K00582,K00583,K00584
+pos	output
+hier	gas metabolism	methanogenesis
+ref	MetaCyc Pathway: methanogenesis from H2 and CO2	Kegg M00567
+///
+MF0101	nitrate reduction (dissimilatory)
+cpd	[nitrate]	[NH3]
+K03385
+pos	output
+hier	inorganic nutrient metabolism	nitrogen
+ref	MetaCyc Pathway: nitrate reduction IV (dissimilatory)
+///
+MF0102	sulfate reduction (dissimilatory)
+cpd	[sulfate, H2,]	[hydrogen sulfide]
+K13811	K00958	K00955	K00957,K00956
+K00394,K00395
+K11180,K11181
+pos	output
+hier	gas metabolism	sulfate metabolism
+ref	MetaCyc Pathway: sulfate reduction IV (dissimilatory)	MetaCyc Pathway: sulfate reduction V (dissimilatory)	Kegg M00176
+///
+MF0103	mucin degradation
+cpd	[mucin]	[NA]
+K01186
+K05970
+K01132	K01135	K01137	K01205
+K01207	K12373	K14459
+K01205	K01207	K12373	K01227	K13714
+K01206
+pos	input
+hier	glycoprotein degradation	mucus degradation
+ref	PMID:25852737
+///
