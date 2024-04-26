@@ -17,7 +17,8 @@ After installation, start the MySQL server on your local machine. You can usuall
 
 Once the MySQL server is running, access the MySQL command line interface by opening a terminal or command prompt and entering the following command (source + the path where the db schema is located in your machine):
 
-\```sql
+```sql
 source C:\Users\sofia\Desktop\bacterial_growth\src\sql_scripts\create_db.sql
-\```
+
+
 
