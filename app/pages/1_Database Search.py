@@ -5,13 +5,13 @@ import streamlit.components.v1 as components
 
 st.set_page_config(page_title="Database Search", page_icon="🔍", layout='wide')
 
-add_logo("logo_sidebar2.png", height=100)
+add_logo("figs/logo_sidebar2.png", height=100)
 with open("style.css") as css:
     st.markdown(f'<style>{css.read()}</style>', unsafe_allow_html=True)
 
 
 # Add a title to your Streamlit app
-st.image('pages/SearchBanner.png')
+st.image('figs/SearchBanner.png')
 #st.title('Search Studies and Experiments!')
 
 st.markdown(

@@ -13,15 +13,13 @@ import json
 from streamlit_tags import st_tags
 
 
-
-
 st.set_page_config(page_title="Upload Data", page_icon="📤", layout='wide')
 
-add_logo("logo_sidebar2.png", height=100)
+add_logo("figs/logo_sidebar2.png", height=100)
 with open("style.css") as css:
     st.markdown(f'<style>{css.read()}</style>', unsafe_allow_html=True)
 
-st.image('pages/UploadBanner.png')
+st.image('figs/UploadBanner.png')
 
 global unique_community_ids
 global list_selected_microbes
@@ -33,6 +31,7 @@ strain_data1 = {}
 data_excel = None
 
 unique_community_ids = set()
+conn = st.connection("BacterialGrowth", type="sql")
 
 if 'rows_communities' not in st.session_state:
     st.session_state['rows_communities'] = 0
@@ -44,11 +43,23 @@ def decrease_rows():
     st.session_state['rows_communities'] -= 1
 
 @st.cache_data
-def connection_df_taxonomy(input_other_taxa):
-    conn = st.connection("BacterialGrowth", type="sql")
+
+def connection_df_taxonomy(input_other_taxa, conn):
+    if input_other_taxa == "":
+        return None
     tax_other_query = f"SELECT * FROM Taxa WHERE tax_names LIKE '%{input_other_taxa}%';"
     df_other_taxonomy = conn.query(tax_other_query, ttl=600)
     return df_other_taxonomy
+
+def taxonomy_df_for_taxa_list(taxa_list, conn):
+    dfs = []
+    for input_other_taxa in taxa_list:
+        if input_other_taxa == "":
+            continue
+        tax_other_query = f"SELECT * FROM Taxa WHERE tax_names LIKE '%{input_other_taxa}%';"
+        df_other_taxonomy = conn.query(tax_other_query, ttl=600)
+        dfs.append(df_other_taxonomy)
+    return pd.concat(dfs, ignore_index=True)
 
 
 
@@ -67,10 +78,11 @@ def display_strain_row(index):
         with col3_add:
             input_other_taxa = st.text_input('*Search microbial strain species:',placeholder='3. Search microbial strain species',help='Type the specific microbial strain  species, then press enter', key=f'input_other_taxa{index}')
         with col4_add:
-            df_other_taxonomy = connection_df_taxonomy(input_other_taxa)
-            df_taxa_other_name = df_other_taxonomy['tax_names']
-            other_taxonomy = st.selectbox('*Select microbial strain species', options=df_taxa_other_name,index=None,placeholder="4. Select one of the species below",help='Select only one microbial strain species, then click on add',key=f'other_taxonomy{index}')
-            strain_data[f'taxa_{index}'] = other_taxonomy
+            if input_other_taxa:
+                df_other_taxonomy = taxonomy_df_for_taxa_list(input_other_taxa, conn)
+                df_taxa_other_name = df_other_taxonomy['tax_names']
+                other_taxonomy = st.selectbox('*Select microbial strain species', options=df_taxa_other_name,index=None,placeholder="4. Select one of the species below",help='Select only one microbial strain species, then click on add',key=f'other_taxonomy{index}')
+                strain_data[f'taxa_{index}'] = other_taxonomy
         with col5_add:
             st.write("")
             st.write("")
@@ -81,8 +93,6 @@ def display_strain_row(index):
             st.write("")
             st.button('Delete',key=f'delete_button_{index}',type='primary', on_click=decrease_rows)
     return strain_data
-
-
 
 
 st.markdown(
@@ -205,6 +215,10 @@ def tab_step2_1():
     list_taxa_id = []
     other_taxa_list = []
     all_taxa_list = []
+    input_taxa = []
+
+    taxa_df = pd.DataFrame()
+
     strain_data1 = {}
     if 'list_strains' not in st.session_state:
         st.session_state['list_strains'] = []
@@ -218,6 +232,7 @@ def tab_step2_1():
 
 
     with tab21:
+        df_taxonomy = ""
         st.subheader("2. Select all the microbial strains used in the study")
         st.markdown(
             """
@@ -226,33 +241,44 @@ def tab_step2_1():
             """)
         col1, col2, col3 = st.columns([0.45,0.45,0.1])
         with col1:
-            input_taxa_tmp = st.text_input('Search microbial strain:', key = 'input_taxa', placeholder='1. Search microbial strain', help='Type the specific microbial strain, then press enter')
+            input_taxon = st.text_input('Search microbial strain:', key = 'input_taxa', placeholder='1. Search microbial strain', help='Type the specific microbial strain, then press enter')
 
         with col2:
-            input_taxa = input_taxa_tmp
-            df_taxonomy = connection_df_taxonomy(input_taxa)
-            # print(df_taxonomy)
-            df_taxa_name = df_taxonomy['tax_names']
-            taxonomy = st.selectbox('Select microbial strain', options=df_taxa_name,index=None,placeholder="2. Select one of the strains below",key = 'select_taxa',help='Select only one microbial strain, then click on add')
-            val_taxonomy = taxonomy
+            if input_taxon:
+                input_taxa.append(input_taxon)
+                df_taxonomy = taxonomy_df_for_taxa_list(input_taxa, conn)
+                df_taxa_name = df_taxonomy['tax_names']
+                taxonomy = st.selectbox('Select microbial strain',
+                                        options=df_taxa_name,
+                                        index=None,
+                                        placeholder="2. Select one of the strains below",
+                                        key = 'select_taxa',
+                                        help='Select only one microbial strain, then click on add')
+                val_taxonomy = taxonomy
+
 
         with  col3:
             st.write("")
             st.write("")
-            add_button = st.button('Add',key='add',type='primary')
-            print("df_taxonomy", df_taxonomy)
+            add_button = st.button('Add', key='add', type='primary')
 
 
         keywords = st.multiselect(label='Microbial species added', options=st.session_state.list_strains, default=st.session_state.list_strains)
-        print("keywords:", keywords)
+
         to_remove = [k for k in st.session_state.list_strains if k not in keywords]
-        list_taxa_id = [df_taxonomy[df_taxonomy['tax_names'] == keyword].iloc[0]['tax_id'] for keyword in keywords]
+
+
         for k in to_remove:
             st.session_state.list_strains.remove(k)
-        for i in keywords:
-            strains_df = df_taxonomy[df_taxonomy['tax_names'] == i]
-            taxa_id = strains_df.iloc[0]['tax_id']
-            st.info(f'For more information about **{i}** go to the NCBI Taxonomy ID:[{taxa_id}](https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id={taxa_id})', icon="❕")
+
+        if len(keywords) > 0:
+            temp_df = taxonomy_df_for_taxa_list(keywords, conn)
+            list_taxa_id.append(temp_df[temp_df['tax_names'] == keyword].iloc[0]['tax_id'] for keyword in keywords)
+
+            for i in keywords:
+                strains_df = temp_df[temp_df['tax_names'] == i]
+                taxa_id = strains_df.iloc[0]['tax_id']
+                st.info(f'For more information about **{i}** go to the NCBI Taxonomy ID:[{taxa_id}](https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id={taxa_id})', icon="❕")
 
 
         other_strains=st.radio("*Did you find all the microbial strains?:",
@@ -262,9 +288,9 @@ def tab_step2_1():
 
 
         if other_strains == "Yes, all microbial strains used in my study have been added.":
-            list_taxa_id = [df_taxonomy[df_taxonomy['tax_names'] == keyword].iloc[0]['tax_id'] for keyword in keywords]
-            st.success("Done! Microbial strains saved, then go to **Step 3**", icon="✅")
-
+            list_taxa_id = [temp_df[temp_df['tax_names'] == keyword].iloc[0]['tax_id'] for keyword in keywords]
+            if len(list_taxa_id):
+                st.success("Done! Microbial strains saved, then go to **Step 3**", icon="✅")
 
 
         if other_strains == "No, Some microbial strains were not found":
@@ -280,10 +306,11 @@ def tab_step2_1():
                 with col8:
                     input_other_taxa = st.text_input('*Search microbial strain species:',placeholder='3. Search microbial strain species',help='Type the specific microbial strain  species, then press enter')
                 with col9:
-                    df_other_taxonomy = connection_df_taxonomy(input_other_taxa)
-                    df_taxa_other_name = df_other_taxonomy['tax_names']
-                    other_taxonomy = st.selectbox('*Select microbial strain species', options=df_taxa_other_name,index=None,placeholder="4. Select one of the species below",help='Select only one microbial strain species, then click on add')
-                    strain_data1['taxa_0'] = other_taxonomy
+                    if input_other_taxa:
+                        df_other_taxonomy = taxonomy_df_for_taxa_list(input_other_taxa, conn)
+                        df_taxa_other_name = df_other_taxonomy['tax_names']
+                        other_taxonomy = st.selectbox('*Select microbial strain species', options=df_taxa_other_name,index=None,placeholder="4. Select one of the species below",help='Select only one microbial strain species, then click on add')
+                        strain_data1['taxa_0'] = other_taxonomy
                 if other_taxonomy:
                     strains_df = df_taxonomy[df_taxonomy['tax_names'] == other_taxonomy]
                     taxa_id = strains_df.iloc[0]['tax_id']
