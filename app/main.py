@@ -10,7 +10,7 @@ from user_inputs import choosePlotOption
 def main():
 
     args = bacterial_parser()
-    
+
     if args.option == 'createInfoFile':
         create_yml_file(args)
     elif args.option == 'populateDB':
