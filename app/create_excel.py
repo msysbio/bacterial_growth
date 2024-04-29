@@ -26,7 +26,7 @@ def create_excel_fun(keywords, list_taxa_id, all_strain_data):
 
         for i, dic in enumerate(all_strain_data):
             name = dic.get(f'name_{i}', '')
-            if name is None:
+            if name is None or name == "":
                 continue
             description = dic.get(f'description_{i}', '')
             parent_ncbi_tax_id = dic.get(f'parent_taxon_id_{i}')

@@ -4,9 +4,16 @@ import pandas as pd
 from create_excel import create_excel_fun
 from datetime import datetime, timedelta
 import time
-from constants import LOCAL_DIRECTORY
+import sys
+import os
 from create_rawdata_excel import create_rawdata_excel_fun
 from streamlit_tags import st_tags
+
+current_dir = os.path.dirname(os.path.realpath(__file__))[:-9]
+relative_path_to_src = os.path.join(current_dir, 'src')
+sys.path.append(relative_path_to_src)
+from constants import LOCAL_DIRECTORY
+
 
 st.set_page_config(page_title="Upload Data", page_icon="📤", layout='wide')
 
@@ -112,11 +119,10 @@ def display_strain_row(index):
                     row_strain_data[f'parent_taxon_{index}'] = other_taxonomy
                     row_strain_data[f'parent_taxon_id_{index}'] = df_other_taxonomy[df_other_taxonomy["tax_names"] == other_taxonomy]["tax_id"].item()
 
-        # Add/delete buttons
-        with col5_add:
-            st.write("")
-            st.write("")
-            st.button('Add More',key=f'add_button_{index}', type='primary',on_click=increase_rows)
+                    with col5_add:
+                        st.write("")
+                        st.write("")
+                        st.button('Add More',key=f'add_button_{index}', type='primary', on_click=increase_rows)
 
         with col6_add:
             st.write("")
@@ -142,7 +148,7 @@ st.write('')
 st.write('')
 
 
-tab1, tab21,  tab2, tab3, tab5, tab6 = st.tabs(["Step 1", "Step 2","Step 3", "Step 4", "Step 5", "Step 6"])
+tab1, tab2,  tab3, tab4, tab5 = st.tabs(["Step 1", "Step 2","Step 3", "Step 4", "Step 5"])
 css = '''
 <style>
 .stTabs [data-baseweb="tab-list"] button [data-testid="stMarkdownContainer"] p {
@@ -276,7 +282,7 @@ def tab_step2():
         st.session_state['select_taxa'] = None
 
 
-    with tab21:
+    with tab2:
         df_taxonomy = ""
         st.subheader("2. Select all the microbial strains used in the study")
         st.markdown(
@@ -402,25 +408,17 @@ def tab_step2():
                                 st.warning("Please make sure you provide a description to before you continue.")
 
                             strain_data1['parent_taxon_0'] = other_taxonomy
-                            strain_data1['parent_taxon_id_0'] = df_other_taxonomy[df_other_taxonomy["tax_names"] == other_taxonomy]["tax_id"].item()
+                            strain_data1['parent_taxon_id_0'] = df_other_taxonomy[
+                                df_other_taxonomy["tax_names"] == other_taxonomy
+                                ]["tax_id"].item()
 
-                            other_taxa_list.append(other_taxonomy)               # [NOTE]
+                            other_taxa_list.append(other_taxonomy)
                             all_strain_data.append(strain_data1)
 
-                # if len(other_taxa_list) > 0: # other_taxonomy.size > 0: #df_other_taxonomy
-                #     parent_strains_df = taxonomy_df_for_taxa_list(other_taxa_list, conn)  # df_other_taxonomy[df_other_taxonomy['tax_names'] == other_taxonomy]
-                #     print("***", parent_strains_df)
-                #     taxa_id = parent_strains_df.iloc[0]['tax_id']
-                #     # st.info(f'For more information about **{other_taxonomy}** \
-                #     #     go to the NCBI Taxonomy ID:[{taxa_id}](https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id={taxa_id})',
-                #     #     icon="❕"
-                #     # )
-                #     other_taxa_list.append(taxa_id)
-
-                with  col10:
-                    st.write("")
-                    st.write("")
-                    st.button('Add More',key='add_other',type='primary',on_click=increase_rows)
+                            with  col10:
+                                st.write("")
+                                st.write("")
+                                st.button('Add More',key='add_other',type='primary',on_click=increase_rows)
 
             # Parse all novel strains (without a NCBI Taxonomy Id) added
             for i in range(st.session_state['rows_communities']):
@@ -471,7 +469,7 @@ def tab_step3(keywords, list_taxa_id, all_strain_data):
     """
     Step 3: Download templates tab
     """
-    with tab2:
+    with tab3:
         colu1,  colu2 = st.columns(2)
         if st.session_state['verify'] == 1:
             with colu1:
@@ -627,7 +625,7 @@ def tab_step3(keywords, list_taxa_id, all_strain_data):
 
 def tab_step4():
 
-    with tab3:
+    with tab4:
         col1, col2 = st.columns(2)
         with col1:
             st.subheader("1. Upload Data Template")
@@ -694,7 +692,6 @@ def tab_step4():
                     else:
                         unique_community_ids.add(ids.strip())
 
-
         st.warning(" Verify that all the data and study information are correct! \
                    No modifications to the data after uploaded are allowed.", icon="⚠️")
         st.info("After checking that all the data provided is correct, click on **Save uploaded files**.")
@@ -705,36 +702,10 @@ def tab_step4():
 
 
 def tab_step5():
-    with tab5:
-        st.subheader("Define the mutations done in the microbial strains")
-        st.markdown(
-            """
-            If in your study any of the bacterial strains used were genetically modified or bio-egineered, please select the mutation done on the specific strain.
-            If the specific mutation is not within the options select: **Other**. If the microbial strains were not mutated select **None**.
-            """
-        )
-
-        if list_selected_microbes:
-            for i in list_selected_microbes:
-                if i != 'Bacteria':
-                    col1, col2 = st.columns(2)
-                    with col1:
-                        st.write(f'{i}')
-                    with col2:
-                        mutation_options = st.selectbox("Select Mutation options:", ['None', 'Other', 'Mutation1'],key = f'mutation_ops{i}')
-                        if mutation_options == 'Other':
-                            st.text_input("New mutation:", key=f'mutation_other{i}')
-
-            mutations_button = st.button('Save Mutations',type="primary",use_container_width = True)
-            if mutations_button:
-                    st.success("Done! Now go to **Step 6** and fill in the details.", icon="✅")
-
-
-def tab_step6():
     """
     Submit data page
     """
-    with tab6:
+    with tab5:
         st.write("# 🔧 Data visibility")
         st.write("By default your data will be visible and public in the database. Do you want to make your data visible now?")
         visibility_option = st.radio("Visibility options:",
@@ -764,4 +735,3 @@ keywords, list_taxa_id, all_strain_data, other_taxa_list = tab_step2()
 tab_step3(keywords, list_taxa_id, all_strain_data)
 tab_step4()
 tab_step5()
-tab_step6()

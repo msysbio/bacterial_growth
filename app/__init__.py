@@ -1,10 +1,8 @@
-from .bacterial_parser import *
-from .constants import *
-from .main import *
-from .user_inputs import *
-from .utils import *
+import os
+import sys
+current_dir = os.path.dirname(os.path.realpath(__file__))[:-3]
+relative_path_to_src = os.path.join(current_dir, 'src')
+sys.path.append(relative_path_to_src)
+from constants import *
 
-import import_into_database
-import export_from_database
 
-# from import_into_database import create_populate_file
