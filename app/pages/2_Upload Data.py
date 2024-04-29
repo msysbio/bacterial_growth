@@ -1,17 +1,12 @@
 import streamlit as st
 from streamlit_extras.app_logo import add_logo
 import pandas as pd
-import numpy as np
 from create_excel import create_excel_fun
 from datetime import datetime, timedelta
-from io import StringIO
 import time
-from df_parse_ex import parse_excel
 from constants import LOCAL_DIRECTORY
 from create_rawdata_excel import create_rawdata_excel_fun
-import json
 from streamlit_tags import st_tags
-
 
 st.set_page_config(page_title="Upload Data", page_icon="📤", layout='wide')
 
@@ -41,7 +36,6 @@ def increase_rows():
 
 def decrease_rows():
     st.session_state['rows_communities'] -= 1
-
 
 @st.cache_data
 def taxonomy_df_for_taxa_list(taxa_list, _conn):
@@ -148,7 +142,7 @@ st.write('')
 st.write('')
 
 
-tab1, tab21,  tab2, tab3, tab4, tab5, tab6 = st.tabs(["Step 1", "Step 2","Step 3", "Step 4", "Step 5", "Step 6"])
+tab1, tab21,  tab2, tab3, tab5, tab6 = st.tabs(["Step 1", "Step 2","Step 3", "Step 4", "Step 5", "Step 6"])
 css = '''
 <style>
 .stTabs [data-baseweb="tab-list"] button [data-testid="stMarkdownContainer"] p {
@@ -263,7 +257,8 @@ def tab_step1():
 
 def tab_step2():
     """
-
+    Main upload function:
+    invokes the display_strain_row() function for each new entry of novel taxa (without an NCBI Taxonomy Id.)
     """
     keywords = []
     all_strain_data = []
@@ -630,10 +625,8 @@ def tab_step3(keywords, list_taxa_id, all_strain_data):
             st.warning("Go back to Step 1 and fill in the details!", icon="⚠️")
 
 
-def tap_step4():
+def tab_step4():
 
-    bact_mod = 0
-    df_filtered_bact = 0
     with tab3:
         col1, col2 = st.columns(2)
         with col1:
@@ -711,14 +704,15 @@ def tap_step4():
             st.success("Done! Now go to **Step 5** and fill in the details.", icon="✅")
 
 
-def tap_step5():
+def tab_step5():
     with tab5:
         st.subheader("Define the mutations done in the microbial strains")
         st.markdown(
             """
             If in your study any of the bacterial strains used were genetically modified or bio-egineered, please select the mutation done on the specific strain.
             If the specific mutation is not within the options select: **Other**. If the microbial strains were not mutated select **None**.
-            """)
+            """
+        )
 
         if list_selected_microbes:
             for i in list_selected_microbes:
@@ -736,9 +730,9 @@ def tap_step5():
                     st.success("Done! Now go to **Step 6** and fill in the details.", icon="✅")
 
 
-def tap_step6():
+def tab_step6():
     """
-
+    Submit data page
     """
     with tab6:
         st.write("# 🔧 Data visibility")
@@ -768,6 +762,6 @@ def tap_step6():
 tab_step1()
 keywords, list_taxa_id, all_strain_data, other_taxa_list = tab_step2()
 tab_step3(keywords, list_taxa_id, all_strain_data)
-tap_step4()
-tap_step5()
-tap_step6()
+tab_step4()
+tab_step5()
+tab_step6()
