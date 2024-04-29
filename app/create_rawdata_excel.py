@@ -25,13 +25,22 @@ def generate_positions(type_vessel,number_vessels,number_columns,number_rows,num
     return positions
 
 
-def create_rawdata_excel_fun(measure_options,meta_options,type_vessel,number_vessels,number_columns,number_rows,number_timepoints,keywords):
+def create_rawdata_excel_fun(
+        measure_options,
+        meta_options,
+        type_vessel,
+        number_vessels,
+        number_columns,
+        number_rows,
+        number_timepoints,
+        keywords
+    ):
     # Create a new workbook
     wb = Workbook()
 
     ws3 = wb.active
     wb.active.title = "Replicate_metadata"
-    
+
 
     headers3_constant = {
         'Biological_Replicate_id': 'Unique IDs of individual samples: a bottle, a well in a well-plate or mini-bioreactor',
@@ -56,7 +65,7 @@ def create_rawdata_excel_fun(measure_options,meta_options,type_vessel,number_ves
 
 
     positions = generate_positions(type_vessel,number_vessels,number_columns,number_rows,number_timepoints)
-    
+
     headers1_constant = {
         'Position' : 'Predetermine position based on the type of vessel specified before.',
         'Biological_Replicate_id': 'Unique IDs of individual samples: a bottle, a well in a well-plate or mini-bioreactor',
@@ -90,7 +99,7 @@ def create_rawdata_excel_fun(measure_options,meta_options,type_vessel,number_ves
 
     if 'Plate-Counts' in measure_options:
         headers1_constant.update(header1_plate_counts)
-    
+
     for i in meta_options:
         header1_metabolites = {
             f'{i}' : 'Concentration values per time-point, use a period (.) as the decimal separator',
@@ -125,8 +134,8 @@ def create_rawdata_excel_fun(measure_options,meta_options,type_vessel,number_ves
             'Biological_Replicate_id': 'Unique IDs of individual samples: a bottle, a well in a well-plate or mini-bioreactor',
             'Time' : 'Measurement time-points in the format: hh:mm:ss (hour, minutes and seconds)',
         }
-    
-    
+
+
     if '16S rRNA-seq' in measure_options:
         for i in keywords:
             header2_species = {

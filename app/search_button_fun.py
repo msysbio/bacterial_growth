@@ -2,7 +2,7 @@ import streamlit as st
 
 def do_search(dropdown_options,input_text_fields):
 
-    conn = st.connection('mysql', type='sql')
+    conn = st.connection("BacterialGrowth", type="sql")
     if dropdown_options == 'Study Name':
         df_search_studyname = conn.query('SELECT {input_text_fields} from study;', ttl=600)
     # Perform query.

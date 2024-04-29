@@ -7,11 +7,11 @@ from openpyxl.styles import Alignment
 from tempfile import NamedTemporaryFile
 import openpyxl
 
-def create_excel_fun(keywords,list_taxa_id ,all_strain_data,other_taxa_list):
+def create_excel_fun(keywords, list_taxa_id, all_strain_data):
 
-    wb = openpyxl.load_workbook('/Users/sofia/Downloads/metadata_template.xlsx')
+    wb = openpyxl.load_workbook('templates/metadata_template.xlsx')
     sheet = wb['COMMUNITY_MEMBERS']
-            
+
     k = 0  # Initialize k here
 
     if keywords:
@@ -21,20 +21,21 @@ def create_excel_fun(keywords,list_taxa_id ,all_strain_data,other_taxa_list):
             sheet.cell(row=k+1, column=2, value=1)
             sheet.cell(row=k+1, column=3, value=keywords[k-1])
             sheet.cell(row=k+1, column=4, value=list_taxa_id[k-1])
-    
+
     if all_strain_data:
 
         for i, dic in enumerate(all_strain_data):
-            print(dic)
             name = dic.get(f'name_{i}', '')
+            if name is None or name == "":
+                continue
             description = dic.get(f'description_{i}', '')
+            parent_ncbi_tax_id = dic.get(f'parent_taxon_id_{i}')
 
             sheet.cell(row=k+i+2, column=1, value=f'member_{k+i+1}')
             sheet.cell(row=k+i+2, column=2, value=0)
             sheet.cell(row=k+i+2, column=3, value=name)
-            sheet.cell(row=k+i+2, column=4, value=other_taxa_list[i])
+            sheet.cell(row=k+i+2, column=4, value=parent_ncbi_tax_id)
             sheet.cell(row=k+i+2, column=5, value=description)
-            
 
     temp_file = NamedTemporaryFile(delete=False, suffix='.xlsx')
     wb.save(temp_file.name)

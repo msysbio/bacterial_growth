@@ -1,24 +1,29 @@
-# thesis
-Master Thesis repository: Gut Bacterial growth data interface
+# How to run the app
 
-# Setting Up MySQL Database Locally
 
-To set up a MySQL database locally, follow these steps:
+I fire the app by running 
 
-## Step 1: Install MySQL Server
+```bash
+streamlit run Welcome.py --server.fileWatcherType none
+```
 
-If you haven't already installed MySQL Server on your machine, you can download and install it from the official MySQL website ([MySQL Downloads](https://dev.mysql.com/downloads/)).
 
-## Step 2: Start MySQL Server
+Remember the `.streamlit` folder and the `secrets.toml` and `config.toml` files.
 
-After installation, start the MySQL server on your local machine. You can usually do this through your system's services manager or by running a command in the terminal or command prompt.
+```bash
+[connections.BacterialGrowth]
+dialect = "mysql"
+username = ""
+password = ""
+host = ""
+database = "BacterialGrowth"
+```
 
-## Step 3: Access MySQL Command Line
 
-Once the MySQL server is running, access the MySQL command line interface by opening a terminal or command prompt and entering the following command (source + the path where the db schema is located in your machine):
+When running locally, in linux, we need the `enableXsrfProtection` to be `false`,
+[see](https://discuss.streamlit.io/t/file-upload-fails-with-error-request-failed-with-status-code-403/27143/35).
 
-```sql
-source C:\Users\sofia\Desktop\bacterial_growth\src\sql_scripts\create_db.sql
+
 
 
 

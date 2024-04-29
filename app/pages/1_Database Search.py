@@ -5,18 +5,18 @@ import streamlit.components.v1 as components
 
 st.set_page_config(page_title="Database Search", page_icon="🔍", layout='wide')
 
-add_logo("logo_sidebar2.png", height=100)
+add_logo("figs/logo_sidebar2.png", height=100)
 with open("style.css") as css:
     st.markdown(f'<style>{css.read()}</style>', unsafe_allow_html=True)
 
 
 # Add a title to your Streamlit app
-st.image('pages/SearchBanner.png')
+st.image('figs/SearchBanner.png')
 #st.title('Search Studies and Experiments!')
 
 st.markdown(
     """
-    Discover studies and datasets by selecting one or more of the optional parameters: Study Name, Organism, Metabolite, chEBI ID, and pH. 
+    Discover studies and datasets by selecting one or more of the optional parameters: Study Name, Organism, Metabolite, chEBI ID, and pH.
     When conducting an advanced search, you can choose multiple logical operators to refine your query and extract precise information from the database.
 
     To download the results of your search, simply select the checkboxes next to the studies you wish to download and then click on "Download Data".
@@ -76,7 +76,7 @@ def display_bar_row(index):
             start_value_add, end_value_add = st.slider('Select a range:', min_value_ph_add, max_value_ph_add, (min_value_ph_add, max_value_ph_add), step=0.5, key=f'slide1_add{index}', format="%.1f")
         else:
             input_value_add = st.text_input('Enter Text here:', '', key=f'text1_add{index}')
-    
+
     col4_add, col5_add = st.columns([0.5, 0.5])
     with col4_add:
         st.button('Add More',key=f'add1_button_{index}', on_click=increase_rows)
@@ -85,7 +85,7 @@ def display_bar_row(index):
         st.button('Delete',key=f'add2_button_{index}', on_click=decrease_rows)
 
 for i in range(st.session_state['rows']):
-    display_bar_row(i)           
+    display_bar_row(i)
 
 search_button = st.button('**Search Data**',type='primary')
 
@@ -97,28 +97,28 @@ if "form" not in st.session_state:
 
 
 def getBacteria(studyID):
-    conn = st.connection('mysql', type='sql')
+    conn = conn = st.connection("BacterialGrowth", type="sql")
     query = f"SELECT DISTINCT Bacteria.* FROM Bacteria JOIN BacteriaCommunity ON Bacteria.bacteriaId = BacteriaCommunity.bacteriaId JOIN BiologicalReplicate ON BacteriaCommunity.biologicalReplicateId = BiologicalReplicate.biologicalReplicateId WHERE BiologicalReplicate.studyId = {studyID};"
     df_Bacteria = conn.query(query, ttl=600)
     columns_to_display = ['bacteriaGenus', 'bacteriaSpecies','bacteriaNCBISpeciesID','bacteriaStrain','bacteriaNCBIStrainID']
     return df_Bacteria[columns_to_display]
 
 def getReactor(studyID):
-    conn = st.connection('mysql', type='sql')
+    conn = conn = st.connection("BacterialGrowth", type="sql")
     query = f"SELECT DISTINCT rs.* FROM ReactorSetUp rs JOIN BiologicalReplicate br ON rs.reactorSetUpId = br.reactorSetUpId JOIN Study s ON br.studyId = s.studyId WHERE s.studyId = {studyID};"
     df_Reactor = conn.query(query, ttl=600)
     columns_to_display = ['reactorSetUpName', 'reactorSetUpMode','reactorSetUpDescription']
     return df_Reactor[columns_to_display]
 
 def getCompartment(studyID):
-    conn = st.connection('mysql', type='sql')
+    conn = conn = st.connection("BacterialGrowth", type="sql")
     query = f"SELECT DISTINCT c.* FROM Compartments c JOIN ReactorSetUp rs ON c.reactorSetUpId = rs.reactorSetUpId JOIN BiologicalReplicate br ON rs.reactorSetUpId = br.reactorSetUpId JOIN Study s ON br.studyId = s.studyId WHERE s.studyId = {studyID};"
     df_Compartment = conn.query(query, ttl=600)
     columns_to_display = ['compartmentName','reactorSetUpName', 'compartmentNumber','volume','pressure','stirring_speed','stirring_mode','O2','CO2','H2','N2','mediaName']
     return df_Compartment[columns_to_display]
 
 def getMetabolite(studyID):
-    conn = st.connection('mysql', type='sql')
+    conn = conn = st.connection("BacterialGrowth", type="sql")
     query = f"SELECT DISTINCT m.* FROM Metabolites m JOIN MetaboliteReplicates mr ON m.cheb_id = mr.cheb_id JOIN TechnicalReplicate tr ON mr.technicalReplicateId = tr.technicalReplicateId JOIN BiologicalReplicate br ON tr.biologicalReplicateId = br.biologicalReplicateId JOIN Study s ON br.studyId = s.studyId WHERE s.studyId = {studyID};"
     df_Metabolite = conn.query(query, ttl=600)
     columns_to_display = ['cheb_id','metabo_name']
@@ -127,8 +127,8 @@ def getMetabolite(studyID):
 
 if search_button or st.session_state.form:
     st.session_state.form = True
-    conn = st.connection('mysql', type='sql')
-    query = f"SELECT * FROM study WHERE studyName LIKE '%{input_value}%';"
+    conn = st.connection("BacterialGrowth", type="sql")
+    query = f"SELECT * FROM Study WHERE studyName LIKE '%{input_value}%';"
     df_studyname = conn.query(query, ttl=600)
 
     transposed_df = df_studyname.T
@@ -176,20 +176,20 @@ if search_button or st.session_state.form:
                 with st.expander("**Metabolite Information**"):
                     df_Metabolite = getMetabolite(df_studyname['studyId'][i])
                     st.dataframe(df_Metabolite,hide_index=True,)
-                
+
                 space = st.text("")
         space2 = st.text("")
         download = st.form_submit_button("Dowload Data", type = 'primary')
         space3 = st.text("")
-    
 
 
 
 
-conn = st.connection('mysql', type='sql')
+
+conn = st.connection("BacterialGrowth", type="sql")
 
 # Perform query.
-df_study = conn.query('SELECT * from study;', ttl=600)
+df_study = conn.query('SELECT * from Study;', ttl=600)
 st.dataframe(df_study)
 
 df_biologicalrep = conn.query('SELECT * from Events;', ttl=600)
@@ -201,7 +201,7 @@ st.dataframe(df_technicalrep)
 df_ReactorSetUp = conn.query('SELECT * from Strains;', ttl=600)
 st.dataframe(df_ReactorSetUp)
 
-df_Compartments = conn.query('SELECT * from Comunity;', ttl=600)
+df_Compartments = conn.query('SELECT * from Community;', ttl=600)
 st.dataframe(df_Compartments)
 
 df_Bacteria = conn.query('SELECT * from CompartmentsPerEvent;', ttl=600)
