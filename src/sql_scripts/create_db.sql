@@ -22,18 +22,19 @@ CREATE TABLE IF NOT EXISTS Study (
     UNIQUE (studyName)
 );
 
-CREATE TABLE IF NOT EXISTS Events (
-	EventUniqueId INT AUTO_INCREMENT,
-    EventId VARCHAR(20), 
+CREATE TABLE IF NOT EXISTS Experiments (
+	experimentUniqueId INT AUTO_INCREMENT,
+    experimentId VARCHAR(20), 
     studyId INT,
-    EventDescription TEXT,
+    experimentDescription TEXT,
     cultivationMode  VARCHAR(50),
     controlDescription TEXT,
-    PRIMARY KEY (EventUniqueId),
+    PRIMARY KEY (experimentUniqueId),
     FOREIGN KEY (studyId) REFERENCES Study (studyId) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS Compartments (
+    studyId INT,
     compartmentUniqueId INT AUTO_INCREMENT PRIMARY KEY,
     compartmentId VARCHAR(50) NOT NULL,
     volume FLOAT(7,2) DEFAULT 0,
@@ -50,24 +51,29 @@ CREATE TABLE IF NOT EXISTS Compartments (
     initialTemperature FLOAT(7,2) DEFAULT NULL,
     carbonSource BOOLEAN DEFAULT FALSE,
     mediaName VARCHAR(20) NOT NULL,
-    mediaLink VARCHAR(100) NOT NULL
+    mediaLink VARCHAR(100) NOT NULL,
+    FOREIGN KEY (studyId) REFERENCES Study (studyId) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
 CREATE TABLE Strains (
+    studyId INT,
     memberId VARCHAR(50),
     defined BOOLEAN DEFAULT FALSE,
     memberName VARCHAR(50),
     strainId INT AUTO_INCREMENT PRIMARY KEY,
     NCBId INT,
-    descriptionMember VARCHAR(100)
+    descriptionMember TEXT,
+    FOREIGN KEY (studyId) REFERENCES Study (studyId) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS Comunity (
+    studyId INT,
     comunityUniqueId INT AUTO_INCREMENT PRIMARY KEY,
     comunityId VARCHAR(50) NOT NULL,
     strainId INT,
     UNIQUE(comunityId,strainId),
-    FOREIGN KEY (strainId) REFERENCES Strains (strainId)
+    FOREIGN KEY (strainId) REFERENCES Strains (strainId)  ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY (studyId) REFERENCES Study (studyId) ON UPDATE CASCADE ON DELETE CASCADE
 
 );
 
@@ -94,34 +100,36 @@ CREATE TABLE IF NOT EXISTS MetaboliteSynonym (
 */
 
 
-CREATE TABLE CompartmentsPerEvent (
-    EventUniqueId INT,
-    EventId VARCHAR(20) NOT NULL,
+CREATE TABLE CompartmentsPerExperiment (
+    experimentUniqueId INT,
+    experimentId VARCHAR(20) NOT NULL,
     compartmentUniqueId INT,
     compartmentId VARCHAR(50) NOT NULL,
     comunityUniqueId INT,
     comunityId VARCHAR(50) NOT NULL,
-    PRIMARY KEY (EventUniqueId, compartmentUniqueId),
-    FOREIGN KEY (EventUniqueId) REFERENCES Events(EventUniqueId),
-    FOREIGN KEY (compartmentUniqueId) REFERENCES Compartments(compartmentUniqueId),
-    FOREIGN KEY (comunityUniqueId) REFERENCES Comunity(comunityUniqueId)
+    PRIMARY KEY (experimentUniqueId, compartmentUniqueId),
+    FOREIGN KEY (experimentUniqueId) REFERENCES Experiments(experimentUniqueId) ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY (compartmentUniqueId) REFERENCES Compartments(compartmentUniqueId)  ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY (comunityUniqueId) REFERENCES Comunity(comunityUniqueId) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
 
-CREATE TABLE TechniquesPerEvent (
-    EventUniqueId INT,
-    EventId VARCHAR(20) NOT NULL,
+CREATE TABLE TechniquesPerExperiment (
+    experimentUniqueId INT,
+    experimentId VARCHAR(20) NOT NULL,
     technique VARCHAR(20),
     techniqueUnit VARCHAR(20),
-    PRIMARY KEY (EventUniqueId, technique, techniqueUnit),
-    FOREIGN KEY (EventUniqueId) REFERENCES Events(EventUniqueId)
+    PRIMARY KEY (experimentUniqueId, technique, techniqueUnit),
+    FOREIGN KEY (experimentUniqueId) REFERENCES Experiments(experimentUniqueId) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
-CREATE TABLE BioReplicatesPerEvent (
+CREATE TABLE BioReplicatesPerExperiment (
+    studyId INT NOT NULL,
     bioreplicateUniqueId INT AUTO_INCREMENT PRIMARY KEY,
-    bioreplicateId VARCHAR(20),
-    EventUniqueId INT,
-    EventId VARCHAR(20) NOT NULL,
+    bioreplicateId VARCHAR(50),
+    experimentUniqueId INT,
+    experimentId VARCHAR(20) NOT NULL,
+    control BOOLEAN DEFAULT FALSE,
     OD BOOLEAN DEFAULT FALSE,
     OD_std BOOLEAN DEFAULT FALSE,
     FC BOOLEAN DEFAULT FALSE,
@@ -129,51 +137,55 @@ CREATE TABLE BioReplicatesPerEvent (
     Plate_counts BOOLEAN DEFAULT FALSE,
     Plate_counts_std BOOLEAN DEFAULT FALSE,
     pH BOOLEAN DEFAULT FALSE,
-    FOREIGN KEY (EventUniqueId) REFERENCES Events(EventUniqueId)
+    UNIQUE (studyId, bioreplicateId),
+    FOREIGN KEY (experimentUniqueId) REFERENCES Experiments(experimentUniqueId) ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY (studyId) REFERENCES Study (studyId)  ON UPDATE CASCADE ON DELETE CASCADE
 );
 
 
 CREATE TABLE IF NOT EXISTS Perturbation (
+    studyId INT,
     perturbationUniqueid INT AUTO_INCREMENT,
-    perturbationId VARCHAR(15),
-    bioreplicateUniqueId INT,
-    bioreplicateId VARCHAR(20) NOT NULL,
+    perturbationId VARCHAR(20) NOT NULL,
+    experimentUniqueId INT,
+    experimentId VARCHAR(20) NOT NULL,
     OLDCompartmentId VARCHAR(20),
     OLDComunityId VARCHAR(20),
     NEWCompartmentId VARCHAR(20),
     NEWComunityId VARCHAR(20),
-    perturbationDescription VARCHAR(255),
+    perturbationDescription TEXT,
     perturbationMinimumValue DECIMAL(10, 2),
     perturbationMaximumValue DECIMAL(10, 2),
     perturbationStartTime TIME,
     perturbationEndTime TIME,
     PRIMARY KEY (perturbationUniqueid),
-    FOREIGN KEY (bioreplicateUniqueId) REFERENCES BioReplicatesPerEvent(bioreplicateUniqueId)
+    FOREIGN KEY (experimentUniqueId) REFERENCES Experiments(experimentUniqueId) ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY (studyId) REFERENCES Study (studyId) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
 
-CREATE TABLE IF NOT EXISTS MetabolitePerEvent (
-    EventUniqueId INT,
-    EventId VARCHAR(20) NOT NULL,
+CREATE TABLE IF NOT EXISTS MetabolitePerExperiment (
+    experimentUniqueId INT,
+    experimentId VARCHAR(20) NOT NULL,
     bioreplicateUniqueId INT,
     bioreplicateId VARCHAR(20),
     metabo_name VARCHAR(255) DEFAULT NULL,
     cheb_id VARCHAR(255),
-    PRIMARY KEY  (bioreplicateId, cheb_id),
-    FOREIGN KEY (cheb_id) REFERENCES Metabolites(cheb_id),
-    FOREIGN KEY (EventUniqueId) REFERENCES Events(EventUniqueId)
+    PRIMARY KEY  (experimentId,bioreplicateId, cheb_id),
+    FOREIGN KEY (cheb_id) REFERENCES Metabolites(cheb_id) ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY (experimentUniqueId) REFERENCES Experiments(experimentUniqueId) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS Abundances (
-    EventUniqueId INT,
-    EventId VARCHAR(20) NOT NULL,
+    experimentUniqueId INT,
+    experimentId VARCHAR(20) NOT NULL,
     bioreplicateUniqueId INT,
     bioreplicateId VARCHAR(20),
     strainId INT,
     memberId VARCHAR(255),
     PRIMARY KEY  (bioreplicateId, memberId),
-    FOREIGN KEY (EventUniqueId) REFERENCES Events(EventUniqueId),
-    FOREIGN KEY (strainId) REFERENCES Strains (strainId)
+    FOREIGN KEY (experimentUniqueId) REFERENCES Experiments(experimentUniqueId) ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY (strainId) REFERENCES Strains (strainId) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
 

@@ -2,7 +2,7 @@ import pandas as pd
 import yaml
 from constants import LOCAL_DIRECTORY
 
-template_filename = LOCAL_DIRECTORY + '/metadata_template.xlsx'
+template_filename = LOCAL_DIRECTORY + '/metadata_template2.xlsx'
 # Read the completed Excel file
 df_excel_1 = pd.read_excel(template_filename, sheet_name='STUDY')
 df_excel_2 = pd.read_excel(template_filename, sheet_name='EXPERIMENTS')
@@ -10,6 +10,10 @@ df_excel_3 = pd.read_excel(template_filename, sheet_name='COMPARTMENTS')
 df_excel_4 = pd.read_excel(template_filename, sheet_name='COMMUNITY_MEMBERS')
 df_excel_5 = pd.read_excel(template_filename, sheet_name='COMMUNITIES')
 df_excel_6 = pd.read_excel(template_filename, sheet_name='PERTURBATIONS')
+
+# Convert start_time and end_time to strings
+df_excel_6['Perturbation_StartTime'] = df_excel_6['Perturbation_StartTime'].astype(str)
+df_excel_6['Perturbation_EndTime'] = df_excel_6['Perturbation_EndTime'].astype(str)
 
 
 NUM_ROWS1, num_columns1 = df_excel_1.shape
