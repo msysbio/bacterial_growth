@@ -148,7 +148,7 @@ st.write('')
 st.write('')
 
 
-tab1, tab21,  tab2, tab3, tab4, tab5, tab6 = st.tabs(["Step 1", "Step 2","Step 3", "Step 4", "Step 5", "Step 6","Step 7"])
+tab1, tab21,  tab2, tab3, tab4, tab5, tab6 = st.tabs(["Step 1", "Step 2","Step 3", "Step 4", "Step 5", "Step 6"])
 css = '''
 <style>
 .stTabs [data-baseweb="tab-list"] button [data-testid="stMarkdownContainer"] p {
@@ -644,20 +644,25 @@ def tap_step4():
             study according to the instructions provided in the **Step 2**. Remember that no modifications are allowed after
             you submit the data. Please double check below that all the celds are correct.
             """)
-            uploaded_file = st.file_uploader("Upload data file .xlsx here:",help='Only one .xlsx file allowed')
+            uploaded_file = st.file_uploader("Upload data file .xlsx here:", help='Only one .xlsx file allowed')
 
             if uploaded_file is not None:
+
                 # Read the Excel file
                 xls = pd.ExcelFile(uploaded_file)
+
                 # Get sheet names
                 sheet_names = xls.sheet_names
+
                 # Display sheet selection dropdown
                 selected_sheet = st.selectbox("Select the Excel sheet you want to visualize", sheet_names)
+
                 # Read the selected sheet
                 df = pd.read_excel(xls, engine='openpyxl', sheet_name=selected_sheet)
 
                 # Display the DataFrame
                 st.dataframe(df)
+
         with col2:
             st.subheader("2. Upload Study Template")
             st.markdown(
@@ -666,13 +671,17 @@ def tap_step4():
             study according to the instructions provided in the **Step 2**. Remember that no modifications are allowed after
             you submit the data. Please double check below that all the celds are correct.
             """)
+
             uploaded_file_2 = st.file_uploader("Upload study file .xlsx here:",help='Only one .xlsx file allowed')
 
             if uploaded_file_2 is not None:
+
                 # Read the Excel file
                 xls = pd.ExcelFile(uploaded_file_2)
+
                 # Get sheet names
                 sheet_names = xls.sheet_names
+
                 # Display sheet selection dropdown
                 selected_sheet_2 = st.selectbox("Select the Excel sheet you want to visualize", sheet_names, key='box_2')
 
@@ -682,21 +691,24 @@ def tap_step4():
                 # Display the DataFrame
                 st.dataframe(df_2)
 
-                df_study_data = pd.read_excel(xls, engine='openpyxl', sheet_name='STUDY_DATA')
+                df_experimnets = pd.read_excel(xls, engine='openpyxl', sheet_name='EXPERIMENTS')
+
                 global unique_community_ids
                 unique_community_ids = set()
-                for ids in df_study_data['Community_ID']:
+                for ids in df_experimnets['Community_ID']:
                     if ',' in ids:
                         unique_community_ids.update(id.strip() for id in ids.split(','))
                     else:
                         unique_community_ids.add(ids.strip())
 
 
-        st.warning(" Verify that all the data and study information are correct! No modifications to the data after uploaded are allowed.", icon="⚠️")
+        st.warning(" Verify that all the data and study information are correct! \
+                   No modifications to the data after uploaded are allowed.", icon="⚠️")
         st.info("After checking that all the data provided is correct, click on **Save uploaded files**.")
-        submit_button = st.button("Save uploaded files",type="primary",use_container_width = True)
+
+        submit_button = st.button("Save uploaded files", type="primary", use_container_width = True)
         if submit_button:
-            st.success("Done! Now go to **Step 4** and fill in the details.", icon="✅")
+            st.success("Done! Now go to **Step 5** and fill in the details.", icon="✅")
 
 
 def tap_step5():
@@ -750,7 +762,7 @@ def tap_step6():
         st.write("After submitting your Data, a report with the results will be sent to your e-mail.")
         email = st.text_input('Provide your e-mail address:')
         confirmation = st.checkbox('I am sure that the data uploaded is correct and I want to submit the data.')
-        Data_button = st.button("Submit Data",type="primary",use_container_width = True)
+        Data_button = st.button("Submit Data", type="primary", use_container_width = True)
 
 
 tab_step1()

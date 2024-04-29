@@ -46,6 +46,11 @@ pip install streamlit-tags
 for the tags in the upload page.
 
 
+
+
+`openpyxl>=3.1.0` 
+
+
 ### To periodically update 
 
 <!-- From [NCBI Taxonomy FTP](https://ftp.ncbi.nih.gov/pub/taxonomy/), we get the latest `taxdump.tar.gz`. -->
