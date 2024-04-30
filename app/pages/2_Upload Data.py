@@ -73,7 +73,6 @@ def taxonomy_df_for_taxa_list(taxa_list, _conn):
 
 def get_highest_index(all_strain_data):
     indices = []
-    print("sssss", all_strain_data)
     try:
         for index, strain in enumerate(all_strain_data):
             if f"parent_taxon_id_{index + 1}" in strain:
@@ -89,20 +88,17 @@ def display_strain_row(index):
     """
     row_strain_data = {}
 
-    print("==================================================")
-    print("st.session_state", st.session_state)
-    print("==================================================")
-    print("st.session_state['rows_communities']", st.session_state['rows_communities'])
-    print(type(st.session_state['rows_communities']))
-    print("\n\n  ******* \n\n")
+    # print("==================================================")
+    # print("st.session_state", st.session_state)
+    # print("==================================================")
+    # print("st.session_state['rows_communities']", st.session_state['rows_communities'])
+    # print(type(st.session_state['rows_communities']))
+    # print("\n\n  ******* \n\n")
 
     if index not in st.session_state['rows_communities']:
         pass
 
     elif st.session_state['rows_communities'][index]:
-
-        print("************************")
-        print(st.session_state['rows_communities'][index])
 
         with st.container():
 
@@ -133,7 +129,7 @@ def display_strain_row(index):
                 row_strain_data[f'description_{index}'] = other_description
 
             # Columns for taxa with NCBI Tax Id available
-            col3_add, col4_add, col5_add, col6_add= st.columns([0.39, 0.39, 0.12, 0.10])
+            col3_add, col4_add, col6_add= st.columns([0.39, 0.39, 0.10])
             with col3_add:
                 input_other_taxa = st.text_input(
                     '*Search microbial strain species:',
@@ -160,9 +156,9 @@ def display_strain_row(index):
                         if other_description == "":
                             st.warning("Please make sure you provide a description to before you continue.")
 
+                        row_strain_data["case_number"] = index
                         row_strain_data[f'parent_taxon_{index}'] = other_taxonomy
                         row_strain_data[f'parent_taxon_id_{index}'] = df_other_taxonomy[df_other_taxonomy["tax_names"] == other_taxonomy]["tax_id"].item()
-
 
                         parent_strains_df = taxonomy_df_for_taxa_list([other_taxonomy], conn)
                         strains_df = parent_strains_df[ parent_strains_df['tax_names'] == other_taxonomy ]
@@ -170,7 +166,8 @@ def display_strain_row(index):
                         row_strain_data[f'parent_taxon_id_{index}'] = taxa_id
 
                         st.info(
-                            f'For more information about **{other_taxonomy}** go to the NCBI Taxonomy ID:[{taxa_id}](https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id={taxa_id})',
+                            f'For more information about **{other_taxonomy}** go to the \
+                                NCBI Taxonomy ID:[{taxa_id}](https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id={taxa_id})',
                             icon="❕"
                         )
 
@@ -294,7 +291,6 @@ def tab_step1():
             if verify_button:
                 update_verify()
                 st.info("Go to **Step 2** and folow the instructions!", icon="✅")
-
         if new_ckeck == 'Add a new version of a study to a previous project':
             col1, col2 = st.columns([0.8,0.2])
             with col1:
@@ -326,6 +322,12 @@ def tab_step2():
     """
     Main upload function:
     invokes the display_strain_row() function for each new entry of novel taxa (without an NCBI Taxonomy Id.)
+
+    Returns:
+        - keywords:         species names with exact NCBI Taxonomy Ids
+        - list_taxa_id:     NCBI Taxonomy Ids of the keywords
+        - all_strain_data:  species names that do not match to an exact NCBI Taxonomy Ids
+        - other_taxa_list:  NCBI Taxonomy Ids of the parent taxa of the all_strain_data
     """
     keywords = []
     all_strain_data = []
@@ -405,7 +407,7 @@ def tab_step2():
                         icon="❕"
                 )
 
-        other_strains=st.radio("*Did you find all the microbial strains?:",
+        other_strains = st.radio("*Did you find all the microbial strains?:",
                                ["Yes, all microbial strains used in my study have been added.",
                                 "No, Some microbial strains were not found"
                                 ],
@@ -423,23 +425,10 @@ def tab_step2():
 
             # Parse all novel strains (without a NCBI Taxonomy Id) added
             for i in range(1, len(st.session_state['rows_communities']) + 1):
-
                 st.write('')
-                # st.write('')
-
                 strain_data = display_strain_row(i)
-
                 all_strain_data.append(strain_data)
 
-            # if len(all_strain_data) < 2:
-            #     max_index = len(all_strain_data)
-            # else:
-            #     max_index = get_highest_index(all_strain_data)
-
-            # if i == max_index and check != len(all_strain_data):
-            # add_button_clicked = st.button('Add More', key=f'add_button_{i}', type='primary')
-            # if add_button_clicked:
-                # increase_rows()
             st.button('Add More',
                     key=f'add_button_{i}',
                     type='primary',
@@ -450,19 +439,30 @@ def tab_step2():
             save_all = st.button('Save All', type='primary')
             if save_all:
 
+                print("all_strain_data", all_strain_data)
+
                 # Check if there are strains that do have exact NCBI Taxonomy ids.
                 if len(keywords) > 0:
                     df_taxonomy = taxonomy_df_for_taxa_list(keywords, conn)
                     list_taxa_id = [df_taxonomy[df_taxonomy['tax_names'] == keyword].iloc[0]['tax_id'] for keyword in keywords]
 
-                for strain in all_strain_data:
-                    taxa_id =  strain[f'parent_taxon_id_{i}']
-                    other_taxa_list.append(taxa_id)
+                all_strain_data_del_in = all_strain_data.copy()
+                all_strain_data = []
 
-                print("all_strain_data:", all_strain_data)
+                for index, strain in enumerate(all_strain_data_del_in,  start=1):
+
+                    if f'parent_taxon_id_{index}' not in strain:
+                        continue
+
+                    if st.session_state['rows_communities'][index]:
+                        taxa_id =  strain[f'parent_taxon_id_{index}']
+                        other_taxa_list.append(taxa_id)
+                        all_strain_data.append(strain)
+
                 print("keywords:", keywords)
                 print("list_taxa_id:", list_taxa_id)
                 print("other_taxa_list", other_taxa_list)
+                print("all_strain_data:", all_strain_data)
 
                 st.success("Done! Microbial strains saved, then go to **Step 3**", icon="✅")
 
@@ -548,13 +548,15 @@ def tab_step3(keywords, list_taxa_id, all_strain_data):
                         st.info(f'For more information about **{i}** go to [{cheb_id}](https://www.ebi.ac.uk/chebi/searchId.do?chebiId={cheb_id})', icon="❕")
 
                 all_keywords = []
-                for index, case in enumerate(all_strain_data):
-                    check = f'parent_taxon_{index}'
-                    if check in case:
-                        name = case[f'parent_taxon_{index}']
-                        tax_id = case[f"parent_taxon_id_{index}"]
-                        all_keywords.append(name)
-                        # all_keywords.append(tax_id)
+                for case in all_strain_data:
+                    if "case_number" in case:
+                        index = case["case_number"]
+                        check = f'parent_taxon_{index}'
+                        if check in case:
+                            name = case[f'parent_taxon_{index}']
+                            tax_id = case[f"parent_taxon_id_{index}"]
+                            all_keywords.append(name)
+                            # all_keywords.append(tax_id)
 
                 if len(all_keywords) > 0:
                     all_keywords.extend(keywords)
@@ -602,21 +604,25 @@ def tab_step3(keywords, list_taxa_id, all_strain_data):
                     Complete each section carefully according to the instructions. **DO NOT** modify the file by adding or deleating columns.
                     """)
 
+
+                filtered_strains = [entry for entry in all_strain_data if entry and 'case_number' in entry]
+
                 try:
-                    excel_data = create_excel_fun(keywords, list_taxa_id, all_strain_data)
+                    excel_data = create_excel_fun(keywords, list_taxa_id, filtered_strains)
                 except:
-                    print("excel fails with")
+                    print("Excel fails with")
                     print("keywords:", keywords)
                     print("list_taxa_id:", list_taxa_id)
-                    print("all_strain_data:", all_strain_data)
+                    print("all_strain_data:", filtered_strains)
                     print("=======")
 
+
                 down_study_button = st.download_button(label='Click here to Download the Study Template',
-                                                       data=excel_data,
-                                                       file_name='example.xlsx',
-                                                       mime='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-                                                       type="primary",
-                                                       use_container_width = True,
+                                                    data=excel_data,
+                                                    file_name='example.xlsx',
+                                                    mime='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                                                    type="primary",
+                                                    use_container_width = True,
                                     )
                 if down_study_button:
                     with st.spinner('Downloading file'):
