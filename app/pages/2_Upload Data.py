@@ -75,7 +75,7 @@ def get_highest_index(all_strain_data):
     indices = []
     try:
         for index, strain in enumerate(all_strain_data):
-            if f"parent_taxon_id_{index + 1}" in strain:
+            if "parent_taxon_id" in strain:
                 indices.append(index + 1)
     except:
         indices.append(1)
@@ -115,18 +115,18 @@ def display_strain_row(index):
                     '*Name of the microbial strain:',
                     placeholder='1. Provide a name to the microbial strain',
                     help='Complete with the name of your microbial strain that does not match to an existing NCBI Taxonomy Id.',
-                    key=f'other_name{index}'
+                    key=f'other_name_{index}'
                 )
-                row_strain_data[f'name_{index}'] = other_name
+                row_strain_data['name'] = other_name
 
             with col2_add:
                 other_description = st.text_input(
                     '*Description of the microbial strain:',
                     placeholder='2. Provide an informative desciption of the microbial strain',
                     help='Complete with a description of your microbial strain',
-                    key=f'other_description{index}'
+                    key=f'other_description_{index}'
                 )
-                row_strain_data[f'description_{index}'] = other_description
+                row_strain_data['description'] = other_description
 
             # Columns for taxa with NCBI Tax Id available
             col3_add, col4_add, col6_add= st.columns([0.39, 0.39, 0.10])
@@ -135,7 +135,7 @@ def display_strain_row(index):
                     '*Search microbial strain species:',
                     placeholder='3. Search microbial strain species',
                     help='Type the specific microbial strain  species, then press enter',
-                    key=f'input_other_taxa{index}'
+                    key=f'input_other_taxa_{index}'
                 )
 
             with col4_add:
@@ -148,7 +148,7 @@ def display_strain_row(index):
                         index=None,
                         placeholder="4. Select one of the species below",
                         help='Select only one microbial strain species, then click on add',
-                        key=f'other_taxonomy{index}'
+                        key=f'other_taxonomy_{index}'
                     )
                     if other_taxonomy is not None:
                         if other_name == "":
@@ -157,13 +157,15 @@ def display_strain_row(index):
                             st.warning("Please make sure you provide a description to before you continue.")
 
                         row_strain_data["case_number"] = index
-                        row_strain_data[f'parent_taxon_{index}'] = other_taxonomy
-                        row_strain_data[f'parent_taxon_id_{index}'] = df_other_taxonomy[df_other_taxonomy["tax_names"] == other_taxonomy]["tax_id"].item()
+                        row_strain_data['parent_taxon'] = other_taxonomy
+                        row_strain_data['parent_taxon_id'] = df_other_taxonomy[
+                            df_other_taxonomy["tax_names"] == other_taxonomy
+                            ]["tax_id"].item()
 
                         parent_strains_df = taxonomy_df_for_taxa_list([other_taxonomy], conn)
                         strains_df = parent_strains_df[ parent_strains_df['tax_names'] == other_taxonomy ]
                         taxa_id = strains_df.iloc[0]['tax_id']
-                        row_strain_data[f'parent_taxon_id_{index}'] = taxa_id
+                        row_strain_data['parent_taxon_id'] = taxa_id
 
                         st.info(
                             f'For more information about **{other_taxonomy}** go to the \
@@ -449,11 +451,11 @@ def tab_step2():
 
                 for index, strain in enumerate(all_strain_data_del_in,  start=1):
 
-                    if f'parent_taxon_id_{index}' not in strain:
+                    if 'parent_taxon_id' not in strain:
                         continue
 
                     if st.session_state['rows_communities'][index]:
-                        taxa_id =  strain[f'parent_taxon_id_{index}']
+                        taxa_id =  strain['parent_taxon_id']
                         other_taxa_list.append(taxa_id)
                         all_strain_data.append(strain)
 
@@ -558,11 +560,11 @@ def tab_step3(keywords, list_taxa_id, all_strain_data):
                 all_keywords = []
                 for case in all_strain_data:
                     if "case_number" in case:
-                        index = case["case_number"]
-                        check = f'parent_taxon_{index}'
+                        # index = case["case_number"]
+                        check = 'parent_taxon'
                         if check in case:
-                            # parent_name = case[f'parent_taxon_{index}']
-                            name = case[f'name_{index}']
+                            # parent_name = case['parent_taxon']
+                            name = case['name']
                             all_keywords.append(name)
 
                 if len(all_keywords) > 0:

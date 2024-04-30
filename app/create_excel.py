@@ -32,13 +32,13 @@ def create_excel_fun(keywords, list_taxa_id, all_strain_data):
         for i, dic in enumerate(all_strain_data):
 
             index = dic["case_number"]
-            name = dic.get(f'name_{index}', '')
+            name = dic.get('name', '')
 
             if name is None or name == "":
                 continue
 
-            description = dic.get(f'description_{index}', '')
-            parent_ncbi_tax_id = dic.get(f'parent_taxon_id_{index}')
+            description = dic.get('description', '')
+            parent_ncbi_tax_id = dic.get('parent_taxon_id')
 
             sheet.cell(row=k+i+2, column=1, value=f'member_{k+i+1}')
             sheet.cell(row=k+i+2, column=2, value=0)
