@@ -192,7 +192,7 @@ conn = st.connection("BacterialGrowth", type="sql")
 df_study = conn.query('SELECT * from Study;', ttl=600)
 st.dataframe(df_study)
 
-df_biologicalrep = conn.query('SELECT * from Events;', ttl=600)
+df_biologicalrep = conn.query('SELECT * from Experiments;', ttl=600)
 st.dataframe(df_biologicalrep)
 
 df_technicalrep = conn.query('SELECT * from Compartments;', ttl=600)
@@ -204,13 +204,13 @@ st.dataframe(df_ReactorSetUp)
 df_Compartments = conn.query('SELECT * from Community;', ttl=600)
 st.dataframe(df_Compartments)
 
-df_Bacteria = conn.query('SELECT * from CompartmentsPerEvent;', ttl=600)
+df_Bacteria = conn.query('SELECT * from CompartmentsPerExperiment;', ttl=600)
 st.dataframe(df_Bacteria)
 
-df_metabolites = conn.query('SELECT * from TechniquesPerEvent;', ttl=600)
+df_metabolites = conn.query('SELECT * from TechniquesPerExperiment;', ttl=600)
 st.dataframe(df_metabolites)
 
-df_metabolitesyn = conn.query('SELECT * from BioReplicatesPerEvent;', ttl=600)
+df_metabolitesyn = conn.query('SELECT * from BioReplicatesPerExperiment;', ttl=600)
 st.dataframe(df_metabolitesyn)
 
 df_metabolite_repl = conn.query('SELECT * from Perturbation;', ttl=600)
@@ -222,7 +222,7 @@ st.dataframe(df_metabolitedb)
 df_Abundances = conn.query('SELECT * from Abundances;', ttl=600)
 st.dataframe(df_Abundances)
 
-df_MetabolitePerReplicates = conn.query('SELECT * from MetabolitePerEvent;', ttl=600)
+df_MetabolitePerReplicates = conn.query('SELECT * from MetabolitePerExperiment;', ttl=600)
 st.dataframe(df_MetabolitePerReplicates)
 
 

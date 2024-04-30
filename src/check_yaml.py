@@ -3,7 +3,6 @@ import validators
 import pandas as pd
 import numpy as np
 from datetime import datetime
-from parse_ex_to_yaml import NUM_ROWS1, NUM_ROWS2
 from constants import LOCAL_DIRECTORY
 
 STUDY_yaml = LOCAL_DIRECTORY + 'STUDY.yaml'

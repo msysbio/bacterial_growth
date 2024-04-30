@@ -66,7 +66,7 @@ CREATE TABLE Strains (
     FOREIGN KEY (studyId) REFERENCES Study (studyId) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS Comunity (
+CREATE TABLE IF NOT EXISTS Community (
     studyId INT,
     comunityUniqueId INT AUTO_INCREMENT PRIMARY KEY,
     comunityId VARCHAR(50) NOT NULL,
@@ -110,7 +110,7 @@ CREATE TABLE CompartmentsPerExperiment (
     PRIMARY KEY (experimentUniqueId, compartmentUniqueId),
     FOREIGN KEY (experimentUniqueId) REFERENCES Experiments(experimentUniqueId) ON UPDATE CASCADE ON DELETE CASCADE,
     FOREIGN KEY (compartmentUniqueId) REFERENCES Compartments(compartmentUniqueId)  ON UPDATE CASCADE ON DELETE CASCADE,
-    FOREIGN KEY (comunityUniqueId) REFERENCES Comunity(comunityUniqueId) ON UPDATE CASCADE ON DELETE CASCADE
+    FOREIGN KEY (comunityUniqueId) REFERENCES Community(comunityUniqueId) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
 
@@ -129,7 +129,7 @@ CREATE TABLE BioReplicatesPerExperiment (
     bioreplicateId VARCHAR(50),
     experimentUniqueId INT,
     experimentId VARCHAR(20) NOT NULL,
-    control BOOLEAN DEFAULT FALSE,
+    controls BOOLEAN DEFAULT FALSE,
     OD BOOLEAN DEFAULT FALSE,
     OD_std BOOLEAN DEFAULT FALSE,
     FC BOOLEAN DEFAULT FALSE,

@@ -12,35 +12,37 @@ from import_into_database.bash_functions import clusterHeaders, getFiles
 from parse_raw_data import get_techniques_metabolites 
 from parse_raw_data import get_measures_growth
 from parse_raw_data import get_measures_abundances
+from parse_ex_to_yaml import parse_ex_to_yaml
+from check_yaml import test_study_yaml, test_experiments_yaml, test_compartments_yaml, test_comu_members_yaml, test_communities_yaml, test_perturbation_yaml
 import pandas as pd
 import itertools
 from datetime import datetime
+import sys
 
 yaml.Dumper.ignore_aliases = lambda self, data: True
 
+def load_yaml(file_path):
+    with open(file_path, 'r') as file:
+        return yaml.safe_load(file)
+
+template_filename = LOCAL_DIRECTORY + 'template_raw_data_ex2.xlsx'
+list_growth = ['Optical Density (OD)','16S rRNA-seq']
+list_metabolites = ['glucose']
+LOCAL_DIRECTORY = 'C:/Users/sofia/Desktop/local_thesis_files/'
+
+
 def populate_db(list_growth, list_metabolites, template_filename,info_file_study,info_file_experiments,info_compart_file,info_mem_file,info_pert_file):
-    template_filename = LOCAL_DIRECTORY + 'template_raw_data_ex2.xlsx'
-    list_growth = ['Optical Density (OD)','16S rRNA-seq']
-    list_metabolites = ['glucose']
+    
     errors = get_techniques_metabolites(list_growth, list_metabolites, template_filename)
-    print(errors)
     erros_logic = []
+
     if not errors:
 
         measures, metabos = get_measures_growth(template_filename)
-        print(measures)
-        print(metabos)
+        #print(measures)
+        #print(metabos)
         abundances_per_replicate = get_measures_abundances(template_filename)
-        print(abundances_per_replicate)
-
-
-        LOCAL_DIRECTORY = 'C:/Users/sofia/Desktop/local_thesis_files/'
-        info_file_study = LOCAL_DIRECTORY + 'STUDY.yaml'
-        info_file_experiments = LOCAL_DIRECTORY + 'EXPERIMENTS.yaml'
-        info_compart_file = LOCAL_DIRECTORY + 'COMPARTMENTS.yaml'
-        info_mem_file = LOCAL_DIRECTORY + 'COMMUNITY_MEMBERS.yaml'
-        info_comu_file = LOCAL_DIRECTORY + 'COMMUNITIES.yaml'
-        info_pert_file = LOCAL_DIRECTORY + 'PERTURBATIONS.yaml'
+        #print(abundances_per_replicate)
 
         info_study = read_yml(info_file_study)
         info = read_yml(info_file_experiments)
@@ -62,7 +64,6 @@ def populate_db(list_growth, list_metabolites, template_filename,info_file_study
                 return [celd.strip()]
 
         study_name_list = info_study['Study_Name']
-        num_items_study = len(study_name_list)
         experiment_name_list = info['Experiment_ID']
         num_experiment = len(experiment_name_list)
         num_compart = len(info_compart['Compartment_ID'])
@@ -79,10 +80,10 @@ def populate_db(list_growth, list_metabolites, template_filename,info_file_study
                 'studyUniqueID': info_study['Study_UniqueID'][0],
                 'projectUniqueID':  info_study['Project_UniqueID'][0]
                 }
-            if np.isnan(study['studyUniqueID']) :
+            if isinstance(info_study['Study_UniqueID'][0], float) :
                 study['studyUniqueID'] = generate_unique_id()
 
-            if np.isnan(study['projectUniqueID']) :
+            if isinstance(info_study['Project_UniqueID'][0], float):
                 study['projectUniqueID'] = generate_unique_id()
 
             study_filtered = {k: v for k, v in study.items() if v is not None}
@@ -97,7 +98,6 @@ def populate_db(list_growth, list_metabolites, template_filename,info_file_study
         biorep_id_list = []
         rep_id_list = []
         compartments_id_list = []
-        bio_pertu_id_list = []
         mem_id_list =[]
         comu_id_list =[]
 
@@ -192,7 +192,7 @@ def populate_db(list_growth, list_metabolites, template_filename,info_file_study
                     }
                     comunities_filtered = {k: v for k, v in comunities.items() if v is not None}
                     if len(comunities_filtered)>0:
-                        comunities_id = db.addRecord('Comunity', comunities_filtered)
+                        comunities_id = db.addRecord('Community', comunities_filtered)
                         comu_id_list.append((info_comu['Community_ID'][i],comunities_id))
                         print('\nCOMUNITY UNIQUE ID: ', comunities_id)
                     else:
@@ -279,14 +279,17 @@ def populate_db(list_growth, list_metabolites, template_filename,info_file_study
                     if len(tech_per_biorep)>0:
                         db.addRecord('TechniquesPerExperiment', tech_per_biorep)
                         print('\TechniquesPerExperiment Populated')
+
                 rep_biorep = stripping_method(info['Biological_Replicate_IDs'][i])
                 rep_controls = stripping_method(str(info['Control'][i]))
                 print(rep_controls)
                 for j in range(len(rep_biorep)):
                     print(rep_biorep[j])
                     list_measures = measures.get(rep_biorep[j])
+
                     if not list_measures:
                         error_ms = f"Biological_Replicate_ID: {rep_biorep[j]} was not defined in the raw data template excel. Please correct!"
+                        print(error_ms)
                         erros_logic.append(error_ms)
                         return erros_logic
 
@@ -316,10 +319,11 @@ def populate_db(list_growth, list_metabolites, template_filename,info_file_study
                         if 'pH' in list_measures:
                             ph = 1
                         rep_per_biorep = {
+                            'studyId' : study_id,
                             'experimentUniqueId': search_id(info['Experiment_ID'][i],biorep_id_list),
                             'experimentId': info['Experiment_ID'][i],
                             'bioreplicateId': rep_biorep[j],
-                            'control': control,
+                            'controls': control,
                             'OD': od,
                             'OD_std': od_std, 
                             'FC': fc, 
@@ -363,6 +367,53 @@ def populate_db(list_growth, list_metabolites, template_filename,info_file_study
                             if len(abundance)>0:
                                 db.addRecord('Abundances', abundance)
                                 print('\Abundances Populated')
-        print(erros_logic)
+        #print(erros_logic)
+    else:
+        return errors
+    
     return erros_logic, study['studyUniqueID'],study['projectUniqueID']
+
+#EXAMPLE OF SCRIPT
+
+# From th metadata template create a yaml file for every sheet
+metadata_template_filename = LOCAL_DIRECTORY + '/metadata_template2.xlsx'
+
+parse_ex_to_yaml(LOCAL_DIRECTORY, metadata_template_filename)
+
+info_file_study = LOCAL_DIRECTORY + 'STUDY.yaml'
+info_file_experiments = LOCAL_DIRECTORY + 'EXPERIMENTS.yaml'
+info_compart_file = LOCAL_DIRECTORY + 'COMPARTMENTS.yaml'
+info_mem_file = LOCAL_DIRECTORY + 'COMMUNITY_MEMBERS.yaml'
+info_comu_file = LOCAL_DIRECTORY + 'COMMUNITIES.yaml'
+info_pert_file = LOCAL_DIRECTORY + 'PERTURBATIONS.yaml'
+
+
+# Do the test to the yaml files according to the sheet
+
+data_study_yaml = load_yaml(info_file_study)
+errors = test_study_yaml(data_study_yaml)
+
+data_experiment_yaml = load_yaml(info_file_experiments)
+errors.append(test_experiments_yaml(data_experiment_yaml))
+
+data_compartment_yaml = load_yaml(info_compart_file)
+errors.append(test_compartments_yaml(data_compartment_yaml))
+
+data_comu_members_yaml = load_yaml(info_mem_file)
+errors.append(test_comu_members_yaml(data_comu_members_yaml))
+
+data_comu = load_yaml(info_comu_file)
+errors.append(test_communities_yaml(data_comu))
+
+data_pertu = load_yaml(info_pert_file)
+errors.append(test_perturbation_yaml(data_pertu))
+
+# Check that there is no error, otherwise, exit or stop code
+
+if not all(not sublist for sublist in errors):
+    print(errors)
+    sys.exit()
+
+# Populate function
+populate_db(list_growth, list_metabolites, template_filename,info_file_study,info_file_experiments,info_compart_file,info_mem_file,info_pert_file)
 
