@@ -1,14 +1,14 @@
 import os
 import mysql.connector
 import warnings
+import streamlit as st
 
-#user_name = os.environ.get('DB_USER')
+
 user_name = 'root'
-#password = os.environ.get('DB_PASSWORD')
 password = 'Amartemucho123-'
-
-
 DB_NAME = 'BacterialGrowth'
+
+
 
 def execute(phrase):
     """
@@ -18,7 +18,7 @@ def execute(phrase):
     :return: list of str received from the database
     """
     try:
-        cnx = mysql.connector.connect(user=user_name, password=password, host='localhost', database=DB_NAME)
+        cnx = mysql.connector.connect(user=user_name, password=password, host='localhost', port=3306,database=DB_NAME)
         cursor = cnx.cursor()
         cursor.execute(phrase)
         res = []
@@ -37,6 +37,8 @@ def execute(phrase):
     except mysql.connector.Error as err:
         print("\nSomething went wrong: {}".format(err),'\n')
         exit()
+    
+
 
 def addRecord(table, args):
     """ 
@@ -56,6 +58,7 @@ def addRecord(table, args):
     # Get the name of the primary key field
     phrase = "SHOW KEYS FROM "+table+" WHERE Key_name = 'PRIMARY'"
     res = execute(phrase)
+    print(res)
     pk = res[0][4]
     print(pk)
     

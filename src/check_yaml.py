@@ -12,13 +12,21 @@ COMMUNITY_MEM_yaml = LOCAL_DIRECTORY + 'COMMUNITY_MEMBERS.yaml'
 COMMUNITIES_yaml = LOCAL_DIRECTORY + 'COMMUNITIES.yaml'
 PERTURBATION_yaml = LOCAL_DIRECTORY + 'PERTURBATIONS.yaml'
 
-
+# functon that loads a yaml file  into a df
 def load_yaml(file_path):
     with open(file_path, 'r') as file:
         return yaml.safe_load(file)
     
 
 def test_study_yaml(data):
+    """
+    Function that test the study yaml dataframe, checking that all the mandatory columns are not .nan or in the right format
+    inputs:
+        - data: dataframe corresponding to the excel sheet
+
+    Returns:
+        - errors: List of errors if found.
+    """
     df = pd.DataFrame(data)
     errors = []
     for column in df.columns:
@@ -31,6 +39,14 @@ def test_study_yaml(data):
     return errors
 
 def test_experiments_yaml(data):
+    """
+    Function that test the experiments yaml dataframe, checking that all the mandatory columns are not .nan or in the right format
+    inputs:
+        - data: dataframe corresponding to the excel sheet
+
+    Returns:
+        - errors: List of errors if found.
+    """
     df = pd.DataFrame(data)
     errors = []
     for column in df.columns:
@@ -46,6 +62,14 @@ def test_experiments_yaml(data):
     return errors
 
 def test_compartments_yaml(data):
+    """
+    Function that test the compartments yaml dataframe, checking that all the mandatory columns are not .nan or in the right format
+    inputs:
+        - data: dataframe corresponding to the excel sheet
+
+    Returns:
+        - errors: List of errors if found.
+    """
     df = pd.DataFrame(data)
     errors = []
     for column in df.columns:
@@ -68,6 +92,14 @@ def test_compartments_yaml(data):
 
 
 def test_comu_members_yaml(data):
+    """
+    Function that test the community members yaml dataframe, checking that all the mandatory columns are not .nan or in the right format
+    inputs:
+        - data: dataframe corresponding to the excel sheet
+
+    Returns:
+        - errors: List of errors if found.
+    """
     df = pd.DataFrame(data)
     errors = []
     for column in df.columns:
@@ -86,6 +118,14 @@ def test_comu_members_yaml(data):
     return errors
 
 def test_communities_yaml(data):
+    """
+    Function that test the communitites yaml dataframe, checking that all the mandatory columns are not .nan or in the right format
+    inputs:
+        - data: dataframe corresponding to the excel sheet
+
+    Returns:
+        - errors: List of errors if found.
+    """
     df = pd.DataFrame(data)
     errors = []
     for column in df.columns:
@@ -95,6 +135,14 @@ def test_communities_yaml(data):
     return errors
 
 def test_perturbation_yaml(data):
+    """
+    Function that test the perturbations yaml dataframe, checking that all the mandatory columns are not .nan or in the right format
+    inputs:
+        - data: dataframe corresponding to the excel sheet
+
+    Returns:
+        - errors: List of errors if found.
+    """
     df = pd.DataFrame(data)
     errors = []
     if pd.api.types.is_string_dtype(df['Perturbation_ID']):
@@ -108,6 +156,7 @@ def test_perturbation_yaml(data):
             else:
                 if not (pd.api.types.is_string_dtype(df[column]) or pd.api.types.is_float_dtype(df[column])):
                     errors.append(f"Column '{column}' must be of type string or blank.")
+                    
     if pd.api.types.is_string_dtype(df['OLD_Community_ID']):
         if not (pd.api.types.is_string_dtype(df['NEW_Community_ID'])):
                  errors.append("Column 'NEW_Community_ID' must be of type a string. No blank celds allowed.")
@@ -128,25 +177,3 @@ def test_perturbation_yaml(data):
 
     return errors
         
-
-
-
-    
-data_study_yaml = load_yaml(STUDY_yaml)
-errors = test_study_yaml(data_study_yaml)
-
-data_experiment_yaml = load_yaml(EXPERMENT_yaml)
-errors2 = test_experiments_yaml(data_experiment_yaml)
-data_compartment_yaml = load_yaml(COMPARTMENT_yaml)
-errors3 = test_compartments_yaml(data_compartment_yaml)
-
-data_comu_members_yaml = load_yaml(COMMUNITY_MEM_yaml)
-errors4 = test_comu_members_yaml(data_comu_members_yaml)
-
-data_comu = load_yaml(COMMUNITIES_yaml)
-errors5 = test_communities_yaml(data_comu)
-
-data_pertu = load_yaml(PERTURBATION_yaml)
-errors6 = test_perturbation_yaml(data_pertu)
-print(errors, errors2, errors3,errors4,errors6)
-print(type(data_pertu['NEW_Community_ID'][0]))

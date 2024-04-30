@@ -222,6 +222,12 @@ st.dataframe(df_metabolitedb)
 df_Abundances = conn.query('SELECT * from Abundances;', ttl=600)
 st.dataframe(df_Abundances)
 
+df_FC_couts = conn.query('SELECT * from FC_Counts;', ttl=600)
+st.dataframe(df_FC_couts)
+
+df_BioReplicatesMetadata = conn.query('SELECT * from BioReplicatesMetadata', ttl=600)
+st.dataframe(df_BioReplicatesMetadata)
+
 df_MetabolitePerReplicates = conn.query('SELECT * from MetabolitePerExperiment;', ttl=600)
 st.dataframe(df_MetabolitePerReplicates)
 

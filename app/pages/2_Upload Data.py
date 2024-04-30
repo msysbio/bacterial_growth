@@ -4,17 +4,30 @@ import pandas as pd
 from create_excel import create_excel_fun
 from datetime import datetime, timedelta
 import time
+import yaml
 import sys
 import os
+import uuid
+import numpy as np
+import itertools
 from create_rawdata_excel import create_rawdata_excel_fun
 from streamlit_tags import st_tags
+st.set_page_config(page_title="Upload Data", page_icon="📤", layout='wide')
+
 current_dir = os.path.dirname(os.path.realpath(__file__))[:-9]
 relative_path_to_src = os.path.join(current_dir, 'src')
 sys.path.append(relative_path_to_src)
 from constants import LOCAL_DIRECTORY
+from parse_ex_to_yaml import parse_ex_to_yaml
+from check_yaml import test_study_yaml, test_experiments_yaml, test_compartments_yaml, test_comu_members_yaml, test_communities_yaml, test_perturbation_yaml
+from populate_db_mod import populate_db
+from import_into_database.yml_functions import read_yml
+import db_functions as db
+from parse_raw_data import get_techniques_metabolites, get_measures_growth, get_measures_counts, get_measures_reads, get_replicate_metadata
 
 
-st.set_page_config(page_title="Upload Data", page_icon="📤", layout='wide')
+
+
 
 add_logo("figs/logo_sidebar2.png", height=100)
 with open("style.css") as css:
@@ -54,6 +67,10 @@ def decrease_rows(index):
 
 def toggle_container(index):
     st.session_state['rows_communities'][index] = not st.session_state['rows_communities'][index]
+
+def load_yaml(file_path):
+    with open(file_path, 'r') as file:
+        return yaml.safe_load(file)
 
 @st.cache_data
 def taxonomy_df_for_taxa_list(taxa_list, _conn):
@@ -474,6 +491,9 @@ def tab_step3(keywords, list_taxa_id, all_strain_data):
     """
     Step 3: Download templates tab
     """
+    meta_col = []
+    measure_tech = []
+    all_keywords = []
     with tab3:
 
         colu1,  colu2 = st.columns(2)
@@ -640,10 +660,12 @@ def tab_step3(keywords, list_taxa_id, all_strain_data):
 
         else:
             st.warning("Go back to Step 1 and fill in the details!", icon="⚠️")
+    return measure_tech, meta_col, all_keywords
 
 
 def tab_step4():
-
+    xls_1 = None
+    xls_2 = None
     with tab4:
         col1, col2 = st.columns(2)
         with col1:
@@ -659,16 +681,16 @@ def tab_step4():
             if uploaded_file is not None:
 
                 # Read the Excel file
-                xls = pd.ExcelFile(uploaded_file)
+                xls_1 = pd.ExcelFile(uploaded_file)
 
                 # Get sheet names
-                sheet_names = xls.sheet_names
+                sheet_names = xls_1.sheet_names
 
                 # Display sheet selection dropdown
                 selected_sheet = st.selectbox("Select the Excel sheet you want to visualize", sheet_names)
 
                 # Read the selected sheet
-                df = pd.read_excel(xls, engine='openpyxl', sheet_name=selected_sheet)
+                df = pd.read_excel(xls_1, engine='openpyxl', sheet_name=selected_sheet)
 
                 # Display the DataFrame
                 st.dataframe(df)
@@ -687,21 +709,21 @@ def tab_step4():
             if uploaded_file_2 is not None:
 
                 # Read the Excel file
-                xls = pd.ExcelFile(uploaded_file_2)
+                xls_2 = pd.ExcelFile(uploaded_file_2)
 
                 # Get sheet names
-                sheet_names = xls.sheet_names
+                sheet_names = xls_2.sheet_names
 
                 # Display sheet selection dropdown
                 selected_sheet_2 = st.selectbox("Select the Excel sheet you want to visualize", sheet_names, key='box_2')
 
                 # Read the selected sheet
-                df_2 = pd.read_excel(xls, engine='openpyxl', sheet_name=selected_sheet_2)
+                df_2 = pd.read_excel(xls_2, engine='openpyxl', sheet_name=selected_sheet_2)
 
                 # Display the DataFrame
                 st.dataframe(df_2)
 
-                df_experimnets = pd.read_excel(xls, engine='openpyxl', sheet_name='EXPERIMENTS')
+                df_experimnets = pd.read_excel(xls_2, engine='openpyxl', sheet_name='EXPERIMENTS')
 
                 global unique_community_ids
                 unique_community_ids = set()
@@ -718,9 +740,10 @@ def tab_step4():
         submit_button = st.button("Save uploaded files", type="primary", use_container_width = True)
         if submit_button:
             st.success("Done! Now go to **Step 5** and fill in the details.", icon="✅")
+    return xls_1, xls_2
 
 
-def tab_step5():
+def tab_step5(xls_1, xls_2, measure_tech, meta_col, all_keywords):
     """
     Submit data page
     """
@@ -748,9 +771,60 @@ def tab_step5():
         confirmation = st.checkbox('I am sure that the data uploaded is correct and I want to submit the data.')
         Data_button = st.button("Submit Data", type="primary", use_container_width = True)
 
+        if Data_button and (xls_1 and xls_2):
+            
+            # Get all the yaml files
+            parse_ex_to_yaml(LOCAL_DIRECTORY, xls_2)
+
+            # Define the yaml files path
+            info_file_study = LOCAL_DIRECTORY + 'STUDY.yaml'
+            info_file_experiments = LOCAL_DIRECTORY + 'EXPERIMENTS.yaml'
+            info_compart_file = LOCAL_DIRECTORY + 'COMPARTMENTS.yaml'
+            info_mem_file = LOCAL_DIRECTORY + 'COMMUNITY_MEMBERS.yaml'
+            info_comu_file = LOCAL_DIRECTORY + 'COMMUNITIES.yaml'
+            info_pert_file = LOCAL_DIRECTORY + 'PERTURBATIONS.yaml'
+            
+            # Do the test to the yaml files according to the sheet
+            data_study_yaml = load_yaml(info_file_study)
+            errors = test_study_yaml(data_study_yaml)
+
+            data_experiment_yaml = load_yaml(info_file_experiments)
+            errors.append(test_experiments_yaml(data_experiment_yaml))
+
+            data_compartment_yaml = load_yaml(info_compart_file)
+            errors.append(test_compartments_yaml(data_compartment_yaml))
+
+            data_comu_members_yaml = load_yaml(info_mem_file)
+            errors.append(test_comu_members_yaml(data_comu_members_yaml))
+
+            data_comu = load_yaml(info_comu_file)
+            errors.append(test_communities_yaml(data_comu))
+
+            data_pertu = load_yaml(info_pert_file)
+            errors.append(test_perturbation_yaml(data_pertu))
+
+            # Check that there is no error, otherwise, show error and do not upload data
+            if not all(not sublist for sublist in errors):
+                for i in errors:
+                    st.error(f"Data uploading unsuccessful: {i}. Please correct and try again!")
+            
+            # else, populate the db and give the unique ids to the user if not error
+            # if errors during the population function then the function stops and the errors are printed
+            else:
+                errors, erros_logic, studyUniqueID, projectUniqueID = populate_db(measure_tech, meta_col, all_keywords ,xls_1,info_file_study,info_file_experiments,info_compart_file,info_mem_file,info_comu_file,info_pert_file)
+                if not (errors and erros_logic) and (studyUniqueID and projectUniqueID):
+                    st.success(f"Thank you! your study has been successfully uploaded into our database, **Unique study Id**: {studyUniqueID} and **Unique Project Id**: {projectUniqueID}")
+                else:
+                    for i in errors:
+                        st.error(f"Data uploading unsuccessful: {i}. Please correct and try again!")
+                    for i in erros_logic:
+                        st.error(f"Data uploading unsuccessful: {i}. Please correct and try again!")
+
+
+
 
 tab_step1()
 keywords, list_taxa_id, all_strain_data, other_taxa_list = tab_step2()
-tab_step3(keywords, list_taxa_id, all_strain_data)
-tab_step4()
-tab_step5()
+list_growth, list_metabolites, all_keywords =  tab_step3(keywords, list_taxa_id, all_strain_data)
+xls_1, xls_2 = tab_step4()
+tab_step5(xls_1, xls_2,list_growth, list_metabolites, all_keywords)

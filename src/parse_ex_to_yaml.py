@@ -4,15 +4,27 @@ from constants import LOCAL_DIRECTORY
 
 template_filename = LOCAL_DIRECTORY + '/metadata_template2.xlsx'
 
-def parse_ex_to_yaml(LOCAL_DIRECTORY, template_filename):
+def parse_ex_to_yaml(LOCAL_DIRECTORY, template_excel):
+    """
+    Function that parse the metadata template that the user uploads in step 4 and creates a yaml file
+    per sheet in the excel
+
+    inputs:
+        - LOCAL_DIRECTORY: path were the yaml files are going to be saved
+        - template_excel: matadata excel file uploaded by the user
+
+    Returns:
+        - yaml file per sheet in metadata excel: STUDY.yaml, EXPERIMENTS.yaml, COMPARTMENTS.yaml,
+        COMMUNITY_MEMBERS.yaml, COMMUNITIES.yaml, PERTURBATIONS.yaml
+    """
 
     # Read the completed Excel file
-    df_excel_1 = pd.read_excel(template_filename, sheet_name='STUDY')
-    df_excel_2 = pd.read_excel(template_filename, sheet_name='EXPERIMENTS')
-    df_excel_3 = pd.read_excel(template_filename, sheet_name='COMPARTMENTS')
-    df_excel_4 = pd.read_excel(template_filename, sheet_name='COMMUNITY_MEMBERS')
-    df_excel_5 = pd.read_excel(template_filename, sheet_name='COMMUNITIES')
-    df_excel_6 = pd.read_excel(template_filename, sheet_name='PERTURBATIONS')
+    df_excel_1 = pd.read_excel(template_excel, engine='openpyxl',sheet_name='STUDY')
+    df_excel_2 = pd.read_excel(template_excel, engine='openpyxl' ,sheet_name='EXPERIMENTS')
+    df_excel_3 = pd.read_excel(template_excel, engine='openpyxl',sheet_name='COMPARTMENTS')
+    df_excel_4 = pd.read_excel(template_excel, engine='openpyxl',sheet_name='COMMUNITY_MEMBERS')
+    df_excel_5 = pd.read_excel(template_excel, engine='openpyxl',sheet_name='COMMUNITIES')
+    df_excel_6 = pd.read_excel(template_excel, engine='openpyxl',sheet_name='PERTURBATIONS')
 
     # Convert start_time and end_time to strings
     df_excel_6['Perturbation_StartTime'] = df_excel_6['Perturbation_StartTime'].astype(str)
@@ -54,6 +66,7 @@ def parse_ex_to_yaml(LOCAL_DIRECTORY, template_filename):
     template_filename_yaml_COMMUNITY_MEMBERS = LOCAL_DIRECTORY + 'COMMUNITY_MEMBERS.yaml'
     template_filename_yaml_COMMUNITIES = LOCAL_DIRECTORY + 'COMMUNITIES.yaml'
     template_filename_yaml_PERTURBATIONS = LOCAL_DIRECTORY + 'PERTURBATIONS.yaml'
+    
     # Write YAML data to a file
     with open(template_filename_yaml_STUDY, "w") as yaml_file:
         yaml_file.write(yaml_data)

@@ -59,7 +59,7 @@ CREATE TABLE Strains (
     studyId INT,
     memberId VARCHAR(50),
     defined BOOLEAN DEFAULT FALSE,
-    memberName VARCHAR(50),
+    memberName TEXT,
     strainId INT AUTO_INCREMENT PRIMARY KEY,
     NCBId INT,
     descriptionMember TEXT,
@@ -132,13 +132,22 @@ CREATE TABLE BioReplicatesPerExperiment (
     controls BOOLEAN DEFAULT FALSE,
     OD BOOLEAN DEFAULT FALSE,
     OD_std BOOLEAN DEFAULT FALSE,
-    FC BOOLEAN DEFAULT FALSE,
-    FC_std BOOLEAN DEFAULT FALSE,
     Plate_counts BOOLEAN DEFAULT FALSE,
     Plate_counts_std BOOLEAN DEFAULT FALSE,
     pH BOOLEAN DEFAULT FALSE,
     UNIQUE (studyId, bioreplicateId),
     FOREIGN KEY (experimentUniqueId) REFERENCES Experiments(experimentUniqueId) ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY (studyId) REFERENCES Study (studyId)  ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+CREATE TABLE BioReplicatesMetadata (
+    studyId INT NOT NULL,
+    bioreplicateUniqueId INT,
+    bioreplicateId VARCHAR(50),
+    biosampleLink TEXT,
+    bioreplicateDescrition TEXT,
+    UNIQUE (studyId, bioreplicateUniqueId),
+    FOREIGN KEY (bioreplicateUniqueId) REFERENCES BioReplicatesPerExperiment (bioreplicateUniqueId)  ON UPDATE CASCADE ON DELETE CASCADE,
     FOREIGN KEY (studyId) REFERENCES Study (studyId)  ON UPDATE CASCADE ON DELETE CASCADE
 );
 
@@ -183,7 +192,19 @@ CREATE TABLE IF NOT EXISTS Abundances (
     bioreplicateId VARCHAR(20),
     strainId INT,
     memberId VARCHAR(255),
-    PRIMARY KEY  (bioreplicateId, memberId),
+    PRIMARY KEY  (experimentId,bioreplicateId, memberId),
+    FOREIGN KEY (experimentUniqueId) REFERENCES Experiments(experimentUniqueId) ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY (strainId) REFERENCES Strains (strainId) ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS FC_Counts (
+    experimentUniqueId INT,
+    experimentId VARCHAR(20) NOT NULL,
+    bioreplicateUniqueId INT,
+    bioreplicateId VARCHAR(20),
+    strainId INT,
+    memberId VARCHAR(255),
+    PRIMARY KEY  (experimentId,bioreplicateId, memberId),
     FOREIGN KEY (experimentUniqueId) REFERENCES Experiments(experimentUniqueId) ON UPDATE CASCADE ON DELETE CASCADE,
     FOREIGN KEY (strainId) REFERENCES Strains (strainId) ON UPDATE CASCADE ON DELETE CASCADE
 );
