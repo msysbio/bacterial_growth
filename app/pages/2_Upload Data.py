@@ -8,7 +8,6 @@ import sys
 import os
 from create_rawdata_excel import create_rawdata_excel_fun
 from streamlit_tags import st_tags
-
 current_dir = os.path.dirname(os.path.realpath(__file__))[:-9]
 relative_path_to_src = os.path.join(current_dir, 'src')
 sys.path.append(relative_path_to_src)
@@ -34,15 +33,27 @@ unique_community_ids = set()
 conn = st.connection("BacterialGrowth", type="sql")
 
 if 'rows_communities' not in st.session_state:
-    st.session_state['rows_communities'] = 0
+    st.session_state['rows_communities'] = {}
+    st.session_state['rows_communities'][1] = True
 
 
 def increase_rows():
-    st.session_state['rows_communities'] += 1
+    index = len(st.session_state['rows_communities'])
+    st.session_state['rows_communities'][index + 1] = True
 
 
-def decrease_rows():
-    st.session_state['rows_communities'] -= 1
+def decrease_rows(index):
+
+    keys_to_remove = []
+    for key in st.session_state:
+        if key.endswith(str(index)):
+            keys_to_remove.append(key)
+    for key in keys_to_remove:
+        del st.session_state[key]
+
+
+def toggle_container(index):
+    st.session_state['rows_communities'][index] = not st.session_state['rows_communities'][index]
 
 @st.cache_data
 def taxonomy_df_for_taxa_list(taxa_list, _conn):
@@ -60,74 +71,123 @@ def taxonomy_df_for_taxa_list(taxa_list, _conn):
     return pd.concat(dfs, ignore_index=True)
 
 
+def get_highest_index(all_strain_data):
+    indices = []
+    try:
+        for index, strain in enumerate(all_strain_data):
+            if "parent_taxon_id" in strain:
+                indices.append(index + 1)
+    except:
+        indices.append(1)
+    return sorted(indices)[-1]
+
+
 def display_strain_row(index):
     """
     Add 4-cols template for addin a new strain without an NCBI Taxonomy Id when other_strains is "No"
     """
     row_strain_data = {}
 
-    with st.container():
+    # print("==================================================")
+    # print("st.session_state", st.session_state)
+    # print("==================================================")
+    # print("st.session_state['rows_communities']", st.session_state['rows_communities'])
+    # print(type(st.session_state['rows_communities']))
+    # print("\n\n  ******* \n\n")
 
-        # Add a text input field to the first column  --  columns for unknown taxa (no NCBI Tax Id available)
-        col1_add, col2_add = st.columns(2)
-        with col1_add:
-            other_name = st.text_input(
-                '*Name of the microbial strain:',
-                placeholder='1. Provide a name to the microbial strain',
-                help='Complete with the name of your microbial strain that does not match to an existing NCBI Taxonomy Id.',
-                key=f'other_name{index}'
-            )
-            row_strain_data[f'name_{index}'] = other_name
+    if index not in st.session_state['rows_communities']:
+        pass
 
-        with col2_add:
-            other_description = st.text_input(
-                '*Description of the microbial strain:',
-                placeholder='2. Provide an informative desciption of the microbial strain',
-                help='Complete with a description of your microbial strain',
-                key=f'other_description{index}'
-            )
-            row_strain_data[f'description_{index}'] = other_description
+    elif st.session_state['rows_communities'][index]:
 
-        # Columns for taxa with NCBI Tax Id available
-        col3_add, col4_add, col5_add, col6_add= st.columns([0.39, 0.39, 0.12, 0.10])
-        with col3_add:
-            input_other_taxa = st.text_input(
-                '*Search microbial strain species:',
-                placeholder='3. Search microbial strain species',
-                help='Type the specific microbial strain  species, then press enter',
-                key=f'input_other_taxa{index}'
-            )
+        with st.container():
 
-        with col4_add:
-            if input_other_taxa:
-                df_other_taxonomy = taxonomy_df_for_taxa_list([input_other_taxa], conn)
-                df_taxa_other_name = df_other_taxonomy['tax_names']
-                other_taxonomy = st.selectbox(
-                    '*Select microbial strain species',
-                    options=df_taxa_other_name,
-                    index=None,
-                    placeholder="4. Select one of the species below",
-                    help='Select only one microbial strain species, then click on add',
-                    key=f'other_taxonomy{index}'
+            if f'add_button_clicked_{index}' not in st.session_state:
+                st.session_state[f'add_button_clicked_{index}'] = False
+
+            if f'delete_button_clicked_{index}' not in st.session_state:
+                st.session_state[f'delete_button_clicked_{index}'] = False
+
+            # Add a text input field to the first column  --  columns for unknown taxa (no NCBI Tax Id available)
+            col1_add, col2_add = st.columns(2)
+            with col1_add:
+                other_name = st.text_input(
+                    '*Name of the microbial strain:',
+                    placeholder='1. Provide a name to the microbial strain',
+                    help='Complete with the name of your microbial strain that does not match to an existing NCBI Taxonomy Id.',
+                    key=f'other_name_{index}'
                 )
-                if other_taxonomy is not None:
-                    if other_name == "":
-                        st.warning("Please make sure you provide a name before you continue.")
-                    if other_description == "":
-                        st.warning("Please make sure you provide a description to before you continue.")
+                row_strain_data['name'] = other_name
 
-                    row_strain_data[f'parent_taxon_{index}'] = other_taxonomy
-                    row_strain_data[f'parent_taxon_id_{index}'] = df_other_taxonomy[df_other_taxonomy["tax_names"] == other_taxonomy]["tax_id"].item()
+            with col2_add:
+                other_description = st.text_input(
+                    '*Description of the microbial strain:',
+                    placeholder='2. Provide an informative desciption of the microbial strain',
+                    help='Complete with a description of your microbial strain',
+                    key=f'other_description_{index}'
+                )
+                row_strain_data['description'] = other_description
 
-                    with col5_add:
-                        st.write("")
-                        st.write("")
-                        st.button('Add More',key=f'add_button_{index}', type='primary', on_click=increase_rows)
+            # Columns for taxa with NCBI Tax Id available
+            col3_add, col4_add, col6_add= st.columns([0.39, 0.39, 0.10])
+            with col3_add:
+                input_other_taxa = st.text_input(
+                    '*Search microbial strain species:',
+                    placeholder='3. Search microbial strain species',
+                    help='Type the specific microbial strain  species, then press enter',
+                    key=f'input_other_taxa_{index}'
+                )
 
+            with col4_add:
+                if input_other_taxa:
+                    df_other_taxonomy = taxonomy_df_for_taxa_list([input_other_taxa], conn)
+                    df_taxa_other_name = df_other_taxonomy['tax_names']
+                    other_taxonomy = st.selectbox(
+                        '*Select microbial strain species',
+                        options=df_taxa_other_name,
+                        index=None,
+                        placeholder="4. Select one of the species below",
+                        help='Select only one microbial strain species, then click on add',
+                        key=f'other_taxonomy_{index}'
+                    )
+                    if other_taxonomy is not None:
+                        if other_name == "":
+                            st.warning("Please make sure you provide a name before you continue.")
+                        if other_description == "":
+                            st.warning("Please make sure you provide a description to before you continue.")
+
+                        row_strain_data["case_number"] = index
+                        row_strain_data['parent_taxon'] = other_taxonomy
+                        row_strain_data['parent_taxon_id'] = df_other_taxonomy[
+                            df_other_taxonomy["tax_names"] == other_taxonomy
+                            ]["tax_id"].item()
+
+                        parent_strains_df = taxonomy_df_for_taxa_list([other_taxonomy], conn)
+                        strains_df = parent_strains_df[ parent_strains_df['tax_names'] == other_taxonomy ]
+                        taxa_id = strains_df.iloc[0]['tax_id']
+                        row_strain_data['parent_taxon_id'] = taxa_id
+
+                        st.info(
+                            f'For more information about **{other_taxonomy}** go to the \
+                                NCBI Taxonomy ID:[{taxa_id}](https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id={taxa_id})',
+                            icon="❕"
+                        )
+
+        # Buttons
         with col6_add:
             st.write("")
             st.write("")
-            st.button('Delete',key=f'delete_button_{index}',type='primary', on_click=decrease_rows)
+
+
+            if f'delete_button_visible_{index}' not in st.session_state:
+                st.session_state[f'delete_button_visible_{index}'] = True
+
+            if st.session_state[f'delete_button_visible_{index}']:
+                if st.button('Delete',
+                             key=f'delete_button_{index}',
+                             type='primary',
+                             on_click=lambda: toggle_container(index)):
+                     st.session_state[f'delete_button_visible_{index}'] = False
 
     return row_strain_data
 
@@ -233,7 +293,6 @@ def tab_step1():
             if verify_button:
                 update_verify()
                 st.info("Go to **Step 2** and folow the instructions!", icon="✅")
-
         if new_ckeck == 'Add a new version of a study to a previous project':
             col1, col2 = st.columns([0.8,0.2])
             with col1:
@@ -265,6 +324,12 @@ def tab_step2():
     """
     Main upload function:
     invokes the display_strain_row() function for each new entry of novel taxa (without an NCBI Taxonomy Id.)
+
+    Returns:
+        - keywords:         species names with exact NCBI Taxonomy Ids
+        - list_taxa_id:     NCBI Taxonomy Ids of the keywords
+        - all_strain_data:  species names that do not match to an exact NCBI Taxonomy Ids
+        - other_taxa_list:  NCBI Taxonomy Ids of the parent taxa of the all_strain_data
     """
     keywords = []
     all_strain_data = []
@@ -281,8 +346,10 @@ def tab_step2():
         st.session_state['input_taxa'] = ''
         st.session_state['select_taxa'] = None
 
-
     with tab2:
+        """
+        Step 2: Describing the strains
+        """
         df_taxonomy = ""
         st.subheader("2. Select all the microbial strains used in the study")
         st.markdown(
@@ -291,6 +358,7 @@ def tab_step2():
             Once you are sure all the different community members are defined, click on 'save'.
             """
         )
+        # Strains with NCBI Taxonomy Ids.
         col1, col2, col3 = st.columns([0.45,0.45,0.1])
         with col1:
             input_taxon = st.text_input(
@@ -341,7 +409,7 @@ def tab_step2():
                         icon="❕"
                 )
 
-        other_strains=st.radio("*Did you find all the microbial strains?:",
+        other_strains = st.radio("*Did you find all the microbial strains?:",
                                ["Yes, all microbial strains used in my study have been added.",
                                 "No, Some microbial strains were not found"
                                 ],
@@ -356,109 +424,46 @@ def tab_step2():
 
         # Case where a strain does not correspond to a NCBI Taxonomy Id
         elif other_strains == "No, Some microbial strains were not found":
-            with st.container():
-
-                strain_data1 = {}
-                # This dictionary consists of 3 keys:
-                #   - name_<int>: with the name that the user gives to their species
-                #   - description_<int>: a more thorough description of the species characteristics
-                #   - parent_taxon_<int>: the NCBI Taxonomy species name of the parent taxon in NCBI Taxonomy; for example for a strain of E.coli, this should be E.coli
-
-                # Columns for novel strain description
-                col6, col7 = st.columns([0.5,0.5])
-                with col6:
-                    other_name = st.text_input(
-                        '*Name of the microbial strain:',
-                        placeholder='1. Provide a name to the microbial strain',
-                        help='Complete with the name of your microbial strain that does not match to an existing NCBI Taxonomy Id.'
-                    )
-                    strain_data1['name_0'] = other_name
-                with col7:
-                    other_description = st.text_input(
-                        '*Description of the microbial strain:',
-                        placeholder='2. Provide an informative desciption of the microbial strain',
-                        help='Complete with a description of your microbial strain'
-                    )
-                    strain_data1['description_0'] = other_description
-
-                # Columns for parent NCBI Taxonomy Id of the novel species
-                col8, col9, col10 = st.columns([0.44,0.44,0.12])
-                with col8:
-                    input_other_taxon = st.text_input(
-                        '*Search microbial strain species:',
-                        placeholder='3. Search microbial strain species',
-                        help='Type the specific microbial strain  species, then press enter'
-                    )
-
-                with col9:
-                    if input_other_taxon:
-                        df_other_taxonomy = taxonomy_df_for_taxa_list([input_other_taxon], conn)
-                        df_taxa_other_name = df_other_taxonomy['tax_names']
-                        other_taxonomy = st.selectbox(
-                            '*Select microbial strain species',
-                            options=df_taxa_other_name,
-                            index=None,
-                            placeholder="4. Select one of the species below",
-                            help='Select only one microbial strain species, then click on add'
-                        )
-                        if other_taxonomy is not None:
-                            if other_name == "":
-                                st.warning("Please make sure you provide a name before you continue.")
-                            if other_description == "":
-                                st.warning("Please make sure you provide a description to before you continue.")
-
-                            strain_data1['parent_taxon_0'] = other_taxonomy
-                            strain_data1['parent_taxon_id_0'] = df_other_taxonomy[
-                                df_other_taxonomy["tax_names"] == other_taxonomy
-                                ]["tax_id"].item()
-
-                            other_taxa_list.append(other_taxonomy)
-                            all_strain_data.append(strain_data1)
-
-                            with  col10:
-                                st.write("")
-                                st.write("")
-                                st.button('Add More',key='add_other',type='primary',on_click=increase_rows)
 
             # Parse all novel strains (without a NCBI Taxonomy Id) added
-            for i in range(st.session_state['rows_communities']):
+            for i in range(1, len(st.session_state['rows_communities']) + 1):
                 st.write('')
-                st.write('')
-
-                name = all_strain_data[i][f'parent_taxon_{i}']
-                parent_strains_df = taxonomy_df_for_taxa_list([name], conn)
-                strains_df = parent_strains_df[ parent_strains_df['tax_names'] == name ]
-                taxa_id = strains_df.iloc[0]['tax_id']
-                st.info(
-                    f'For more information about **{name}** go to the NCBI Taxonomy ID:[{taxa_id}](https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id={taxa_id})',
-                    icon="❕"
-                )
-                strain_data = display_strain_row(i+1)
+                strain_data = display_strain_row(i)
                 all_strain_data.append(strain_data)
-                other_taxa_list.append(strain_data)
 
+            st.button('Add More',
+                    key=f'add_button_{i}',
+                    type='primary',
+                    on_click=increase_rows
+            )
 
             # Save both novel and strains with NCBI Taxonomy Ids
             save_all = st.button('Save All', type='primary')
             if save_all:
-                print("\n\n\n", all_strain_data, "\n\n\n")
+
                 # Check if there are strains that do have exact NCBI Taxonomy ids.
                 if len(keywords) > 0:
                     df_taxonomy = taxonomy_df_for_taxa_list(keywords, conn)
                     list_taxa_id = [df_taxonomy[df_taxonomy['tax_names'] == keyword].iloc[0]['tax_id'] for keyword in keywords]
 
-                # Add last strain withoun exact NCBI Taxonomy Id given
-                # all_strain_data.append(strain_data1)
-                for i in range(st.session_state['rows_communities']):
-                    name = all_strain_data[i][f'parent_taxon_{i}']
-                    # strains_df = df_taxonomy[df_taxonomy['tax_names'] == name]
-                    taxa_id =  all_strain_data[i][f'parent_taxon_id_{i}']  # strains_df.iloc[0]['tax_id']
-                    other_taxa_list.append(taxa_id)
+                all_strain_data_del_in = all_strain_data.copy()
+                all_strain_data = []
 
-                print("all_strain_data:", all_strain_data)
+                for index, strain in enumerate(all_strain_data_del_in,  start=1):
+
+                    if 'parent_taxon_id' not in strain:
+                        continue
+
+                    if st.session_state['rows_communities'][index]:
+                        taxa_id =  strain['parent_taxon_id']
+                        other_taxa_list.append(taxa_id)
+                        all_strain_data.append(strain)
+
+                print("\n=======\n New round with: ")
                 print("keywords:", keywords)
                 print("list_taxa_id:", list_taxa_id)
                 print("other_taxa_list", other_taxa_list)
+                print("all_strain_data:", all_strain_data)
 
                 st.success("Done! Microbial strains saved, then go to **Step 3**", icon="✅")
 
@@ -470,9 +475,17 @@ def tab_step3(keywords, list_taxa_id, all_strain_data):
     Step 3: Download templates tab
     """
     with tab3:
+
         colu1,  colu2 = st.columns(2)
+
         if st.session_state['verify'] == 1:
+
             with colu1:
+
+                """
+                RAW DATA TEMPLATE
+                """
+
                 st.subheader("1. Download the Data Template")
                 st.markdown(
                     """
@@ -543,14 +556,16 @@ def tab_step3(keywords, list_taxa_id, all_strain_data):
                         cheb_id = filtered_df.iloc[0]['cheb_id']
                         st.info(f'For more information about **{i}** go to [{cheb_id}](https://www.ebi.ac.uk/chebi/searchId.do?chebiId={cheb_id})', icon="❕")
 
+                # [NOTE] Keep
                 all_keywords = []
-                for index, case in enumerate(all_strain_data):
-                    check = f'parent_taxon_{index}'
-                    if check in case:
-                        name = case[f'parent_taxon_{index}']
-                        tax_id = case[f"parent_taxon_id_{index}"]
-                        all_keywords.append(name)
-                        # all_keywords.append(tax_id)
+                for case in all_strain_data:
+                    if "case_number" in case:
+                        # index = case["case_number"]
+                        check = 'parent_taxon'
+                        if check in case:
+                            # parent_name = case['parent_taxon']
+                            name = case['name']
+                            all_keywords.append(name)
 
                 if len(all_keywords) > 0:
                     all_keywords.extend(keywords)
@@ -598,21 +613,25 @@ def tab_step3(keywords, list_taxa_id, all_strain_data):
                     Complete each section carefully according to the instructions. **DO NOT** modify the file by adding or deleating columns.
                     """)
 
+
+                filtered_strains = [entry for entry in all_strain_data if entry and 'case_number' in entry]
+
                 try:
-                    excel_data = create_excel_fun(keywords, list_taxa_id, all_strain_data)
+                    excel_data = create_excel_fun(keywords, list_taxa_id, filtered_strains)
                 except:
-                    print("excel fails with")
+                    print("Excel fails with")
                     print("keywords:", keywords)
                     print("list_taxa_id:", list_taxa_id)
-                    print("all_strain_data:", all_strain_data)
+                    print("all_strain_data:", filtered_strains)
                     print("=======")
 
+
                 down_study_button = st.download_button(label='Click here to Download the Study Template',
-                                                       data=excel_data,
-                                                       file_name='example.xlsx',
-                                                       mime='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-                                                       type="primary",
-                                                       use_container_width = True,
+                                                    data=excel_data,
+                                                    file_name='example.xlsx',
+                                                    mime='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                                                    type="primary",
+                                                    use_container_width = True,
                                     )
                 if down_study_button:
                     with st.spinner('Downloading file'):

@@ -8,6 +8,11 @@ from tempfile import NamedTemporaryFile
 import openpyxl
 
 def create_excel_fun(keywords, list_taxa_id, all_strain_data):
+    """
+    keywords: NCBI Taxonomy Ids of taxa with exact match to a NCBI Taxonomy Id
+    list_taxa_id: names of the taxa with exact NCBI Taxonomy ids
+    all_strain_data: list of dictionaries with taxa without an exact NCBI Taxonomy Id
+    """
 
     wb = openpyxl.load_workbook('templates/metadata_template.xlsx')
     sheet = wb['COMMUNITY_MEMBERS']
@@ -25,11 +30,15 @@ def create_excel_fun(keywords, list_taxa_id, all_strain_data):
     if all_strain_data:
 
         for i, dic in enumerate(all_strain_data):
-            name = dic.get(f'name_{i}', '')
+
+            index = dic["case_number"]
+            name = dic.get('name', '')
+
             if name is None or name == "":
                 continue
-            description = dic.get(f'description_{i}', '')
-            parent_ncbi_tax_id = dic.get(f'parent_taxon_id_{i}')
+
+            description = dic.get('description', '')
+            parent_ncbi_tax_id = dic.get('parent_taxon_id')
 
             sheet.cell(row=k+i+2, column=1, value=f'member_{k+i+1}')
             sheet.cell(row=k+i+2, column=2, value=0)
