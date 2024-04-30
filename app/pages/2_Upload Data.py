@@ -439,8 +439,6 @@ def tab_step2():
             save_all = st.button('Save All', type='primary')
             if save_all:
 
-                print("all_strain_data", all_strain_data)
-
                 # Check if there are strains that do have exact NCBI Taxonomy ids.
                 if len(keywords) > 0:
                     df_taxonomy = taxonomy_df_for_taxa_list(keywords, conn)
@@ -459,6 +457,7 @@ def tab_step2():
                         other_taxa_list.append(taxa_id)
                         all_strain_data.append(strain)
 
+                print("\n=======\n New round with: ")
                 print("keywords:", keywords)
                 print("list_taxa_id:", list_taxa_id)
                 print("other_taxa_list", other_taxa_list)
@@ -474,9 +473,17 @@ def tab_step3(keywords, list_taxa_id, all_strain_data):
     Step 3: Download templates tab
     """
     with tab3:
+
         colu1,  colu2 = st.columns(2)
+
         if st.session_state['verify'] == 1:
+
             with colu1:
+
+                """
+                RAW DATA TEMPLATE
+                """
+
                 st.subheader("1. Download the Data Template")
                 st.markdown(
                     """
@@ -547,16 +554,16 @@ def tab_step3(keywords, list_taxa_id, all_strain_data):
                         cheb_id = filtered_df.iloc[0]['cheb_id']
                         st.info(f'For more information about **{i}** go to [{cheb_id}](https://www.ebi.ac.uk/chebi/searchId.do?chebiId={cheb_id})', icon="❕")
 
+                # [NOTE] Keep
                 all_keywords = []
                 for case in all_strain_data:
                     if "case_number" in case:
                         index = case["case_number"]
                         check = f'parent_taxon_{index}'
                         if check in case:
-                            name = case[f'parent_taxon_{index}']
-                            tax_id = case[f"parent_taxon_id_{index}"]
+                            # parent_name = case[f'parent_taxon_{index}']
+                            name = case[f'name_{index}']
                             all_keywords.append(name)
-                            # all_keywords.append(tax_id)
 
                 if len(all_keywords) > 0:
                     all_keywords.extend(keywords)
