@@ -23,7 +23,7 @@ from check_yaml import test_study_yaml, test_experiments_yaml, test_compartments
 from populate_db_mod import populate_db
 from import_into_database.yml_functions import read_yml
 import db_functions as db
-from parse_raw_data import get_techniques_metabolites, get_measures_growth, get_measures_counts, get_measures_reads, get_replicate_metadata
+from parse_raw_data import get_techniques_metabolites, get_measures_growth, get_measures_counts, get_measures_reads, get_replicate_metadata, save_data_to_csv
 
 
 
@@ -811,9 +811,17 @@ def tab_step5(xls_1, xls_2, measure_tech, meta_col, all_keywords):
             # else, populate the db and give the unique ids to the user if not error
             # if errors during the population function then the function stops and the errors are printed
             else:
-                errors, erros_logic, studyUniqueID, projectUniqueID = populate_db(measure_tech, meta_col, all_keywords ,xls_1,info_file_study,info_file_experiments,info_compart_file,info_mem_file,info_comu_file,info_pert_file)
-                if not (errors and erros_logic) and (studyUniqueID and projectUniqueID):
+                study_id, errors, erros_logic, studyUniqueID, projectUniqueID = populate_db(measure_tech, meta_col, all_keywords ,xls_1,info_file_study,info_file_experiments,info_compart_file,info_mem_file,info_comu_file,info_pert_file)
+                if not (errors and erros_logic) and (study_id and studyUniqueID and projectUniqueID):
                     st.success(f"Thank you! your study has been successfully uploaded into our database, **Unique study Id**: {studyUniqueID} and **Unique Project Id**: {projectUniqueID}")
+                    # create folder to store study data:
+                    path = relative_path_to_src + f"/Data/Growth/{study_id}"
+                    growth_file = path + f"/Growth_Metabolites.csv"
+                    reads_file = path + f"/Sequencing_Reads.csv"
+                    # Create the folder
+                    os.makedirs(path, exist_ok=True)
+                    save_data_to_csv(growth_file,reads_file,xls_1)
+
                 else:
                     for i in errors:
                         st.error(f"Data uploading unsuccessful: {i}. Please correct and try again!")

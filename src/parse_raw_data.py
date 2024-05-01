@@ -162,3 +162,21 @@ def get_replicate_metadata(raw_data_template):
     rep_metadata_dicts = {}
     rep_metadata_dicts = {col: df_replicate_metadata[col].tolist() for col in df_replicate_metadata.columns}
     return rep_metadata_dicts
+
+
+def save_data_to_csv(output_csv_path_growth,output_csv_path_reads,raw_data_template):
+    df_excel_growth = pd.read_excel(raw_data_template, sheet_name='Growth_Data_and_Metabolites')
+    # Drop columns with NaN values
+    df_excel_growth = df_excel_growth.dropna(axis=1, how='all')
+    # Drop rows where all values are NaN
+    df_excel_growth = df_excel_growth.dropna(axis=0, how='all')
+    if not df_excel_growth.empty:
+        df_excel_growth.to_csv(output_csv_path_growth, index=False)
+
+    df_excel_reads = pd.read_excel(raw_data_template, sheet_name='Sequencing_and_FC_Data')
+    # Drop columns with NaN values
+    df_excel_reads = df_excel_reads.dropna(axis=1, how='all')
+    # Drop rows where all values are NaN
+    df_excel_reads = df_excel_reads.dropna(axis=0, how='all')
+    if not df_excel_reads.empty:
+        df_excel_reads.to_csv(output_csv_path_reads, index=False)

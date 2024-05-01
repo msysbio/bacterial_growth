@@ -51,6 +51,7 @@ def populate_db(list_growth, list_metabolites, list_microbial_strains,raw_data_t
     # checks that all the options selected by the user in the interface match the uploaded raw data template
     errors = get_techniques_metabolites(list_growth, list_metabolites,list_microbial_strains, raw_data_template)
     erros_logic = []
+    study_id = None
 
     if not errors:
 
@@ -282,6 +283,7 @@ def populate_db(list_growth, list_metabolites, list_microbial_strains,raw_data_t
                 comu_biorep = stripping_method(info['Community_ID'][i])
                 for j,k in zip(comp_biorep, itertools.cycle(comu_biorep)):
                     comp_per_biorep={
+                        'studyId': study_id,
                         'experimentUniqueId': search_id(info['Experiment_ID'][i],biorep_id_list),
                         'experimentId': info['Experiment_ID'][i],
                         'compartmentUniqueId': search_id(j, compartments_id_list),
@@ -301,6 +303,7 @@ def populate_db(list_growth, list_metabolites, list_microbial_strains,raw_data_t
 
                 for j, k in zip(tech_biorep, unit_biorep):
                     tech_per_biorep={
+                        'studyId': study_id,
                         'experimentUniqueId': search_id(info['Experiment_ID'][i],biorep_id_list),
                         'experimentId': info['Experiment_ID'][i],
                         'technique': j,
@@ -370,6 +373,7 @@ def populate_db(list_growth, list_metabolites, list_microbial_strains,raw_data_t
                         for k in list_metabo:
                             cheb_id = db.getChebiId(k)
                             metabo_rep = {
+                                'studyId': study_id,
                                 'experimentUniqueId': search_id(info['Experiment_ID'][i],biorep_id_list),
                                 'experimentId': info['Experiment_ID'][i],
                                 'bioreplicateId': rep_biorep[j],
@@ -389,6 +393,7 @@ def populate_db(list_growth, list_metabolites, list_microbial_strains,raw_data_t
                             print('strainId ID',search_id(member_id,mem_id_list))
                             print(mem_id_list)
                             abundance ={
+                                'studyId': study_id,
                                 'experimentUniqueId': search_id(info['Experiment_ID'][i],biorep_id_list),
                                 'experimentId': info['Experiment_ID'][i],
                                 'bioreplicateId': rep_biorep[j],
@@ -405,6 +410,7 @@ def populate_db(list_growth, list_metabolites, list_microbial_strains,raw_data_t
                             member_id = search_id(m,mem_name_id_list)
                             print(search_id(member_id,mem_id_list))
                             FC_counts = {
+                                'studyId': study_id,
                                 'experimentUniqueId': search_id(info['Experiment_ID'][i],biorep_id_list),
                                 'experimentId': info['Experiment_ID'][i],
                                 'bioreplicateId': rep_biorep[j],
@@ -435,4 +441,4 @@ def populate_db(list_growth, list_metabolites, list_microbial_strains,raw_data_t
     else:
         sys.exit()
     
-    return errors, erros_logic, study['studyUniqueID'],study['projectUniqueID']
+    return study_id, errors, erros_logic, study['studyUniqueID'],study['projectUniqueID']

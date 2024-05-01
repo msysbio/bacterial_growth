@@ -23,9 +23,9 @@ CREATE TABLE IF NOT EXISTS Study (
 );
 
 CREATE TABLE IF NOT EXISTS Experiments (
+    studyId INT,
 	experimentUniqueId INT AUTO_INCREMENT,
     experimentId VARCHAR(20), 
-    studyId INT,
     experimentDescription TEXT,
     cultivationMode  VARCHAR(50),
     controlDescription TEXT,
@@ -101,6 +101,7 @@ CREATE TABLE IF NOT EXISTS MetaboliteSynonym (
 
 
 CREATE TABLE CompartmentsPerExperiment (
+    studyId INT,
     experimentUniqueId INT,
     experimentId VARCHAR(20) NOT NULL,
     compartmentUniqueId INT,
@@ -110,17 +111,20 @@ CREATE TABLE CompartmentsPerExperiment (
     PRIMARY KEY (experimentUniqueId, compartmentUniqueId),
     FOREIGN KEY (experimentUniqueId) REFERENCES Experiments(experimentUniqueId) ON UPDATE CASCADE ON DELETE CASCADE,
     FOREIGN KEY (compartmentUniqueId) REFERENCES Compartments(compartmentUniqueId)  ON UPDATE CASCADE ON DELETE CASCADE,
-    FOREIGN KEY (comunityUniqueId) REFERENCES Community(comunityUniqueId) ON UPDATE CASCADE ON DELETE CASCADE
+    FOREIGN KEY (comunityUniqueId) REFERENCES Community(comunityUniqueId) ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY (studyId) REFERENCES Study (studyId) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
 
 CREATE TABLE TechniquesPerExperiment (
+    studyId INT,
     experimentUniqueId INT,
     experimentId VARCHAR(20) NOT NULL,
     technique VARCHAR(20),
     techniqueUnit VARCHAR(20),
     PRIMARY KEY (experimentUniqueId, technique, techniqueUnit),
-    FOREIGN KEY (experimentUniqueId) REFERENCES Experiments(experimentUniqueId) ON UPDATE CASCADE ON DELETE CASCADE
+    FOREIGN KEY (experimentUniqueId) REFERENCES Experiments(experimentUniqueId) ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY (studyId) REFERENCES Study (studyId) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
 CREATE TABLE BioReplicatesPerExperiment (
@@ -174,6 +178,7 @@ CREATE TABLE IF NOT EXISTS Perturbation (
 
 
 CREATE TABLE IF NOT EXISTS MetabolitePerExperiment (
+    studyId INT,
     experimentUniqueId INT,
     experimentId VARCHAR(20) NOT NULL,
     bioreplicateUniqueId INT,
@@ -182,10 +187,12 @@ CREATE TABLE IF NOT EXISTS MetabolitePerExperiment (
     cheb_id VARCHAR(255),
     PRIMARY KEY  (experimentId,bioreplicateId, cheb_id),
     FOREIGN KEY (cheb_id) REFERENCES Metabolites(cheb_id) ON UPDATE CASCADE ON DELETE CASCADE,
-    FOREIGN KEY (experimentUniqueId) REFERENCES Experiments(experimentUniqueId) ON UPDATE CASCADE ON DELETE CASCADE
+    FOREIGN KEY (experimentUniqueId) REFERENCES Experiments(experimentUniqueId) ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY (studyId) REFERENCES Study (studyId) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS Abundances (
+    studyId INT,
     experimentUniqueId INT,
     experimentId VARCHAR(20) NOT NULL,
     bioreplicateUniqueId INT,
@@ -194,10 +201,12 @@ CREATE TABLE IF NOT EXISTS Abundances (
     memberId VARCHAR(255),
     PRIMARY KEY  (experimentId,bioreplicateId, memberId),
     FOREIGN KEY (experimentUniqueId) REFERENCES Experiments(experimentUniqueId) ON UPDATE CASCADE ON DELETE CASCADE,
-    FOREIGN KEY (strainId) REFERENCES Strains (strainId) ON UPDATE CASCADE ON DELETE CASCADE
+    FOREIGN KEY (strainId) REFERENCES Strains (strainId) ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY (studyId) REFERENCES Study (studyId) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS FC_Counts (
+    studyId INT,
     experimentUniqueId INT,
     experimentId VARCHAR(20) NOT NULL,
     bioreplicateUniqueId INT,
@@ -206,7 +215,8 @@ CREATE TABLE IF NOT EXISTS FC_Counts (
     memberId VARCHAR(255),
     PRIMARY KEY  (experimentId,bioreplicateId, memberId),
     FOREIGN KEY (experimentUniqueId) REFERENCES Experiments(experimentUniqueId) ON UPDATE CASCADE ON DELETE CASCADE,
-    FOREIGN KEY (strainId) REFERENCES Strains (strainId) ON UPDATE CASCADE ON DELETE CASCADE
+    FOREIGN KEY (strainId) REFERENCES Strains (strainId) ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY (studyId) REFERENCES Study (studyId) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
 

@@ -26,7 +26,7 @@ st.write('')
 st.write('')
 
 # Define the options for the dropdown list
-options = ['Study Name', 'Organism', 'Metabolites', 'chEBI ID', 'pH']
+options = ['Project Name', 'Project ID', 'Study Name', 'Study ID','Microbial Strain', 'NCBI ID','Metabolites', 'chEBI ID', 'pH']
 options_logical = ['AND', 'OR', 'NOT']
 
 # Define the range for the slider
@@ -36,56 +36,110 @@ min_value_ph_add = 0.0
 max_value_ph_add = 14.0
 
 if 'rows' not in st.session_state:
-    st.session_state['rows'] = 0
+    st.session_state['rows'] = {}
+    st.session_state['rows'][1] = True
 
 def increase_rows():
-    st.session_state['rows'] += 1
+    index = len(st.session_state['rows'])
+    st.session_state['rows'][index + 1] = True
 
-def decrease_rows():
-    st.session_state['rows'] -= 1
 
+def decrease_rows(index):
+    keys_to_remove = []
+    for key in st.session_state:
+        if key.endswith(str(index)):
+            keys_to_remove.append(key)
+    for key in keys_to_remove:
+        del st.session_state[key]
+
+def toggle_container(index):
+    st.session_state['rows'][index] = not st.session_state['rows'][index]
+
+def display_row(index):
+
+    advance_query = {}
+
+    if index not in st.session_state['rows']:
+        pass
+
+    elif st.session_state['rows'][index]:
+
+        with st.container():
+
+            if f'add_query_clicked_{index}' not in st.session_state:
+                st.session_state[f'add_query_clicked_{index}'] = False
+
+            if f'delete_query_clicked_{index}' not in st.session_state:
+                st.session_state[f'delete_query_clicked_{index}'] = False
+
+            col1_add, col2_add, col3_add = st.columns([1, 1, 2])
+            # Add a text input field to the first column
+            with col1_add:
+                logical_options = st.selectbox('Select logic opetator:', options_logical, key=f'box1_add{index}')
+                advance_query['logic_operator'] = logical_options
+
+            with col2_add:
+                selected_option_add = st.selectbox('Select an option:', options,  key=f'box2_add{index}')
+                advance_query['option'] = selected_option_add
+
+            with col3_add:
+                if selected_option_add == 'pH':
+                    start_value_add, end_value_add = st.slider('Select a range:', min_value_ph_add, max_value_ph_add, (min_value_ph_add, max_value_ph_add), step=0.5, key=f'slide1_add{index}', format="%.1f")
+                    advance_query['value'] = (start_value_add, end_value_add)
+                else:
+                    input_value_add = st.text_input('Enter Text here:', '', key=f'text1_add{index}')
+                    advance_query['value'] = (input_value_add)
+
+
+            if f'delete_query_visible_{index}' not in st.session_state:
+                st.session_state[f'delete_query_visible_{index}'] = True
+
+            if st.session_state[f'delete_query_visible_{index}']:
+                if st.button('Delete',
+                             key=f'delete_quern_{index}',
+                             type='primary',
+                             on_click=lambda: toggle_container(index)):
+                     st.session_state[f'delete_query_visible_{index}'] = False
+    return advance_query
+
+
+all_advance_query = []
+first_query = {}
 # Use columns to lay out the elements side by side
 col1, col2 = st.columns([1, 2])
 
 # Add a text input field to the first column
 with col1:
     selected_option = st.selectbox('Select an option:', options, key='selectbox1')
+    first_query['option'] = selected_option
 
-# Add a selectbox to the second column
+    # Add a selectbox to the second column
 with col2:
     if selected_option == 'pH':
         start_value, end_value = st.slider('Select a range:', min_value_ph, max_value_ph, (min_value_ph, max_value_ph), step=0.5, key='range1', format="%.1f")
+        first_query['value'] = (start_value, end_value)
     else:
         input_value = st.text_input('Enter Text here:', '', key='textinput1')
+        first_query['value'] = input_value
 
-st.button('Advanced Search', on_click=increase_rows)
+all_advance_query.append(first_query)
 
 # Function to render additional dropdown block
-def display_bar_row(index):
 
-    col1_add, col2_add, col3_add = st.columns([1, 1, 2])
-    # Add a text input field to the first column
-    with col1_add:
-        logical_options = st.selectbox('Select logic opetator:', options_logical, key=f'box1_add{index}')
+advance_search = st.checkbox("Advanced Search", value=False)
+if advance_search == True:
+    # Parse all novel strains (without a NCBI Taxonomy Id) added
+    for i in range(1, len(st.session_state['rows']) + 1):
+        st.write('')
+        advance_query = display_row(i)
+        all_advance_query.append(advance_query)
 
-    with col2_add:
-        selected_option_add = st.selectbox('Select an option:', options,  key=f'box2_add{index}')
+    st.button('Add More',
+        key=f'add_query_{i}',
+        type='primary',
+        on_click=increase_rows
+        )
 
-    with col3_add:
-        if selected_option_add == 'pH':
-            start_value_add, end_value_add = st.slider('Select a range:', min_value_ph_add, max_value_ph_add, (min_value_ph_add, max_value_ph_add), step=0.5, key=f'slide1_add{index}', format="%.1f")
-        else:
-            input_value_add = st.text_input('Enter Text here:', '', key=f'text1_add{index}')
-
-    col4_add, col5_add = st.columns([0.5, 0.5])
-    with col4_add:
-        st.button('Add More',key=f'add1_button_{index}', on_click=increase_rows)
-
-    with col5_add:
-        st.button('Delete',key=f'add2_button_{index}', on_click=decrease_rows)
-
-for i in range(st.session_state['rows']):
-    display_bar_row(i)
 
 search_button = st.button('**Search Data**',type='primary')
 
@@ -95,96 +149,330 @@ st.text("")
 if "form" not in st.session_state:
     st.session_state.form = False
 
+def getGeneralInfo(studyID):
+    query = f"SELECT * FROM Study WHERE studyId = {studyID};"
+    df_general = conn.query(query, ttl=600)
+    columns_to_exclude = ['studyId','projectUniqueID','studyUniqueID']
+    df_general.drop(columns_to_exclude, axis=1)
+    query = f"SELECT CONCAT(memberName, ' (', NCBId, ')') AS transformed_output FROM Strains WHERE studyId = {studyID};"
+    micro_strains = conn.query(query, ttl=600)
+    df_general['memberName'] = ', '.join(micro_strains['transformed_output'])
+    query = f"SELECT DISTINCT technique FROM TechniquesPerExperiment WHERE studyId = {studyID};"
+    techniques = conn.query(query, ttl=600)
+    df_general['techniques'] = ', '.join(techniques['technique'])
+    query = f"SELECT DISTINCT CONCAT(metabo_name, ' (', cheb_id, ')') AS transformed_output FROM MetabolitePerExperiment WHERE studyId = {studyID};"
+    metabolites = conn.query(query, ttl=600)
+    df_general['metabolites'] = ', '.join(metabolites['transformed_output'])
 
-def getBacteria(studyID):
-    conn = conn = st.connection("BacterialGrowth", type="sql")
-    query = f"SELECT DISTINCT Bacteria.* FROM Bacteria JOIN BacteriaCommunity ON Bacteria.bacteriaId = BacteriaCommunity.bacteriaId JOIN BiologicalReplicate ON BacteriaCommunity.biologicalReplicateId = BiologicalReplicate.biologicalReplicateId WHERE BiologicalReplicate.studyId = {studyID};"
+    return df_general.drop(columns=columns_to_exclude)
+
+
+
+def getExperiments(studyID):
+    query = f"""
+    SELECT 
+        E.experimentUniqueId,
+        E.experimentId,
+        E.experimentDescription,
+        E.cultivationMode,
+        GROUP_CONCAT(DISTINCT BRI.bioreplicateId) AS bioreplicateIds,
+        E.controlDescription,
+        GROUP_CONCAT(DISTINCT BR.bioreplicateId) AS control_bioreplicateIds,
+        GROUP_CONCAT(DISTINCT C.comunityId) AS comunityIds,
+        GROUP_CONCAT(DISTINCT CP.compartmentId) AS compartmentIds
+    FROM 
+        Experiments AS E
+    LEFT JOIN 
+        BioReplicatesPerExperiment AS BRI ON E.experimentUniqueId = BRI.experimentUniqueId
+    LEFT JOIN 
+        BioReplicatesPerExperiment AS BR ON E.experimentUniqueId = BR.experimentUniqueId
+    LEFT JOIN 
+        Community AS C ON E.studyId = C.studyId
+    LEFT JOIN 
+        CompartmentsPerExperiment AS CP ON E.experimentUniqueId = CP.experimentUniqueId
+    WHERE 
+        E.studyId = {studyID}
+        AND BR.controls = 1
+    GROUP BY 
+        E.experimentId,
+        E.experimentUniqueId,
+        E.experimentDescription,
+        E.cultivationMode,
+        E.controlDescription;
+    """
+    df_experiments = conn.query(query, ttl=600)
+    columns_to_exclude = ['experimentUniqueId']
+    return df_experiments.drop(columns=columns_to_exclude)
+
+def getMicrobialStrains(studyID):
+    query = f"SELECT * FROM Strains WHERE studyId = {studyID};"
     df_Bacteria = conn.query(query, ttl=600)
-    columns_to_display = ['bacteriaGenus', 'bacteriaSpecies','bacteriaNCBISpeciesID','bacteriaStrain','bacteriaNCBIStrainID']
-    return df_Bacteria[columns_to_display]
-
-def getReactor(studyID):
-    conn = conn = st.connection("BacterialGrowth", type="sql")
-    query = f"SELECT DISTINCT rs.* FROM ReactorSetUp rs JOIN BiologicalReplicate br ON rs.reactorSetUpId = br.reactorSetUpId JOIN Study s ON br.studyId = s.studyId WHERE s.studyId = {studyID};"
-    df_Reactor = conn.query(query, ttl=600)
-    columns_to_display = ['reactorSetUpName', 'reactorSetUpMode','reactorSetUpDescription']
-    return df_Reactor[columns_to_display]
+    columns_to_exclude = ['studyId']
+    return df_Bacteria.drop(columns=columns_to_exclude)
 
 def getCompartment(studyID):
-    conn = conn = st.connection("BacterialGrowth", type="sql")
-    query = f"SELECT DISTINCT c.* FROM Compartments c JOIN ReactorSetUp rs ON c.reactorSetUpId = rs.reactorSetUpId JOIN BiologicalReplicate br ON rs.reactorSetUpId = br.reactorSetUpId JOIN Study s ON br.studyId = s.studyId WHERE s.studyId = {studyID};"
+    query = f"SELECT DISTINCT * FROM Compartments WHERE studyId = {studyID};"
     df_Compartment = conn.query(query, ttl=600)
-    columns_to_display = ['compartmentName','reactorSetUpName', 'compartmentNumber','volume','pressure','stirring_speed','stirring_mode','O2','CO2','H2','N2','mediaName']
-    return df_Compartment[columns_to_display]
+    columns_to_exclude = ['studyId','compartmentUniqueId']
+    return df_Compartment.drop(columns=columns_to_exclude)
 
 def getMetabolite(studyID):
-    conn = conn = st.connection("BacterialGrowth", type="sql")
-    query = f"SELECT DISTINCT m.* FROM Metabolites m JOIN MetaboliteReplicates mr ON m.cheb_id = mr.cheb_id JOIN TechnicalReplicate tr ON mr.technicalReplicateId = tr.technicalReplicateId JOIN BiologicalReplicate br ON tr.biologicalReplicateId = br.biologicalReplicateId JOIN Study s ON br.studyId = s.studyId WHERE s.studyId = {studyID};"
+    query = f"SELECT * FROM MetabolitePerExperiment  WHERE studyId = {studyID};"
     df_Metabolite = conn.query(query, ttl=600)
-    columns_to_display = ['cheb_id','metabo_name']
-    return df_Metabolite[columns_to_display]
+    columns_to_exclude = ['experimentUniqueId','experimentId','bioreplicateUniqueId']
+    return df_Metabolite.drop(columns=columns_to_exclude)
+
+def getPerturbations(studyID):
+    query = f"SELECT * FROM Perturbation WHERE studyId = {studyID};"
+    df_perturbations = conn.query(query, ttl=600)
+    columns_to_exclude = ['studyId', 'perturbationUniqueid']
+    return df_perturbations.drop(columns=columns_to_exclude)
+
+def getCommunities(studyID):
+    query = f"""
+    SELECT 
+        C.comunityId,
+        GROUP_CONCAT(DISTINCT S.memberName) AS memberNames,
+        GROUP_CONCAT(DISTINCT CP.compartmentId) AS compartmentIds
+    FROM 
+        Community AS C
+    LEFT JOIN 
+        Strains AS S ON C.strainId = S.strainId
+    LEFT JOIN 
+        CompartmentsPerExperiment AS CP ON CP.comunityUniqueId = C.comunityUniqueId
+    WHERE 
+        C.studyId = {studyID}
+    GROUP BY 
+        C.comunityId;
+    """
+    df_communities = conn.query(query, ttl=600)
+    #columns_to_exclude = ['studyId', 'perturbationUniqueId']
+    return df_communities
+
+def getBiorep(studyID):
+    query = f"""
+    SELECT 
+        B.bioreplicateId,
+        B.bioreplicateUniqueId,
+        B.controls,
+        B.OD,
+        B.Plate_counts,
+        B.pH,
+        BM.biosampleLink,
+        BM.bioreplicateDescrition
+    FROM 
+        BioReplicatesPerExperiment AS B
+    LEFT JOIN 
+        BioReplicatesMetadata AS BM ON B.bioreplicateUniqueId = BM.bioreplicateUniqueId
+    WHERE 
+        B.studyId = {studyID};
+        """
+    df_bioreps = conn.query(query, ttl=600)
+    columns_to_exclude = ['bioreplicateUniqueId']
+    return df_bioreps.drop(columns=columns_to_exclude)
+
+def getAbundance(studyID):
+    query = f"""
+    SELECT 
+        A.bioreplicateId,
+        S.memberName,
+        S.NCBId
+    FROM 
+        Abundances AS A
+    JOIN 
+        Strains AS S ON A.strainId = S.strainId
+    WHERE 
+        A.studyId = {studyID};
+        """
+    df_abundances = conn.query(query, ttl=600)
+    return df_abundances
+
+def getFC(studyID):
+    query = f"""
+    SELECT 
+        F.bioreplicateId,
+        S.memberName,
+        S.NCBId
+    FROM 
+        FC_Counts AS F
+    JOIN 
+        Strains AS S ON F.strainId = S.strainId
+    WHERE 
+        F.studyId = {studyID};
+        """
+    df_FC = conn.query(query, ttl=600)
+    return df_FC
+
+def dynamical_query(all_advance_query):
+    base_query = "SELECT DISTINCT studyId"
+    search_final_query =  ""
+    for query_dict in all_advance_query:
+        where_clause = ""
+        if query_dict['option']:
+            if query_dict['option'] == 'Project Name':
+                project_name = query_dict['value']
+                if project_name !=  '':
+                    where_clause = f"""
+                    FROM Study
+                    WHERE projectUniqueID IN (
+                        SELECT projectUniqueID
+                        FROM Project
+                        WHERE projectName LIKE '%{project_name}%'
+                        )
+                    """
+            elif query_dict['option'] == 'Project ID':
+                project_id = query_dict['value']
+                where_clause = f"""
+                FROM Study
+                WHERE projectUniqueID IN (
+                    SELECT projectUniqueID
+                    FROM Project
+                    WHERE projectId = '{project_id}'
+                    )
+                """
+            elif query_dict['option'] == 'Study Name':
+                study_name = query_dict['value']
+                where_clause = f"""
+                FROM Study
+                WHERE studyName LIKE '%{study_name}%'
+                """
+            elif query_dict['option'] == 'Study ID':
+                study_id = query_dict['value']
+                where_clause = f"""
+                FROM Study
+                WHERE studyId = '{study_id}'
+                """
+            elif query_dict['option'] == 'Microbial Strain':
+                microb_strain = query_dict['value']
+                where_clause = f"""
+                FROM Strains
+                WHERE memberName LIKE '%{microb_strain}%'
+                """
+            elif query_dict['option'] == 'NCBI ID':
+                microb_ID = query_dict['value']
+                where_clause = f"""
+                FROM Strains
+                WHERE NCBId = '{microb_ID}'
+                """
+            elif query_dict['option'] == 'Metabolites':
+                metabo = query_dict['value']
+                where_clause = f"""
+                FROM MetabolitePerExperiment
+                WHERE metabo_name LIKE '%{metabo}%'
+                """
+            elif query_dict['option'] == 'chEBI ID':
+                cheb_id = query_dict['value']
+                where_clause = f"""
+                FROM MetabolitePerExperiment
+                WHERE cheb_id = '{cheb_id}'
+                """  
+            elif query_dict['option'] == 'pH':
+                start, end = query_dict['value']
+                where_clause = f"""
+                FROM Compartments
+                WHERE initialPh BETWEEN {start} AND {end}
+                """
+        logic_add = ""
+        if 'logic_operator' in query_dict:
+            if query_dict['logic_operator'] == 'AND':
+                logic_add = " AND studyId IN ("
+            if query_dict['logic_operator'] == 'OR':
+                logic_add = " OR studyId IN ("
+            if query_dict['logic_operator'] == 'NOT':
+                logic_add = " AND studyId NOT IN ("
+        
+        if logic_add != "":
+            final_query = logic_add + " " + base_query + " " + where_clause + " )"
+        else:
+            final_query = base_query + " " + where_clause + " "
+        
+        search_final_query += final_query
+    
+    search_final_query = search_final_query + ";"
+    return search_final_query
 
 
 if search_button or st.session_state.form:
     st.session_state.form = True
+
+    final_query = dynamical_query(all_advance_query)
+    print(final_query)
+
     conn = st.connection("BacterialGrowth", type="sql")
-    query = f"SELECT * FROM Study WHERE studyName LIKE '%{input_value}%';"
-    df_studyname = conn.query(query, ttl=600)
+    df_studies = conn.query(final_query, ttl=600)
 
-    transposed_df = df_studyname.T
-    new_headers = ['Study Information']
-    transposed_df.columns = new_headers
+    
 
-    num_results = len(df_studyname)
+    num_results = len(df_studies)
 
-    st.write(f'**{num_results}** search results')
+    if num_results == 0:
+        st.warning("Sorry, there is no studies in the database that match your search.")
+    
+    else:
 
-    with st.form(key="Results"):
-        c1 , c2 = st.columns([0.1, 0.9])
-        for i in range(len(df_studyname)):
-            with c1:
-                down_check = st.checkbox(f"{i+1}",key=f'checkbox{i}')
+        st.write(f'**{num_results}** search results')
 
-            with c2:
-                study_name = df_studyname['studyName'][i]
-                studyname = st.page_link("pages/2_Upload Data.py",label= f':blue[**{study_name}**]')
-                formatted_html = transposed_df.to_html(render_links=True, escape=False, justify='justify', header = False)
-                styled_html = f"<style>table {{ font-size: 13px; }}</style>{formatted_html}"
-                table = st.markdown(styled_html, unsafe_allow_html=True)
+        with st.form(key="Results"):
+            c1 , c2 = st.columns([0.05, 0.95])
+            for i in range(len(df_studies)):
+                with c1:
+                    down_check = st.checkbox(f"{i+1}",key=f'checkbox{i}')
 
-                space = st.text("")
-                space = st.text("")
+                with c2:
+                    df_general = getGeneralInfo(df_studies['studyId'][i])
+                    study_name = df_general['studyName'][i]
+                    transposed_df = df_general.T
+                    studyname = st.page_link("pages/2_Upload Data.py",label= f':blue[**{study_name}**]')
+                    formatted_html = transposed_df.to_html(render_links=True, escape=False, justify='justify', header = False)
+                    styled_html = f"<style>table {{ font-size: 13px; }}</style>{formatted_html}"
+                    table = st.markdown(styled_html, unsafe_allow_html=True)
 
-                with st.expander("**Bacterial Community Information**"):
-                    df_Bacteria = getBacteria(df_studyname['studyId'][i])
-                    st.dataframe(df_Bacteria,hide_index=True,)
+                    space = st.text("")
 
-                space = st.text("")
+                    with st.expander("**Experiments**"):
+                        df_experiments = getExperiments(df_studies['studyId'][i])
+                        st.dataframe(df_experiments,hide_index=True,)
 
-                with st.expander("**Reactor Setup Information**"):
-                    df_Reactor = getReactor(df_studyname['studyId'][i])
-                    st.dataframe(df_Reactor,hide_index=True,)
-
-                space = st.text("")
-
-                with st.expander("**Compartement Information**"):
-                    df_Compartment = getCompartment(df_studyname['studyId'][i])
-                    st.dataframe(df_Compartment,hide_index=True,)
-
-                space = st.text("")
-
-                with st.expander("**Metabolite Information**"):
-                    df_Metabolite = getMetabolite(df_studyname['studyId'][i])
-                    st.dataframe(df_Metabolite,hide_index=True,)
-
-                space = st.text("")
-        space2 = st.text("")
-        download = st.form_submit_button("Dowload Data", type = 'primary')
-        space3 = st.text("")
+                    space = st.text("")
+                    
+                    with st.expander("**Compartments**"):
+                        df_Compartment = getCompartment(df_studies['studyId'][i])
+                        st.dataframe(df_Compartment,hide_index=True,)
+                    
+                    space = st.text("")
+                    
+                    with st.expander("**Microbial Strains and Communities**"):
+                        df_Compartment = getCommunities(df_studies['studyId'][i])
+                        st.dataframe(df_Compartment,hide_index=True,)
+                        df_strains = getMicrobialStrains(df_studies['studyId'][i])
+                        st.dataframe(df_strains,hide_index=True,)
 
 
+                    space = st.text("")
+                    
+                    with st.expander("**Biological Replicates, Growth and Metabolites Measurements**"):
+                        df_biorep = getBiorep(df_studies['studyId'][i])
+                        st.dataframe(df_biorep,hide_index=True,)
+                        df_abundance = getAbundance(df_studies['studyId'][i])
+                        st.dataframe(df_abundance,hide_index=True,)
+                        df_FC = getFC(df_studies['studyId'][i])
+                        st.dataframe(df_FC,hide_index=True,)
+                        df_Metabolite = getMetabolite(df_studies['studyId'][i])
+                        st.dataframe(df_Metabolite,hide_index=True,)
 
 
+                    space = st.text("")
+
+                    with st.expander("**Perturbations**"):
+                        df_perturbation = getPerturbations(df_studies['studyId'][i])
+                        st.dataframe(df_perturbation,hide_index=True,)
+                    
+            space2 = st.text("")
+            download = st.form_submit_button("Dowload Data", type = 'primary')
+            if download:
+                st.write('bla')
+        
+'''
 
 conn = st.connection("BacterialGrowth", type="sql")
 
@@ -234,13 +522,6 @@ st.dataframe(df_MetabolitePerReplicates)
 
 #st.markdown("# Search")
 #st.write(
-#    """This demo illustrates a combination of plotting and animation with
-#Streamlit. We're generating a bunch of random numbers in a loop for around
-#5 seconds. Enjoy!"""
-#)
-
-# Print results.
-#for row in df.itertuples():
-#    st.write(f"{row.studyId} ID, Study Name: {row.studyName}, Study Description: {row.studyDescription} ")
+#    '''
 
 
