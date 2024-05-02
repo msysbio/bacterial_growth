@@ -23,10 +23,7 @@ from populate_db_mod import populate_db
 from import_into_database.yml_functions import read_yml
 import db_functions as db
 from parse_raw_data import get_techniques_metabolites, get_measures_growth, get_measures_counts, get_measures_reads, get_replicate_metadata, save_data_to_csv
-
-
-
-
+from constants import *
 
 add_logo("figs/logo_sidebar2.png", height=100)
 with open("style.css") as css:
@@ -87,29 +84,11 @@ def taxonomy_df_for_taxa_list(taxa_list, _conn):
     return pd.concat(dfs, ignore_index=True)
 
 
-def get_highest_index(all_strain_data):
-    indices = []
-    try:
-        for index, strain in enumerate(all_strain_data):
-            if "parent_taxon_id" in strain:
-                indices.append(index + 1)
-    except:
-        indices.append(1)
-    return sorted(indices)[-1]
-
-
 def display_strain_row(index):
     """
     Add 4-cols template for addin a new strain without an NCBI Taxonomy Id when other_strains is "No"
     """
     row_strain_data = {}
-
-    # print("==================================================")
-    # print("st.session_state", st.session_state)
-    # print("==================================================")
-    # print("st.session_state['rows_communities']", st.session_state['rows_communities'])
-    # print(type(st.session_state['rows_communities']))
-    # print("\n\n  ******* \n\n")
 
     if index not in st.session_state['rows_communities']:
         pass
@@ -771,18 +750,18 @@ def tab_step5(xls_1, xls_2, measure_tech, meta_col, all_keywords):
         Data_button = st.button("Submit Data", type="primary", use_container_width = True)
 
         if Data_button and (xls_1 and xls_2):
-            LOCAL_DIRECTORY_YAML = current_dir + "/templates/yaml_templates"
+
             # Get all the yaml files
             parse_ex_to_yaml(LOCAL_DIRECTORY_YAML, xls_2)
 
             # Define the yaml files path
-            info_file_study = LOCAL_DIRECTORY_YAML + 'STUDY.yaml'
-            info_file_experiments = LOCAL_DIRECTORY_YAML + 'EXPERIMENTS.yaml'
-            info_compart_file = LOCAL_DIRECTORY_YAML + 'COMPARTMENTS.yaml'
-            info_mem_file = LOCAL_DIRECTORY_YAML + 'COMMUNITY_MEMBERS.yaml'
-            info_comu_file = LOCAL_DIRECTORY_YAML + 'COMMUNITIES.yaml'
-            info_pert_file = LOCAL_DIRECTORY_YAML + 'PERTURBATIONS.yaml'
-            
+            info_file_study = os.path.join(LOCAL_DIRECTORY_YAML, 'STUDY.yaml')
+            info_file_experiments = os.path.join(LOCAL_DIRECTORY_YAML, 'EXPERIMENTS.yaml')
+            info_compart_file = os.path.join(LOCAL_DIRECTORY_YAML, 'COMPARTMENTS.yaml')
+            info_mem_file = os.path.join(LOCAL_DIRECTORY_YAML, 'COMMUNITY_MEMBERS.yaml')
+            info_comu_file = os.path.join(LOCAL_DIRECTORY_YAML, 'COMMUNITIES.yaml')
+            info_pert_file = os.path.join(LOCAL_DIRECTORY_YAML, 'PERTURBATIONS.yaml')
+
             # Do the test to the yaml files according to the sheet
             data_study_yaml = load_yaml(info_file_study)
             errors = test_study_yaml(data_study_yaml)
@@ -806,7 +785,7 @@ def tab_step5(xls_1, xls_2, measure_tech, meta_col, all_keywords):
             if not all(not sublist for sublist in errors):
                 for i in errors:
                     st.error(f"Data uploading unsuccessful: {i}. Please correct and try again!")
-            
+
             # else, populate the db and give the unique ids to the user if not error
             # if errors during the population function then the function stops and the errors are printed
             else:
