@@ -7,7 +7,7 @@ import yaml
 import uuid
 import numpy as np
 from constants import *
-from parse_raw_data import get_techniques_metabolites 
+from parse_raw_data import get_techniques_metabolites
 from parse_raw_data import get_measures_growth
 from parse_raw_data import get_measures_counts
 from parse_raw_data import get_measures_reads
@@ -28,7 +28,7 @@ def load_yaml(file_path):
         return yaml.safe_load(file)
 
 
-def populate_db(list_growth, list_metabolites, list_microbial_strains,raw_data_template,info_file_study,info_file_experiments,info_compart_file,info_mem_file,info_comu_file,info_pert_file):
+def populate_db(list_growth, list_metabolites, list_microbial_strains, raw_data_template, info_file_study, info_file_experiments, info_compart_file, info_mem_file, info_comu_file, info_pert_file):
     """
     Function that populates all the data from the yaml files if not errors, in case of errors the function stops and displays the error
     inputs:
@@ -62,7 +62,7 @@ def populate_db(list_growth, list_metabolites, list_microbial_strains,raw_data_t
         abundances_per_replicate = get_measures_reads(raw_data_template)
         counts_per_replicate = get_measures_counts(raw_data_template)
         replicate_metadata = get_replicate_metadata(raw_data_template)
-        
+
         #reads all the yaml file
         info_study = read_yml(info_file_study)
         info = read_yml(info_file_experiments)
@@ -74,7 +74,7 @@ def populate_db(list_growth, list_metabolites, list_microbial_strains,raw_data_t
         #function that defines unique ids as strings
         def generate_unique_id():
             return str(uuid.uuid4())
-        
+
         #function that stripst columns where more than one value is allowed
         def stripping_method(celd):
             if ',' in celd:
@@ -82,7 +82,7 @@ def populate_db(list_growth, list_metabolites, list_microbial_strains,raw_data_t
                 return samples
             else:
                 return [celd.strip()]
-            
+
         #defining dictionaries per every yaml file
         study_name_list = info_study['Study_Name']
         experiment_name_list = info['Experiment_ID']
@@ -125,7 +125,7 @@ def populate_db(list_growth, list_metabolites, list_microbial_strains,raw_data_t
         mem_id_list =[]
         mem_name_id_list = []
         comu_id_list =[]
-        
+
         # function that search the id given a value
         def search_id(search_value, data_list):
             # Using a for loop to iterate over the list of tuples
@@ -133,7 +133,7 @@ def populate_db(list_growth, list_metabolites, list_microbial_strains,raw_data_t
                 if key == search_value:
                     return value  # Return the value if the key is found
             return None
-        
+
         # populating strains table
         if 'Member_ID' in info_mem:
             for i in range(num_mem):
@@ -193,7 +193,7 @@ def populate_db(list_growth, list_metabolites, list_microbial_strains,raw_data_t
                 biologicalreplicates = {
                     'experimentId': info['Experiment_ID'][i],
                     'studyId': study_id,
-                    'experimentDescription': info['Experiment_Description'][i],  
+                    'experimentDescription': info['Experiment_Description'][i],
                     'cultivationMode': info['Cultivation_Mode'][i],
                     'controlDescription': info['Control_Description'][i]
                 }
@@ -277,8 +277,6 @@ def populate_db(list_growth, list_metabolites, list_microbial_strains,raw_data_t
                 else:
                     print('No perturbations reported')
 
-
-
         if 'Experiment_ID' in info:
             for i in range(num_experiment):
                 comp_biorep = stripping_method(info['Compartment_ID'][i])
@@ -355,7 +353,7 @@ def populate_db(list_growth, list_metabolites, list_microbial_strains,raw_data_t
                             'bioreplicateId': rep_biorep[j],
                             'controls': control,
                             'OD': od,
-                            'OD_std': od_std, 
+                            'OD_std': od_std,
                             'Plate_counts': platecounts,
                             'Plate_counts_std': platecounts_std,
                             'pH': ph,
@@ -365,7 +363,7 @@ def populate_db(list_growth, list_metabolites, list_microbial_strains,raw_data_t
                             rep_id = db.addRecord('BioReplicatesPerExperiment', rep_per_biorep_filtered)
                             rep_id_list.append((rep_biorep[j],rep_id))
                             print('\BioReplicatesPerExperiment Populated')
-                
+
                 for j in range(len(rep_biorep)):
                     list_metabo = metabos.get(rep_biorep[j])
                     print('list_metabo', list_metabo)
@@ -424,7 +422,7 @@ def populate_db(list_growth, list_metabolites, list_microbial_strains,raw_data_t
                             if len(FC_counts_filtered)>0:
                                 db.addRecord('FC_Counts', FC_counts_filtered)
                                 print('\FC_Counts Populated')
-    
+
         if 'Biological_Replicate_id' in replicate_metadata:
             for i in range(num_rep_metadata):
                 biorep_metadata = {
@@ -438,9 +436,8 @@ def populate_db(list_growth, list_metabolites, list_microbial_strains,raw_data_t
                 if len(biorep_metadata_filtered)>0:
                     db.addRecord('BioReplicatesMetadata', biorep_metadata_filtered)
                     print('\BioReplicatesMetadata Populated')
-    
 
     else:
         sys.exit()
-    
+
     return study_id, errors, erros_logic, study['studyUniqueID'],study['projectUniqueID']
