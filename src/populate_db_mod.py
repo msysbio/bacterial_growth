@@ -26,9 +26,21 @@ yaml.Dumper.ignore_aliases = lambda self, data: True
 def load_yaml(file_path):
     with open(file_path, 'r') as file:
         return yaml.safe_load(file)
+    
+#function that defines unique ids as strings
+def generate_unique_id():
+    return str(uuid.uuid4())
+        
+#function that stripst columns where more than one value is allowed
+def stripping_method(celd):
+    if ',' in celd:
+        samples = [sample.strip() for sample in celd.split(',')]
+        return samples
+    else:
+        return [celd.strip()]
 
 
-def populate_db(list_growth, list_metabolites, list_microbial_strains,raw_data_template,info_file_study,info_file_experiments,info_compart_file,info_mem_file,info_comu_file,info_pert_file):
+def populate_db(list_growth, list_metabolites, list_microbial_strains,raw_data_template,info_file_study,info_file_experiments,info_compart_file,info_mem_file,info_comu_file,info_pert_file, conn, project_name, project_description):
     """
     Function that populates all the data from the yaml files if not errors, in case of errors the function stops and displays the error
     inputs:
@@ -54,6 +66,7 @@ def populate_db(list_growth, list_metabolites, list_microbial_strains,raw_data_t
     errors = get_techniques_metabolites(list_growth, list_metabolites,list_microbial_strains, raw_data_template)
     erros_logic = []
     study_id = None
+    project_id = None
 
     if not errors:
 
@@ -70,18 +83,6 @@ def populate_db(list_growth, list_metabolites, list_microbial_strains,raw_data_t
         info_pertu = read_yml(info_pert_file)
         info_mem = read_yml(info_mem_file)
         info_comu = read_yml(info_comu_file)
-
-        #function that defines unique ids as strings
-        def generate_unique_id():
-            return str(uuid.uuid4())
-        
-        #function that stripst columns where more than one value is allowed
-        def stripping_method(celd):
-            if ',' in celd:
-                samples = [sample.strip() for sample in celd.split(',')]
-                return samples
-            else:
-                return [celd.strip()]
             
         #defining dictionaries per every yaml file
         study_name_list = info_study['Study_Name']
@@ -94,9 +95,12 @@ def populate_db(list_growth, list_metabolites, list_microbial_strains,raw_data_t
         num_comu = len(info_comu['Community_ID'])
         num_rep_metadata = len(replicate_metadata['Biological_Replicate_id'])
 
+
+
         #populating the study table
         if 'Study_Name' in info_study:
             study = {
+                'studyId' : db.getStudyID(conn),
                 'studyName': info_study['Study_Name'][0],
                 'studyDescription': info_study['Study_Description'][0],
                 'studyURL': info_study['Study_PublicationURL'][0],
@@ -106,14 +110,28 @@ def populate_db(list_growth, list_metabolites, list_microbial_strains,raw_data_t
             if isinstance(info_study['Study_UniqueID'][0], float) :
                 study['studyUniqueID'] = generate_unique_id()
 
-            if isinstance(info_study['Project_UniqueID'][0], float):
-                study['projectUniqueID'] = generate_unique_id()
-
             study_filtered = {k: v for k, v in study.items() if v is not None}
             #print(study_filtered)
             if len(study_filtered)>0:
                     study_id = db.addRecord('Study', study_filtered)
                     print('\nSTUDY ID: ', study_id)
+            else:
+                print('You must introduce some study information')
+                exit()
+        
+        if 'Project_UniqueID' in info_study:
+            project = {
+                'project' : db.getProjectID(conn),
+                'projectName': project_name,
+                'projectDescription': project_description,
+                'projectUniqueID': info_study['Project_UniqueID'][0]
+            }
+
+            project_filtered = {k: v for k, v in project.items() if v is not None}
+            #print(study_filtered)
+            if len(project_filtered)>0:
+                    project_id = db.addRecord('Project', project_filtered)
+                    print('\nSTUDY ID: ', project_id)
             else:
                 print('You must introduce some study information')
                 exit()
@@ -443,4 +461,4 @@ def populate_db(list_growth, list_metabolites, list_microbial_strains,raw_data_t
     else:
         sys.exit()
     
-    return study_id, errors, erros_logic, study['studyUniqueID'],study['projectUniqueID']
+    return study_id, errors, erros_logic, study['studyUniqueID'],study['projectUniqueID'], project_id

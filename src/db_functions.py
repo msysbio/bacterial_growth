@@ -259,17 +259,17 @@ def getHavingClause(agg_function, field, operator, quant, distinct=False):
     return clause
 
 def getGeneralInfo(studyID, conn):
-    query = f"SELECT * FROM Study WHERE studyId = {studyID};"
+    query = f"SELECT * FROM Study WHERE studyId = '{studyID}';"
     df_general = conn.query(query, ttl=600)
     columns_to_exclude = ['studyId','projectUniqueID','studyUniqueID']
     df_general.drop(columns_to_exclude, axis=1)
-    query = f"SELECT CONCAT(memberName, ' (', NCBId, ')') AS transformed_output FROM Strains WHERE studyId = {studyID};"
+    query = f"SELECT CONCAT(memberName, ' (', NCBId, ')') AS transformed_output FROM Strains WHERE studyId = '{studyID}';"
     micro_strains = conn.query(query, ttl=600)
     df_general['memberName'] = ', '.join(micro_strains['transformed_output'])
-    query = f"SELECT DISTINCT technique FROM TechniquesPerExperiment WHERE studyId = {studyID};"
+    query = f"SELECT DISTINCT technique FROM TechniquesPerExperiment WHERE studyId = '{studyID}';"
     techniques = conn.query(query, ttl=600)
     df_general['techniques'] = ', '.join(techniques['technique'])
-    query = f"SELECT DISTINCT CONCAT(metabo_name, ' (', cheb_id, ')') AS transformed_output FROM MetabolitePerExperiment WHERE studyId = {studyID};"
+    query = f"SELECT DISTINCT CONCAT(metabo_name, ' (', cheb_id, ')') AS transformed_output FROM MetabolitePerExperiment WHERE studyId = '{studyID}';"
     metabolites = conn.query(query, ttl=600)
     df_general['metabolites'] = ', '.join(metabolites['transformed_output'])
 
@@ -301,7 +301,7 @@ def getExperiments(studyID, conn):
     LEFT JOIN 
         CompartmentsPerExperiment AS CP ON E.experimentUniqueId = CP.experimentUniqueId
     WHERE 
-        E.studyId = {studyID}
+        E.studyId = '{studyID}'
         AND BR.controls = 1
     GROUP BY 
         E.experimentId,
@@ -315,25 +315,25 @@ def getExperiments(studyID, conn):
     return df_experiments.drop(columns=columns_to_exclude)
 
 def getMicrobialStrains(studyID, conn):
-    query = f"SELECT * FROM Strains WHERE studyId = {studyID};"
+    query = f"SELECT * FROM Strains WHERE studyId = '{studyID}';"
     df_Bacteria = conn.query(query, ttl=600)
     columns_to_exclude = ['studyId']
     return df_Bacteria.drop(columns=columns_to_exclude)
 
 def getCompartment(studyID, conn):
-    query = f"SELECT DISTINCT * FROM Compartments WHERE studyId = {studyID};"
+    query = f"SELECT DISTINCT * FROM Compartments WHERE studyId = '{studyID}';"
     df_Compartment = conn.query(query, ttl=600)
     columns_to_exclude = ['studyId','compartmentUniqueId']
     return df_Compartment.drop(columns=columns_to_exclude)
 
 def getMetabolite(studyID, conn):
-    query = f"SELECT * FROM MetabolitePerExperiment  WHERE studyId = {studyID};"
+    query = f"SELECT * FROM MetabolitePerExperiment  WHERE studyId = '{studyID}';"
     df_Metabolite = conn.query(query, ttl=600)
     columns_to_exclude = ['experimentUniqueId','experimentId','bioreplicateUniqueId']
     return df_Metabolite.drop(columns=columns_to_exclude)
 
 def getPerturbations(studyID, conn):
-    query = f"SELECT * FROM Perturbation WHERE studyId = {studyID};"
+    query = f"SELECT * FROM Perturbation WHERE studyId = '{studyID}';"
     df_perturbations = conn.query(query, ttl=600)
     columns_to_exclude = ['studyId', 'perturbationUniqueid']
     return df_perturbations.drop(columns=columns_to_exclude)
@@ -351,7 +351,7 @@ def getCommunities(studyID, conn):
     LEFT JOIN 
         CompartmentsPerExperiment AS CP ON CP.comunityUniqueId = C.comunityUniqueId
     WHERE 
-        C.studyId = {studyID}
+        C.studyId = '{studyID}'
     GROUP BY 
         C.comunityId;
     """
@@ -375,7 +375,7 @@ def getBiorep(studyID, conn):
     LEFT JOIN 
         BioReplicatesMetadata AS BM ON B.bioreplicateUniqueId = BM.bioreplicateUniqueId
     WHERE 
-        B.studyId = {studyID};
+        B.studyId = '{studyID}';
         """
     df_bioreps = conn.query(query, ttl=600)
     columns_to_exclude = ['bioreplicateUniqueId']
@@ -392,7 +392,7 @@ def getAbundance(studyID, conn):
     JOIN 
         Strains AS S ON A.strainId = S.strainId
     WHERE 
-        A.studyId = {studyID};
+        A.studyId = '{studyID}';
         """
     df_abundances = conn.query(query, ttl=600)
     return df_abundances
@@ -408,10 +408,48 @@ def getFC(studyID, conn):
     JOIN 
         Strains AS S ON F.strainId = S.strainId
     WHERE 
-        F.studyId = {studyID};
+        F.studyId = '{studyID}';
         """
     df_FC = conn.query(query, ttl=600)
     return df_FC
+
+def getPrivateProjectID(private_project_id, conn):
+    query = f"""
+    SELECT 
+        *
+    FROM 
+        Study
+    WHERE 
+        projectUniqueID = '{private_project_id}';
+        """
+    df_proyect = conn.query(query, ttl=600)
+    return df_proyect
+
+def getProjectInfo(private_project_id, conn):
+    query = f"""
+    SELECT 
+        *
+    FROM 
+        Project
+    WHERE 
+        projectUniqueID = '{private_project_id}';
+        """
+    df_proyect = conn.query(query, ttl=600)
+    return df_proyect
+
+def getProjectID(conn):
+    query = "SELECT IFNULL(COUNT(*), 0) FROM Project;"
+    number_projects = conn.query(query, ttl=600)
+    next_number = int(number_projects.iloc[0].iloc[0]) + 1
+    Project_ID = "PMGDB{:06d}".format(next_number)
+    return Project_ID
+
+def getStudyID(conn):
+    query = "SELECT IFNULL(COUNT(*), 0) FROM Study;"
+    number_projects = conn.query(query, ttl=600)
+    next_number = int(number_projects.iloc[0].iloc[0]) + 1
+    Study_ID = "SMGDB{:08d}".format(next_number)
+    return Study_ID
 
 def dynamical_query(all_advance_query):
     base_query = "SELECT DISTINCT studyId"
