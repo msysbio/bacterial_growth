@@ -68,11 +68,12 @@ with st.container():
                 st.dataframe(df_growth)
         with col1:
             if not df_growth.empty:
-                df_experiments = getExperiments(studyID_to_visualize, conn)
-                st.write("**Experiments**")
-                for i in df_experiments["experimentId"]:
-                    with st.expander(f"{i}"):
-                        for j in set(df_growth["Biological_Replicate_id"]):
-                            st.checkbox(f"{j}")
-                        #st.write(df_growth["Biological_Replicate_id"])
+                st.write("bla")
+                #df_experiments = getExperiments(studyID_to_visualize, conn)
+                #st.write("**Experiments**")
+                #for i in df_experiments["experimentId"]:
+                #    with st.expander(f"{i}"):
+                #        for j in set(df_growth["Biological_Replicate_id"]):
+                #            st.checkbox(f"{j}")
+                #        #st.write(df_growth["Biological_Replicate_id"])
             
