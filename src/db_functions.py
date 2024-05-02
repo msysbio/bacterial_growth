@@ -2,7 +2,10 @@ import os
 import mysql.connector
 import warnings
 import streamlit as st
-from constants import *
+try:
+    from constants import *
+except:
+    from .constants import *
 
 def execute(phrase):
     """
