@@ -1,5 +1,6 @@
 import streamlit as st
 from streamlit_extras.app_logo import add_logo
+from st_pages import show_pages_from_config
 
 
 st.set_page_config(page_title="µGrowthDB", page_icon="🔍", layout='wide')
@@ -7,7 +8,6 @@ st.set_page_config(page_title="µGrowthDB", page_icon="🔍", layout='wide')
 add_logo("figs/logo_sidebar2.png", height=100)
 with open("style.css") as css:
     st.markdown(f'<style>{css.read()}</style>', unsafe_allow_html=True)
-
 
 st.image('figs/logo.png')
 st.write('')
@@ -56,27 +56,4 @@ st.markdown(
 st.write('')
 st.write('')
 
-r1, r2, r3, r4, r5 = st.columns(5)
-
-
-with r1:
-    st.image('figs/search.png',width=100)
-    st.page_link("pages/1_Database Search.py",label= f':blue[**Search**]')
-
-
-with r2:
-    st.image('figs/folder.png',width=100)
-    st.page_link("pages/2_Upload Data.py",label= f':blue[**Upload**]')
-
-
-with r3:
-    st.image('figs/download.png',width=100)
-    st.page_link("pages/1_Database Search.py",label= f':blue[**Download**]')
-
-with r4:
-    st.image('figs/question.png',width=100)
-    st.page_link("pages/3_Help.py",label= f':blue[**Help**]')
-
-with r5:
-    st.image('figs/people.png',width=100)
-    st.page_link("pages/4_About Us.py",label= f':blue[**About Us**]')
+show_pages_from_config()
