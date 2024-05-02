@@ -1,7 +1,9 @@
 import streamlit as st
 from streamlit_extras.app_logo import add_logo
 import streamlit.components.v1 as components
-#from st_aggrid import GridOptionsBuilder, AgGrid, GridUpdateMode, ColumnsAutoSizeMode
+import os
+import sys
+
 
 st.set_page_config(page_title="Database Search", page_icon="🔍", layout='wide')
 
@@ -9,6 +11,10 @@ add_logo("figs/logo_sidebar2.png", height=100)
 with open("style.css") as css:
     st.markdown(f'<style>{css.read()}</style>', unsafe_allow_html=True)
 
+current_dir = os.path.dirname(os.path.realpath(__file__))[:-9]
+relative_path_to_src = os.path.join(current_dir, 'src')
+sys.path.append(relative_path_to_src)
+from db_functions import dynamical_query, getGeneralInfo, getExperiments, getCompartment, getCommunities, getMicrobialStrains, getBiorep, getAbundance, getFC, getMetabolite, getPerturbations
 
 # Add a title to your Streamlit app
 st.image('figs/SearchBanner.png')
@@ -149,248 +155,6 @@ st.text("")
 if "form" not in st.session_state:
     st.session_state.form = False
 
-def getGeneralInfo(studyID, conn):
-    query = f"SELECT * FROM Study WHERE studyId = {studyID};"
-    df_general = conn.query(query, ttl=600)
-    columns_to_exclude = ['studyId','projectUniqueID','studyUniqueID']
-    df_general.drop(columns_to_exclude, axis=1)
-    query = f"SELECT CONCAT(memberName, ' (', NCBId, ')') AS transformed_output FROM Strains WHERE studyId = {studyID};"
-    micro_strains = conn.query(query, ttl=600)
-    df_general['memberName'] = ', '.join(micro_strains['transformed_output'])
-    query = f"SELECT DISTINCT technique FROM TechniquesPerExperiment WHERE studyId = {studyID};"
-    techniques = conn.query(query, ttl=600)
-    df_general['techniques'] = ', '.join(techniques['technique'])
-    query = f"SELECT DISTINCT CONCAT(metabo_name, ' (', cheb_id, ')') AS transformed_output FROM MetabolitePerExperiment WHERE studyId = {studyID};"
-    metabolites = conn.query(query, ttl=600)
-    df_general['metabolites'] = ', '.join(metabolites['transformed_output'])
-
-    return df_general.drop(columns=columns_to_exclude)
-
-
-
-def getExperiments(studyID, conn):
-    query = f"""
-    SELECT 
-        E.experimentUniqueId,
-        E.experimentId,
-        E.experimentDescription,
-        E.cultivationMode,
-        GROUP_CONCAT(DISTINCT BRI.bioreplicateId) AS bioreplicateIds,
-        E.controlDescription,
-        GROUP_CONCAT(DISTINCT BR.bioreplicateId) AS control_bioreplicateIds,
-        GROUP_CONCAT(DISTINCT C.comunityId) AS comunityIds,
-        GROUP_CONCAT(DISTINCT CP.compartmentId) AS compartmentIds
-    FROM 
-        Experiments AS E
-    LEFT JOIN 
-        BioReplicatesPerExperiment AS BRI ON E.experimentUniqueId = BRI.experimentUniqueId
-    LEFT JOIN 
-        BioReplicatesPerExperiment AS BR ON E.experimentUniqueId = BR.experimentUniqueId
-    LEFT JOIN 
-        Community AS C ON E.studyId = C.studyId
-    LEFT JOIN 
-        CompartmentsPerExperiment AS CP ON E.experimentUniqueId = CP.experimentUniqueId
-    WHERE 
-        E.studyId = {studyID}
-        AND BR.controls = 1
-    GROUP BY 
-        E.experimentId,
-        E.experimentUniqueId,
-        E.experimentDescription,
-        E.cultivationMode,
-        E.controlDescription;
-    """
-    df_experiments = conn.query(query, ttl=600)
-    columns_to_exclude = ['experimentUniqueId']
-    return df_experiments.drop(columns=columns_to_exclude)
-
-def getMicrobialStrains(studyID, conn):
-    query = f"SELECT * FROM Strains WHERE studyId = {studyID};"
-    df_Bacteria = conn.query(query, ttl=600)
-    columns_to_exclude = ['studyId']
-    return df_Bacteria.drop(columns=columns_to_exclude)
-
-def getCompartment(studyID, conn):
-    query = f"SELECT DISTINCT * FROM Compartments WHERE studyId = {studyID};"
-    df_Compartment = conn.query(query, ttl=600)
-    columns_to_exclude = ['studyId','compartmentUniqueId']
-    return df_Compartment.drop(columns=columns_to_exclude)
-
-def getMetabolite(studyID, conn):
-    query = f"SELECT * FROM MetabolitePerExperiment  WHERE studyId = {studyID};"
-    df_Metabolite = conn.query(query, ttl=600)
-    columns_to_exclude = ['experimentUniqueId','experimentId','bioreplicateUniqueId']
-    return df_Metabolite.drop(columns=columns_to_exclude)
-
-def getPerturbations(studyID, conn):
-    query = f"SELECT * FROM Perturbation WHERE studyId = {studyID};"
-    df_perturbations = conn.query(query, ttl=600)
-    columns_to_exclude = ['studyId', 'perturbationUniqueid']
-    return df_perturbations.drop(columns=columns_to_exclude)
-
-def getCommunities(studyID, conn):
-    query = f"""
-    SELECT 
-        C.comunityId,
-        GROUP_CONCAT(DISTINCT S.memberName) AS memberNames,
-        GROUP_CONCAT(DISTINCT CP.compartmentId) AS compartmentIds
-    FROM 
-        Community AS C
-    LEFT JOIN 
-        Strains AS S ON C.strainId = S.strainId
-    LEFT JOIN 
-        CompartmentsPerExperiment AS CP ON CP.comunityUniqueId = C.comunityUniqueId
-    WHERE 
-        C.studyId = {studyID}
-    GROUP BY 
-        C.comunityId;
-    """
-    df_communities = conn.query(query, ttl=600)
-    #columns_to_exclude = ['studyId', 'perturbationUniqueId']
-    return df_communities
-
-def getBiorep(studyID, conn):
-    query = f"""
-    SELECT 
-        B.bioreplicateId,
-        B.bioreplicateUniqueId,
-        B.controls,
-        B.OD,
-        B.Plate_counts,
-        B.pH,
-        BM.biosampleLink,
-        BM.bioreplicateDescrition
-    FROM 
-        BioReplicatesPerExperiment AS B
-    LEFT JOIN 
-        BioReplicatesMetadata AS BM ON B.bioreplicateUniqueId = BM.bioreplicateUniqueId
-    WHERE 
-        B.studyId = {studyID};
-        """
-    df_bioreps = conn.query(query, ttl=600)
-    columns_to_exclude = ['bioreplicateUniqueId']
-    return df_bioreps.drop(columns=columns_to_exclude)
-
-def getAbundance(studyID, conn):
-    query = f"""
-    SELECT 
-        A.bioreplicateId,
-        S.memberName,
-        S.NCBId
-    FROM 
-        Abundances AS A
-    JOIN 
-        Strains AS S ON A.strainId = S.strainId
-    WHERE 
-        A.studyId = {studyID};
-        """
-    df_abundances = conn.query(query, ttl=600)
-    return df_abundances
-
-def getFC(studyID, conn):
-    query = f"""
-    SELECT 
-        F.bioreplicateId,
-        S.memberName,
-        S.NCBId
-    FROM 
-        FC_Counts AS F
-    JOIN 
-        Strains AS S ON F.strainId = S.strainId
-    WHERE 
-        F.studyId = {studyID};
-        """
-    df_FC = conn.query(query, ttl=600)
-    return df_FC
-
-def dynamical_query(all_advance_query):
-    base_query = "SELECT DISTINCT studyId"
-    search_final_query =  ""
-    for query_dict in all_advance_query:
-        where_clause = ""
-        if query_dict['option']:
-            if query_dict['option'] == 'Project Name':
-                project_name = query_dict['value']
-                if project_name !=  '':
-                    where_clause = f"""
-                    FROM Study
-                    WHERE projectUniqueID IN (
-                        SELECT projectUniqueID
-                        FROM Project
-                        WHERE projectName LIKE '%{project_name}%'
-                        )
-                    """
-            elif query_dict['option'] == 'Project ID':
-                project_id = query_dict['value']
-                where_clause = f"""
-                FROM Study
-                WHERE projectUniqueID IN (
-                    SELECT projectUniqueID
-                    FROM Project
-                    WHERE projectId = '{project_id}'
-                    )
-                """
-            elif query_dict['option'] == 'Study Name':
-                study_name = query_dict['value']
-                where_clause = f"""
-                FROM Study
-                WHERE studyName LIKE '%{study_name}%'
-                """
-            elif query_dict['option'] == 'Study ID':
-                study_id = query_dict['value']
-                where_clause = f"""
-                FROM Study
-                WHERE studyId = '{study_id}'
-                """
-            elif query_dict['option'] == 'Microbial Strain':
-                microb_strain = query_dict['value']
-                where_clause = f"""
-                FROM Strains
-                WHERE memberName LIKE '%{microb_strain}%'
-                """
-            elif query_dict['option'] == 'NCBI ID':
-                microb_ID = query_dict['value']
-                where_clause = f"""
-                FROM Strains
-                WHERE NCBId = '{microb_ID}'
-                """
-            elif query_dict['option'] == 'Metabolites':
-                metabo = query_dict['value']
-                where_clause = f"""
-                FROM MetabolitePerExperiment
-                WHERE metabo_name LIKE '%{metabo}%'
-                """
-            elif query_dict['option'] == 'chEBI ID':
-                cheb_id = query_dict['value']
-                where_clause = f"""
-                FROM MetabolitePerExperiment
-                WHERE cheb_id = '{cheb_id}'
-                """  
-            elif query_dict['option'] == 'pH':
-                start, end = query_dict['value']
-                where_clause = f"""
-                FROM Compartments
-                WHERE initialPh BETWEEN {start} AND {end}
-                """
-        logic_add = ""
-        if 'logic_operator' in query_dict:
-            if query_dict['logic_operator'] == 'AND':
-                logic_add = " AND studyId IN ("
-            if query_dict['logic_operator'] == 'OR':
-                logic_add = " OR studyId IN ("
-            if query_dict['logic_operator'] == 'NOT':
-                logic_add = " AND studyId NOT IN ("
-        
-        if logic_add != "":
-            final_query = logic_add + " " + base_query + " " + where_clause + " )"
-        else:
-            final_query = base_query + " " + where_clause + " "
-        
-        search_final_query += final_query
-    
-    search_final_query = search_final_query + ";"
-    return search_final_query
-
 
 if search_button or st.session_state.form:
     st.session_state.form = True
@@ -422,7 +186,7 @@ if search_button or st.session_state.form:
                     df_general = getGeneralInfo(df_studies['studyId'][i], conn)
                     study_name = df_general['studyName'][i]
                     transposed_df = df_general.T
-                    studyname = st.page_link("pages/3_Upload Data.py",label= f':blue[**{study_name}**]')
+                    studyname = st.page_link("pages/Upload_Data.py",label= f':blue[**{study_name}**]')
                     formatted_html = transposed_df.to_html(render_links=True, escape=False, justify='justify', header = False)
                     styled_html = f"<style>table {{ font-size: 13px; }}</style>{formatted_html}"
                     table = st.markdown(styled_html, unsafe_allow_html=True)
