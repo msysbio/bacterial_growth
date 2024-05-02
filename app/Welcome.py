@@ -56,31 +56,4 @@ st.markdown(
 st.write('')
 st.write('')
 
-<<<<<<< HEAD
 show_pages_from_config()
-=======
-r1, r2, r3, r4, r5 = st.columns(5)
-
-
-with r1:
-    st.image('figs/search.png',width=100)
-    st.page_link("pages/Database_Search.py",label= f':blue[**Search**]')
-
-
-with r2:
-    st.image('figs/folder.png',width=100)
-    st.page_link("pages/3_Upload Data.py",label= f':blue[**Upload**]')
-
-
-with r3:
-    st.image('figs/download.png',width=100)
-    st.page_link("pages/Database_Search.py",label= f':blue[**Download**]')
-
-with r4:
-    st.image('figs/question.png',width=100)
-    st.page_link("pages/4_Help.py",label= f':blue[**Help**]')
-
-with r5:
-    st.image('figs/people.png',width=100)
-    st.page_link("pages/5_About Us.py",label= f':blue[**About Us**]')
->>>>>>> 63ee095604dcde4b0c1fe08a51b4bdfb04ca3a04
