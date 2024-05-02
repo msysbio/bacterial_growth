@@ -1,7 +1,12 @@
 [[pages]]
+path = "Welcome.py"
+name = "Home"
+icon = ":house:"
+
+[[pages]]
 path = "pages/Database_Search.py"
 name = "Search"
-icon = ":house:"
+icon = ":paperclip:"
 
 [[pages]]
 path = "pages/Visualization_Dashboard.py"
