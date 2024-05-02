@@ -17,7 +17,6 @@ st.set_page_config(page_title="Upload Data", page_icon="📤", layout='wide')
 current_dir = os.path.dirname(os.path.realpath(__file__))[:-9]
 relative_path_to_src = os.path.join(current_dir, 'src')
 sys.path.append(relative_path_to_src)
-from constants import LOCAL_DIRECTORY
 from parse_ex_to_yaml import parse_ex_to_yaml
 from check_yaml import test_study_yaml, test_experiments_yaml, test_compartments_yaml, test_comu_members_yaml, test_communities_yaml, test_perturbation_yaml
 from populate_db_mod import populate_db
@@ -772,17 +771,17 @@ def tab_step5(xls_1, xls_2, measure_tech, meta_col, all_keywords):
         Data_button = st.button("Submit Data", type="primary", use_container_width = True)
 
         if Data_button and (xls_1 and xls_2):
-            
+            LOCAL_DIRECTORY_YAML = current_dir + "/templates/yaml_templates"
             # Get all the yaml files
-            parse_ex_to_yaml(LOCAL_DIRECTORY, xls_2)
+            parse_ex_to_yaml(LOCAL_DIRECTORY_YAML, xls_2)
 
             # Define the yaml files path
-            info_file_study = LOCAL_DIRECTORY + 'STUDY.yaml'
-            info_file_experiments = LOCAL_DIRECTORY + 'EXPERIMENTS.yaml'
-            info_compart_file = LOCAL_DIRECTORY + 'COMPARTMENTS.yaml'
-            info_mem_file = LOCAL_DIRECTORY + 'COMMUNITY_MEMBERS.yaml'
-            info_comu_file = LOCAL_DIRECTORY + 'COMMUNITIES.yaml'
-            info_pert_file = LOCAL_DIRECTORY + 'PERTURBATIONS.yaml'
+            info_file_study = LOCAL_DIRECTORY_YAML + 'STUDY.yaml'
+            info_file_experiments = LOCAL_DIRECTORY_YAML + 'EXPERIMENTS.yaml'
+            info_compart_file = LOCAL_DIRECTORY_YAML + 'COMPARTMENTS.yaml'
+            info_mem_file = LOCAL_DIRECTORY_YAML + 'COMMUNITY_MEMBERS.yaml'
+            info_comu_file = LOCAL_DIRECTORY_YAML + 'COMMUNITIES.yaml'
+            info_pert_file = LOCAL_DIRECTORY_YAML + 'PERTURBATIONS.yaml'
             
             # Do the test to the yaml files according to the sheet
             data_study_yaml = load_yaml(info_file_study)

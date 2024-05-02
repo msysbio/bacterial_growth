@@ -1,4 +1,5 @@
 import re
+import os
 
 # global PROJECT_DIRECTORY
 # global LOCAL_DIRECTORY
@@ -17,8 +18,14 @@ global rnaseq_regex
 global abundance_options
 
 # This directory MUST BE the one where the core is in the server
-PROJECT_DIRECTORY = 'C:/Users/sofia/Desktop/bacterial_growth/'
-LOCAL_DIRECTORY = 'C:/Users/sofia/Desktop/local_thesis_files/'
+current_file_path = os.path.abspath(__file__)
+root_folder = os.path.dirname(current_file_path)
+
+# This directory MUST BE the one where the core is in the server
+PROJECT_DIRECTORY = os.path.join(root_folder, "")
+print(PROJECT_DIRECTORY)
+LOCAL_DIRECTORY = os.path.join(root_folder, "")
+print(LOCAL_DIRECTORY)
 # Bash files needed to run the code
 BIOLOGICAL_REPLICATE_ANALYSIS_FILE = 'src/bash_scripts/lab_files_analysis.sh'
 MEDIA_ANALYSIS_FILE = 'src/bash_scripts/media_file_analysis.sh'

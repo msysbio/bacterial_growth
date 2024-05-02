@@ -64,7 +64,7 @@ with st.container():
 
 
 with st.container():
-    col1, col2, col3 = st.columns([0.20, 0.75 ,0.5])
+    col1, col2, col3 = st.columns([0.25, 0.70, 0.5])
     if not df_growth.empty or not df_reads.empty:
         with col2:
             if not df_growth.empty :
@@ -76,9 +76,11 @@ with st.container():
                 #st.write("bla")
                 df_experiments = getExperiments(studyID_to_visualize, conn)
                 st.write("**Experiments**")
-                for i in df_experiments["experimentId"]:
+                for i, j, k in zip(df_experiments["experimentId"], df_experiments["experimentDescription"],  df_experiments["bioreplicateIds"]):
                     with st.expander(f"{i}"):
-                        for j in set(df_growth["Biological_Replicate_id"]):
-                            st.checkbox(f"{j}", key = f"checkbox_{i}_{j}")
+                        st.write(f"{j}")
+                        biorep_list = k.split(",")
+                        for rep in biorep_list:
+                            st.checkbox(f"{rep}", key = f"checkbox_{i}_{rep}")
                         #st.write(df_growth["Biological_Replicate_id"])
             
