@@ -165,6 +165,18 @@ def get_replicate_metadata(raw_data_template):
 
 
 def save_data_to_csv(output_csv_path_growth,output_csv_path_reads,raw_data_template):
+    """
+    Function that two files given the raw data template, one stores all the growth + metabolites data and
+    the other stores the sequencing and count data from 16S RNA Seq OR FC
+
+    input:
+        - output_csv_path_growth: file path to store the growth data file
+        - output_csv_path_reads: file path to store the sequencing data file
+        - raw_data_template: raw data template file
+
+    Returns:
+        - two csv files stored in the path : src/Data/Growth/StudyId/.., the data does not contain empty columns or empty rows.
+    """
     df_excel_growth = pd.read_excel(raw_data_template, sheet_name='Growth_Data_and_Metabolites')
     # Drop columns with NaN values
     df_excel_growth = df_excel_growth.dropna(axis=1, how='all')

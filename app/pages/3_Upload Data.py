@@ -820,6 +820,7 @@ def tab_step5(xls_1, xls_2, measure_tech, meta_col, all_keywords):
                     reads_file = path + f"/Sequencing_Reads.csv"
                     # Create the folder
                     os.makedirs(path, exist_ok=True)
+                    # this function stores the raw data in 2 .csv files in a study folder
                     save_data_to_csv(growth_file,reads_file,xls_1)
 
                 else:

@@ -34,6 +34,7 @@ def populate_db(list_growth, list_metabolites, list_microbial_strains,raw_data_t
     inputs:
         - list_growth: List of growth measurements selected by the user in step 3
         - list_metabolites: List of metabolites selected by the user in step 3
+        - list_microbial_strains: List of all the microial strains selected by the user in step 2
         - raw_data_template: excel uploaded by the user in step 4 with all the raw data
         - info_file_study: yaml file with all the information of the STUDY sheet
         - info_file_experiments: yaml file with all the information of the EXPERIMENTS sheet
@@ -43,6 +44,7 @@ def populate_db(list_growth, list_metabolites, list_microbial_strains,raw_data_t
         - info_pert_file: yaml file with all the information of the PERTURBATIONS sheet
 
     Returns:
+        - study_id: study id of the uploaded study if susccessfull, if not it will be None
         - errors: List of all the errors resulting from the get_techniques_metabolites function
         - erros_logic: List of all logial errors checked while populating the data into the database
         - study['studyUniqueID']: Study Unique ID only if all was susscessful

@@ -114,3 +114,6 @@ mysql> LOAD DATA INFILE '/var/lib/mysql-files/unicellular_ncbi_ids_preferred_nam
 
 ```
 
+# To populate the DB
+At the moment to populate the db correctly you need to go to this file: src/db_functions.py and put the info of your db (user, password, db name, port), I tried to use streamlit to populate but was not straighforward. But if we dont want people to do this, we can parse the secrets.toml but I haven't implemented that yet.
+
