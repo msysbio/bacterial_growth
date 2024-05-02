@@ -1,14 +1,15 @@
 import streamlit as st
+st.set_page_config(page_title="Visualization Dashboard", layout='wide')
+
+#from pages.Database_Search import getExperiments
 import pandas as pd
 import altair as alt
 import plotly.express as px
 from streamlit_extras.app_logo import add_logo
 import streamlit.components.v1 as components
 import os
-from pages.Database_Search import getExperiments
 
 
-st.set_page_config(page_title="Visualization Dashboard", page_icon="🔍", layout='wide')
 
 current_dir = os.path.dirname(os.path.realpath(__file__))[:-9]
 relative_path_to_src = os.path.join(current_dir, 'src')
@@ -19,6 +20,7 @@ with open("style.css") as css:
 
 df_growth = pd.DataFrame()
 df_reads = pd.DataFrame()
+conn = st.connection("BacterialGrowth", type="sql")
 
 st.title("Visualizing Study Data")
 
@@ -66,5 +68,12 @@ with st.container():
                 st.dataframe(df_growth)
         with col1:
             if not df_growth.empty:
-                st.write("**Biological Replicate IDs**")
+                st.write("bla")
+                #df_experiments = getExperiments(studyID_to_visualize, conn)
+                #st.write("**Experiments**")
+                #for i in df_experiments["experimentId"]:
+                #    with st.expander(f"{i}"):
+                #        for j in set(df_growth["Biological_Replicate_id"]):
+                #            st.checkbox(f"{j}")
+                #        #st.write(df_growth["Biological_Replicate_id"])
             

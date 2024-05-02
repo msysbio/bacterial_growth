@@ -149,7 +149,7 @@ st.text("")
 if "form" not in st.session_state:
     st.session_state.form = False
 
-def getGeneralInfo(studyID):
+def getGeneralInfo(studyID, conn):
     query = f"SELECT * FROM Study WHERE studyId = {studyID};"
     df_general = conn.query(query, ttl=600)
     columns_to_exclude = ['studyId','projectUniqueID','studyUniqueID']
@@ -168,7 +168,7 @@ def getGeneralInfo(studyID):
 
 
 
-def getExperiments(studyID):
+def getExperiments(studyID, conn):
     query = f"""
     SELECT 
         E.experimentUniqueId,
@@ -204,31 +204,31 @@ def getExperiments(studyID):
     columns_to_exclude = ['experimentUniqueId']
     return df_experiments.drop(columns=columns_to_exclude)
 
-def getMicrobialStrains(studyID):
+def getMicrobialStrains(studyID, conn):
     query = f"SELECT * FROM Strains WHERE studyId = {studyID};"
     df_Bacteria = conn.query(query, ttl=600)
     columns_to_exclude = ['studyId']
     return df_Bacteria.drop(columns=columns_to_exclude)
 
-def getCompartment(studyID):
+def getCompartment(studyID, conn):
     query = f"SELECT DISTINCT * FROM Compartments WHERE studyId = {studyID};"
     df_Compartment = conn.query(query, ttl=600)
     columns_to_exclude = ['studyId','compartmentUniqueId']
     return df_Compartment.drop(columns=columns_to_exclude)
 
-def getMetabolite(studyID):
+def getMetabolite(studyID, conn):
     query = f"SELECT * FROM MetabolitePerExperiment  WHERE studyId = {studyID};"
     df_Metabolite = conn.query(query, ttl=600)
     columns_to_exclude = ['experimentUniqueId','experimentId','bioreplicateUniqueId']
     return df_Metabolite.drop(columns=columns_to_exclude)
 
-def getPerturbations(studyID):
+def getPerturbations(studyID, conn):
     query = f"SELECT * FROM Perturbation WHERE studyId = {studyID};"
     df_perturbations = conn.query(query, ttl=600)
     columns_to_exclude = ['studyId', 'perturbationUniqueid']
     return df_perturbations.drop(columns=columns_to_exclude)
 
-def getCommunities(studyID):
+def getCommunities(studyID, conn):
     query = f"""
     SELECT 
         C.comunityId,
@@ -249,7 +249,7 @@ def getCommunities(studyID):
     #columns_to_exclude = ['studyId', 'perturbationUniqueId']
     return df_communities
 
-def getBiorep(studyID):
+def getBiorep(studyID, conn):
     query = f"""
     SELECT 
         B.bioreplicateId,
@@ -271,7 +271,7 @@ def getBiorep(studyID):
     columns_to_exclude = ['bioreplicateUniqueId']
     return df_bioreps.drop(columns=columns_to_exclude)
 
-def getAbundance(studyID):
+def getAbundance(studyID, conn):
     query = f"""
     SELECT 
         A.bioreplicateId,
@@ -287,7 +287,7 @@ def getAbundance(studyID):
     df_abundances = conn.query(query, ttl=600)
     return df_abundances
 
-def getFC(studyID):
+def getFC(studyID, conn):
     query = f"""
     SELECT 
         F.bioreplicateId,
@@ -419,7 +419,7 @@ if search_button or st.session_state.form:
                     down_check = st.checkbox(f"{i+1}",key=f'checkbox{i}')
 
                 with c2:
-                    df_general = getGeneralInfo(df_studies['studyId'][i])
+                    df_general = getGeneralInfo(df_studies['studyId'][i], conn)
                     study_name = df_general['studyName'][i]
                     transposed_df = df_general.T
                     studyname = st.page_link("pages/3_Upload Data.py",label= f':blue[**{study_name}**]')
@@ -430,41 +430,41 @@ if search_button or st.session_state.form:
                     space = st.text("")
 
                     with st.expander("**Experiments**"):
-                        df_experiments = getExperiments(df_studies['studyId'][i])
+                        df_experiments = getExperiments(df_studies['studyId'][i], conn)
                         st.dataframe(df_experiments,hide_index=True,)
 
                     space = st.text("")
                     
                     with st.expander("**Compartments**"):
-                        df_Compartment = getCompartment(df_studies['studyId'][i])
+                        df_Compartment = getCompartment(df_studies['studyId'][i], conn)
                         st.dataframe(df_Compartment,hide_index=True,)
                     
                     space = st.text("")
                     
                     with st.expander("**Microbial Strains and Communities**"):
-                        df_Compartment = getCommunities(df_studies['studyId'][i])
+                        df_Compartment = getCommunities(df_studies['studyId'][i], conn)
                         st.dataframe(df_Compartment,hide_index=True,)
-                        df_strains = getMicrobialStrains(df_studies['studyId'][i])
+                        df_strains = getMicrobialStrains(df_studies['studyId'][i], conn)
                         st.dataframe(df_strains,hide_index=True,)
 
 
                     space = st.text("")
                     
                     with st.expander("**Biological Replicates, Growth and Metabolites Measurements**"):
-                        df_biorep = getBiorep(df_studies['studyId'][i])
+                        df_biorep = getBiorep(df_studies['studyId'][i], conn)
                         st.dataframe(df_biorep,hide_index=True,)
-                        df_abundance = getAbundance(df_studies['studyId'][i])
+                        df_abundance = getAbundance(df_studies['studyId'][i], conn)
                         st.dataframe(df_abundance,hide_index=True,)
-                        df_FC = getFC(df_studies['studyId'][i])
+                        df_FC = getFC(df_studies['studyId'][i], conn)
                         st.dataframe(df_FC,hide_index=True,)
-                        df_Metabolite = getMetabolite(df_studies['studyId'][i])
+                        df_Metabolite = getMetabolite(df_studies['studyId'][i], conn)
                         st.dataframe(df_Metabolite,hide_index=True,)
 
 
                     space = st.text("")
 
                     with st.expander("**Perturbations**"):
-                        df_perturbation = getPerturbations(df_studies['studyId'][i])
+                        df_perturbation = getPerturbations(df_studies['studyId'][i], conn)
                         st.dataframe(df_perturbation,hide_index=True,)
                     
             space2 = st.text("")
