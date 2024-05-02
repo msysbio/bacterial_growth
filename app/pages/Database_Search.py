@@ -422,7 +422,7 @@ if search_button or st.session_state.form:
                     df_general = getGeneralInfo(df_studies['studyId'][i])
                     study_name = df_general['studyName'][i]
                     transposed_df = df_general.T
-                    studyname = st.page_link("pages/2_Upload Data.py",label= f':blue[**{study_name}**]')
+                    studyname = st.page_link("pages/3_Upload Data.py",label= f':blue[**{study_name}**]')
                     formatted_html = transposed_df.to_html(render_links=True, escape=False, justify='justify', header = False)
                     styled_html = f"<style>table {{ font-size: 13px; }}</style>{formatted_html}"
                     table = st.markdown(styled_html, unsafe_allow_html=True)

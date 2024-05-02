@@ -5,6 +5,7 @@ import plotly.express as px
 from streamlit_extras.app_logo import add_logo
 import streamlit.components.v1 as components
 import os
+from pages.Database_Search import getExperiments
 
 
 st.set_page_config(page_title="Visualization Dashboard", page_icon="🔍", layout='wide')
@@ -64,5 +65,6 @@ with st.container():
             if not df_reads.empty:
                 st.dataframe(df_growth)
         with col1:
-            st.write("**Biological Replicate IDs**")
+            if not df_growth.empty:
+                st.write("**Biological Replicate IDs**")
             
