@@ -1,0 +1,33 @@
+Biological_Replicate_IDs:
+- A1, A2
+- A3, A4
+Biological_Replicates_Number:
+- 1
+- 1
+Community_ID:
+- community1, community2
+- community2
+Compartment_ID:
+- comp1,comp2
+- comp1
+Control:
+- A2
+- A3
+Control_Description:
+- qqqqqq ffff
+- gggg ddddd
+Cultivation_Mode:
+- batch
+- batch
+Experiment_Description:
+- this is with bacteria A and B
+- this is with bacteria B and C
+Experiment_ID:
+- sample1
+- sample2
+Measurement_Technique:
+- OD, FC
+- OD
+Measurement_Unit:
+- OD, mM
+- OD
