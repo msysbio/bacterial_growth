@@ -2,13 +2,10 @@ import os
 import mysql.connector
 import warnings
 import streamlit as st
-
-
-user_name = 'root'
-password = 'Amartemucho123-'
-DB_NAME = 'BacterialGrowth'
-
-
+try:
+    from constants import *
+except:
+    from .constants import *
 
 def execute(phrase):
     """
@@ -18,7 +15,7 @@ def execute(phrase):
     :return: list of str received from the database
     """
     try:
-        cnx = mysql.connector.connect(user=user_name, password=password, host='localhost', port=3306,database=DB_NAME)
+        cnx = mysql.connector.connect(user=USER, password=PASSWORD, host='localhost', port=3306,database=DATABASE)
         cursor = cnx.cursor()
         cursor.execute(phrase)
         res = []
@@ -29,7 +26,7 @@ def execute(phrase):
         if warnings:
             for warning in warnings:
                 print("\t\t ** Warning - ", warning)
-        
+
         cursor.close()
         cnx.commit()
         cnx.close()
@@ -37,11 +34,11 @@ def execute(phrase):
     except mysql.connector.Error as err:
         print("\nSomething went wrong: {}".format(err),'\n')
         exit()
-    
+
 
 
 def addRecord(table, args):
-    """ 
+    """
     Add new entry into the db
 
     :param table: table of the DB
@@ -54,14 +51,14 @@ def addRecord(table, args):
     print(phrase)
     res = execute(phrase)
     print(res)
-    
+
     # Get the name of the primary key field
     phrase = "SHOW KEYS FROM "+table+" WHERE Key_name = 'PRIMARY'"
     res = execute(phrase)
     print(res)
     pk = res[0][4]
     print(pk)
-    
+
     # Get the value of the primary key (this will return the value both if it was inserted or ignored)
     where_clause = getWhereClause(args)
     print(where_clause)
@@ -72,7 +69,7 @@ def addRecord(table, args):
         last_id = 'WARNING'
     else:
         last_id = res[0][0]
-    
+
     return last_id
 
 def countRecords(table, args):
@@ -115,7 +112,7 @@ def getChebiId(metabolite):
 def getFiles(fields, args):
     where_clause = getWhereClause(args)
     fields_clause = getSelectFields(fields)
-    
+
     phrase = "SELECT "+fields_clause+" FROM TechnicalReplicate "+where_clause
     res = execute(phrase)
     return res
@@ -123,7 +120,7 @@ def getFiles(fields, args):
 def getRecords(table, fields, args):
     where_clause = getWhereClause(args)
     fields_clause = getSelectFields(fields)
-    
+
     phrase = "SELECT "+fields_clause+" FROM "+table+" "+where_clause
     res = execute(phrase)
     return res
@@ -144,7 +141,7 @@ def getMetaboliteID(metabolite):
 def getInsertFieldsValues(args):
     '''
     Create the fields and values strings to be inserted in the db
-    
+
     :param args: dictionary with the data to return (key = db field name. value = insert value)
     :return str with part of query
     '''
@@ -165,7 +162,7 @@ def getSelectFields(args):
     :return str clause
     '''
     clause = ""
-    for field in args: 
+    for field in args:
         clause = clause + field + ", "
     clause = clause[:-2]
     return clause
@@ -188,9 +185,9 @@ def getWhereClause(args):
                 clause = clause + key + " IS NOT NULL AND "
             else:
                 clause = clause + key + "= '" + str(val) + "' AND "
-        
+
         clause = clause[:-5] + ')'
-    
+
     return clause
 
 def getWhereInClause(args):
@@ -214,9 +211,9 @@ def getWhereInClause(args):
                 clause = clause + key + " IS NOT NULL AND "
             else:
                 clause = clause + key + "= '" + str(val) + "' AND "
-        
+
         clause = clause[:-5] + ')'
-    
+
     return clause
 
 
@@ -234,7 +231,7 @@ def getJoinClause(table_from, table_to, field):
 def getGroupByClause(field):
     '''
     Get the str with the group by clause
-    
+
     :param field
     :return str clause
     '''
@@ -244,7 +241,7 @@ def getGroupByClause(field):
 def getHavingClause(agg_function, field, operator, quant, distinct=False):
     '''
     Get the str with the having clause
-    
+
     :param agg_function: MIN(), MAX(), SUM(), AVG() or COUNT()
     :param field
     :param operator and quant: to build up the having condition. i.e. having id > 5
@@ -254,7 +251,7 @@ def getHavingClause(agg_function, field, operator, quant, distinct=False):
     clause = "HAVING "+agg_function
     if distinct == False:
         clause = clause + "("+field+") "+operator+" "+str(quant)
-    elif distinct == True:
+    elif distinct == True:stripping_method
         clause = clause +"(DISTINCT "+field+") "+operator+" "+str(quant)
     return clause
 
@@ -280,7 +277,7 @@ def getGeneralInfo(studyID, conn):
 
 def getExperiments(studyID, conn):
     query = f"""
-    SELECT 
+    SELECT
         E.experimentUniqueId,
         E.experimentId,
         E.experimentDescription,
@@ -290,20 +287,20 @@ def getExperiments(studyID, conn):
         GROUP_CONCAT(DISTINCT BR.bioreplicateId) AS control_bioreplicateIds,
         GROUP_CONCAT(DISTINCT C.comunityId) AS comunityIds,
         GROUP_CONCAT(DISTINCT CP.compartmentId) AS compartmentIds
-    FROM 
+    FROM
         Experiments AS E
-    LEFT JOIN 
+    LEFT JOIN
         BioReplicatesPerExperiment AS BRI ON E.experimentUniqueId = BRI.experimentUniqueId
-    LEFT JOIN 
+    LEFT JOIN
         BioReplicatesPerExperiment AS BR ON E.experimentUniqueId = BR.experimentUniqueId
-    LEFT JOIN 
+    LEFT JOIN
         Community AS C ON E.studyId = C.studyId
-    LEFT JOIN 
+    LEFT JOIN
         CompartmentsPerExperiment AS CP ON E.experimentUniqueId = CP.experimentUniqueId
     WHERE 
         E.studyId = '{studyID}'
         AND BR.controls = 1
-    GROUP BY 
+    GROUP BY
         E.experimentId,
         E.experimentUniqueId,
         E.experimentDescription,
@@ -340,15 +337,15 @@ def getPerturbations(studyID, conn):
 
 def getCommunities(studyID, conn):
     query = f"""
-    SELECT 
+    SELECT
         C.comunityId,
         GROUP_CONCAT(DISTINCT S.memberName) AS memberNames,
         GROUP_CONCAT(DISTINCT CP.compartmentId) AS compartmentIds
-    FROM 
+    FROM
         Community AS C
-    LEFT JOIN 
+    LEFT JOIN
         Strains AS S ON C.strainId = S.strainId
-    LEFT JOIN 
+    LEFT JOIN
         CompartmentsPerExperiment AS CP ON CP.comunityUniqueId = C.comunityUniqueId
     WHERE 
         C.studyId = '{studyID}'
@@ -361,7 +358,7 @@ def getCommunities(studyID, conn):
 
 def getBiorep(studyID, conn):
     query = f"""
-    SELECT 
+    SELECT
         B.bioreplicateId,
         B.bioreplicateUniqueId,
         B.controls,
@@ -370,9 +367,9 @@ def getBiorep(studyID, conn):
         B.pH,
         BM.biosampleLink,
         BM.bioreplicateDescrition
-    FROM 
+    FROM
         BioReplicatesPerExperiment AS B
-    LEFT JOIN 
+    LEFT JOIN
         BioReplicatesMetadata AS BM ON B.bioreplicateUniqueId = BM.bioreplicateUniqueId
     WHERE 
         B.studyId = '{studyID}';
@@ -383,13 +380,13 @@ def getBiorep(studyID, conn):
 
 def getAbundance(studyID, conn):
     query = f"""
-    SELECT 
+    SELECT
         A.bioreplicateId,
         S.memberName,
         S.NCBId
-    FROM 
+    FROM
         Abundances AS A
-    JOIN 
+    JOIN
         Strains AS S ON A.strainId = S.strainId
     WHERE 
         A.studyId = '{studyID}';
@@ -399,13 +396,13 @@ def getAbundance(studyID, conn):
 
 def getFC(studyID, conn):
     query = f"""
-    SELECT 
+    SELECT
         F.bioreplicateId,
         S.memberName,
         S.NCBId
-    FROM 
+    FROM
         FC_Counts AS F
-    JOIN 
+    JOIN
         Strains AS S ON F.strainId = S.strainId
     WHERE 
         F.studyId = '{studyID}';
@@ -513,7 +510,7 @@ def dynamical_query(all_advance_query):
                 where_clause = f"""
                 FROM MetabolitePerExperiment
                 WHERE cheb_id = '{cheb_id}'
-                """  
+                """
             elif query_dict['option'] == 'pH':
                 start, end = query_dict['value']
                 where_clause = f"""
@@ -528,14 +525,14 @@ def dynamical_query(all_advance_query):
                 logic_add = " OR studyId IN ("
             if query_dict['logic_operator'] == 'NOT':
                 logic_add = " AND studyId NOT IN ("
-        
+
         if logic_add != "":
             final_query = logic_add + " " + base_query + " " + where_clause + " )"
         else:
             final_query = base_query + " " + where_clause + " "
-        
+
         search_final_query += final_query
-    
+
     search_final_query = search_final_query + ";"
     return search_final_query
 

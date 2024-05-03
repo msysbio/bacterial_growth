@@ -24,10 +24,7 @@ from populate_db_mod import populate_db, generate_unique_id, stripping_method
 from import_into_database.yml_functions import read_yml
 import db_functions as db
 from parse_raw_data import get_techniques_metabolites, get_measures_growth, get_measures_counts, get_measures_reads, get_replicate_metadata, save_data_to_csv
-
-
-
-
+from constants import *
 
 add_logo("figs/logo_sidebar2.png", height=100)
 with open("style.css") as css:
@@ -91,29 +88,11 @@ def taxonomy_df_for_taxa_list(taxa_list, _conn):
     return pd.concat(dfs, ignore_index=True)
 
 
-def get_highest_index(all_strain_data):
-    indices = []
-    try:
-        for index, strain in enumerate(all_strain_data):
-            if "parent_taxon_id" in strain:
-                indices.append(index + 1)
-    except:
-        indices.append(1)
-    return sorted(indices)[-1]
-
-
 def display_strain_row(index):
     """
     Add 4-cols template for addin a new strain without an NCBI Taxonomy Id when other_strains is "No"
     """
     row_strain_data = {}
-
-    # print("==================================================")
-    # print("st.session_state", st.session_state)
-    # print("==================================================")
-    # print("st.session_state['rows_communities']", st.session_state['rows_communities'])
-    # print(type(st.session_state['rows_communities']))
-    # print("\n\n  ******* \n\n")
 
     if index not in st.session_state['rows_communities']:
         pass
@@ -476,7 +455,25 @@ def tab_step2():
                 if len(list_taxa_id):
                     st.success("Done! Microbial strains saved, then go to **Step 3**", icon="✅")
 
-            # Case where a strain does not correspond to a NCBI Taxonomy Id
+            # Case where<class 'streamlit.runtime.scriptrunner.script_run_context.ScriptRunContext'>
+ScriptRunContext(session_id='6421808e-b0d8-450d-ad23-6b52542906c7', _enqueue=<bound method ScriptRunner._enqueue_forward_msg of ScriptRunner(_session_id='6421808e-b0d8-450d-ad23-6b52542906c7', _main_script_path='app.py', _session_state={}, _uploaded_file_mgr=MemoryUploadedFileManager(endpoint='/_stcore/upload_file'), _script_cache=<streamlit.runtime.scriptrunner.script_cache.ScriptCache object at 0x716ade16ce80>, _user_info={'email': 'test@example.com'}, _fragment_storage=<streamlit.runtime.fragment.MemoryFragmentStorage object at 0x716adda68e20>, _requests=<streamlit.runtime.scriptrunner.script_requests.ScriptRequests object at 0x716a8b9e85b0>, on_event=<blinker.base.Signal object at 0x716a8b9e8610>, _execing=True, _script_thread=<Thread(ScriptRunner.scriptThread, started 124702515770944)>)>, query_string='', session_state={}, uploaded_file_mgr=MemoryUploadedFileManager(endpoint='/_stcore/upload_file'), main_script_path='app.py', page_script_hash='5de154de49ab0b023fe9d323ca97ad51', user_info={'email': 'test@example.com'}, fragment_storage=<streamlit.runtime.fragment.MemoryFragmentStorage object at 0x716adda68e20>, gather_usage_stats=True, command_tracking_deactivated=False, tracked_commands=[name: "set_page_config"
+args {
+  k: "page_title"
+  t: "str"
+  m: "len:15"
+}
+args {
+  k: "page_icon"
+  t: "str"
+  m: "len:1"
+}
+args {
+  k: "layout"
+  t: "str"
+  m: "len:4"
+}
+time: 138
+], tracked_commands_counter=Counter({'set_page_config': 1}), _set_page_config_allowed=False, _has_script_started=True, widget_ids_this_run=set(), widget_user_keys_this_run=set(), form_ids_this_run=set(), cursors={}, script_requests=<streamlit.runtime.scriptrunner.script_requests.ScriptRequests object at 0x716a8b9e85b0>, current_fragment_id=None, fragment_ids_this_run=set()) a strain does not correspond to a NCBI Taxonomy Id
             elif other_strains == "No, Some microbial strains were not found":
 
                 # Parse all novel strains (without a NCBI Taxonomy Id) added
@@ -849,7 +846,7 @@ def tab_step5(xls_1, xls_2, measure_tech, meta_col, all_keywords, conn, project_
             if not all(not sublist for sublist in errors):
                 for i in errors:
                     st.error(f"Data uploading unsuccessful: {i}. Please correct and try again!")
-            
+
             # else, populate the db and give the unique ids to the user if not error
             # if errors during the population function then the function stops and the errors are printed
             else:

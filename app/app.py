@@ -2,7 +2,6 @@ import streamlit as st
 from streamlit_extras.app_logo import add_logo
 from st_pages import show_pages_from_config
 
-
 st.set_page_config(page_title="µGrowthDB", page_icon="🔍", layout='wide')
 
 add_logo("figs/logo_sidebar2.png", height=100)
