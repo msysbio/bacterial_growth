@@ -1,7 +1,7 @@
 
 
 
-def dashboard(df_growth=None):
+def dashboard():
     """
     If df_growth then init page with selected from Search page data
     else init the whole page.
@@ -9,6 +9,10 @@ def dashboard(df_growth=None):
 
     import streamlit as st
     st.set_page_config(page_title="Visualization Dashboard", layout='wide')
+
+
+    print("session state in dashboard:",st.session_state)
+
 
     import pandas as pd
     import altair as alt
@@ -30,32 +34,51 @@ def dashboard(df_growth=None):
 
     df_growth = pd.DataFrame()
     df_reads = pd.DataFrame()
+
     conn = st.connection("BacterialGrowth", type="sql")
 
     st.title("Visualizing Study Data")
 
 
-    print("SESSION STATE IN THE DASHBOARD", st.session_state)
+    # temporar
+    if "to_dashboard" in st.session_state and st.session_state["to_dashboard"] != "":
+        studyID_to_visualize = str(st.session_state["to_dashboard"])
+    else:
+        studyID_to_visualize = None
 
     with st.container():
-        data = None
-        studyID_to_visualize = None
-        col1, col2 = st.columns([0.94, 0.06])
-        with col1:
-            studyID_to_visualize = st.text_input(label = "Study ID",placeholder="Enter the Study ID you want to visualize its data", help="Enter only numerical values")
-        with col2:
-            st.write("")
-            st.write("")
-            no_button = True
-            go_button = st.button("Go!",type = "primary")
 
-        if studyID_to_visualize == None and go_button:
-            st.warning("You need to provide a Study ID first!")
+        data = None
+        col1, col2 = st.columns([0.94, 0.06])
+
+        if studyID_to_visualize is None:
+
+            with col1:
+                studyID_to_visualize = st.text_input(
+                    label = "Study ID",
+                    placeholder="Enter the Study ID you want to visualize its data",
+                    help="Enter only numerical values"
+                )
+
+            with col2:
+                st.write("")
+                st.write("")
+                no_button = True
+                go_button = st.button("Go!",type = "primary")
+
+            if studyID_to_visualize == None and go_button:
+                st.warning("You need to provide a Study ID first!")
+
+        else:
+            go_button = True
+
         if studyID_to_visualize != None and go_button:
+            print(studyID_to_visualize)
+            print(type(studyID_to_visualize))
+            print("===================")
             path = relative_path_to_src + f"/Data/Growth/{studyID_to_visualize}"
             growth_file = path + f"/Growth_Metabolites.csv"
             reads_file = path + f"/Sequencing_Reads.csv"
-
 
             try:
                 df_growth = pd.read_csv(growth_file)
@@ -70,18 +93,18 @@ def dashboard(df_growth=None):
             if df_growth.empty or df_reads.empty:
                 st.warning("This Study ID is invalid, check and try again with a correct ID.")
 
-
     with st.container():
         col1, col2, col3 = st.columns([0.25, 0.70, 0.5])
         if not df_growth.empty or not df_reads.empty:
+
             with col2:
                 if not df_growth.empty :
                     st.dataframe(df_growth)
                 if not df_reads.empty:
                     st.dataframe(df_growth)
+
             with col1:
                 if not df_growth.empty:
-                    #st.write("bla")
                     df_experiments = getExperiments(studyID_to_visualize, conn)
                     st.write("**Experiments**")
                     for i, j, k in zip(df_experiments["experimentId"], df_experiments["experimentDescription"],  df_experiments["bioreplicateIds"]):

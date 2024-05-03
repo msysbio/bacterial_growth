@@ -105,7 +105,6 @@ def db_search():
         getCompartment, getCommunities, getMicrobialStrains, getBiorep, getAbundance, \
         getFC, getMetabolite, getPerturbations
 
-    st.set_page_config(page_title="Database Search", page_icon="🔍", layout='wide')
 
     add_logo("figs/logo_sidebar2.png", height=100)
     with open("style.css") as css:
@@ -170,6 +169,14 @@ def db_search():
     else:
         st.session_state.searching = False
 
+    if len(all_advance_query) > 0:
+        for i in all_advance_query:
+            check = True
+            if i['value'] != "" or i['value'] is not None:
+                check = False
+            if check:
+                st.session_state.searching = False
+
     search_button = st.button(
         '**Search Data**',
         key='search_button',
@@ -204,22 +211,29 @@ def db_search():
             st.warning("Sorry, there is no studies in the database that match your search.")
 
         else:
-
+            study_ids = []
             st.write(f'**{num_results}** search results')
 
             with st.form(key="Results"):
+
                 c1 , c2 = st.columns([0.05, 0.95])
+
                 for i in range(len(df_studies)):
+
                     with c1:
                         down_check = st.checkbox(f"{i+1}",key=f'checkbox{i}')
 
                     with c2:
-                        df_general = getGeneralInfo(df_studies['studyId'][i], conn)
+                        study_id = df_studies['studyId'][i]
+                        study_ids.append(study_id)
+                        df_general = getGeneralInfo(study_id, conn)
                         print(df_general)
                         study_name = df_general['studyName'][i]
                         transposed_df = df_general.T
                         studyname = st.page_link("pages/Visualization_Dashboard.py",
-                                                label= f':blue[**{study_name}**]')
+                                                label= f':blue[**{study_name}**]'
+                                    )
+
                         formatted_html = transposed_df.to_html(render_links=True, escape=False, justify='justify', header = False)
                         styled_html = f"<style>table {{ font-size: 13px; }}</style>{formatted_html}"
                         table = st.markdown(styled_html, unsafe_allow_html=True)
@@ -227,39 +241,39 @@ def db_search():
                         space = st.text("")
 
                         with st.expander("**Experiments**"):
-                            df_experiments = getExperiments(df_studies['studyId'][i], conn)
+                            df_experiments = getExperiments(study_id, conn)
                             st.dataframe(df_experiments,hide_index=True,)
 
                         space = st.text("")
 
                         with st.expander("**Compartments**"):
-                            df_Compartment = getCompartment(df_studies['studyId'][i], conn)
+                            df_Compartment = getCompartment(study_id, conn)
                             st.dataframe(df_Compartment,hide_index=True,)
 
                         space = st.text("")
 
                         with st.expander("**Microbial Strains and Communities**"):
-                            df_Compartment = getCommunities(df_studies['studyId'][i], conn)
+                            df_Compartment = getCommunities(study_id, conn)
                             st.dataframe(df_Compartment,hide_index=True,)
-                            df_strains = getMicrobialStrains(df_studies['studyId'][i], conn)
+                            df_strains = getMicrobialStrains(study_id, conn)
                             st.dataframe(df_strains,hide_index=True,)
 
                         space = st.text("")
 
                         with st.expander("**Biological Replicates, Growth and Metabolites Measurements**"):
-                            df_biorep = getBiorep(df_studies['studyId'][i], conn)
+                            df_biorep = getBiorep(study_id, conn)
                             st.dataframe(df_biorep,hide_index=True,)
-                            df_abundance = getAbundance(df_studies['studyId'][i], conn)
+                            df_abundance = getAbundance(study_id, conn)
                             st.dataframe(df_abundance,hide_index=True,)
-                            df_FC = getFC(df_studies['studyId'][i], conn)
+                            df_FC = getFC(study_id, conn)
                             st.dataframe(df_FC,hide_index=True,)
-                            df_Metabolite = getMetabolite(df_studies['studyId'][i], conn)
+                            df_Metabolite = getMetabolite(study_id, conn)
                             st.dataframe(df_Metabolite,hide_index=True,)
 
                         space = st.text("")
 
                         with st.expander("**Perturbations**"):
-                            df_perturbation = getPerturbations(df_studies['studyId'][i], conn)
+                            df_perturbation = getPerturbations(study_id, conn)
                             st.dataframe(df_perturbation,hide_index=True,)
 
                 if 'search_button' in st.session_state and st.session_state.search_button == True:
@@ -271,6 +285,17 @@ def db_search():
                 download = st.form_submit_button("Dowload Data", type = 'primary')
                 if download:
                     st.write('bla')
+
+
+            # Out of the form
+            if not df_general.empty:
+                st.session_state.to_dashboard = study_ids[-1]
+                print("i have a df to viewwww...")
+                print(study_ids[-1])
+                # st.link_button("View on dashboard", "Visualization_Dashboard,py")
+                st.page_link("pages/Visualization_Dashboard.py", label="Your profile")
+
+
 
     '''
 
@@ -327,6 +352,14 @@ def db_search():
 
 
 if __name__ == "__main__":
+
+    try:
+        st.set_page_config(page_title="Database Search", page_icon="🔍", layout='wide')
+    except:
+        print("already init")
+        pass
+
+    print("THIS IS MAIN")
 
     # Define the options for the dropdown list
     options = ['Project Name', 'Project ID', 'Study Name', 'Study ID','Microbial Strain', 'NCBI ID','Metabolites', 'chEBI ID', 'pH']
