@@ -18,8 +18,9 @@ current_dir = os.path.dirname(os.path.realpath(__file__))[:-9]
 relative_path_to_src = os.path.join(current_dir, 'src')
 sys.path.append(relative_path_to_src)
 from parse_ex_to_yaml import parse_ex_to_yaml
+from constants import *
 from check_yaml import test_study_yaml, test_experiments_yaml, test_compartments_yaml, test_comu_members_yaml, test_communities_yaml, test_perturbation_yaml
-from populate_db_mod import populate_db
+from populate_db_mod import populate_db, generate_unique_id, stripping_method
 from import_into_database.yml_functions import read_yml
 import db_functions as db
 from parse_raw_data import get_techniques_metabolites, get_measures_growth, get_measures_counts, get_measures_reads, get_replicate_metadata, save_data_to_csv
@@ -44,6 +45,9 @@ conn = st.connection("BacterialGrowth", type="sql")
 if 'rows_communities' not in st.session_state:
     st.session_state['rows_communities'] = {}
     st.session_state['rows_communities'][1] = True
+
+if 'private_project_id' not in st.session_state:
+    st.session_state['private_project_id'] = None
 
 
 def increase_rows():
@@ -229,9 +233,11 @@ def create_StudyID():
 
 
 def tab_step1():
-    """
-    Step 1: set type of data submission
-    """
+    create_private_project_id = None
+    unique_study_id_val = None
+    project_name = None
+    project_description = None
+    # Step 1: set type of data submission
     with tab1:
         st.subheader("1. Select type of data submission")
         st.markdown(
@@ -269,9 +275,17 @@ def tab_step1():
                 st.write('')
                 st.write('')
                 create_button = st.button("Create project",type="primary")
-            if create_button and project_name and project_description:
+
+            if st.session_state['private_project_id'] is None:
+                create_private_project_id = generate_unique_id()
+                st.session_state['private_project_id'] = create_private_project_id
+
+            if st.session_state['private_project_id'] is not None:
+                create_private_project_id = st.session_state['private_project_id']
+
+            if create_button or (project_name and project_description):
                 update_verify()
-                st.info(f"Your New proyect **{project_name}** was successfully created! Your unique proyect ID is **1234**, Go to **Step 2** and folow the instructions!", icon="✅")
+                st.info(f"Your New proyect **{project_name}** was successfully created! Your **Private Proyect ID** is **{create_private_project_id}**.  Copy and paste somewhere safe this ID, you will need it to upload more studies or do updates, Go to **Step 2** and folow the instructions!", icon="✅")
                 # then verify that the number is correct
         if new_ckeck == 'Add a new study to a previos project':
             col1, col2 = st.columns([0.85,0.15])
@@ -285,9 +299,17 @@ def tab_step1():
                 st.write('')
                 st.write('')
                 verify_button = st.button("Verify unique ID",type="primary")
-            if verify_button:
-                update_verify()
-                st.info("Go to **Step 2** and folow the instructions!", icon="✅")
+
+            if verify_button and project_id:
+                df_proyect_id = db.getPrivateProjectID(project_id,conn)
+                if not df_proyect_id.empty:
+                    project_info_df = db.getProjectInfo(project_id, conn)
+                    project_name = project_info_df['projectName'][0]
+                    project_description = project_info_df['projectDescription'][0]
+                    update_verify()
+                    st.info(f"Go to **Step 2** and folow the instructions!", icon="✅")
+                else:
+                    st.warning("Incorrect Private Project ID, try again.")
         if new_ckeck == 'Add a new version of a study to a previous project':
             col1, col2 = st.columns([0.8,0.2])
             with col1:
@@ -310,9 +332,23 @@ def tab_step1():
                 st.write('')
                 st.write('')
                 verify2_button = st.button("Verify unique IDs",type="primary")
-            if verify2_button:
-                update_verify()
-                st.info("Go to **Step 2** and folow the instructions!", icon="✅")
+            if verify2_button and project_id and study_id:
+                df_proyect_id = db.getPrivateProjectID(project_id,conn)
+                unique_project_id_val = df_proyect_id["projectUniqueID"][0]
+                create_private_project_id = unique_project_id_val
+                unique_study_id_val = df_proyect_id["studyUniqueID"][0]
+                if not df_proyect_id.empty and unique_study_id_val == study_id:
+                    project_info_df = db.getProjectInfo(project_id, conn)
+                    project_name = project_info_df['projectName'][0]
+                    project_description = project_info_df['projectDescription'][0]
+                    update_verify()
+                    st.info(f"Go to **Step 2** and folow the instructions!", icon="✅")
+                else:
+                    st.warning("Incorrect Private Project ID or Private Study ID, try again.")
+
+    return create_private_project_id, unique_study_id_val, project_name, project_description
+
+
 
 
 def tab_step2():
@@ -342,130 +378,153 @@ def tab_step2():
         st.session_state['select_taxa'] = None
 
     with tab2:
-        """
-        Step 2: Describing the strains
-        """
-        df_taxonomy = ""
-        st.subheader("2. Select all the microbial strains used in the study")
-        st.markdown(
+
+        if st.session_state['verify'] == 1:
             """
-            Using the search tap bellow, select all the microbial strains used in your study as well as any uncultured communities, click on 'add' to include the selected option.
-            Once you are sure all the different community members are defined, click on 'save'.
+            Step 2: Describing the strains
             """
-        )
-        # Strains with NCBI Taxonomy Ids.
-        col1, col2, col3 = st.columns([0.45,0.45,0.1])
-        with col1:
-            input_taxon = st.text_input(
-                'Search microbial strain:',
-                key = 'input_taxa',
-                placeholder='1. Search microbial strain',
-                help='Type the specific microbial strain, then press enter'
+            df_taxonomy = ""
+            st.subheader("2. Select all the microbial strains used in the study")
+            st.markdown(
+                """
+                Using the search tap bellow, select all the microbial strains used in your study as well as any uncultured communities, click on 'add' to include the selected option.
+                Once you are sure all the different community members are defined, click on 'save'.
+                """
             )
-
-        with col2:
-            if input_taxon:
-                df_taxa_taxonomy = taxonomy_df_for_taxa_list([input_taxon], conn)
-                df_taxa_name = df_taxa_taxonomy['tax_names']
-                taxonomy = st.selectbox(
-                    'Select microbial strain',
-                    options=df_taxa_name,
-                    index=None,
-                    placeholder="2. Select one of the strains below",
-                    key = 'select_taxa',
-                    help='Select only one microbial strain, then click on add'
-                )
-                val_taxonomy = taxonomy
-
-        with  col3:
-            st.write("")
-            st.write("")
-            add_button = st.button('Add', key='add', type='primary')
-
-        keywords = st.multiselect(
-            label='Microbial species added',
-            options=st.session_state.list_strains,
-            default=st.session_state.list_strains
-        )
-
-        to_remove = [k for k in st.session_state.list_strains if k not in keywords]
-
-        for k in to_remove:
-            st.session_state.list_strains.remove(k)
-
-        if len(keywords) > 0:
-            temp_df = taxonomy_df_for_taxa_list(keywords, conn)
-
-            for i in keywords:
-                list_taxa_id.append(temp_df[temp_df['tax_names'] == i].iloc[0]['tax_id'])
-                strains_df = temp_df[temp_df['tax_names'] == i]
-                taxa_id = strains_df.iloc[0]['tax_id']
-                st.info(f'For more information about **{i}** go to the NCBI Taxonomy ID:[{taxa_id}](https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id={taxa_id})',
-                        icon="❕"
+            # Strains with NCBI Taxonomy Ids.
+            col1, col2, col3 = st.columns([0.45,0.45,0.1])
+            with col1:
+                input_taxon = st.text_input(
+                    'Search microbial strain:',
+                    key = 'input_taxa',
+                    placeholder='1. Search microbial strain',
+                    help='Type the specific microbial strain, then press enter'
                 )
 
-        other_strains = st.radio("*Did you find all the microbial strains?:",
-                               ["Yes, all microbial strains used in my study have been added.",
-                                "No, Some microbial strains were not found"
-                                ],
-                                index=None
-        )
+            with col2:
+                if input_taxon:
+                    df_taxa_taxonomy = taxonomy_df_for_taxa_list([input_taxon], conn)
+                    df_taxa_name = df_taxa_taxonomy['tax_names']
+                    taxonomy = st.selectbox(
+                        'Select microbial strain',
+                        options=df_taxa_name,
+                        index=None,
+                        placeholder="2. Select one of the strains below",
+                        key = 'select_taxa',
+                        help='Select only one microbial strain, then click on add'
+                    )
+                    val_taxonomy = taxonomy
 
-        # All user's strains have NCBI Taxonomy Ids
-        if other_strains == "Yes, all microbial strains used in my study have been added.":
-            list_taxa_id = [temp_df[temp_df['tax_names'] == keyword].iloc[0]['tax_id'] for keyword in keywords]
-            if len(list_taxa_id):
-                st.success("Done! Microbial strains saved, then go to **Step 3**", icon="✅")
+            with  col3:
+                st.write("")
+                st.write("")
+                add_button = st.button('Add', key='add', type='primary')
 
-        # Case where a strain does not correspond to a NCBI Taxonomy Id
-        elif other_strains == "No, Some microbial strains were not found":
-
-            # Parse all novel strains (without a NCBI Taxonomy Id) added
-            for i in range(1, len(st.session_state['rows_communities']) + 1):
-                st.write('')
-                strain_data = display_strain_row(i)
-                all_strain_data.append(strain_data)
-
-            st.button('Add More',
-                    key=f'add_button_{i}',
-                    type='primary',
-                    on_click=increase_rows
+            keywords = st.multiselect(
+                label='Microbial species added',
+                options=st.session_state.list_strains,
+                default=st.session_state.list_strains
             )
 
-            # Save both novel and strains with NCBI Taxonomy Ids
-            save_all = st.button('Save All', type='primary')
-            if save_all:
+            to_remove = [k for k in st.session_state.list_strains if k not in keywords]
 
-                # Check if there are strains that do have exact NCBI Taxonomy ids.
-                if len(keywords) > 0:
-                    df_taxonomy = taxonomy_df_for_taxa_list(keywords, conn)
-                    list_taxa_id = [df_taxonomy[df_taxonomy['tax_names'] == keyword].iloc[0]['tax_id'] for keyword in keywords]
+            for k in to_remove:
+                st.session_state.list_strains.remove(k)
 
-                all_strain_data_del_in = all_strain_data.copy()
-                all_strain_data = []
+            if len(keywords) > 0:
+                temp_df = taxonomy_df_for_taxa_list(keywords, conn)
 
-                for index, strain in enumerate(all_strain_data_del_in,  start=1):
+                for i in keywords:
+                    list_taxa_id.append(temp_df[temp_df['tax_names'] == i].iloc[0]['tax_id'])
+                    strains_df = temp_df[temp_df['tax_names'] == i]
+                    taxa_id = strains_df.iloc[0]['tax_id']
+                    st.info(f'For more information about **{i}** go to the NCBI Taxonomy ID:[{taxa_id}](https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id={taxa_id})',
+                            icon="❕"
+                    )
 
-                    if 'parent_taxon_id' not in strain:
-                        continue
+            other_strains = st.radio("*Did you find all the microbial strains?:",
+                                ["Yes, all microbial strains used in my study have been added.",
+                                    "No, Some microbial strains were not found"
+                                    ],
+                                    index=None
+            )
 
-                    if st.session_state['rows_communities'][index]:
-                        taxa_id =  strain['parent_taxon_id']
-                        other_taxa_list.append(taxa_id)
-                        all_strain_data.append(strain)
+            # All user's strains have NCBI Taxonomy Ids
+            if other_strains == "Yes, all microbial strains used in my study have been added.":
+                list_taxa_id = [temp_df[temp_df['tax_names'] == keyword].iloc[0]['tax_id'] for keyword in keywords]
+                if len(list_taxa_id):
+                    st.success("Done! Microbial strains saved, then go to **Step 3**", icon="✅")
 
-                print("\n=======\n New round with: ")
-                print("keywords:", keywords)
-                print("list_taxa_id:", list_taxa_id)
-                print("other_taxa_list", other_taxa_list)
-                print("all_strain_data:", all_strain_data)
+            # Case where<class 'streamlit.runtime.scriptrunner.script_run_context.ScriptRunContext'>
+ScriptRunContext(session_id='6421808e-b0d8-450d-ad23-6b52542906c7', _enqueue=<bound method ScriptRunner._enqueue_forward_msg of ScriptRunner(_session_id='6421808e-b0d8-450d-ad23-6b52542906c7', _main_script_path='app.py', _session_state={}, _uploaded_file_mgr=MemoryUploadedFileManager(endpoint='/_stcore/upload_file'), _script_cache=<streamlit.runtime.scriptrunner.script_cache.ScriptCache object at 0x716ade16ce80>, _user_info={'email': 'test@example.com'}, _fragment_storage=<streamlit.runtime.fragment.MemoryFragmentStorage object at 0x716adda68e20>, _requests=<streamlit.runtime.scriptrunner.script_requests.ScriptRequests object at 0x716a8b9e85b0>, on_event=<blinker.base.Signal object at 0x716a8b9e8610>, _execing=True, _script_thread=<Thread(ScriptRunner.scriptThread, started 124702515770944)>)>, query_string='', session_state={}, uploaded_file_mgr=MemoryUploadedFileManager(endpoint='/_stcore/upload_file'), main_script_path='app.py', page_script_hash='5de154de49ab0b023fe9d323ca97ad51', user_info={'email': 'test@example.com'}, fragment_storage=<streamlit.runtime.fragment.MemoryFragmentStorage object at 0x716adda68e20>, gather_usage_stats=True, command_tracking_deactivated=False, tracked_commands=[name: "set_page_config"
+args {
+  k: "page_title"
+  t: "str"
+  m: "len:15"
+}
+args {
+  k: "page_icon"
+  t: "str"
+  m: "len:1"
+}
+args {
+  k: "layout"
+  t: "str"
+  m: "len:4"
+}
+time: 138
+], tracked_commands_counter=Counter({'set_page_config': 1}), _set_page_config_allowed=False, _has_script_started=True, widget_ids_this_run=set(), widget_user_keys_this_run=set(), form_ids_this_run=set(), cursors={}, script_requests=<streamlit.runtime.scriptrunner.script_requests.ScriptRequests object at 0x716a8b9e85b0>, current_fragment_id=None, fragment_ids_this_run=set()) a strain does not correspond to a NCBI Taxonomy Id
+            elif other_strains == "No, Some microbial strains were not found":
 
-                st.success("Done! Microbial strains saved, then go to **Step 3**", icon="✅")
+                # Parse all novel strains (without a NCBI Taxonomy Id) added
+                for i in range(1, len(st.session_state['rows_communities']) + 1):
+                    st.write('')
+                    strain_data = display_strain_row(i)
+                    all_strain_data.append(strain_data)
+
+                st.button('Add More',
+                        key=f'add_button_{i}',
+                        type='primary',
+                        on_click=increase_rows
+                )
+
+                # Save both novel and strains with NCBI Taxonomy Ids
+                save_all = st.button('Save All', type='primary')
+                if save_all:
+
+                    # Check if there are strains that do have exact NCBI Taxonomy ids.
+                    if len(keywords) > 0:
+                        df_taxonomy = taxonomy_df_for_taxa_list(keywords, conn)
+                        list_taxa_id = [df_taxonomy[df_taxonomy['tax_names'] == keyword].iloc[0]['tax_id'] for keyword in keywords]
+
+                    all_strain_data_del_in = all_strain_data.copy()
+                    all_strain_data = []
+
+                    for index, strain in enumerate(all_strain_data_del_in,  start=1):
+
+                        if 'parent_taxon_id' not in strain:
+                            continue
+
+                        if st.session_state['rows_communities'][index]:
+                            taxa_id =  strain['parent_taxon_id']
+                            other_taxa_list.append(taxa_id)
+                            all_strain_data.append(strain)
+
+                    print("\n=======\n New round with: ")
+                    print("keywords:", keywords)
+                    print("list_taxa_id:", list_taxa_id)
+                    print("other_taxa_list", other_taxa_list)
+                    print("all_strain_data:", all_strain_data)
+
+                    st.success("Done! Microbial strains saved, then go to **Step 3**", icon="✅")
+
+        else:
+            st.warning("Go back to Step 1 and fill in the details!", icon="⚠️")
 
     return keywords, list_taxa_id, all_strain_data, other_taxa_list
 
 
-def tab_step3(keywords, list_taxa_id, all_strain_data):
+def tab_step3(keywords, list_taxa_id, all_strain_data,create_private_project_id, unique_study_id_val):
     """
     Step 3: Download templates tab
     """
@@ -615,7 +674,7 @@ def tab_step3(keywords, list_taxa_id, all_strain_data):
                 filtered_strains = [entry for entry in all_strain_data if entry and 'case_number' in entry]
 
                 try:
-                    excel_data = create_excel_fun(keywords, list_taxa_id, filtered_strains)
+                    excel_data = create_excel_fun(keywords, list_taxa_id, filtered_strains, create_private_project_id, unique_study_id_val)
                 except:
                     print("Excel fails with")
                     print("keywords:", keywords)
@@ -721,7 +780,7 @@ def tab_step4():
     return xls_1, xls_2
 
 
-def tab_step5(xls_1, xls_2, measure_tech, meta_col, all_keywords):
+def tab_step5(xls_1, xls_2, measure_tech, meta_col, all_keywords, conn, project_name, project_description):
     """
     Submit data page
     """
@@ -751,6 +810,8 @@ def tab_step5(xls_1, xls_2, measure_tech, meta_col, all_keywords):
 
         if Data_button and (xls_1 and xls_2):
 
+            os.makedirs(LOCAL_DIRECTORY_TEMPLATES, exist_ok=True)
+            os.makedirs(LOCAL_DIRECTORY_YAML, exist_ok=True)
             # Get all the yaml files
             parse_ex_to_yaml(LOCAL_DIRECTORY_YAML, xls_2)
 
@@ -761,7 +822,7 @@ def tab_step5(xls_1, xls_2, measure_tech, meta_col, all_keywords):
             info_mem_file = os.path.join(LOCAL_DIRECTORY_YAML, 'COMMUNITY_MEMBERS.yaml')
             info_comu_file = os.path.join(LOCAL_DIRECTORY_YAML, 'COMMUNITIES.yaml')
             info_pert_file = os.path.join(LOCAL_DIRECTORY_YAML, 'PERTURBATIONS.yaml')
-
+            
             # Do the test to the yaml files according to the sheet
             data_study_yaml = load_yaml(info_file_study)
             errors = test_study_yaml(data_study_yaml)
@@ -789,9 +850,9 @@ def tab_step5(xls_1, xls_2, measure_tech, meta_col, all_keywords):
             # else, populate the db and give the unique ids to the user if not error
             # if errors during the population function then the function stops and the errors are printed
             else:
-                study_id, errors, erros_logic, studyUniqueID, projectUniqueID = populate_db(measure_tech, meta_col, all_keywords ,xls_1,info_file_study,info_file_experiments,info_compart_file,info_mem_file,info_comu_file,info_pert_file)
-                if not (errors and erros_logic) and (study_id and studyUniqueID and projectUniqueID):
-                    st.success(f"Thank you! your study has been successfully uploaded into our database, **Unique study Id**: {studyUniqueID} and **Unique Project Id**: {projectUniqueID}")
+                study_id, errors, erros_logic, studyUniqueID, projectUniqueID, project_id = populate_db(measure_tech, meta_col, all_keywords ,xls_1,info_file_study,info_file_experiments,info_compart_file,info_mem_file,info_comu_file,info_pert_file, conn, project_name, project_description)
+                if not (errors and erros_logic) and (study_id and studyUniqueID and projectUniqueID and project_id):
+                    st.success(f"Thank you! your study has been successfully uploaded into our database, **Unique Study ID**: {studyUniqueID} and **Study ID**: {study_id}, **Unique Project Id**: {projectUniqueID} and **Project ID**: {project_id}")
                     # create folder to store study data:
                     path = relative_path_to_src + f"/Data/Growth/{study_id}"
                     growth_file = path + f"/Growth_Metabolites.csv"
@@ -809,9 +870,8 @@ def tab_step5(xls_1, xls_2, measure_tech, meta_col, all_keywords):
 
 
 
-
-tab_step1()
+create_private_project_id, unique_study_id_val, project_name, project_description= tab_step1()
 keywords, list_taxa_id, all_strain_data, other_taxa_list = tab_step2()
-list_growth, list_metabolites, all_keywords =  tab_step3(keywords, list_taxa_id, all_strain_data)
+list_growth, list_metabolites, all_keywords =  tab_step3(keywords, list_taxa_id, all_strain_data, create_private_project_id, unique_study_id_val)
 xls_1, xls_2 = tab_step4()
-tab_step5(xls_1, xls_2,list_growth, list_metabolites, all_keywords)
+tab_step5(xls_1, xls_2,list_growth, list_metabolites, all_keywords, conn, project_name, project_description)

@@ -3,7 +3,7 @@ CREATE DATABASE BacterialGrowth;
 USE BacterialGrowth;
 
 CREATE TABLE IF NOT EXISTS Project (
-	projectId INT AUTO_INCREMENT,
+	projectId VARCHAR(100),
     projectName VARCHAR(100) DEFAULT NULL, 
     projectDescription TEXT DEFAULT NULL,
     projectUniqueID VARCHAR(100),
@@ -12,18 +12,18 @@ CREATE TABLE IF NOT EXISTS Project (
 );
 
 CREATE TABLE IF NOT EXISTS Study (
-	studyId INT AUTO_INCREMENT,
+	studyId VARCHAR(100),
     projectUniqueID VARCHAR(100),
     studyName VARCHAR(100) DEFAULT NULL, 
     studyDescription TEXT DEFAULT NULL,
     studyURL VARCHAR(100) DEFAULT NULL,
     studyUniqueID VARCHAR(100) DEFAULT NULL,
     PRIMARY KEY (studyId),
-    UNIQUE (studyName)
+    UNIQUE (studyDescription(255))
 );
 
 CREATE TABLE IF NOT EXISTS Experiments (
-    studyId INT,
+    studyId VARCHAR(100),
 	experimentUniqueId INT AUTO_INCREMENT,
     experimentId VARCHAR(20), 
     experimentDescription TEXT,
@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS Experiments (
 );
 
 CREATE TABLE IF NOT EXISTS Compartments (
-    studyId INT,
+    studyId VARCHAR(100),
     compartmentUniqueId INT AUTO_INCREMENT PRIMARY KEY,
     compartmentId VARCHAR(50) NOT NULL,
     volume FLOAT(7,2) DEFAULT 0,
@@ -56,7 +56,7 @@ CREATE TABLE IF NOT EXISTS Compartments (
 );
 
 CREATE TABLE Strains (
-    studyId INT,
+    studyId VARCHAR(100),
     memberId VARCHAR(50),
     defined BOOLEAN DEFAULT FALSE,
     memberName TEXT,
@@ -67,7 +67,7 @@ CREATE TABLE Strains (
 );
 
 CREATE TABLE IF NOT EXISTS Community (
-    studyId INT,
+    studyId VARCHAR(100),
     comunityUniqueId INT AUTO_INCREMENT PRIMARY KEY,
     comunityId VARCHAR(50) NOT NULL,
     strainId INT,
@@ -101,7 +101,7 @@ CREATE TABLE IF NOT EXISTS MetaboliteSynonym (
 
 
 CREATE TABLE CompartmentsPerExperiment (
-    studyId INT,
+    studyId VARCHAR(100),
     experimentUniqueId INT,
     experimentId VARCHAR(20) NOT NULL,
     compartmentUniqueId INT,
@@ -117,7 +117,7 @@ CREATE TABLE CompartmentsPerExperiment (
 
 
 CREATE TABLE TechniquesPerExperiment (
-    studyId INT,
+    studyId VARCHAR(100),
     experimentUniqueId INT,
     experimentId VARCHAR(20) NOT NULL,
     technique VARCHAR(20),
@@ -128,7 +128,7 @@ CREATE TABLE TechniquesPerExperiment (
 );
 
 CREATE TABLE BioReplicatesPerExperiment (
-    studyId INT NOT NULL,
+    studyId VARCHAR(100) NOT NULL,
     bioreplicateUniqueId INT AUTO_INCREMENT PRIMARY KEY,
     bioreplicateId VARCHAR(50),
     experimentUniqueId INT,
@@ -145,7 +145,7 @@ CREATE TABLE BioReplicatesPerExperiment (
 );
 
 CREATE TABLE BioReplicatesMetadata (
-    studyId INT NOT NULL,
+    studyId VARCHAR(100) NOT NULL,
     bioreplicateUniqueId INT,
     bioreplicateId VARCHAR(50),
     biosampleLink TEXT,
@@ -157,7 +157,7 @@ CREATE TABLE BioReplicatesMetadata (
 
 
 CREATE TABLE IF NOT EXISTS Perturbation (
-    studyId INT,
+    studyId VARCHAR(100),
     perturbationUniqueid INT AUTO_INCREMENT,
     perturbationId VARCHAR(20) NOT NULL,
     experimentUniqueId INT,
@@ -178,7 +178,7 @@ CREATE TABLE IF NOT EXISTS Perturbation (
 
 
 CREATE TABLE IF NOT EXISTS MetabolitePerExperiment (
-    studyId INT,
+    studyId VARCHAR(100),
     experimentUniqueId INT,
     experimentId VARCHAR(20) NOT NULL,
     bioreplicateUniqueId INT,
@@ -192,7 +192,7 @@ CREATE TABLE IF NOT EXISTS MetabolitePerExperiment (
 );
 
 CREATE TABLE IF NOT EXISTS Abundances (
-    studyId INT,
+    studyId VARCHAR(100),
     experimentUniqueId INT,
     experimentId VARCHAR(20) NOT NULL,
     bioreplicateUniqueId INT,
@@ -206,7 +206,7 @@ CREATE TABLE IF NOT EXISTS Abundances (
 );
 
 CREATE TABLE IF NOT EXISTS FC_Counts (
-    studyId INT,
+    studyId VARCHAR(100),
     experimentUniqueId INT,
     experimentId VARCHAR(20) NOT NULL,
     bioreplicateUniqueId INT,

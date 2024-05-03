@@ -1,11 +1,10 @@
 import pandas as pd
 import yaml
-from constants import LOCAL_DIRECTORY
+from constants import LOCAL_DIRECTORY_YAML
 import os
 
-template_filename = os.path.join(LOCAL_DIRECTORY, 'metadata_template2.xlsx')
 
-def parse_ex_to_yaml(LOCAL_DIRECTORY, template_excel):
+def parse_ex_to_yaml(LOCAL_DIRECTORY_YAML, template_excel):
     """
     Function that parse the metadata template that the user uploads in step 4 and creates a yaml file
     per sheet in the excel
@@ -61,13 +60,14 @@ def parse_ex_to_yaml(LOCAL_DIRECTORY, template_excel):
     yaml_data5 = yaml.dump(data_dicts5)
     yaml_data6 = yaml.dump(data_dicts6)
 
-    template_filename_yaml_STUDY = os.path.join(LOCAL_DIRECTORY, 'STUDY.yaml')
-    template_filename_yaml_EXPERIMENTS = os.path.join(LOCAL_DIRECTORY, 'EXPERIMENTS.yaml')
-    template_filename_yaml_COMPARTMENTS = os.path.join(LOCAL_DIRECTORY, 'COMPARTMENTS.yaml')
-    template_filename_yaml_COMMUNITY_MEMBERS = os.path.join(LOCAL_DIRECTORY, 'COMMUNITY_MEMBERS.yaml')
-    template_filename_yaml_COMMUNITIES = os.path.join(LOCAL_DIRECTORY, 'COMMUNITIES.yaml')
-    template_filename_yaml_PERTURBATIONS = os.path.join(LOCAL_DIRECTORY, 'PERTURBATIONS.yaml')
 
+    template_filename_yaml_STUDY = os.path.join(LOCAL_DIRECTORY_YAML, 'STUDY.yaml')
+    template_filename_yaml_EXPERIMENTS = os.path.join(LOCAL_DIRECTORY_YAML, 'EXPERIMENTS.yaml')
+    template_filename_yaml_COMPARTMENTS = os.path.join(LOCAL_DIRECTORY_YAML, 'COMPARTMENTS.yaml')
+    template_filename_yaml_COMMUNITY_MEMBERS = os.path.join(LOCAL_DIRECTORY_YAML, 'COMMUNITY_MEMBERS.yaml')
+    template_filename_yaml_COMMUNITIES = os.path.join(LOCAL_DIRECTORY_YAML, 'COMMUNITIES.yaml')
+    template_filename_yaml_PERTURBATIONS = os.path.join(LOCAL_DIRECTORY_YAML, 'PERTURBATIONS.yaml')
+    
     # Write YAML data to a file
     with open(template_filename_yaml_STUDY, "w") as yaml_file:
         yaml_file.write(yaml_data)

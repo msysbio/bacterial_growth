@@ -7,7 +7,7 @@ from openpyxl.styles import Alignment
 from tempfile import NamedTemporaryFile
 import openpyxl
 
-def create_excel_fun(keywords, list_taxa_id, all_strain_data):
+def create_excel_fun(keywords, list_taxa_id, all_strain_data, create_private_project_id, unique_study_id_val):
     """
     keywords: NCBI Taxonomy Ids of taxa with exact match to a NCBI Taxonomy Id
     list_taxa_id: names of the taxa with exact NCBI Taxonomy ids
@@ -45,6 +45,14 @@ def create_excel_fun(keywords, list_taxa_id, all_strain_data):
             sheet.cell(row=k+i+2, column=3, value=name)
             sheet.cell(row=k+i+2, column=4, value=parent_ncbi_tax_id)
             sheet.cell(row=k+i+2, column=5, value=description)
+
+    sheet_study = wb['STUDY']
+    if create_private_project_id != None:
+        sheet_study.cell(row=2, column=1, value=create_private_project_id)
+    if unique_study_id_val != None:
+        sheet_study.cell(row=2, column=2, value=unique_study_id_val)
+
+
 
     temp_file = NamedTemporaryFile(delete=False, suffix='.xlsx')
     wb.save(temp_file.name)
