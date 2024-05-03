@@ -251,7 +251,7 @@ def getHavingClause(agg_function, field, operator, quant, distinct=False):
     clause = "HAVING "+agg_function
     if distinct == False:
         clause = clause + "("+field+") "+operator+" "+str(quant)
-    elif distinct == True:stripping_method
+    elif distinct == True:
         clause = clause +"(DISTINCT "+field+") "+operator+" "+str(quant)
     return clause
 
