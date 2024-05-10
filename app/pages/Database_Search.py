@@ -106,6 +106,13 @@ def db_search():
         getFC, getMetabolite, getPerturbations
 
 
+    scripts_dir = os.path.join(repo_dir, "app/scripts")
+    sys.path.append(scripts_dir)
+    from edit_sessions import clean_dashboard
+
+
+    clean_dashboard()
+
     add_logo("figs/logo_sidebar2.png", height=100)
     with open("style.css") as css:
         st.markdown(f'<style>{css.read()}</style>', unsafe_allow_html=True)
@@ -353,13 +360,7 @@ def db_search():
 
 if __name__ == "__main__":
 
-    try:
-        st.set_page_config(page_title="Database Search", page_icon="🔍", layout='wide')
-    except:
-        print("already init")
-        pass
-
-    print("THIS IS MAIN")
+    st.set_page_config(page_title="Database Search", page_icon="🔍", layout='wide')
 
     # Define the options for the dropdown list
     options = ['Project Name', 'Project ID', 'Study Name', 'Study ID','Microbial Strain', 'NCBI ID','Metabolites', 'chEBI ID', 'pH']
