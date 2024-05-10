@@ -1,4 +1,29 @@
+import streamlit as st
+st.set_page_config(page_title="Visualization Dashboard", layout='wide')
 
+
+
+import pandas as pd
+import altair as alt
+import plotly.express as px
+from streamlit_extras.app_logo import add_logo
+import streamlit.components.v1 as components
+import sys
+import os
+
+current_dir = os.path.dirname(os.path.realpath(__file__))[:-9]
+relative_path_to_src = os.path.join(current_dir, 'src')
+
+sys.path.append(relative_path_to_src)
+from db_functions import getExperiments
+
+add_logo("figs/logo_sidebar3.png", height=100)
+with open("style.css") as css:
+    st.markdown(f'<style>{css.read()}</style>', unsafe_allow_html=True)
+
+conn = st.connection("BacterialGrowth", type="sql")
+
+st.title("Visualizing Study Data")
 
 
 def dashboard():
@@ -7,38 +32,8 @@ def dashboard():
     else init the whole page.
     """
 
-    import streamlit as st
-    st.set_page_config(page_title="Visualization Dashboard", layout='wide')
-
-
-    print("session state in dashboard:",st.session_state)
-
-
-    import pandas as pd
-    import altair as alt
-    import plotly.express as px
-    from streamlit_extras.app_logo import add_logo
-    import streamlit.components.v1 as components
-    import sys
-    import os
-
-    current_dir = os.path.dirname(os.path.realpath(__file__))[:-9]
-    relative_path_to_src = os.path.join(current_dir, 'src')
-
-    sys.path.append(relative_path_to_src)
-    from db_functions import getExperiments
-
-    add_logo("figs/logo_sidebar2.png", height=100)
-    with open("style.css") as css:
-        st.markdown(f'<style>{css.read()}</style>', unsafe_allow_html=True)
-
     df_growth = pd.DataFrame()
     df_reads = pd.DataFrame()
-
-    conn = st.connection("BacterialGrowth", type="sql")
-
-    st.title("Visualizing Study Data")
-
 
     # temporar
     if "to_dashboard" in st.session_state and st.session_state["to_dashboard"] != "":
@@ -63,8 +58,8 @@ def dashboard():
             with col2:
                 st.write("")
                 st.write("")
-                no_button = True
-                go_button = st.button("Go!",type = "primary")
+                st.session_state.dontGo = studyID_to_visualize == ""
+                go_button = st.button("Go!", disabled=st.session_state.dontGo, type = "primary")
 
             if studyID_to_visualize == None and go_button:
                 st.warning("You need to provide a Study ID first!")
@@ -73,9 +68,7 @@ def dashboard():
             go_button = True
 
         if studyID_to_visualize != None and go_button:
-            print(studyID_to_visualize)
-            print(type(studyID_to_visualize))
-            print("===================")
+
             path = relative_path_to_src + f"/Data/Growth/{studyID_to_visualize}"
             growth_file = path + f"/Growth_Metabolites.csv"
             reads_file = path + f"/Sequencing_Reads.csv"

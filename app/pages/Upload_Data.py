@@ -1,32 +1,32 @@
+
 import streamlit as st
 from streamlit_extras.app_logo import add_logo
+from streamlit_tags import st_tags
 import pandas as pd
 from scripts.create_excel import create_excel_fun
 from datetime import datetime, timedelta
 import time
 import yaml
-import sys
-import os
-import uuid
-import numpy as np
-import itertools
+import sys, os, re
 from scripts.create_rawdata_excel import create_rawdata_excel_fun
-from streamlit_tags import st_tags
-st.set_page_config(page_title="Upload Data", page_icon="📤", layout='wide')
 
+# Import custom methods
 current_dir = os.path.dirname(os.path.realpath(__file__))[:-9]
 relative_path_to_src = os.path.join(current_dir, 'src')
 sys.path.append(relative_path_to_src)
 from parse_ex_to_yaml import parse_ex_to_yaml
 from constants import *
 from check_yaml import test_study_yaml, test_experiments_yaml, test_compartments_yaml, test_comu_members_yaml, test_communities_yaml, test_perturbation_yaml
-from populate_db_mod import populate_db, generate_unique_id, stripping_method
-from import_into_database.yml_functions import read_yml
+from populate_db_mod import populate_db, generate_unique_id
 import db_functions as db
-from parse_raw_data import get_techniques_metabolites, get_measures_growth, get_measures_counts, get_measures_reads, get_replicate_metadata, save_data_to_csv
+from parse_raw_data import save_data_to_csv
 from constants import *
 
-add_logo("figs/logo_sidebar2.png", height=100)
+
+# Page config
+st.set_page_config(page_title="Upload Data", page_icon="📤", layout='wide')
+
+add_logo("figs/logo_sidebar3.png", height=100)
 with open("style.css") as css:
     st.markdown(f'<style>{css.read()}</style>', unsafe_allow_html=True)
 
@@ -49,6 +49,11 @@ if 'rows_communities' not in st.session_state:
 if 'private_project_id' not in st.session_state:
     st.session_state['private_project_id'] = None
 
+
+def is_valid_email(email):
+    # Regular expression pattern for validating email addresses
+    pattern = r'^[\w\.-]+@[\w\.-]+\.\w+$'
+    return re.match(pattern, email) is not None
 
 def increase_rows():
     index = len(st.session_state['rows_communities'])
@@ -233,10 +238,13 @@ def create_StudyID():
 
 
 def tab_step1():
+
     create_private_project_id = None
     unique_study_id_val = None
     project_name = None
     project_description = None
+
+
     # Step 1: set type of data submission
     with tab1:
         st.subheader("1. Select type of data submission")
@@ -244,7 +252,7 @@ def tab_step1():
             """
             **Data Submission Options:**
             - [x] **Add a new study to a new project:** Choose this option if you're uploding study data from a new, non existing project.
-            - [x] **Add a new study to a previos project:** Choose this option if you're updating a new study to an already existing project.
+            - [x] **Add a new study to a previous project:** Choose this option if you're updating a new study to an already existing project.
             - [x] **Add a new version of a study to a previous project:** Choose this option if you're updating a new study version to an already existing project.
 
             **Unique study ID:** Please provide the unique study ID of the previous study you wish to update. This ensures continuity and helps us maintain the database up to data.
@@ -254,18 +262,21 @@ def tab_step1():
             If you do not remember the unique IDs please follow the intructions in (link).
             """)
 
-        options = ['Add a new study to a new project','Add a new study to a previos project','Add a new version of a study to a previous project']
+        options = ['Add a new study to a new project','Add a new study to a previous project','Add a new version of a study to a previous project']
         new_ckeck = st.selectbox('Select the type of data submission:',
                                  options,
                                  None,
                                  help='Choose one of the options for your data submission.'
                     )
 
+        # NEW PROJECT
         if new_ckeck == 'Add a new study to a new project':
             col1, col2 = st.columns([0.87,0.13])
             with col1:
                 project_name = st.text_input('Project name:',help='Name the new project',placeholder='1. Provide a name for your new project')
                 project_description = st.text_input('Project description:',help='Description the new project',placeholder='2. Provide a project description')
+                st.session_state.dontCreate = (project_name == "" or project_description == "")
+
             with col2:
                 st.write('')
                 st.write('')
@@ -274,7 +285,10 @@ def tab_step1():
                 st.write('')
                 st.write('')
                 st.write('')
-                create_button = st.button("Create project",type="primary")
+
+
+                create_button = st.button("Create project", disabled = st.session_state.dontCreate, type="primary")
+
 
             if st.session_state['private_project_id'] is None:
                 create_private_project_id = generate_unique_id()
@@ -283,11 +297,28 @@ def tab_step1():
             if st.session_state['private_project_id'] is not None:
                 create_private_project_id = st.session_state['private_project_id']
 
-            if create_button or (project_name and project_description):
+
+            if create_button:
+
+                # if st.session_state['private_project_id'] is None:
+                #     create_private_project_id = generate_unique_id()
+                #     st.session_state['private_project_id'] = create_private_project_id
+
+                # if st.session_state['private_project_id'] is not None:
+                #     create_private_project_id = st.session_state['private_project_id']
+
+
                 update_verify()
-                st.info(f"Your New proyect **{project_name}** was successfully created! Your **Private Proyect ID** is **{create_private_project_id}**.  Copy and paste somewhere safe this ID, you will need it to upload more studies or do updates, Go to **Step 2** and folow the instructions!", icon="✅")
-                # then verify that the number is correct
-        if new_ckeck == 'Add a new study to a previos project':
+
+                st.info(f"""Your New proyect **{project_name}** was successfully created! \
+                    Your **Private Proyect ID** is **{create_private_project_id}**.  \
+                    Copy and paste somewhere safe this ID, you will need it to upload more studies or do updates. \
+                    Go to **Step 2** and folow the instructions!""", icon="✅"
+                )
+                # [TODO] then verify that the number is correct
+
+        # NEW STUDY ON ONGOING PROJECT
+        if new_ckeck == 'Add a new study to a previous project':
             col1, col2 = st.columns([0.85,0.15])
             with col1:
                 project_id = st.text_input(
@@ -295,10 +326,11 @@ def tab_step1():
                     help='Provide the unique ID of the project you want to add a new study',
                     placeholder='1. Provide the unique project ID'
                 )
+                st.session_state.dontAdd = project_id == ""
             with col2:
                 st.write('')
                 st.write('')
-                verify_button = st.button("Verify unique ID",type="primary")
+                verify_button = st.button("Verify unique ID", disabled=st.session_state.dontAdd, type="primary")
 
             if verify_button and project_id:
                 df_proyect_id = db.getPrivateProjectID(project_id,conn)
@@ -310,6 +342,10 @@ def tab_step1():
                     st.info(f"Go to **Step 2** and folow the instructions!", icon="✅")
                 else:
                     st.warning("Incorrect Private Project ID, try again.")
+
+        print( st.session_state['verify'] )
+
+        # UPDATE STUDY
         if new_ckeck == 'Add a new version of a study to a previous project':
             col1, col2 = st.columns([0.8,0.2])
             with col1:
@@ -323,6 +359,7 @@ def tab_step1():
                     help='Provide the unique ID of the study you want to add a new version',
                     placeholder='2. Provide the unique study ID'
                 )
+                st.session_state.dontUpdate = (project_id == "" or study_id == "")
             with col2:
                 st.write('')
                 st.write('')
@@ -331,7 +368,8 @@ def tab_step1():
                 st.write('')
                 st.write('')
                 st.write('')
-                verify2_button = st.button("Verify unique IDs",type="primary")
+                verify2_button = st.button("Verify unique IDs", disabled=st.session_state.dontUpdate, type="primary")
+
             if verify2_button and project_id and study_id:
                 df_proyect_id = db.getPrivateProjectID(project_id,conn)
                 unique_project_id_val = df_proyect_id["projectUniqueID"][0]
@@ -347,8 +385,6 @@ def tab_step1():
                     st.warning("Incorrect Private Project ID or Private Study ID, try again.")
 
     return create_private_project_id, unique_study_id_val, project_name, project_description
-
-
 
 
 def tab_step2():
@@ -687,6 +723,7 @@ def tab_step4():
     xls_2 = None
     with tab4:
         col1, col2 = st.columns(2)
+
         with col1:
             st.subheader("1. Upload Data Template")
             st.markdown(
@@ -752,11 +789,13 @@ def tab_step4():
                     else:
                         unique_community_ids.add(ids.strip())
 
-        st.warning(" Verify that all the data and study information are correct! \
-                   No modifications to the data after uploaded are allowed.", icon="⚠️")
-        st.info("After checking that all the data provided is correct, click on **Save uploaded files**.")
+        st.session_state.hinderUploading = (uploaded_file is None or uploaded_file_2 is None)
 
-        submit_button = st.button("Save uploaded files", type="primary", use_container_width = True)
+        submit_button = st.button("Save uploaded files", disabled=st.session_state.hinderUploading, type="primary", use_container_width = True)
+        st.info(" Verify that all the data and study information are correct! \
+                   No modifications to the data after uploaded are allowed.", icon="⚠️")
+        # st.info("After checking that all the data provided is correct, click on **Save uploaded files**.")
+
         if submit_button:
             st.success("Done! Now go to **Step 5** and fill in the details.", icon="✅")
     return xls_1, xls_2
@@ -782,18 +821,31 @@ def tab_step5(xls_1, xls_2, measure_tech, meta_col, all_keywords, conn, project_
                                              max_value = next_year)
             if date_visible is not None:
                 st.success(f'Data will be visible and public on: {date_visible}.', icon="✅")
+
         if visibility_option == "Yes, make my data visible now!":
             st.success(" Data is going to be visible and public now.", icon="✅")
 
         st.write("After submitting your Data, a report with the results will be sent to your e-mail.")
         email = st.text_input('Provide your e-mail address:')
         confirmation = st.checkbox('I am sure that the data uploaded is correct and I want to submit the data.')
-        Data_button = st.button("Submit Data", type="primary", use_container_width = True)
+
+        print("confirmation", confirmation )
+        print("visibility:", visibility_option)
+        print("mail:", email)
+
+        st.session_state.hinderSubmit = (confirmation == False or visibility_option == None or email == "")
+
+        Data_button = st.button("Submit Data",
+                                type="primary",
+                                disabled=st.session_state.hinderSubmit,
+                                use_container_width=True
+        )
 
         if Data_button and (xls_1 and xls_2):
 
             os.makedirs(LOCAL_DIRECTORY_TEMPLATES, exist_ok=True)
             os.makedirs(LOCAL_DIRECTORY_YAML, exist_ok=True)
+
             # Get all the yaml files
             parse_ex_to_yaml(LOCAL_DIRECTORY_YAML, xls_2)
 
