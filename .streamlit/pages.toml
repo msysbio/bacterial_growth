@@ -1,0 +1,29 @@
+[[pages]]
+path = "app.py"
+name = "Home"
+icon = ":house:"
+
+[[pages]]
+path = "pages/Database_Search.py"
+name = "Search"
+icon = ":paperclip:"
+
+[[pages]]
+path = "pages/Visualization_Dashboard.py"
+name = "Dashboard"
+icon = ":books:"
+
+[[pages]]
+path = "pages/Upload_Data.py"
+name = "Upload data"
+icon = "📖"
+
+[[pages]]
+path = "pages/Help.py"
+name = "Help"
+icon = "🧰"
+
+[[pages]]
+path = "pages/About_Us.py"
+name = "About us"
+icon = "✏️"
