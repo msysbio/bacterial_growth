@@ -6,11 +6,11 @@ import streamlit.components.v1 as components
 
 # Load local modules
 current_dir = os.path.dirname(os.path.realpath(__file__))
-repo_dir = os.path.dirname(os.path.realpath(__file__))[:-9]
+repo_dir = os.path.dirname(os.path.dirname(current_dir))
 relative_path_to_src = os.path.join(repo_dir, 'src')
 sys.path.append(relative_path_to_src)
 sys.path.append(current_dir)
-scripts_dir = os.path.join(repo_dir, "app/scripts")
+scripts_dir = os.path.join(repo_dir, "scripts")
 sys.path.append(scripts_dir)
 
 from Visualization_Dashboard import dashboard
@@ -30,9 +30,6 @@ min_value_ph = 0.0
 max_value_ph = 14.0
 min_value_ph_add = 0.0
 max_value_ph_add = 14.0
-
-
-
 
 
 def increase_rows():
@@ -112,9 +109,9 @@ def display_row(index):
 
 def db_search():
 
-    with open("app/style.css") as css:
+    with open("style.css") as css:
         st.markdown(f'<style>{css.read()}</style>', unsafe_allow_html=True)
-    st.image('app/figs/SearchBanner.png')
+    st.image('figs/SearchBanner.png')
 
 
     st.session_state["IDEA"] = True
@@ -357,6 +354,6 @@ else:
 
 # Confing st page
 # st.set_page_config(page_title="Database Search", page_icon="🔍", layout='wide')
-add_logo("app/figs/logo_sidebar3.png", height=100)
+add_logo("figs/logo_sidebar3.png", height=100)
 
 db_search()

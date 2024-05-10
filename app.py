@@ -5,19 +5,19 @@ from st_pages import show_pages_from_config
 # Preload CSS file
 @st.cache_resource
 def load_css():
-    with open("app/style.css") as css:
+    with open("style.css") as css:
         return css.read()
 
 st.set_page_config(page_title="µGrowthDB", page_icon="🔍", layout='wide')
 
-add_logo("app/figs/logo_sidebar3.png", height=100)
+add_logo("figs/logo_sidebar3.png", height=100)
 
 
 st.markdown(f'<style>{load_css()}</style>', unsafe_allow_html=True)
 
 
 
-st.image('app/figs/logo.png')
+st.image('figs/logo.png')
 st.write('')
 st.write('')
 st.write('')

@@ -11,8 +11,9 @@ import sys, os, re
 from scripts.create_rawdata_excel import create_rawdata_excel_fun
 
 # Import custom methods
-current_dir = os.path.dirname(os.path.realpath(__file__))[:-9]
-relative_path_to_src = os.path.join(current_dir, 'src')
+filepath = os.path.realpath(__file__)
+root_dir = os.path.dirname(os.path.dirname(filepath))
+relative_path_to_src = os.path.join(root_dir, 'src')
 sys.path.append(relative_path_to_src)
 from parse_ex_to_yaml import parse_ex_to_yaml
 from constants import *
@@ -26,11 +27,11 @@ from constants import *
 # Page config
 st.set_page_config(page_title="Upload Data", page_icon="📤", layout='wide')
 
-add_logo("app/figs/logo_sidebar3.png", height=100)
-with open("app/style.css") as css:
+add_logo("figs/logo_sidebar3.png", height=100)
+with open("style.css") as css:
     st.markdown(f'<style>{css.read()}</style>', unsafe_allow_html=True)
 
-st.image('app/figs/UploadBanner.png')
+st.image('figs/UploadBanner.png')
 
 global unique_community_ids
 global list_selected_microbes

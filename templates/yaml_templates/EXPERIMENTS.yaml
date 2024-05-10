@@ -1,33 +1,44 @@
 Biological_Replicate_IDs:
-- A1, A2
-- A3, A4
+- A1, A2, A3,sA1
+- A4
+- MULTIPLE VALUES ALLOWED
 Biological_Replicates_Number:
-- 1
-- 1
+- 1.0
+- 1.0
+- .nan
 Community_ID:
-- community1, community2
+- community1
 - community2
+- MULTIPLE VALUES ALLOWED IN ORDER, IF ONLY ONE SAME COMUNITY PER COMPARTMENT
 Compartment_ID:
 - comp1,comp2
-- comp1
+- comp1,comp2
+- MULTIPLE VALUES ALLOWED
 Control:
-- A2
-- A3
+- .nan
+- .nan
+- .nan
 Control_Description:
-- qqqqqq ffff
-- gggg ddddd
+- 0.0
+- 0.0
+- .nan
 Cultivation_Mode:
 - batch
 - batch
+- .nan
 Experiment_Description:
 - this is with bacteria A and B
 - this is with bacteria B and C
+- .nan
 Experiment_ID:
 - sample1
 - sample2
+- .nan
 Measurement_Technique:
-- OD, FC
 - OD
+- OD
+- MULTIPLE VALUES ALLOWED
 Measurement_Unit:
-- OD, mM
 - OD
+- OD
+- MULTIPLE VALUES ALLOWED
