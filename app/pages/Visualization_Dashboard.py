@@ -21,12 +21,14 @@ def dashboard():
     import streamlit.components.v1 as components
     import sys
     import os
+    from scripts.filter_df import filter_dict_states
 
     current_dir = os.path.dirname(os.path.realpath(__file__))[:-9]
     relative_path_to_src = os.path.join(current_dir, 'src')
 
     sys.path.append(relative_path_to_src)
     from db_functions import getExperiments
+    
 
     add_logo("figs/logo_sidebar2.png", height=100)
     with open("style.css") as css:
@@ -46,75 +48,108 @@ def dashboard():
     else:
         studyID_to_visualize = None
 
-    with st.container():
+    if  "df_growth" not in st.session_state:
+        st.session_state['df_growth'] = None
 
-        data = None
-        col1, col2 = st.columns([0.94, 0.06])
+    if  "df_reads" not in st.session_state:
+        st.session_state['df_reads'] = None
 
-        if studyID_to_visualize is None:
+    data = None
+    col1, col2 = st.columns([0.94, 0.06])
 
-            with col1:
-                studyID_to_visualize = st.text_input(
-                    label = "Study ID",
-                    placeholder="Enter the Study ID you want to visualize its data",
-                    help="Enter only numerical values"
+    if studyID_to_visualize is None:
+
+        with col1:
+            no_button = True
+            studyID_to_visualize = st.text_input(
+                label = "Study ID",
+                placeholder="Enter the Study ID you want to visualize its data",
+                help="Enter only numerical values"
                 )
+            if studyID_to_visualize != None:
+                no_button = False
 
-            with col2:
-                st.write("")
-                st.write("")
-                no_button = True
-                go_button = st.button("Go!",type = "primary")
 
-            if studyID_to_visualize == None and go_button:
-                st.warning("You need to provide a Study ID first!")
+        with col2:
+            st.write("")
+            st.write("")
+            go_button = st.button("Go!",type = "primary",disabled=no_button)
 
-        else:
-            go_button = True
 
-        if studyID_to_visualize != None and go_button:
-            print(studyID_to_visualize)
-            print(type(studyID_to_visualize))
-            print("===================")
-            path = relative_path_to_src + f"/Data/Growth/{studyID_to_visualize}"
-            growth_file = path + f"/Growth_Metabolites.csv"
-            reads_file = path + f"/Sequencing_Reads.csv"
+    if studyID_to_visualize != None or go_button:
+        print(studyID_to_visualize)
+        print(type(studyID_to_visualize))
+        print("===================")
+        path = relative_path_to_src + f"/Data/Growth/{studyID_to_visualize}"
+        growth_file = path + f"/Growth_Metabolites.csv"
+        reads_file = path + f"/Sequencing_Reads.csv"
 
-            try:
-                df_growth = pd.read_csv(growth_file)
-            except FileNotFoundError:
-                df_growth = pd.DataFrame()
+        try:
+            df_growth = pd.read_csv(growth_file)
+            st.session_state['df_growth'] = 0
+        except FileNotFoundError:
+            df_growth = pd.DataFrame()
 
-            try:
-                df_reads = pd.read_csv(reads_file)
-            except FileNotFoundError:
-                df_reads = pd.DataFrame()
+        try:
+            df_reads = pd.read_csv(reads_file)
+            st.session_state['df_reads'] = 0
+        except FileNotFoundError:
+            df_reads = pd.DataFrame()
 
-            if df_growth.empty or df_reads.empty:
-                st.warning("This Study ID is invalid, check and try again with a correct ID.")
 
-    with st.container():
-        col1, col2, col3 = st.columns([0.25, 0.70, 0.5])
-        if not df_growth.empty or not df_reads.empty:
+    return df_growth, df_reads, studyID_to_visualize, conn
 
-            with col2:
-                if not df_growth.empty :
-                    st.dataframe(df_growth)
-                if not df_reads.empty:
-                    st.dataframe(df_growth)
+def content(df_growth, df_reads, studyID_to_visualize, conn):
+    import streamlit as st
+    import pandas as pd
+    import altair as alt
+    import plotly.express as px
+    from streamlit_extras.app_logo import add_logo
+    import streamlit.components.v1 as components
+    import sys
+    import os
+    from scripts.filter_df import filter_dict_states
 
-            with col1:
-                if not df_growth.empty:
-                    df_experiments = getExperiments(studyID_to_visualize, conn)
-                    st.write("**Experiments**")
-                    for i, j, k in zip(df_experiments["experimentId"], df_experiments["experimentDescription"],  df_experiments["bioreplicateIds"]):
-                        with st.expander(f"{i}"):
-                            st.write(f"{j}")
-                            biorep_list = k.split(",")
-                            for rep in biorep_list:
-                                st.checkbox(f"{rep}", key = f"checkbox_{i}_{rep}")
-                            #st.write(df_growth["Biological_Replicate_id"])
+    current_dir = os.path.dirname(os.path.realpath(__file__))[:-9]
+    relative_path_to_src = os.path.join(current_dir, 'src')
+
+    sys.path.append(relative_path_to_src)
+    from db_functions import getExperiments
+
+    print("session state in dashboard:",st.session_state)
+
+    checkbox_states = {}
+
+    col1, col2, col3 = st.columns([0.25, 0.70, 0.5])
+    with col2:
+        if not df_growth.empty :
+            st.dataframe(df_growth)
+        if not df_reads.empty:
+            st.dataframe(df_growth)
+    with col1:
+        st.write("**Experiments**")
+
+    if not df_growth.empty or not df_reads.empty:
+        with col1:
+            if not df_growth.empty:
+                df_experiments = getExperiments(studyID_to_visualize, conn)
+                for i, j, k in zip(df_experiments["experimentId"], df_experiments["experimentDescription"],  df_experiments["bioreplicateIds"]):
+                    with st.expander(f"{i}"):
+                        st.write(f"{j}")
+                        biorep_list = k.split(",")
+                        for rep in biorep_list:
+                            checkbox_key = f"checkbox_{i}_{rep}"
+                            checkbox_states[checkbox_key] = st.checkbox(f"{rep}", key=checkbox_key, value=checkbox_states.get(checkbox_key, False))
+            else:
+                st.warning("Study does not contain growth data")
+
+            
+        true_checkboxes = filter_dict_states(st.session_state)
+        print('true----------',true_checkboxes)
+
 
 
 if __name__ == "__main__":
-    dashboard()
+    df_growth, df_reads, studyID_to_visualize, conn = dashboard()
+    content(df_growth, df_reads, studyID_to_visualize, conn)
+    #content(df_growth, df_reads, studyID_to_visualize, conn)
