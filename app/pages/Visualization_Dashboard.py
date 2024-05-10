@@ -17,8 +17,8 @@ relative_path_to_src = os.path.join(current_dir, 'src')
 sys.path.append(relative_path_to_src)
 from db_functions import getExperiments
 
-add_logo("figs/logo_sidebar3.png", height=100)
-with open("style.css") as css:
+add_logo("app/figs/logo_sidebar3.png", height=100)
+with open("app/style.css") as css:
     st.markdown(f'<style>{css.read()}</style>', unsafe_allow_html=True)
 
 conn = st.connection("BacterialGrowth", type="sql")
