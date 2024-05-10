@@ -251,7 +251,7 @@ def getHavingClause(agg_function, field, operator, quant, distinct=False):
     clause = "HAVING "+agg_function
     if distinct == False:
         clause = clause + "("+field+") "+operator+" "+str(quant)
-    elif distinct == True:stripping_method
+    elif distinct == True:
         clause = clause +"(DISTINCT "+field+") "+operator+" "+str(quant)
     return clause
 
@@ -297,7 +297,7 @@ def getExperiments(studyID, conn):
         Community AS C ON E.studyId = C.studyId
     LEFT JOIN
         CompartmentsPerExperiment AS CP ON E.experimentUniqueId = CP.experimentUniqueId
-    WHERE 
+    WHERE
         E.studyId = '{studyID}'
         AND BR.controls = 1
     GROUP BY
@@ -347,9 +347,9 @@ def getCommunities(studyID, conn):
         Strains AS S ON C.strainId = S.strainId
     LEFT JOIN
         CompartmentsPerExperiment AS CP ON CP.comunityUniqueId = C.comunityUniqueId
-    WHERE 
+    WHERE
         C.studyId = '{studyID}'
-    GROUP BY 
+    GROUP BY
         C.comunityId;
     """
     df_communities = conn.query(query, ttl=600)
@@ -371,7 +371,7 @@ def getBiorep(studyID, conn):
         BioReplicatesPerExperiment AS B
     LEFT JOIN
         BioReplicatesMetadata AS BM ON B.bioreplicateUniqueId = BM.bioreplicateUniqueId
-    WHERE 
+    WHERE
         B.studyId = '{studyID}';
         """
     df_bioreps = conn.query(query, ttl=600)
@@ -388,7 +388,7 @@ def getAbundance(studyID, conn):
         Abundances AS A
     JOIN
         Strains AS S ON A.strainId = S.strainId
-    WHERE 
+    WHERE
         A.studyId = '{studyID}';
         """
     df_abundances = conn.query(query, ttl=600)
@@ -404,7 +404,7 @@ def getFC(studyID, conn):
         FC_Counts AS F
     JOIN
         Strains AS S ON F.strainId = S.strainId
-    WHERE 
+    WHERE
         F.studyId = '{studyID}';
         """
     df_FC = conn.query(query, ttl=600)
@@ -412,11 +412,11 @@ def getFC(studyID, conn):
 
 def getPrivateProjectID(private_project_id, conn):
     query = f"""
-    SELECT 
+    SELECT
         *
-    FROM 
+    FROM
         Study
-    WHERE 
+    WHERE
         projectUniqueID = '{private_project_id}';
         """
     df_proyect = conn.query(query, ttl=600)
@@ -424,11 +424,11 @@ def getPrivateProjectID(private_project_id, conn):
 
 def getProjectInfo(private_project_id, conn):
     query = f"""
-    SELECT 
+    SELECT
         *
-    FROM 
+    FROM
         Project
-    WHERE 
+    WHERE
         projectUniqueID = '{private_project_id}';
         """
     df_proyect = conn.query(query, ttl=600)
