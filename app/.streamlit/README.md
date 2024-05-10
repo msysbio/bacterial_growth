@@ -1,1 +1,0 @@
-In this folder we have the `secrets.toml` file with the necessary credentials for connecting to our db.
