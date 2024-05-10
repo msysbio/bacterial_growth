@@ -26,11 +26,11 @@ from constants import *
 # Page config
 st.set_page_config(page_title="Upload Data", page_icon="📤", layout='wide')
 
-add_logo("figs/logo_sidebar3.png", height=100)
-with open("style.css") as css:
+add_logo("app/figs/logo_sidebar3.png", height=100)
+with open("app/style.css") as css:
     st.markdown(f'<style>{css.read()}</style>', unsafe_allow_html=True)
 
-st.image('figs/UploadBanner.png')
+st.image('app/figs/UploadBanner.png')
 
 global unique_community_ids
 global list_selected_microbes

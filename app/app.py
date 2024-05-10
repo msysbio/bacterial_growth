@@ -17,7 +17,7 @@ st.markdown(f'<style>{load_css()}</style>', unsafe_allow_html=True)
 
 
 
-st.image('figs/logo.png')
+st.image('app/figs/logo.png')
 st.write('')
 st.write('')
 st.write('')
