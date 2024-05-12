@@ -1,5 +1,6 @@
 # Database files
 src/*.sql
+.streamlit/secrets.toml
 
 src/names.dmp
 src/taxonomy_names.csv

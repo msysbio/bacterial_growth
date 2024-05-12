@@ -1,12 +1,6 @@
 import re
 import os
-# global PROJECT_DIRECTORY
-# global LOCAL_DIRECTORY
-# global BIOLOGICAL_REPLICATE_ANALYSIS_FILE
-# global MEDIA_ANALYSIS_FILE
-# global HEADERS_FILE
-# global BIOLOGICAL_REPLICATES_LIST
-# global MEDIA_LIST
+import streamlit as st
 global od_regex
 global counts_regex
 global qpcr_regex
@@ -33,17 +27,11 @@ BIOLOGICAL_REPLICATES_LIST = 'IntermediateFiles/listOfFiles.list'
 MEDIA_LIST = 'IntermediateFiles/listOfMedia.list'
 
 # Database credentials
-secrets_file = os.path.join(root_folder, "app/.streamlit/secrets.toml")
-secrets = [line.strip() for line in open(secrets_file, 'r').readlines() if line.strip()]
-secrets_dict = dict(line.split(' = ', 1) for line in secrets[1:])
-
-USER = secrets_dict["username"].replace('"', '')
-PASSWORD = secrets_dict["password"].replace('"', '')
-HOST = secrets_dict["host"].replace('"', '')
-PORT = secrets_dict["port"].replace('"', '')
-DATABASE = secrets_dict["database"].replace('"', '')
-
-
+USER = st.secrets.connections.BacterialGrowth.username
+PASSWORD = st.secrets.BacterialGrowth.password
+HOST = st.secrets.BacterialGrowth.host
+PORT = st.secrets.BacterialGrowth.port
+DATABASE = st.secrets.BacterialGrowth.database
 
 
 # File types

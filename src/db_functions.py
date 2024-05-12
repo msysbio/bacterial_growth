@@ -2,10 +2,12 @@ import os
 import mysql.connector
 import warnings
 import streamlit as st
-try:
-    from constants import *
-except:
-    from .constants import *
+import sys
+filepath = os.path.realpath(__file__)
+current_dir = os.path.dirname(filepath)
+sys.path.append(current_dir)
+from constants import *
+
 
 def execute(phrase):
     """
