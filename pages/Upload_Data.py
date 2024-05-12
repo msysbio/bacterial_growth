@@ -3,18 +3,20 @@ import streamlit as st
 from streamlit_extras.app_logo import add_logo
 from streamlit_tags import st_tags
 import pandas as pd
-from scripts.create_excel import create_excel_fun
 from datetime import datetime, timedelta
 import time
 import yaml
 import sys, os, re
-from scripts.create_rawdata_excel import create_rawdata_excel_fun
 
 # Import custom methods
 filepath = os.path.realpath(__file__)
 root_dir = os.path.dirname(os.path.dirname(filepath))
 relative_path_to_src = os.path.join(root_dir, 'src')
 sys.path.append(relative_path_to_src)
+
+from create_rawdata_excel import create_rawdata_excel_fun
+from create_excel import create_excel_fun
+
 from parse_ex_to_yaml import parse_ex_to_yaml
 from constants import *
 from check_yaml import test_study_yaml, test_experiments_yaml, test_compartments_yaml, test_comu_members_yaml, test_communities_yaml, test_perturbation_yaml

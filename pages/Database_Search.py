@@ -10,8 +10,6 @@ repo_dir = os.path.dirname(os.path.dirname(current_dir))
 relative_path_to_src = os.path.join(repo_dir, 'src')
 sys.path.append(relative_path_to_src)
 sys.path.append(current_dir)
-scripts_dir = os.path.join(repo_dir, "scripts")
-sys.path.append(scripts_dir)
 
 from Visualization_Dashboard import dashboard
 from db_functions import dynamical_query, getGeneralInfo, getExperiments, \
