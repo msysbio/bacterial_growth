@@ -1,8 +1,4 @@
 import streamlit as st
-st.set_page_config(page_title="Visualization Dashboard", layout='wide')
-
-
-
 import pandas as pd
 import altair as alt
 import plotly.express as px
@@ -10,22 +6,24 @@ from streamlit_extras.app_logo import add_logo
 import streamlit.components.v1 as components
 import sys
 import os
-
 filepath = os.path.realpath(__file__)
-current_dir = os.path.dirname(os.path.dirname(filepath))
-relative_path_to_src = os.path.join(current_dir, 'src')
+current_dir = os.path.dirname(filepath)
+root_dir = os.path.dirname(current_dir)
+relative_path_to_src = os.path.join(root_dir, 'src')
 sys.path.append(relative_path_to_src)
-
 from db_functions import getExperiments
 
+
+# Configure page
+st.set_page_config(page_title="Visualization Dashboard", layout='wide')
 add_logo("figs/logo_sidebar3.png", height=100)
 with open("style.css") as css:
     st.markdown(f'<style>{css.read()}</style>', unsafe_allow_html=True)
 
-conn = st.connection("BacterialGrowth", type="sql")
-
 st.title("Visualizing Study Data")
 
+
+conn = st.connection("BacterialGrowth", type="sql")
 
 def dashboard():
     """
