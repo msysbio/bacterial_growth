@@ -28,10 +28,10 @@ MEDIA_LIST = 'IntermediateFiles/listOfMedia.list'
 
 # Database credentials
 USER = st.secrets.connections.BacterialGrowth.username
-PASSWORD = st.secrets.BacterialGrowth.password
-HOST = st.secrets.BacterialGrowth.host
-PORT = st.secrets.BacterialGrowth.port
-DATABASE = st.secrets.BacterialGrowth.database
+PASSWORD = st.secrets.connections.BacterialGrowth.password
+HOST = st.secrets.connections.BacterialGrowth.host
+PORT = st.secrets.connections.BacterialGrowth.port
+DATABASE = st.secrets.connections.BacterialGrowth.database
 
 
 # File types
