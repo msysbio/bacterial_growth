@@ -1,6 +1,7 @@
 import streamlit as st
 from streamlit_extras.app_logo import add_logo
 from st_pages import show_pages_from_config
+from streamlit_extras.badges import badge
 
 # Preload CSS file
 @st.cache_resource
@@ -22,6 +23,10 @@ st.write('')
 st.write('')
 st.write('')
 st.write('')
+
+
+st.markdown("![badge](https://img.shields.io/badge/status-under%20development-orange?style=for-the-badge)")
+
 
 st.markdown(
     """
