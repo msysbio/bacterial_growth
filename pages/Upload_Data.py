@@ -7,16 +7,13 @@ from datetime import datetime, timedelta
 import time
 import yaml
 import sys, os, re
-
 # Import custom methods
 filepath = os.path.realpath(__file__)
 root_dir = os.path.dirname(os.path.dirname(filepath))
 relative_path_to_src = os.path.join(root_dir, 'src')
 sys.path.append(relative_path_to_src)
-
 from create_rawdata_excel import create_rawdata_excel_fun
 from create_excel import create_excel_fun
-
 from parse_ex_to_yaml import parse_ex_to_yaml
 from constants import *
 from check_yaml import test_study_yaml, test_experiments_yaml, test_compartments_yaml, test_comu_members_yaml, test_communities_yaml, test_perturbation_yaml
@@ -42,6 +39,8 @@ list_strains = []
 list_selected_microbes = []
 data_excel = None
 
+tab1, tab2,  tab3, tab4, tab5 = st.tabs(["Step 1", "Step 2","Step 3", "Step 4", "Step 5"])
+
 unique_community_ids = set()
 conn = st.connection("BacterialGrowth", type="sql")
 
@@ -58,13 +57,13 @@ def is_valid_email(email):
     pattern = r'^[\w\.-]+@[\w\.-]+\.\w+$'
     return re.match(pattern, email) is not None
 
+
 def increase_rows():
     index = len(st.session_state['rows_communities'])
     st.session_state['rows_communities'][index + 1] = True
 
 
 def decrease_rows(index):
-
     keys_to_remove = []
     for key in st.session_state:
         if key.endswith(str(index)):
@@ -198,34 +197,6 @@ def display_strain_row(index):
 
     return row_strain_data
 
-
-st.markdown(
-    """
-    Thank you for choosing to share your Bacterial Growth data with us. Your commitment to sharing study and experimental data is essential
-    for advancing our understanding of gut microbiome dynamics. Your contribution plays a vital role in driving research forward and enhancing
-    our collective knowledge in this field.
-
-    To successfully submit your data, please ensure that you follow the instructions provided in each of the following steps. Adhering to these
-    instructions helps us maintain the quality of our database and ensures the accuracy and reliability of the information stored within it.
-    Thank you for your cooperation in maintaining data integrity and reliability.
-    """
-)
-
-st.write('')
-st.write('')
-
-
-tab1, tab2,  tab3, tab4, tab5 = st.tabs(["Step 1", "Step 2","Step 3", "Step 4", "Step 5"])
-css = '''
-<style>
-.stTabs [data-baseweb="tab-list"] button [data-testid="stMarkdownContainer"] p {
-    font-size:1.6rem;
-    font-weight: bold;
-    }
-</style>
-'''
-
-st.markdown(css, unsafe_allow_html=True)
 
 if 'verify' not in st.session_state:
     st.session_state['verify'] = 0
@@ -904,6 +875,35 @@ def tab_step5(xls_1, xls_2, measure_tech, meta_col, all_keywords, conn, project_
                         st.error(f"Data uploading unsuccessful: {i}. Please correct and try again!")
                     for i in erros_logic:
                         st.error(f"Data uploading unsuccessful: {i}. Please correct and try again!")
+
+
+
+# Start
+css = '''
+<style>
+.stTabs [data-baseweb="tab-list"] button [data-testid="stMarkdownContainer"] p {
+    font-size:1.6rem;
+    font-weight: bold;
+    }
+</style>
+'''
+
+st.markdown(css, unsafe_allow_html=True)
+st.markdown("![badge](https://img.shields.io/badge/status-under%20development-orange?style=for-the-badge)")
+st.markdown(
+    """
+    Thank you for choosing to share your Bacterial Growth data with us. Your commitment to sharing study and experimental data is essential
+    for advancing our understanding of gut microbiome dynamics. Your contribution plays a vital role in driving research forward and enhancing
+    our collective knowledge in this field.
+
+    To successfully submit your data, please ensure that you follow the instructions provided in each of the following steps. Adhering to these
+    instructions helps us maintain the quality of our database and ensures the accuracy and reliability of the information stored within it.
+    Thank you for your cooperation in maintaining data integrity and reliability.
+    """
+)
+
+st.write('')
+st.write('')
 
 
 

@@ -9,6 +9,8 @@ with open("style.css") as css:
 
 st.image('figs/HelpBanner.png')
 
+st.markdown("![badge](https://img.shields.io/badge/status-under%20development-orange?style=for-the-badge)")
+
 teo_info = st.expander("**All About Bacterial Growth Data**")
 teo_info.write('hello')
 

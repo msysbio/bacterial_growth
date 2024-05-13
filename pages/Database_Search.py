@@ -115,7 +115,7 @@ def db_search():
     st.session_state["IDEA"] = True
 
 
-
+    st.markdown("![badge](https://img.shields.io/badge/status-under%20development-orange?style=for-the-badge)")
     st.markdown(
         """
         Discover studies and datasets by selecting one or more of the optional parameters: Study Name, Organism, Metabolite, chEBI ID, and pH.

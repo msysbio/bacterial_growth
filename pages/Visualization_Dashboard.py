@@ -21,7 +21,7 @@ with open("style.css") as css:
     st.markdown(f'<style>{css.read()}</style>', unsafe_allow_html=True)
 
 st.title("Visualizing Study Data")
-
+st.markdown("![badge](https://img.shields.io/badge/status-under%20development-orange?style=for-the-badge)")
 
 conn = st.connection("BacterialGrowth", type="sql")
 
