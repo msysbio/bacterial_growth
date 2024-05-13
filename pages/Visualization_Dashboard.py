@@ -12,7 +12,7 @@ root_dir = os.path.dirname(current_dir)
 relative_path_to_src = os.path.join(root_dir, 'src')
 sys.path.append(relative_path_to_src)
 from db_functions import getExperiments
-from filter_df import filter_dict_states
+from filter_df import filter_df, filter_dict_states
 
 # Configure page
 st.set_page_config(page_title="Visualization Dashboard", layout='wide')
@@ -95,14 +95,6 @@ def dashboard():
     return df_growth, df_reads, studyID_to_visualize, conn
 
 def content(df_growth, df_reads, studyID_to_visualize, conn):
-
-    current_dir = os.path.dirname(os.path.realpath(__file__))[:-9]
-    relative_path_to_src = os.path.join(current_dir, 'src')
-
-    sys.path.append(relative_path_to_src)
-    from db_functions import getExperiments
-    from filter_df import filter_dict_states
-
 
     checkbox_states = {}
 
