@@ -12,7 +12,7 @@ root_dir = os.path.dirname(current_dir)
 relative_path_to_src = os.path.join(root_dir, 'src')
 sys.path.append(relative_path_to_src)
 from db_functions import getExperiments
-
+from filter_df import filter_dict_states
 
 # Configure page
 st.set_page_config(page_title="Visualization Dashboard", layout='wide')
@@ -31,31 +31,8 @@ def dashboard():
     else init the whole page.
     """
 
-    import streamlit as st
-    st.set_page_config(page_title="Visualization Dashboard", layout='wide')
-
-
     print("session state in dashboard:",st.session_state)
 
-
-    import pandas as pd
-    import altair as alt
-    import plotly.express as px
-    from streamlit_extras.app_logo import add_logo
-    import streamlit.components.v1 as components
-    import sys
-    import os
-
-    current_dir = os.path.dirname(os.path.realpath(__file__))[:-9]
-    relative_path_to_src = os.path.join(current_dir, 'src')
-
-    sys.path.append(relative_path_to_src)
-    from db_functions import getExperiments
-    from filter_df import filter_dict_states
-
-    add_logo("figs/logo_sidebar2.png", height=100)
-    with open("style.css") as css:
-        st.markdown(f'<style>{css.read()}</style>', unsafe_allow_html=True)
 
     df_growth = pd.DataFrame()
     df_reads = pd.DataFrame()
@@ -118,14 +95,6 @@ def dashboard():
     return df_growth, df_reads, studyID_to_visualize, conn
 
 def content(df_growth, df_reads, studyID_to_visualize, conn):
-    import streamlit as st
-    import pandas as pd
-    import altair as alt
-    import plotly.express as px
-    from streamlit_extras.app_logo import add_logo
-    import streamlit.components.v1 as components
-    import sys
-    import os
 
     current_dir = os.path.dirname(os.path.realpath(__file__))[:-9]
     relative_path_to_src = os.path.join(current_dir, 'src')
@@ -137,12 +106,6 @@ def content(df_growth, df_reads, studyID_to_visualize, conn):
 
     checkbox_states = {}
 
-    #col1, col2, col3 = st.columns([0.25, 0.70, 0.5])
-    #with col2:
-    #    if not df_growth.empty :
-    #        st.dataframe(df_growth)
-    #    if not df_reads.empty:
-    #        st.dataframe(df_growth)
     with col1:
         st.write("**Experiments**")
 
@@ -165,19 +128,7 @@ def content(df_growth, df_reads, studyID_to_visualize, conn):
         return experiment_with_bioreps
 
 def tabs_plots(experiment_with_bioreps):
-    import streamlit as st
-    import pandas as pd
-    import altair as alt
-    import plotly.express as px
-    from streamlit_extras.app_logo import add_logo
-    import streamlit.components.v1 as components
-    import sys
-    import os
 
-    current_dir = os.path.dirname(os.path.realpath(__file__))[:-9]
-    relative_path_to_src = os.path.join(current_dir, 'src')
-    sys.path.append(relative_path_to_src)
-    from filter_df import filter_df
 
     with col2:
         result_growth_df_dict, result_reads_df_dict = filter_df(experiment_with_bioreps,df_growth,df_reads)
