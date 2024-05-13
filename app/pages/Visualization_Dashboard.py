@@ -120,12 +120,12 @@ def content(df_growth, df_reads, studyID_to_visualize, conn):
 
     checkbox_states = {}
 
-    col1, col2, col3 = st.columns([0.25, 0.70, 0.5])
-    with col2:
-        if not df_growth.empty :
-            st.dataframe(df_growth)
-        if not df_reads.empty:
-            st.dataframe(df_growth)
+    #col1, col2, col3 = st.columns([0.25, 0.70, 0.5])
+    #with col2:
+    #    if not df_growth.empty :
+    #        st.dataframe(df_growth)
+    #    if not df_reads.empty:
+    #        st.dataframe(df_growth)
     with col1:
         st.write("**Experiments**")
 
@@ -144,12 +144,65 @@ def content(df_growth, df_reads, studyID_to_visualize, conn):
                 st.warning("Study does not contain growth data")
 
             
-        true_checkboxes = filter_dict_states(st.session_state)
-        print('true----------',true_checkboxes)
+        experiment_with_bioreps = filter_dict_states(st.session_state)
+        return experiment_with_bioreps
+    
+def tabs_plots(experiment_with_bioreps):
+    import streamlit as st
+    import pandas as pd
+    import altair as alt
+    import plotly.express as px
+    from streamlit_extras.app_logo import add_logo
+    import streamlit.components.v1 as components
+    from scripts.filter_df import filter_df
+    import sys
+    import os
+    from scripts.filter_df import filter_dict_states
+
+    current_dir = os.path.dirname(os.path.realpath(__file__))[:-9]
+    relative_path_to_src = os.path.join(current_dir, 'src')
+
+    sys.path.append(relative_path_to_src)
+    from db_functions import getExperiments
+
+    with col2:
+        result_growth_df_dict, result_reads_df_dict = filter_df(experiment_with_bioreps,df_growth,df_reads)
+        print(result_growth_df_dict)
+        print(result_reads_df_dict)
+        tab1, tab2, tab3, tab4,tab5 = st.tabs(["OD", "Plate Counts","FC Counts","Reads 16S RNA","Metabolites"])
+        with tab1:
+            for exp, growth_df in result_growth_df_dict.items():
+                st.write(f"OD in Experiment: {exp}")
+                st.dataframe(growth_df)
+                if 'OD' in growth_df.columns:
+                    fig = px.line(growth_df, x='Time', y='OD',color='Biological_Replicate_id' ,title=f'OD Data for Experiment:{exp} per Biological replicates')
+                    st.plotly_chart(fig, use_container_width=True)
+                else:
+                    st.warning("The Biological Replicate ID selected do not contain OD data")
+        with tab2:
+            for exp, growth_df in result_growth_df_dict.items():
+                st.write(f"Plate Counts: {exp}")
+                st.dataframe(growth_df)
+                if 'Plate_counts' in growth_df.columns:
+                    fig = px.line(growth_df, x='Time', y='Plate_counts',color='Biological_Replicate_id' ,title=f'Plate Counts for Experiment:{exp} per Biological replicates')
+                    st.plotly_chart(fig, use_container_width=True)
+                else:
+                    st.warning("The Biological Replicate IDs selected do not contain Plate Counts data")
+
+
+
+
+
+
+
 
 
 
 if __name__ == "__main__":
+    import streamlit as st
     df_growth, df_reads, studyID_to_visualize, conn = dashboard()
-    content(df_growth, df_reads, studyID_to_visualize, conn)
+    col1, col2, col3 = st.columns([0.25, 0.70, 0.5])
+    experiment_with_bioreps=content(df_growth, df_reads, studyID_to_visualize, conn)
+    print(experiment_with_bioreps)
+    tabs_plots(experiment_with_bioreps)
     #content(df_growth, df_reads, studyID_to_visualize, conn)
