@@ -32,6 +32,36 @@ with open("style.css") as css:
 
 st.image('figs/UploadBanner.png')
 
+# Static part
+css = '''
+<style>
+.stTabs [data-baseweb="tab-list"] button [data-testid="stMarkdownContainer"] p {
+    font-size:1.6rem;
+    font-weight: bold;
+    }
+</style>
+'''
+
+st.markdown(css, unsafe_allow_html=True)
+st.markdown("![badge](https://img.shields.io/badge/status-under%20development-orange?style=for-the-badge)")
+st.markdown(
+    """
+    Thank you for choosing to share your Bacterial Growth data with us. Your commitment to sharing study and experimental data is essential
+    for advancing our understanding of gut microbiome dynamics. Your contribution plays a vital role in driving research forward and enhancing
+    our collective knowledge in this field.
+
+    To successfully submit your data, please ensure that you follow the instructions provided in each of the following steps. Adhering to these
+    instructions helps us maintain the quality of our database and ensures the accuracy and reliability of the information stored within it.
+    Thank you for your cooperation in maintaining data integrity and reliability.
+    """
+)
+
+st.write('')
+st.write('')
+
+
+# Dynamic part
+
 global unique_community_ids
 global list_selected_microbes
 global list_strains
@@ -875,36 +905,6 @@ def tab_step5(xls_1, xls_2, measure_tech, meta_col, all_keywords, conn, project_
                         st.error(f"Data uploading unsuccessful: {i}. Please correct and try again!")
                     for i in erros_logic:
                         st.error(f"Data uploading unsuccessful: {i}. Please correct and try again!")
-
-
-
-# Start
-css = '''
-<style>
-.stTabs [data-baseweb="tab-list"] button [data-testid="stMarkdownContainer"] p {
-    font-size:1.6rem;
-    font-weight: bold;
-    }
-</style>
-'''
-
-st.markdown(css, unsafe_allow_html=True)
-st.markdown("![badge](https://img.shields.io/badge/status-under%20development-orange?style=for-the-badge)")
-st.markdown(
-    """
-    Thank you for choosing to share your Bacterial Growth data with us. Your commitment to sharing study and experimental data is essential
-    for advancing our understanding of gut microbiome dynamics. Your contribution plays a vital role in driving research forward and enhancing
-    our collective knowledge in this field.
-
-    To successfully submit your data, please ensure that you follow the instructions provided in each of the following steps. Adhering to these
-    instructions helps us maintain the quality of our database and ensures the accuracy and reliability of the information stored within it.
-    Thank you for your cooperation in maintaining data integrity and reliability.
-    """
-)
-
-st.write('')
-st.write('')
-
 
 
 create_private_project_id, unique_study_id_val, project_name, project_description= tab_step1()
