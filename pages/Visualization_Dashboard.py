@@ -1,5 +1,29 @@
+import streamlit as st
+import pandas as pd
+import altair as alt
+import plotly.express as px
+from streamlit_extras.app_logo import add_logo
+import streamlit.components.v1 as components
+import sys
+import os
+filepath = os.path.realpath(__file__)
+current_dir = os.path.dirname(filepath)
+root_dir = os.path.dirname(current_dir)
+relative_path_to_src = os.path.join(root_dir, 'src')
+sys.path.append(relative_path_to_src)
+from db_functions import getExperiments
+from filter_df import filter_df, filter_dict_states
 
+# Configure page
+st.set_page_config(page_title="Visualization Dashboard", layout='wide')
+add_logo("figs/logo_sidebar3.png", height=100)
+with open("style.css") as css:
+    st.markdown(f'<style>{css.read()}</style>', unsafe_allow_html=True)
 
+st.title("Visualizing Study Data")
+st.markdown("![badge](https://img.shields.io/badge/status-under%20development-orange?style=for-the-badge)")
+
+conn = st.connection("BacterialGrowth", type="sql")
 
 def dashboard():
     """
@@ -7,40 +31,11 @@ def dashboard():
     else init the whole page.
     """
 
-    import streamlit as st
-    st.set_page_config(page_title="Visualization Dashboard", layout='wide')
-
-
     print("session state in dashboard:",st.session_state)
 
 
-    import pandas as pd
-    import altair as alt
-    import plotly.express as px
-    from streamlit_extras.app_logo import add_logo
-    import streamlit.components.v1 as components
-    import sys
-    import os
-    from scripts.filter_df import filter_dict_states
-
-    current_dir = os.path.dirname(os.path.realpath(__file__))[:-9]
-    relative_path_to_src = os.path.join(current_dir, 'src')
-
-    sys.path.append(relative_path_to_src)
-    from db_functions import getExperiments
-    
-
-    add_logo("figs/logo_sidebar2.png", height=100)
-    with open("style.css") as css:
-        st.markdown(f'<style>{css.read()}</style>', unsafe_allow_html=True)
-
     df_growth = pd.DataFrame()
     df_reads = pd.DataFrame()
-
-    conn = st.connection("BacterialGrowth", type="sql")
-
-    st.title("Visualizing Study Data")
-
 
     # temporar
     if "to_dashboard" in st.session_state and st.session_state["to_dashboard"] != "":
@@ -100,32 +95,9 @@ def dashboard():
     return df_growth, df_reads, studyID_to_visualize, conn
 
 def content(df_growth, df_reads, studyID_to_visualize, conn):
-    import streamlit as st
-    import pandas as pd
-    import altair as alt
-    import plotly.express as px
-    from streamlit_extras.app_logo import add_logo
-    import streamlit.components.v1 as components
-    import sys
-    import os
-    from scripts.filter_df import filter_dict_states
-
-    current_dir = os.path.dirname(os.path.realpath(__file__))[:-9]
-    relative_path_to_src = os.path.join(current_dir, 'src')
-
-    sys.path.append(relative_path_to_src)
-    from db_functions import getExperiments
-
-    print("session state in dashboard:",st.session_state)
 
     checkbox_states = {}
 
-    #col1, col2, col3 = st.columns([0.25, 0.70, 0.5])
-    #with col2:
-    #    if not df_growth.empty :
-    #        st.dataframe(df_growth)
-    #    if not df_reads.empty:
-    #        st.dataframe(df_growth)
     with col1:
         st.write("**Experiments**")
 
@@ -143,27 +115,12 @@ def content(df_growth, df_reads, studyID_to_visualize, conn):
             else:
                 st.warning("Study does not contain growth data")
 
-            
+
         experiment_with_bioreps = filter_dict_states(st.session_state)
         return experiment_with_bioreps
-    
+
 def tabs_plots(experiment_with_bioreps):
-    import streamlit as st
-    import pandas as pd
-    import altair as alt
-    import plotly.express as px
-    from streamlit_extras.app_logo import add_logo
-    import streamlit.components.v1 as components
-    from scripts.filter_df import filter_df
-    import sys
-    import os
-    from scripts.filter_df import filter_dict_states
 
-    current_dir = os.path.dirname(os.path.realpath(__file__))[:-9]
-    relative_path_to_src = os.path.join(current_dir, 'src')
-
-    sys.path.append(relative_path_to_src)
-    from db_functions import getExperiments
 
     with col2:
         result_growth_df_dict, result_reads_df_dict = filter_df(experiment_with_bioreps,df_growth,df_reads)

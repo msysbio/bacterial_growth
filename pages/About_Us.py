@@ -4,7 +4,7 @@ from streamlit_extras.badges import badge
 
 st.set_page_config(page_title="About Us", page_icon="📤", layout='wide')
 
-add_logo("figs/logo_sidebar2.png", height=100)
+add_logo("figs/logo_sidebar3.png", height=100)
 with open("style.css") as css:
     st.markdown(f'<style>{css.read()}</style>', unsafe_allow_html=True)
 

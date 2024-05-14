@@ -1,6 +1,8 @@
 Community_ID:
 - community1
 - community2
+- .nan
 Member_ID:
 - bact1, bact2
 - bact2
+- MULTIPLE VALUES ALLOWED

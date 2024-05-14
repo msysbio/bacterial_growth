@@ -1,14 +1,33 @@
-# Authors:
-#
-#
-# Aim:
-#   Page for searching/quering for growth data
-#
-# Usage:
-#   The db_search() function will be invoked from the show_pages_from_config() in the app.py
-
-
+import os
+import sys
 import streamlit as st
+from streamlit_extras.app_logo import add_logo
+import streamlit.components.v1 as components
+
+# Load local modules
+current_dir = os.path.dirname(os.path.realpath(__file__))
+repo_dir = os.path.dirname(os.path.dirname(current_dir))
+relative_path_to_src = os.path.join(repo_dir, 'src')
+sys.path.append(relative_path_to_src)
+sys.path.append(current_dir)
+
+from Visualization_Dashboard import dashboard
+from db_functions import dynamical_query, getGeneralInfo, getExperiments, \
+    getCompartment, getCommunities, getMicrobialStrains, getBiorep, getAbundance, \
+    getFC, getMetabolite, getPerturbations
+from edit_sessions import clean_dashboard
+
+st.set_page_config(page_title="Database Search", page_icon="🔍", layout='wide')
+
+# Define the options for the dropdown list
+options = ['Project Name', 'Project ID', 'Study Name', 'Study ID','Microbial Strain', 'NCBI ID','Metabolites', 'chEBI ID', 'pH']
+options_logical = ['AND', 'OR', 'NOT']
+
+# Define the range for the slider
+min_value_ph = 0.0
+max_value_ph = 14.0
+min_value_ph_add = 0.0
+max_value_ph_add = 14.0
 
 
 def increase_rows():
@@ -88,31 +107,15 @@ def display_row(index):
 
 def db_search():
 
-    import streamlit as st
-    from streamlit_extras.app_logo import add_logo
-    import streamlit.components.v1 as components
-    import os
-    import sys
-
-    current_dir = os.path.dirname(os.path.realpath(__file__))
-    repo_dir = os.path.dirname(os.path.realpath(__file__))[:-9]
-    relative_path_to_src = os.path.join(repo_dir, 'src')
-    sys.path.append(relative_path_to_src)
-    sys.path.append(current_dir)
-
-    from Visualization_Dashboard import dashboard
-    from db_functions import dynamical_query, getGeneralInfo, getExperiments, \
-        getCompartment, getCommunities, getMicrobialStrains, getBiorep, getAbundance, \
-        getFC, getMetabolite, getPerturbations
-
-
-    add_logo("figs/logo_sidebar2.png", height=100)
     with open("style.css") as css:
         st.markdown(f'<style>{css.read()}</style>', unsafe_allow_html=True)
-
-    # Add a title to your Streamlit app
     st.image('figs/SearchBanner.png')
 
+
+    st.session_state["IDEA"] = True
+
+
+    st.markdown("![badge](https://img.shields.io/badge/status-under%20development-orange?style=for-the-badge)")
     st.markdown(
         """
         Discover studies and datasets by selecting one or more of the optional parameters: Study Name, Organism, Metabolite, chEBI ID, and pH.
@@ -124,7 +127,6 @@ def db_search():
 
     st.write('')
     st.write('')
-    st.session_state.searching = False
 
     if 'rows' not in st.session_state:
         st.session_state['rows'] = {}
@@ -141,7 +143,8 @@ def db_search():
         selected_option = st.selectbox('Select an option:', options, key='selectbox1')
         first_query['option'] = selected_option
 
-        # Add a selectbox to the second column
+    # Add a selectbox to the second column
+    # input_value = None
     with col2:
         if selected_option == 'pH':
             start_value, end_value = st.slider('Select a range:', min_value_ph, max_value_ph, (min_value_ph, max_value_ph), step=0.5, key='range1', format="%.1f")
@@ -152,9 +155,10 @@ def db_search():
 
     all_advance_query.append(first_query)
 
+
     # Function to render additional dropdown block
     advance_search = st.checkbox("Advanced Search", value=False)
-    if advance_search == True:
+    if advance_search:
         # Parse all novel strains (without a NCBI Taxonomy Id) added
         for i in range(1, len(st.session_state['rows']) + 1):
             st.write('')
@@ -166,41 +170,32 @@ def db_search():
             type='primary',
             on_click=increase_rows
         )
-    else:
-        st.session_state.searching = False
 
-    if len(all_advance_query) > 0:
-        for i in all_advance_query:
-            check = True
-            if i['value'] != "" or i['value'] is not None:
-                check = False
-            if check:
-                st.session_state.searching = False
+    st.session_state.preventSearching = first_query["value"] == ""
 
     search_button = st.button(
         '**Search Data**',
         key='search_button',
-        disabled=st.session_state.searching,
+        disabled=st.session_state.preventSearching,
         type='primary'
     )
 
+
     st.text("")
     st.text("")
 
-    if "form" not in st.session_state:              # [NOTE]  Not sure why/if we need this..
+    if "form" not in st.session_state:  # [NOTE]  Not sure why/if we need this..
         st.session_state.form = False
 
+    # if search_button or st.session_state.form:
     if search_button or st.session_state.form:
-        """
-        Once search is clicked a table pops up
-        If a growth_df is clicked then jump into the dashboard page using that as input
-        thanks to the st.session_state
-        """
-        # st.session_state.form = True                      # [NOTE] This is what led to the bug when leaving the tab and then coming back
-        st.session_state.searching = False
+
+        # Once search is clicked a table pops up
+        # If a growth_df is clicked then jump into the dashboard page using that as input
+        # thanks to the st.session_state
+
 
         final_query = dynamical_query(all_advance_query)
-        print(final_query)
 
         conn = st.connection("BacterialGrowth", type="sql")
         df_studies = conn.query(final_query, ttl=600)
@@ -276,10 +271,8 @@ def db_search():
                             df_perturbation = getPerturbations(study_id, conn)
                             st.dataframe(df_perturbation,hide_index=True,)
 
-                if 'search_button' in st.session_state and st.session_state.search_button == True:
-                    st.session_state.searching = True
-                else:
-                    st.session_state.searching = False
+
+                print("Checkboxes:", down_check)
 
                 space2 = st.text("")
                 download = st.form_submit_button("Dowload Data", type = 'primary')
@@ -290,15 +283,10 @@ def db_search():
             # Out of the form
             if not df_general.empty:
                 st.session_state.to_dashboard = study_ids[-1]
-                print("i have a df to viewwww...")
-                print(study_ids[-1])
-                # st.link_button("View on dashboard", "Visualization_Dashboard,py")
-                st.page_link("pages/Visualization_Dashboard.py", label="Your profile")
 
-
+                st.page_link("pages/Visualization_Dashboard.py", label="View selected on Dashboard")
 
     '''
-
     conn = st.connection("BacterialGrowth", type="sql")
 
     # Perform query.
@@ -344,31 +332,26 @@ def db_search():
     df_MetabolitePerReplicates = conn.query('SELECT * from MetabolitePerExperiment;', ttl=600)
     st.dataframe(df_MetabolitePerReplicates)
 
-
-    #st.markdown("# Search")
-    #st.write(
-    #    '''
+    '''
 
 
 
-if __name__ == "__main__":
+if 'IDEA' in st.session_state:
+    print("MONO MIA FORA RE MALAKA TAKI")
 
+
+else:
+    print("TAKI TON IPIES - PALI MIDEN")
     try:
-        st.set_page_config(page_title="Database Search", page_icon="🔍", layout='wide')
+        print("TAKI KATHARISE")
+        clean_dashboard()
     except:
-        print("already init")
+        print("POS GINETAI NA MI MPOREIS NA KATHARISEIS RE MALAKA TAKI")
         pass
+    button_enabled = False
 
-    print("THIS IS MAIN")
+# Confing st page
+# st.set_page_config(page_title="Database Search", page_icon="🔍", layout='wide')
+add_logo("figs/logo_sidebar3.png", height=100)
 
-    # Define the options for the dropdown list
-    options = ['Project Name', 'Project ID', 'Study Name', 'Study ID','Microbial Strain', 'NCBI ID','Metabolites', 'chEBI ID', 'pH']
-    options_logical = ['AND', 'OR', 'NOT']
-
-    # Define the range for the slider
-    min_value_ph = 0.0
-    max_value_ph = 14.0
-    min_value_ph_add = 0.0
-    max_value_ph_add = 14.0
-
-    db_search()
+db_search()

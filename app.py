@@ -1,18 +1,32 @@
 import streamlit as st
 from streamlit_extras.app_logo import add_logo
 from st_pages import show_pages_from_config
+from streamlit_extras.badges import badge
+
+# Preload CSS file
+@st.cache_resource
+def load_css():
+    with open("style.css") as css:
+        return css.read()
 
 st.set_page_config(page_title="µGrowthDB", page_icon="🔍", layout='wide')
 
-add_logo("figs/logo_sidebar2.png", height=100)
-with open("style.css") as css:
-    st.markdown(f'<style>{css.read()}</style>', unsafe_allow_html=True)
+add_logo("figs/logo_sidebar3.png", height=100)
+
+
+st.markdown(f'<style>{load_css()}</style>', unsafe_allow_html=True)
+
+
 
 st.image('figs/logo.png')
 st.write('')
 st.write('')
 st.write('')
 st.write('')
+
+
+st.markdown("![badge](https://img.shields.io/badge/status-under%20development-orange?style=for-the-badge)")
+
 
 st.markdown(
     """
