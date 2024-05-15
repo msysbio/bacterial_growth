@@ -456,24 +456,24 @@ def tab_step2():
                     st.success("Done! Microbial strains saved, then go to **Step 3**", icon="✅")
 
             # Case where<class 'streamlit.runtime.scriptrunner.script_run_context.ScriptRunContext'>
-ScriptRunContext(session_id='6421808e-b0d8-450d-ad23-6b52542906c7', _enqueue=<bound method ScriptRunner._enqueue_forward_msg of ScriptRunner(_session_id='6421808e-b0d8-450d-ad23-6b52542906c7', _main_script_path='app.py', _session_state={}, _uploaded_file_mgr=MemoryUploadedFileManager(endpoint='/_stcore/upload_file'), _script_cache=<streamlit.runtime.scriptrunner.script_cache.ScriptCache object at 0x716ade16ce80>, _user_info={'email': 'test@example.com'}, _fragment_storage=<streamlit.runtime.fragment.MemoryFragmentStorage object at 0x716adda68e20>, _requests=<streamlit.runtime.scriptrunner.script_requests.ScriptRequests object at 0x716a8b9e85b0>, on_event=<blinker.base.Signal object at 0x716a8b9e8610>, _execing=True, _script_thread=<Thread(ScriptRunner.scriptThread, started 124702515770944)>)>, query_string='', session_state={}, uploaded_file_mgr=MemoryUploadedFileManager(endpoint='/_stcore/upload_file'), main_script_path='app.py', page_script_hash='5de154de49ab0b023fe9d323ca97ad51', user_info={'email': 'test@example.com'}, fragment_storage=<streamlit.runtime.fragment.MemoryFragmentStorage object at 0x716adda68e20>, gather_usage_stats=True, command_tracking_deactivated=False, tracked_commands=[name: "set_page_config"
-args {
-  k: "page_title"
-  t: "str"
-  m: "len:15"
-}
-args {
-  k: "page_icon"
-  t: "str"
-  m: "len:1"
-}
-args {
-  k: "layout"
-  t: "str"
-  m: "len:4"
-}
-time: 138
-], tracked_commands_counter=Counter({'set_page_config': 1}), _set_page_config_allowed=False, _has_script_started=True, widget_ids_this_run=set(), widget_user_keys_this_run=set(), form_ids_this_run=set(), cursors={}, script_requests=<streamlit.runtime.scriptrunner.script_requests.ScriptRequests object at 0x716a8b9e85b0>, current_fragment_id=None, fragment_ids_this_run=set()) a strain does not correspond to a NCBI Taxonomy Id
+                ScriptRunContext(session_id='6421808e-b0d8-450d-ad23-6b52542906c7', _enqueue=<bound method ScriptRunner._enqueue_forward_msg of ScriptRunner(_session_id='6421808e-b0d8-450d-ad23-6b52542906c7', _main_script_path='app.py', _session_state={}, _uploaded_file_mgr=MemoryUploadedFileManager(endpoint='/_stcore/upload_file'), _script_cache=<streamlit.runtime.scriptrunner.script_cache.ScriptCache object at 0x716ade16ce80>, _user_info={'email': 'test@example.com'}, _fragment_storage=<streamlit.runtime.fragment.MemoryFragmentStorage object at 0x716adda68e20>, _requests=<streamlit.runtime.scriptrunner.script_requests.ScriptRequests object at 0x716a8b9e85b0>, on_event=<blinker.base.Signal object at 0x716a8b9e8610>, _execing=True, _script_thread=<Thread(ScriptRunner.scriptThread, started 124702515770944)>)>, query_string='', session_state={}, uploaded_file_mgr=MemoryUploadedFileManager(endpoint='/_stcore/upload_file'), main_script_path='app.py', page_script_hash='5de154de49ab0b023fe9d323ca97ad51', user_info={'email': 'test@example.com'}, fragment_storage=<streamlit.runtime.fragment.MemoryFragmentStorage object at 0x716adda68e20>, gather_usage_stats=True, command_tracking_deactivated=False, tracked_commands=[name: "set_page_config"
+                args {
+                    k: "page_title"
+                    t: "str"
+                    m: "len:15"
+                    }
+                    args {
+                    k: "page_icon"
+                    t: "str"
+                    m: "len:1"
+                    }
+                    args {
+                    k: "layout"
+                    t: "str"
+                    m: "len:4"
+                    }
+                    time: 138
+                    ], tracked_commands_counter=Counter({'set_page_config': 1}), _set_page_config_allowed=False, _has_script_started=True, widget_ids_this_run=set(), widget_user_keys_this_run=set(), form_ids_this_run=set(), cursors={}, script_requests=<streamlit.runtime.scriptrunner.script_requests.ScriptRequests object at 0x716a8b9e85b0>, current_fragment_id=None, fragment_ids_this_run=set()) a strain does not correspond to a NCBI Taxonomy Id
             elif other_strains == "No, Some microbial strains were not found":
 
                 # Parse all novel strains (without a NCBI Taxonomy Id) added
