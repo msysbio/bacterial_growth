@@ -120,7 +120,7 @@ def taxonomy_df_for_taxa_list(taxa_list, _conn):
         if taxon == "":
             continue
         tax_query = f"SELECT * FROM Taxa WHERE tax_names LIKE '%{taxon}%';"
-        df_taxonomy = _conn.query(tax_query, ttl=600)
+        df_taxonomy = _conn.query(tax_query, ttl=None)
         dfs.append(df_taxonomy)
     return pd.concat(dfs, ignore_index=True)
 
@@ -621,7 +621,7 @@ def tab_step3(keywords, list_taxa_id, all_strain_data,create_private_project_id,
                     help='Select all the measurement techniques used in your study to quantify bacterial growth.'
                 )
                 conn = st.connection("BacterialGrowth", type="sql")
-                df_metabolites = conn.query('SELECT * from Metabolites;', ttl="1d")
+                df_metabolites = conn.query('SELECT * from Metabolites;', ttl=None)
                 df_metabo_name = df_metabolites['metabo_name']
                 meta_col = st.multiselect(
                     'If metabolites were measure, select which ones:',
