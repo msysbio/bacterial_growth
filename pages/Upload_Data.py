@@ -593,7 +593,7 @@ def tab_step3(keywords, list_taxa_id, all_strain_data,create_private_project_id,
                 with colu11:
                     type_vessel = st.selectbox(
                         '*Select the type of vessels used:',
-                        [ vessels.__getattribute__(x) for x in dir(growth_techniques) if not x.startswith("_") ],
+                        [ vessels.__getattribute__(x) for x in dir(vessels) if not x.startswith("_") ],
                         index=None,
                         help='Choose which type of vessel was used in your study'
                     )
