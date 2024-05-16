@@ -198,7 +198,7 @@ def db_search():
         final_query = dynamical_query(all_advance_query)
 
         conn = st.connection("BacterialGrowth", type="sql")
-        df_studies = conn.query(final_query, ttl=600)
+        df_studies = conn.query(final_query)  # , ttl=None
 
         num_results = len(df_studies)
 

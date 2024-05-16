@@ -554,6 +554,8 @@ def tab_step3(keywords, list_taxa_id, all_strain_data,create_private_project_id,
     measure_tech = []
     all_taxa = []
     growth_techniques = GrowthTechniques()
+    vessels = Vessels()
+
     with tab3:
 
         colu1,  colu2 = st.columns(2)
@@ -591,13 +593,13 @@ def tab_step3(keywords, list_taxa_id, all_strain_data,create_private_project_id,
                 with colu11:
                     type_vessel = st.selectbox(
                         '*Select the type of vessels used:',
-                        ['Bottles', 'Agar-plates', 'Well-plates', 'mini-bioreactors'],
+                        [ vessels.__getattribute__(x) for x in dir(growth_techniques) if not x.startswith("_") ],
                         index=None,
                         help='Choose which type of vessel was used in your study'
                     )
 
                 with colu22:
-                    if type_vessel == 'Bottles' or type_vessel == 'Agar-plates':
+                    if type_vessel == vessels.bottles or type_vessel == vessels.agar_plates:
                         number_vessels = st.text_input(
                             '*Number of bottles/agar-plates:',
                             help='Please specify the total number of individual bottle or agar-plates in your study.',
@@ -624,7 +626,7 @@ def tab_step3(keywords, list_taxa_id, all_strain_data,create_private_project_id,
                 # Techniques
                 measure_tech = st.multiselect(
                     '*Select the techniques used to measure growth:',
-                    [ x for x in dir(growth_techniques) if not x.startswith("_") ],
+                    [ growth_techniques.__getattribute__(x) for x in dir(growth_techniques) if not x.startswith("_") ],
                     help='Select all the measurement techniques used in your study to quantify bacterial growth.'
                 )
 
