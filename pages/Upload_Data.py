@@ -1,12 +1,13 @@
 
 import streamlit as st
 from streamlit_extras.app_logo import add_logo
-from streamlit_tags import st_tags
-import pandas as pd
+# from streamlit_tags import st_tags
+
 from datetime import datetime, timedelta
-import time
+import sys, os, re, time
+import pandas as pd
 import yaml
-import sys, os, re
+
 # Import custom methods
 filepath = os.path.realpath(__file__)
 root_dir = os.path.dirname(os.path.dirname(filepath))
@@ -20,7 +21,6 @@ from check_yaml import test_study_yaml, test_experiments_yaml, test_compartments
 from populate_db_mod import populate_db, generate_unique_id
 import db_functions as db
 from parse_raw_data import save_data_to_csv
-from constants import *
 
 
 # Page config
@@ -553,6 +553,7 @@ def tab_step3(keywords, list_taxa_id, all_strain_data,create_private_project_id,
     metabo_col = []
     measure_tech = []
     all_taxa = []
+    growth_techniques = GrowthTechniques()
     with tab3:
 
         colu1,  colu2 = st.columns(2)
@@ -623,7 +624,7 @@ def tab_step3(keywords, list_taxa_id, all_strain_data,create_private_project_id,
                 # Techniques
                 measure_tech = st.multiselect(
                     '*Select the techniques used to measure growth:',
-                    ['Optical Density', 'Plate Counts', 'Plate Counts (per species)', 'Flow Cytometry', 'Flow Cytometry (per species)', '16S rRNA-seq'],
+                    [ x for x in dir(growth_techniques) if not x.startswith("_") ],
                     help='Select all the measurement techniques used in your study to quantify bacterial growth.'
                 )
 
