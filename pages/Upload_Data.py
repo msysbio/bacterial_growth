@@ -912,9 +912,9 @@ def tab_step5(xls_1, xls_2, measure_tech, metabo_col, all_taxa, conn, project_na
                                                                                                         project_description
                                                                                                         )
                 if not (errors and erros_logic) and (study_id and studyUniqueID and projectUniqueID and project_id):
-                    st.success(f"Thank you! your study has been successfully uploaded into our database,
+                    st.success(f"""Thank you! your study has been successfully uploaded into our database,
                                **Unique Study ID**: {studyUniqueID} and **Study ID**: {study_id},
-                               **Unique Project Id**: {projectUniqueID} and **Project ID**: {project_id}")
+                               **Unique Project Id**: {projectUniqueID} and **Project ID**: {project_id}""")
 
                     # create folder to store study data:
                     path = relative_path_to_src + f"/Data/Growth/{study_id}"
