@@ -33,7 +33,7 @@ def create_rawdata_excel_fun(
         number_columns,
         number_rows,
         number_timepoints,
-        keywords
+        taxa
     ):
     # Create a new workbook
     wb = Workbook()
@@ -97,9 +97,14 @@ def create_rawdata_excel_fun(
     if 'Optical Density (OD)' in measure_options:
         headers1_constant.update(header1_OD)
 
-    if 'Plate-Counts' in measure_options:
+    if 'Plate Counts' in measure_options:
         headers1_constant.update(header1_plate_counts)
 
+    if 'Flow Cytometry' in measure_options:
+        header1_FC.update(header1_FC)
+
+
+    # Add metabolites measured as column names
     for i in meta_options:
         header1_metabolites = {
             f'{i}' : 'Concentration values per time-point, use a period (.) as the decimal separator',
@@ -137,15 +142,15 @@ def create_rawdata_excel_fun(
 
 
     if '16S rRNA-seq' in measure_options:
-        for i in keywords:
+        for i in taxa:
             header2_species = {
                 f'{i}_reads' : f'Abundances values per time-point for species {i}, use a period (.) as the decimal separator',
                 f'{i}_reads_std' : 'Standard deviation if more than 1 technical replicate, use a period (.) as the decimal separator'
             }
             headers2_constant.update(header2_species)
 
-    if 'Flow Cytometry (FC)' in measure_options:
-        for i in keywords:
+    if 'Flow Cytometry (per species)' in measure_options:
+        for i in taxa:
             header2_species_fc = {
                 f'{i}_counts' : f'FC counts values per time-point for species {i}, use a period (.) as the decimal separator',
                 f'{i}_counts_std' : 'Standard deviation if more than 1 technical replicate, use a period (.) as the decimal separator'
@@ -153,7 +158,18 @@ def create_rawdata_excel_fun(
             }
             headers2_constant.update(header2_species_fc)
 
-    if '16S rRNA-seq' or 'Flow Cytometry (FC)' in measure_options:
+    if 'Plate Counts (per species)' in measure_options:
+        for i in taxa:
+            header2_species_pc = {
+                f'{i}_Plate_counts' : f'FC counts values per time-point for species {i}, use a period (.) as the decimal separator',
+                f'{i}_Plate_counts_std' : 'Standard deviation if more than 1 technical replicate, use a period (.) as the decimal separator'
+
+            }
+            headers2_constant.update(header2_species_pc)
+
+
+
+    if '16S rRNA-seq' or 'Flow Cytometry (per species)' or 'Plate Counts (per species)' in measure_options:
         wb.create_sheet(title="Sequencing_and_FC_Data")
         ws2 = wb["Sequencing_and_FC_Data"]
 

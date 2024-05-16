@@ -550,9 +550,9 @@ def tab_step3(keywords, list_taxa_id, all_strain_data,create_private_project_id,
     """
     Step 3: Download templates tab
     """
-    meta_col = []
+    metabo_col = []
     measure_tech = []
-    all_keywords = []
+    all_taxa = []
     with tab3:
 
         colu1,  colu2 = st.columns(2)
@@ -579,7 +579,10 @@ def tab_step3(keywords, list_taxa_id, all_strain_data,create_private_project_id,
 
                     - **Download Data Template**: Once all the require fields are completed, click on the button below to download the data template in Excel format. Fill in the template with your raw data accordingly.
                     """)
+
+                # Set-up
                 colu11, colu22 = st.columns(2)
+
                 number_vessels = 0
                 number_columns = 0
                 number_rows = 0
@@ -611,32 +614,37 @@ def tab_step3(keywords, list_taxa_id, all_strain_data,create_private_project_id,
                             value=0
                         )
 
+                # Time points
                 number_timepoints = st.text_input(
                     '*Number of measurement time-points:',
                     help='Please provide the number of measurement time-points per experiment. If different time-points were used across experiments, please specify the largest one.'
                 )
+
+                # Techniques
                 measure_tech = st.multiselect(
                     '*Select the techniques used to measure growth:',
-                    ['Optical Density (OD)', 'Plate-Counts', 'Flow Cytometry (FC)', '16S rRNA-seq'],
+                    ['Optical Density', 'Plate Counts', 'Plate Counts (per species)', 'Flow Cytometry', 'Flow Cytometry (per species)', '16S rRNA-seq'],
                     help='Select all the measurement techniques used in your study to quantify bacterial growth.'
                 )
+
+                # Provide metabolites measured
                 conn = st.connection("BacterialGrowth", type="sql")
                 df_metabolites = conn.query('SELECT * from Metabolites;', ttl=None)
                 df_metabo_name = df_metabolites['metabo_name']
-                meta_col = st.multiselect(
-                    'If metabolites were measure, select which ones:',
+                metabo_col = st.multiselect(
+                    'If metabolites were measured, select which ones:',
                     df_metabo_name,
                     help='Select all the metabolites quantified in your study, please make sure to use the correct name.'
                 )
 
-                if meta_col:
-                    for i in meta_col:
+                if metabo_col:
+                    for i in metabo_col:
                         filtered_df = df_metabolites[df_metabolites['metabo_name'] == i]
                         cheb_id = filtered_df.iloc[0]['cheb_id']
                         st.info(f'For more information about **{i}** go to [{cheb_id}](https://www.ebi.ac.uk/chebi/searchId.do?chebiId={cheb_id})', icon="❕")
 
                 # [NOTE] Keep
-                all_keywords = []
+                all_taxa = []
                 for case in all_strain_data:
                     if "case_number" in case:
                         # index = case["case_number"]
@@ -644,21 +652,21 @@ def tab_step3(keywords, list_taxa_id, all_strain_data,create_private_project_id,
                         if check in case:
                             # parent_name = case['parent_taxon']
                             name = case['name']
-                            all_keywords.append(name)
+                            all_taxa.append(name)
 
-                if len(all_keywords) > 0:
-                    all_keywords.extend(keywords)
+                if len(all_taxa) > 0:
+                    all_taxa.extend(keywords)
                 else:
-                    all_keywords = keywords
+                    all_taxa = keywords
 
                 excel_rawdata = create_rawdata_excel_fun(measure_tech,
-                                                         meta_col,
+                                                         metabo_col,
                                                          type_vessel,
                                                          number_vessels,
                                                          number_columns,
                                                          number_rows,
                                                          number_timepoints,
-                                                         all_keywords
+                                                         all_taxa
                                 )
                 disabled = not measure_tech
 
@@ -697,6 +705,7 @@ def tab_step3(keywords, list_taxa_id, all_strain_data,create_private_project_id,
 
                 try:
                     excel_data = create_excel_fun(keywords, list_taxa_id, filtered_strains, create_private_project_id, unique_study_id_val)
+
                 except:
                     print("Excel fails with")
                     print("keywords:", keywords)
@@ -706,12 +715,12 @@ def tab_step3(keywords, list_taxa_id, all_strain_data,create_private_project_id,
 
 
                 down_study_button = st.download_button(label='Click here to Download the Study Template',
-                                                    data=excel_data,
-                                                    file_name='example.xlsx',
-                                                    mime='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-                                                    type="primary",
-                                                    use_container_width = True,
-                                    )
+                                                       data=excel_data,
+                                                       file_name='raw_data.xlsx',
+                                                       mime='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                                                       type="primary",
+                                                       use_container_width = True
+                                                       )
                 if down_study_button:
                     with st.spinner('Downloading file'):
                         time.sleep(2)
@@ -719,7 +728,7 @@ def tab_step3(keywords, list_taxa_id, all_strain_data,create_private_project_id,
 
         else:
             st.warning("Go back to Step 1 and fill in the details!", icon="⚠️")
-    return measure_tech, meta_col, all_keywords
+    return measure_tech, metabo_col, all_taxa
 
 
 def tab_step4():
@@ -805,7 +814,7 @@ def tab_step4():
     return xls_1, xls_2
 
 
-def tab_step5(xls_1, xls_2, measure_tech, meta_col, all_keywords, conn, project_name, project_description):
+def tab_step5(xls_1, xls_2, measure_tech, metabo_col, all_taxa, conn, project_name, project_description):
     """
     Submit data page
     """
@@ -888,9 +897,25 @@ def tab_step5(xls_1, xls_2, measure_tech, meta_col, all_keywords, conn, project_
             # else, populate the db and give the unique ids to the user if not error
             # if errors during the population function then the function stops and the errors are printed
             else:
-                study_id, errors, erros_logic, studyUniqueID, projectUniqueID, project_id = populate_db(measure_tech, meta_col, all_keywords ,xls_1,info_file_study,info_file_experiments,info_compart_file,info_mem_file,info_comu_file,info_pert_file, conn, project_name, project_description)
+                study_id, errors, erros_logic, studyUniqueID, projectUniqueID, project_id = populate_db(measure_tech,
+                                                                                                        metabo_col,
+                                                                                                        all_taxa ,
+                                                                                                        xls_1,
+                                                                                                        info_file_study,
+                                                                                                        info_file_experiments,
+                                                                                                        info_compart_file,
+                                                                                                        info_mem_file,
+                                                                                                        info_comu_file,
+                                                                                                        info_pert_file,
+                                                                                                        conn,
+                                                                                                        project_name,
+                                                                                                        project_description
+                                                                                                        )
                 if not (errors and erros_logic) and (study_id and studyUniqueID and projectUniqueID and project_id):
-                    st.success(f"Thank you! your study has been successfully uploaded into our database, **Unique Study ID**: {studyUniqueID} and **Study ID**: {study_id}, **Unique Project Id**: {projectUniqueID} and **Project ID**: {project_id}")
+                    st.success(f"Thank you! your study has been successfully uploaded into our database,
+                               **Unique Study ID**: {studyUniqueID} and **Study ID**: {study_id},
+                               **Unique Project Id**: {projectUniqueID} and **Project ID**: {project_id}")
+
                     # create folder to store study data:
                     path = relative_path_to_src + f"/Data/Growth/{study_id}"
                     growth_file = path + f"/Growth_Metabolites.csv"
@@ -909,6 +934,6 @@ def tab_step5(xls_1, xls_2, measure_tech, meta_col, all_keywords, conn, project_
 
 create_private_project_id, unique_study_id_val, project_name, project_description= tab_step1()
 keywords, list_taxa_id, all_strain_data, other_taxa_list = tab_step2()
-list_growth, list_metabolites, all_keywords =  tab_step3(keywords, list_taxa_id, all_strain_data, create_private_project_id, unique_study_id_val)
+list_growth, list_metabolites, all_taxa =  tab_step3(keywords, list_taxa_id, all_strain_data, create_private_project_id, unique_study_id_val)
 xls_1, xls_2 = tab_step4()
-tab_step5(xls_1, xls_2,list_growth, list_metabolites, all_keywords, conn, project_name, project_description)
+tab_step5(xls_1, xls_2,list_growth, list_metabolites, all_taxa, conn, project_name, project_description)
