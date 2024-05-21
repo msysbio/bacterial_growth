@@ -1,22 +1,11 @@
-Experiment_ID:
-- sample1
-NEW_Community_ID:
-- .nan
-NEW_Compartment_ID:
-- comp2
-OLD_Community_ID:
-- .nan
-OLD_Compartment_ID:
-- comp1
-Perturbation_Description:
-- bbbb aaa
-Perturbation_EndTime:
-- '10:25:34'
-Perturbation_ID:
-- pert1
-Perturbation_MaximumValue:
-- 20
-Perturbation_MinimumValue:
-- 1
-Perturbation_StartTime:
-- 01:12:30
+Experiment_ID: []
+NEW_Community_ID: []
+NEW_Compartment_ID: []
+OLD_Community_ID: []
+OLD_Compartment_ID: []
+Perturbation_Description: []
+Perturbation_EndTime: []
+Perturbation_ID: []
+Perturbation_MaximumValue: []
+Perturbation_MinimumValue: []
+Perturbation_StartTime: []

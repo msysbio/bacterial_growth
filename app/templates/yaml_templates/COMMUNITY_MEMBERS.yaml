@@ -1,15 +1,15 @@
 Defined:
-- 0
-- 0
+- 1
+- 1
 Description:
-- aaaaa ttt
-- sssss fff
+- .nan
+- .nan
 Member_ID:
-- bact1
-- bact2
+- member_1
+- member_2
 Member_Name:
-- Salmonella enterica subsp. enterica serovar Agona str. SA-2
-- t
+- Bacteroides thetaiotaomicron VPI-5482
+- Roseburia intestinalis L1-82
 NCBI_ID:
-- 123
-- 1234
+- 226186
+- 536231

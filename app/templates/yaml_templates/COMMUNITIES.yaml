@@ -1,6 +1,8 @@
 Community_ID:
-- community1
-- community2
+- BT
+- RI
+- BT_RI
 Member_ID:
-- bact1, bact2
-- bact2
+- member_1
+- member_2
+- member_1, member_2

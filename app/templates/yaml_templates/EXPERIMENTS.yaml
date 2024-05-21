@@ -1,33 +1,155 @@
 Biological_Replicate_IDs:
-- A1, A2
-- A3, A4
+- BT_MUCIN_1_1, BT_MUCIN_1_2, BT_MUCIN_1_3
+- BT_MUCIN_2_1, BT_MUCIN_2_2, BT_MUCIN_2_3
+- BT_WC_1, BT_WC_2, BT_WC_3
+- RI_MUCIN_1, RI_MUCIN_2, RI_MUCIN_3
+- RI_WC_1, RI_WC_2, RI_WC_3
+- BTRI_MUCIN_1, BTRI_MUCIN_2, BTRI_MUCIN_3
+- BTRI_WC_1, BTRI_WC_2, BTRI_WC_3
+- BT_MUCIN_RNA_1, BT_MUCIN_RNA_2, BT_MUCIN_RNA_3
+- BT_WC_RNA_1, BT_WC_RNA_2, BT_WC_RNA_3
+- RI_MUCIN_RNA_1, RI_MUCIN_RNA_2, RI_MUCIN_RNA_3
+- RI_WC_RNA_1, RI_WC_RNA_2, RI_WC_RNA_3
+- BTRI_MUCIN_RNA_1, BTRI_MUCIN_RNA_2, BTRI_MUCIN_RNA_3
+- BTRI_WC_RNA_1, BTRI_WC_RNA_2, BTRI_WC_RNA_3
 Biological_Replicates_Number:
-- 1
-- 1
+- 3
+- 3
+- 3
+- 3
+- 3
+- 3
+- 3
+- 3
+- 3
+- 3
+- 3
+- 3
+- 3
 Community_ID:
-- community1, community2
-- community2
+- BT
+- BT
+- BT
+- RI
+- RI
+- BT_RI
+- BT_RI
+- BT
+- BT
+- RI
+- RI
+- BT_RI
+- BT_RI
 Compartment_ID:
-- comp1,comp2
-- comp1
+- WC_MUCIN
+- WC_MUCIN
+- WC
+- WC_MUCIN
+- WC
+- WC_MUCIN
+- WC
+- WC_MUCIN
+- WC
+- WC_MUCIN
+- WC
+- WC_MUCIN
+- WC
 Control:
-- A2
-- A3
+- BT_MUCIN_1_3
+- BT_MUCIN_2_3
+- BT_WC_3
+- RI_MUCIN_3
+- RI_WC_3
+- BTRI_MUCIN_3
+- BTRI_WC_3
+- BT_MUCIN_RNA_3
+- BT_WC_RNA_3
+- RI_MUCIN_RNA_3
+- RI_WC_RNA_3
+- BTRI_MUCIN_RNA_3
+- BTRI_WC_RNA_3
 Control_Description:
-- qqqqqq ffff
-- gggg ddddd
+- .nan
+- .nan
+- .nan
+- .nan
+- .nan
+- .nan
+- .nan
+- .nan
+- .nan
+- .nan
+- .nan
+- .nan
+- .nan
 Cultivation_Mode:
 - batch
 - batch
+- batch
+- batch
+- batch
+- batch
+- batch
+- batch
+- batch
+- batch
+- batch
+- batch
+- batch
 Experiment_Description:
-- this is with bacteria A and B
-- this is with bacteria B and C
+- BT with WC plus mucin beads for 72 hours
+- BT with WC plus mucin beads for 120 hours
+- BT with WC for 120h
+- RI in WC plus mucion beads for 120 hours
+- RI in WC for 120 hours
+- co-culture of BT and RI with WC plus mucin beads for 120 hours
+- co-culture of BT and RI in WC for 120 hours
+- BT in WC plus mucin beads (4, 12, 24, 48 and 120 h), total RNA extraction and sequencing
+- BT in WC (4, 12, 24, 48 and 120 h), total RNA extraction and sequencing
+- RI in WC plus mucin beads (4, 12, 24, 48 and 120 h), total RNA extraction and sequencing
+- RI in WC (4, 12, 24, 48 and 120 h), total RNA extraction and sequencing
+- co-culture of BT and RI in WC plus mucin beads (4, 12, 24, 48 and 120 h), total
+  RNA extraction and sequencing
+- co-culture of BT and RI in WC (12, 24 and 36 h), total RNA extraction and sequencing
 Experiment_ID:
-- sample1
-- sample2
+- BT_MUCIN_1
+- BT_MUCIN_2
+- BT_WC
+- RI_MUCIN
+- RI_WC
+- BTRI_MUCIN
+- BTRI_WC
+- BT_MUCIN_RNA
+- BT_WC_RNA
+- RI_MUCIN_RNA
+- RI_WC_RNA
+- BTRI_MUCIN_RNA
+- BTRI_WC_RNA
 Measurement_Technique:
-- OD, FC
+- OD
+- OD
+- OD
+- OD
+- OD
+- OD
+- OD
+- OD
+- OD
+- OD
+- OD
+- OD
 - OD
 Measurement_Unit:
-- OD, mM
+- OD
+- OD
+- OD
+- OD
+- OD
+- OD
+- OD
+- OD
+- OD
+- OD
+- OD
+- OD
 - OD
