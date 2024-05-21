@@ -67,6 +67,7 @@ def populate_db(list_growth, list_metabolites, list_microbial_strains,raw_data_t
     erros_logic = []
     study_id = None
     project_id = None
+    print("tttttt",errors)
 
     if not errors:
 
