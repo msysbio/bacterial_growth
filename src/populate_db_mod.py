@@ -121,7 +121,7 @@ def populate_db(list_growth, list_metabolites, list_microbial_strains,raw_data_t
         
         if 'Project_UniqueID' in info_study:
             project = {
-                'project' : db.getProjectID(conn),
+                'projectId' : db.getProjectID(conn),
                 'projectName': project_name,
                 'projectDescription': project_description,
                 'projectUniqueID': info_study['Project_UniqueID'][0]
