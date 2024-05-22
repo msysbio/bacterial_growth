@@ -1,8 +1,4 @@
 Community_ID:
-- BT
-- RI
-- BT_RI
+- Synthetic_Community
 Member_ID:
-- member_1
-- member_2
-- member_1, member_2
+- member_1, member_2, member_3, member_4, member_5

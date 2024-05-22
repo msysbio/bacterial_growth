@@ -1,155 +1,26 @@
 Biological_Replicate_IDs:
-- BT_MUCIN_1_1, BT_MUCIN_1_2, BT_MUCIN_1_3
-- BT_MUCIN_2_1, BT_MUCIN_2_2, BT_MUCIN_2_3
-- BT_WC_1, BT_WC_2, BT_WC_3
-- RI_MUCIN_1, RI_MUCIN_2, RI_MUCIN_3
-- RI_WC_1, RI_WC_2, RI_WC_3
-- BTRI_MUCIN_1, BTRI_MUCIN_2, BTRI_MUCIN_3
-- BTRI_WC_1, BTRI_WC_2, BTRI_WC_3
-- BT_MUCIN_RNA_1, BT_MUCIN_RNA_2, BT_MUCIN_RNA_3
-- BT_WC_RNA_1, BT_WC_RNA_2, BT_WC_RNA_3
-- RI_MUCIN_RNA_1, RI_MUCIN_RNA_2, RI_MUCIN_RNA_3
-- RI_WC_RNA_1, RI_WC_RNA_2, RI_WC_RNA_3
-- BTRI_MUCIN_RNA_1, BTRI_MUCIN_RNA_2, BTRI_MUCIN_RNA_3
-- BTRI_WC_RNA_1, BTRI_WC_RNA_2, BTRI_WC_RNA_3
+- biorep1, biorep2, biorep3, biorep4, biorep5, biorep6
 Biological_Replicates_Number:
-- 3
-- 3
-- 3
-- 3
-- 3
-- 3
-- 3
-- 3
-- 3
-- 3
-- 3
-- 3
-- 3
+- 6
 Community_ID:
-- BT
-- BT
-- BT
-- RI
-- RI
-- BT_RI
-- BT_RI
-- BT
-- BT
-- RI
-- RI
-- BT_RI
-- BT_RI
+- Synthetic_Community
 Compartment_ID:
-- WC_MUCIN
-- WC_MUCIN
-- WC
-- WC_MUCIN
-- WC
-- WC_MUCIN
-- WC
-- WC_MUCIN
-- WC
-- WC_MUCIN
-- WC
-- WC_MUCIN
-- WC
+- compartment1
 Control:
-- BT_MUCIN_1_3
-- BT_MUCIN_2_3
-- BT_WC_3
-- RI_MUCIN_3
-- RI_WC_3
-- BTRI_MUCIN_3
-- BTRI_WC_3
-- BT_MUCIN_RNA_3
-- BT_WC_RNA_3
-- RI_MUCIN_RNA_3
-- RI_WC_RNA_3
-- BTRI_MUCIN_RNA_3
-- BTRI_WC_RNA_3
+- biorep6
 Control_Description:
-- .nan
-- .nan
-- .nan
-- .nan
-- .nan
-- .nan
-- .nan
-- .nan
-- .nan
-- .nan
-- .nan
-- .nan
-- .nan
+- blank
 Cultivation_Mode:
-- batch
-- batch
-- batch
-- batch
-- batch
-- batch
-- batch
-- batch
-- batch
-- batch
-- batch
-- batch
-- batch
+- chemostat
 Experiment_Description:
-- BT with WC plus mucin beads for 72 hours
-- BT with WC plus mucin beads for 120 hours
-- BT with WC for 120h
-- RI in WC plus mucion beads for 120 hours
-- RI in WC for 120 hours
-- co-culture of BT and RI with WC plus mucin beads for 120 hours
-- co-culture of BT and RI in WC for 120 hours
-- BT in WC plus mucin beads (4, 12, 24, 48 and 120 h), total RNA extraction and sequencing
-- BT in WC (4, 12, 24, 48 and 120 h), total RNA extraction and sequencing
-- RI in WC plus mucin beads (4, 12, 24, 48 and 120 h), total RNA extraction and sequencing
-- RI in WC (4, 12, 24, 48 and 120 h), total RNA extraction and sequencing
-- co-culture of BT and RI in WC plus mucin beads (4, 12, 24, 48 and 120 h), total
-  RNA extraction and sequencing
-- co-culture of BT and RI in WC (12, 24 and 36 h), total RNA extraction and sequencing
+- 'six parallel bioreactors in chemostat mode, total cell counts were obtained via
+  flow cytometry. The community was composed of gut bacterial species: Roseburia intestinalis
+  DSM 14610 (RI), Blautia hydrogenotrophica DSM 10507 (BH), Collinsella aerofaciens
+  RCC 1377 (CA), and Bacteroides thetaiotaomicron DSM 2079 (BT) and Prevotella copri
+  DSM18205 (PC).'
 Experiment_ID:
-- BT_MUCIN_1
-- BT_MUCIN_2
-- BT_WC
-- RI_MUCIN
-- RI_WC
-- BTRI_MUCIN
-- BTRI_WC
-- BT_MUCIN_RNA
-- BT_WC_RNA
-- RI_MUCIN_RNA
-- RI_WC_RNA
-- BTRI_MUCIN_RNA
-- BTRI_WC_RNA
+- Synthetic_Human_Gut
 Measurement_Technique:
-- OD
-- OD
-- OD
-- OD
-- OD
-- OD
-- OD
-- OD
-- OD
-- OD
-- OD
-- OD
-- OD
+- FC, 16S-RNASeq
 Measurement_Unit:
-- OD
-- OD
-- OD
-- OD
-- OD
-- OD
-- OD
-- OD
-- OD
-- OD
-- OD
-- OD
-- OD
+- 'Cells/mL, Cells/mL '

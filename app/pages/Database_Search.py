@@ -297,7 +297,7 @@ def db_search():
 
 
 
-    '''
+    
 
     conn = st.connection("BacterialGrowth", type="sql")
 

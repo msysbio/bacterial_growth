@@ -766,7 +766,7 @@ def tab_step5(xls_1, xls_2, measure_tech, meta_col, all_keywords, conn, project_
     Submit data page
     """
     with tab5:
-        st.write("# 🔧 Data visibility")
+        st.subheader("Data visibility")
         st.write("By default your data will be visible and public in the database. Do you want to make your data visible now?")
         visibility_option = st.radio("Visibility options:",
                                    ["Yes, make my data visible now!",
@@ -832,10 +832,10 @@ def tab_step5(xls_1, xls_2, measure_tech, meta_col, all_keywords, conn, project_
             # else, populate the db and give the unique ids to the user if not error
             # if errors during the population function then the function stops and the errors are printed
             else:
-                print("heeeeeeeeeeeelp")
+                
                 study_id, errors, erros_logic, studyUniqueID, projectUniqueID, project_id = populate_db(measure_tech, meta_col, all_keywords ,xls_1,info_file_study,info_file_experiments,info_compart_file,info_mem_file,info_comu_file,info_pert_file, conn, project_name, project_description)
                 if not (errors and erros_logic) and (study_id and studyUniqueID and projectUniqueID and project_id):
-                    print("esty aqui")
+                    print("esty aquiiiiiiiiiiii")
                     st.success(f"Thank you! your study has been successfully uploaded into our database, **Unique Study ID**: {studyUniqueID} and **Study ID**: {study_id}, **Unique Project Id**: {projectUniqueID} and **Project ID**: {project_id}")
                     # create folder to store study data:
                     path = relative_path_to_src + f"/Data/Growth/{study_id}"
@@ -848,9 +848,9 @@ def tab_step5(xls_1, xls_2, measure_tech, meta_col, all_keywords, conn, project_
 
                 else:
                     for i in errors:
-                        st.error(f"Data uploading unsuccessful: {i}. Please correct and try again!")
+                        st.error(f"Data uploading unsuccessful!: {i}. Please correct and try again!")
                     for i in erros_logic:
-                        st.error(f"Data uploading unsuccessful: {i}. Please correct and try again!")
+                        st.error(f"Data uploading unsuccessful!: {i}. Please correct and try again!")
 
 
 

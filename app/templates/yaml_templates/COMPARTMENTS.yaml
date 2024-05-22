@@ -1,48 +1,32 @@
 CO2%:
-- 10
-- 10
+- 80
 Carbon_Source:
 - 1
-- 1
 Compartment_ID:
-- WC_MUCIN
-- WC
+- compartment1
 Compartment_Pressure:
 - 1
-- 1
 Compartment_StirringMode:
-- linear
-- linear
+- .nan
 Compartment_StirringSpeed:
-- 120
-- 170
+- .nan
 Compartment_Volume:
-- 120
-- 60
-H2%:
 - 10
+H2%:
 - 10
 Initial_Temperature:
 - 37
-- 37
 Initial_pH:
-- .nan
-- .nan
+- 6.5
 Inoculum_Concentration:
-- 1960000
-- 1960000
+- 1000000
 Inoculum_Volume:
 - 1
-- 1
 Medium_Link:
-- https://assets.thermofisher.com/TFS-Assets/LSG/manuals/IFU7322.pdf
-- https://assets.thermofisher.com/TFS-Assets/LSG/manuals/IFU7322.pdf
+- .nan
 Medium_Name:
-- Wilkins-Chalgren Anaerobe Broth (WC)
-- Wilkins-Chalgren Anaerobe Broth (WC)
+- Wilkins-Chalgren Anerobe Broth (WC)
 N2%:
-- 80
-- 80
+- 10
 O2%:
-- 0
 - 0

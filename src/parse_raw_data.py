@@ -35,15 +35,15 @@ def get_techniques_metabolites(list_growth, list_metabolites, list_microbial_str
 
             #check all columns fro the microbial strains are in the excel
             for i in list_microbial_strains:
-                microbial_count = f'{i}_counts'
+                #microbial_count = f'{i}_counts'
                 microbial_read = f'{i}_reads'
 
-                microbial_count_std = f'{i}_counts_std'
+                #microbial_count_std = f'{i}_counts_std'
                 microbial_reads_std = f'{i}_reads_std'
 
-                assert microbial_count in columns_abundances, f'ERROR: column {microbial_count} information is missing in template_raw_data'
+                #assert microbial_count in columns_abundances, f'ERROR: column {microbial_count} information is missing in template_raw_data'
                 assert microbial_read in columns_abundances, f'ERROR: column {microbial_read} information is missing in template_raw_data'
-                assert microbial_count_std in columns_abundances, f'ERROR: column {microbial_count_std} is missing in template_raw_data'
+                #assert microbial_count_std in columns_abundances, f'ERROR: column {microbial_count_std} is missing in template_raw_data'
                 assert microbial_reads_std in columns_abundances, f'ERROR: column {microbial_reads_std} is missing in template_raw_data'
 
 
@@ -54,6 +54,8 @@ def get_techniques_metabolites(list_growth, list_metabolites, list_microbial_str
             assert 'OD' in columns_growth and 'OD_std' in columns_growth, "ERROR: 'OD' or 'OD_std' not found in template_raw_data"
         if'Plate-Counts'in list_growth:
             assert 'Plate_counts' in columns_growth and 'Plate_counts_std' in columns_growth, "ERROR: 'Plate_counts' or 'Plate_counts_std' not found in template_raw_data"
+        if'Flow Cytometry (FC)'in list_growth:
+            assert 'FC' in columns_growth and 'FC_std' in columns_growth, "ERROR: 'FC' or 'FC_std' not found in template_raw_data"
 
         for i in list_metabolites:
             metabolite_std = f'{i}_std'
@@ -95,7 +97,7 @@ def get_measures_growth(raw_data_template):
         # Convert the result to a list and store it in the dictionary
         measures_per_replicate[replicate_id] = non_empty_columns.tolist()
 
-    measures = ['OD', 'OD_std','Plate_counts','Plate_counts_std','pH']
+    measures = ['OD', 'OD_std','Plate_counts','Plate_counts_std','pH', 'FC', 'FC_std']
     # filters the ones that are not null per Biological_replicate_id
     filtered_measures_per_replicate = {key: [item for item in value if item in measures] for key, value in measures_per_replicate.items()}
     filtered_metabolites_per_replicate = {key: [item for item in value if item not in measures and not item.endswith('_std')] for key, value in measures_per_replicate.items()}
@@ -188,7 +190,8 @@ def save_data_to_csv(output_csv_path_growth,output_csv_path_reads,raw_data_templ
     df_excel_reads = pd.read_excel(raw_data_template, sheet_name='Sequencing_and_FC_Data')
     # Drop columns with NaN values
     df_excel_reads = df_excel_reads.dropna(axis=1, how='all')
+    subset_columns = df_excel_reads.columns.drop('Position')
     # Drop rows where all values are NaN
-    df_excel_reads = df_excel_reads.dropna(axis=0, how='all')
+    df_excel_reads = df_excel_reads.dropna(subset=subset_columns, how='all')
     if not df_excel_reads.empty:
         df_excel_reads.to_csv(output_csv_path_reads, index=False)
