@@ -26,11 +26,11 @@ yaml.Dumper.ignore_aliases = lambda self, data: True
 def load_yaml(file_path):
     with open(file_path, 'r') as file:
         return yaml.safe_load(file)
-    
+
 #function that defines unique ids as strings
 def generate_unique_id():
     return str(uuid.uuid4())
-        
+
 #function that stripst columns where more than one value is allowed
 def stripping_method(celd):
     if ',' in celd:
@@ -83,7 +83,7 @@ def populate_db(list_growth, list_metabolites, list_microbial_strains,raw_data_t
         info_pertu = read_yml(info_pert_file)
         info_mem = read_yml(info_mem_file)
         info_comu = read_yml(info_comu_file)
-            
+
         #defining dictionaries per every yaml file
         study_name_list = info_study['Study_Name']
         experiment_name_list = info['Experiment_ID']
@@ -118,10 +118,10 @@ def populate_db(list_growth, list_metabolites, list_microbial_strains,raw_data_t
             else:
                 print('You must introduce some study information')
                 exit()
-        
+
         if 'Project_UniqueID' in info_study:
             project = {
-                'project' : db.getProjectID(conn),
+                'projectId' : db.getProjectID(conn),
                 'projectName': project_name,
                 'projectDescription': project_description,
                 'projectUniqueID': info_study['Project_UniqueID'][0]
@@ -457,5 +457,5 @@ def populate_db(list_growth, list_metabolites, list_microbial_strains,raw_data_t
 
     else:
         sys.exit()
-    
+
     return study_id, errors, erros_logic, study['studyUniqueID'],study['projectUniqueID'], project_id
