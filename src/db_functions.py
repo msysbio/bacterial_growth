@@ -17,12 +17,12 @@ def execute(phrase):
     :return: list of str received from the database
     """
     try:
-        cnx = mysql.connector.connect(
-            user="freedb_testDev",
-            password="gktRWCV7NEf8*Kv",
-            host="sql.freedb.tech",
-            port="3306"
-            database="freedb_BacterialGrowth")
+        st.connection()
+        cnx =  st.connection("BacterialGrowth", type="sql")
+        with cnx.session as session:
+            session.execute(phrase)
+            session.commit()
+        # cnx = mysql.connector.connect()
             # user=st.secrets.connections.BacterialGrowth.username,
             #                           password=st.secrets.connections.BacterialGrowth.password,
             #                           host=st.secrets.connections.BacterialGrowth.host,
