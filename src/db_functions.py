@@ -52,7 +52,7 @@ def addRecord(table, args):
     # return fields, values
     phrase = "INSERT IGNORE INTO " +table+" "+fields+" VALUES "+values
     print(phrase)
-    return phrase
+    # return phrase
     res = execute(phrase)
     print(res)
     return res
