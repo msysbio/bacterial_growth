@@ -15,24 +15,25 @@ from db_functions import getExperiments
 from filter_df import filter_df, filter_dict_states
 
 # Configure page
-st.set_page_config(page_title="Visualization Dashboard", layout='wide')
+try:
+    st.set_page_config(page_title="Visualization Dashboard", layout='wide')
+except:
+    pass
+
 add_logo("figs/logo_sidebar3.png", height=100)
 with open("style.css") as css:
     st.markdown(f'<style>{css.read()}</style>', unsafe_allow_html=True)
 
 st.title("Visualizing Study Data")
 st.markdown("![badge](https://img.shields.io/badge/status-under%20development-orange?style=for-the-badge)")
-
 conn = st.connection("BacterialGrowth", type="sql")
+
 
 def dashboard():
     """
     If df_growth then init page with selected from Search page data
     else init the whole page.
     """
-
-    print("session state in dashboard:",st.session_state)
-
 
     df_growth = pd.DataFrame()
     df_reads = pd.DataFrame()
@@ -98,6 +99,7 @@ def dashboard():
 
 
     return df_growth, df_reads, studyID_to_visualize, conn
+
 
 def content(df_growth, df_reads, studyID_to_visualize, conn):
 
