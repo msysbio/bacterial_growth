@@ -63,15 +63,12 @@ def populate_db(list_growth, list_metabolites, list_microbial_strains,raw_data_t
         - study['projectUniqueID']: Project Unique ID only if all was susscessful
     """
 
-    return ";fajshfa;s"
-
     # checks that all the options selected by the user in the interface match the uploaded raw data template
     errors = get_techniques_metabolites(list_growth, list_metabolites,list_microbial_strains, raw_data_template)
     errors = []
     erros_logic = []
     study_id = None
     project_id = None
-    print("tttttt",errors)
 
     if not errors:
 
@@ -80,6 +77,9 @@ def populate_db(list_growth, list_metabolites, list_microbial_strains,raw_data_t
         abundances_per_replicate = get_measures_reads(raw_data_template)
         counts_per_replicate = get_measures_counts(raw_data_template)
         replicate_metadata = get_replicate_metadata(raw_data_template)
+
+        return "get... part"
+
 
         #reads all the yaml file
         info_study = read_yml(info_file_study)
