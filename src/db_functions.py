@@ -22,7 +22,7 @@ def execute(phrase):
             password="gktRWCV7NEf8*Kv",
             host="sql.freedb.tech",
             port="3306",
-            database="BacterialGrowth",
+            database="freedb_BacterialGrowth",
             auth_plugin='mysql_native_password'
             )
 
