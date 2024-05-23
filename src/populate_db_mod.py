@@ -40,6 +40,15 @@ def stripping_method(celd):
         return [celd.strip()]
 
 
+# function that search the id given a value
+def search_id(search_value, data_list):
+    # Using a for loop to iterate over the list of tuples
+    for key, value in data_list:
+        if key == search_value:
+            return value  # Return the value if the key is found
+    return None
+
+
 def populate_db(list_growth, list_metabolites, list_microbial_strains,raw_data_template,info_file_study,info_file_experiments,info_compart_file,info_mem_file,info_comu_file,info_pert_file, conn, project_name, project_description):
     """
     Function that populates all the data from the yaml files if not errors, in case of errors the function stops and displays the error
@@ -87,10 +96,6 @@ def populate_db(list_growth, list_metabolites, list_microbial_strains,raw_data_t
         info_mem = read_yml(info_mem_file)
         info_comu = read_yml(info_comu_file)
 
-
-
-        if info_mem is not None:
-            return info_mem
 
         #defining dictionaries per every yaml file
         study_name_list = info_study['Study_Name']
@@ -153,13 +158,7 @@ def populate_db(list_growth, list_metabolites, list_microbial_strains,raw_data_t
         mem_name_id_list = []
         comu_id_list =[]
 
-        # function that search the id given a value
-        def search_id(search_value, data_list):
-            # Using a for loop to iterate over the list of tuples
-            for key, value in data_list:
-                if key == search_value:
-                    return value  # Return the value if the key is found
-            return None
+
 
         # populating strains table
         if 'Member_ID' in info_mem:
