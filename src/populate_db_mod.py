@@ -78,7 +78,6 @@ def populate_db(list_growth, list_metabolites, list_microbial_strains,raw_data_t
         counts_per_replicate = get_measures_counts(raw_data_template)
         replicate_metadata = get_replicate_metadata(raw_data_template)
 
-        return abundances_per_replicate
 
         #reads all the yaml file
         info_study = read_yml(info_file_study)
@@ -89,7 +88,8 @@ def populate_db(list_growth, list_metabolites, list_microbial_strains,raw_data_t
         info_comu = read_yml(info_comu_file)
 
 
-        return "get... part"
+        return info
+
 
         if info_mem is not None:
             return info_mem
