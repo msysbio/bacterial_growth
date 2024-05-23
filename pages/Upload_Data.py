@@ -853,7 +853,7 @@ def tab_step5(xls_1, xls_2, measure_tech, metabo_col, all_taxa, conn, project_na
 
         Data_button = st.button("Submit Data",
                                 type="primary",
-                                disabled=st.session_state.hinderSubmit,
+                                # disabled=st.session_state.hinderSubmit,
                                 use_container_width=True
         )
 
