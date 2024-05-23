@@ -906,7 +906,8 @@ def tab_step5(xls_1, xls_2, measure_tech, metabo_col, all_taxa, conn, project_na
             # if errors during the population function then the function stops and the errors are printed
             else:
                 st.info("ESTA AQUI")
-                study_id, errors, erros_logic, studyUniqueID, projectUniqueID, project_id = populate_db(measure_tech,
+                # study_id, errors, erros_logic, studyUniqueID, projectUniqueID, project_id
+                cehck = populate_db(measure_tech,
                                                                                                         metabo_col,
                                                                                                         all_taxa ,
                                                                                                         xls_1,
@@ -921,29 +922,29 @@ def tab_step5(xls_1, xls_2, measure_tech, metabo_col, all_taxa, conn, project_na
                                                                                                         project_description
                                                                                                         )
 
-                st.info(errors)
-                st.info(erros_logic)
+                # st.info(errors)
+                st.info(cehck)
 
-                if not (errors and erros_logic) and (study_id and studyUniqueID and projectUniqueID and project_id):
-                    st.info("esty aquiiiiiiiiiiii")
-                    st.success(f"""Thank you! your study has been successfully uploaded into our database,
-                               **Unique Study ID**: {studyUniqueID} and **Study ID**: {study_id},
-                               **Unique Project Id**: {projectUniqueID} and **Project ID**: {project_id}""")
+                # if not (errors and erros_logic) and (study_id and studyUniqueID and projectUniqueID and project_id):
+                #     st.info("esty aquiiiiiiiiiiii")
+                #     st.success(f"""Thank you! your study has been successfully uploaded into our database,
+                #                **Unique Study ID**: {studyUniqueID} and **Study ID**: {study_id},
+                #                **Unique Project Id**: {projectUniqueID} and **Project ID**: {project_id}""")
 
-                    # create folder to store study data:
-                    path = relative_path_to_src + f"/Data/Growth/{study_id}"
-                    growth_file = path + f"/Growth_Metabolites.csv"
-                    reads_file = path + f"/Sequencing_Reads.csv"
-                    # Create the folder
-                    os.makedirs(path, exist_ok=True)
-                    # this function stores the raw data in 2 .csv files in a study folder
-                    save_data_to_csv(growth_file,reads_file,xls_1)
+                #     # create folder to store study data:
+                #     path = relative_path_to_src + f"/Data/Growth/{study_id}"
+                #     growth_file = path + f"/Growth_Metabolites.csv"
+                #     reads_file = path + f"/Sequencing_Reads.csv"
+                #     # Create the folder
+                #     os.makedirs(path, exist_ok=True)
+                #     # this function stores the raw data in 2 .csv files in a study folder
+                #     save_data_to_csv(growth_file,reads_file,xls_1)
 
-                else:
-                    for i in errors:
-                        st.error(f"Data uploading unsuccessful: {i}. Please correct and try again!")
-                    for i in erros_logic:
-                        st.error(f"Data uploading unsuccessful: {i}. Please correct and try again!")
+                # else:
+                #     for i in errors:
+                #         st.error(f"Data uploading unsuccessful: {i}. Please correct and try again!")
+                #     for i in erros_logic:
+                #         st.error(f"Data uploading unsuccessful: {i}. Please correct and try again!")
 
 
 create_private_project_id, unique_study_id_val, project_name, project_description= tab_step1()
