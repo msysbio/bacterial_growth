@@ -123,12 +123,11 @@ def populate_db(list_growth, list_metabolites, list_microbial_strains,raw_data_t
             if isinstance(info_study['Study_UniqueID'][0], float) :
                 study['studyUniqueID'] = generate_unique_id()
 
-            return study
-
             study_filtered = {k: v for k, v in study.items() if v is not None}
             if len(study_filtered)>0:
                     study_id = db.addRecord('Study', study_filtered)
                     print('\nSTUDY ID: ', study_id)
+                    return study_id
             else:
                 print('You must introduce some study information')
                 exit()
