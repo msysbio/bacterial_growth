@@ -1,8 +1,4 @@
 Community_ID:
-- community1
-- community2
-- .nan
+- Synthetic_Community
 Member_ID:
-- bact1, bact2
-- bact2
-- MULTIPLE VALUES ALLOWED
+- member_1, member_2, member_3, member_4, member_5
