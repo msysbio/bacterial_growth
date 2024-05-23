@@ -27,7 +27,7 @@ from parse_raw_data import save_data_to_csv
 st.set_page_config(page_title="Upload Data", page_icon="📤", layout='wide')
 
 
-st.info(USER, PASSWORD, HOST, DATABASE, PORT )
+
 
 
 add_logo("figs/logo_sidebar3.png", height=100)
