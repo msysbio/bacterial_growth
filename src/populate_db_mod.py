@@ -88,8 +88,6 @@ def populate_db(list_growth, list_metabolites, list_microbial_strains,raw_data_t
         info_comu = read_yml(info_comu_file)
 
 
-        return info
-
 
         if info_mem is not None:
             return info_mem
