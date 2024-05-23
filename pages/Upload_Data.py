@@ -906,8 +906,8 @@ def tab_step5(xls_1, xls_2, measure_tech, metabo_col, all_taxa, conn, project_na
             # if errors during the population function then the function stops and the errors are printed
             else:
                 st.info("ESTA AQUI")
-                cehck = populate_db(measure_tech,
                 # study_id, errors, erros_logic, studyUniqueID, projectUniqueID, project_id  = populate_db(measure_tech,
+                cehck = populate_db(measure_tech,
                                                                                                         metabo_col,
                                                                                                         all_taxa ,
                                                                                                         xls_1,
@@ -922,7 +922,8 @@ def tab_step5(xls_1, xls_2, measure_tech, metabo_col, all_taxa, conn, project_na
                                                                                                         project_description
                                                                                                         )
 
-                st.info(cehck.append("lajshdasd"))
+                cehck.append("lajshdasd")
+                st.info(cehck)
 
                 # if not (errors and erros_logic) and (study_id and studyUniqueID and projectUniqueID and project_id):
                 #     st.info("esty aquiiiiiiiiiiii")
