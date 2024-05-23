@@ -21,3 +21,6 @@ src/__pycache__/*
 # secrets.toml
 poetry.lock
 pyproject.toml
+
+
+app/templates/yaml_templates/
