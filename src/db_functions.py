@@ -49,10 +49,13 @@ def addRecord(table, args):
     """
     # Insert into table
     fields, values = getInsertFieldsValues(args)
+    # return fields, values
     phrase = "INSERT IGNORE INTO " +table+" "+fields+" VALUES "+values
     print(phrase)
+    return phrase
     res = execute(phrase)
     print(res)
+    return res
 
     # Get the name of the primary key field
     phrase = "SHOW KEYS FROM "+table+" WHERE Key_name = 'PRIMARY'"
