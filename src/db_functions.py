@@ -28,7 +28,7 @@ def execute(phrase):
 
         cursor = cnx.cursor()
         cursor.execute(phrase)
-        return phrase
+        return cursor
         res = []
         for row in cursor:
             res.append(row)
