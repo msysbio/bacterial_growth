@@ -17,7 +17,7 @@ def execute(phrase):
     :return: list of str received from the database
     """
     try:
-        st.connection()
+        # st.connection()
         cnx =  st.connection("BacterialGrowth", type="sql")
         with cnx.session as session:
             session.execute(phrase)
