@@ -8,15 +8,14 @@ import logging
 # Configure the logging
 logging.basicConfig(
     level=logging.DEBUG,  # Set the logging level to DEBUG
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',  # Log message format
-    datefmt='%Y-%m-%d %H:%M:%S',  # Date format
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    datefmt='%Y-%m-%d %H:%M:%S',
     handlers=[
-        logging.FileHandler("app.log"),  # Log messages to a file named app.log
-        logging.StreamHandler()  # Also log messages to the console
+        logging.FileHandler("app.log"),  # Log to a file named app.log
+        logging.StreamHandler()  # Log to the console
     ]
 )
 
-# Create a logger object
 logger = logging.getLogger(__name__)
 
 
