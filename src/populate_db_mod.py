@@ -62,6 +62,9 @@ def populate_db(list_growth, list_metabolites, list_microbial_strains,raw_data_t
         - study['studyUniqueID']: Study Unique ID only if all was susscessful
         - study['projectUniqueID']: Project Unique ID only if all was susscessful
     """
+
+    return ";fajshfa;s"
+
     # checks that all the options selected by the user in the interface match the uploaded raw data template
     errors = get_techniques_metabolites(list_growth, list_metabolites,list_microbial_strains, raw_data_template)
     errors = []
@@ -85,6 +88,10 @@ def populate_db(list_growth, list_metabolites, list_microbial_strains,raw_data_t
         info_pertu = read_yml(info_pert_file)
         info_mem = read_yml(info_mem_file)
         info_comu = read_yml(info_comu_file)
+
+
+        if info_mem is not None:
+            return info_mem
 
         #defining dictionaries per every yaml file
         study_name_list = info_study['Study_Name']
@@ -114,7 +121,6 @@ def populate_db(list_growth, list_metabolites, list_microbial_strains,raw_data_t
                 study['studyUniqueID'] = generate_unique_id()
 
             study_filtered = {k: v for k, v in study.items() if v is not None}
-            #print(study_filtered)
             if len(study_filtered)>0:
                     study_id = db.addRecord('Study', study_filtered)
                     print('\nSTUDY ID: ', study_id)
@@ -132,7 +138,7 @@ def populate_db(list_growth, list_metabolites, list_microbial_strains,raw_data_t
             }
 
             project_filtered = {k: v for k, v in project.items() if v is not None}
-            #print(study_filtered)
+
             if len(project_filtered)>0:
                     project_id = db.addRecord('Project', project_filtered)
                     print('\nProject ID: ', project_id)
