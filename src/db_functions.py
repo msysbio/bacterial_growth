@@ -17,7 +17,11 @@ def execute(phrase):
     :return: list of str received from the database
     """
     try:
-        cnx = mysql.connector.connect(user=USER, password=PASSWORD, host=HOST, port=PORT,database=DATABASE)
+        cnx = mysql.connector.connect(user=st.secrets.connections.BacterialGrowth.username,
+                                      password=st.secrets.connections.BacterialGrowth.password,
+                                      host=st.secrets.connections.BacterialGrowth.host,
+                                      port=st.secrets.connections.BacterialGrowth.port,
+                                      database=st.secrets.connections.BacterialGrowth.database)
         cursor = cnx.cursor()
         cursor.execute(phrase)
         res = []
