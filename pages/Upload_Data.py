@@ -922,7 +922,6 @@ def tab_step5(xls_1, xls_2, measure_tech, metabo_col, all_taxa, conn, project_na
                                                                                                         project_description
                                                                                                         )
 
-                cehck.append("lajshdasd")
                 st.info(cehck)
 
                 # if not (errors and erros_logic) and (study_id and studyUniqueID and projectUniqueID and project_id):
