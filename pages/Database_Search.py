@@ -4,6 +4,8 @@ import streamlit as st
 from streamlit_extras.app_logo import add_logo
 import streamlit.components.v1 as components
 
+st.set_page_config(page_title="Database Search", page_icon="🔍", layout='wide')
+
 # Load local modules
 current_dir = os.path.dirname(os.path.realpath(__file__))
 repo_dir = os.path.dirname(os.path.dirname(current_dir))
@@ -17,7 +19,6 @@ from db_functions import dynamical_query, getGeneralInfo, getExperiments, \
     getFC, getMetabolite, getPerturbations
 from edit_sessions import clean_dashboard
 
-st.set_page_config(page_title="Database Search", page_icon="🔍", layout='wide')
 
 # Define the options for the dropdown list
 options = ['Project Name', 'Project ID', 'Study Name', 'Study ID','Microbial Strain', 'NCBI ID','Metabolites', 'chEBI ID', 'pH']
