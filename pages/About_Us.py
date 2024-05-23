@@ -6,18 +6,17 @@ from streamlit_extras.badges import badge
 import logging
 
 # Configure the logging
-logging.basicConfig(
-    level=logging.DEBUG,  # Set the logging level to DEBUG
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    datefmt='%Y-%m-%d %H:%M:%S',
-    handlers=[
-        logging.FileHandler("app.log"),  # Log to a file named app.log
-        logging.StreamHandler()  # Log to the console
-    ]
-)
+import logging
+from logging import getLogger
 
-logger = logging.getLogger(__name__)
+import streamlit as st
 
+print("---------------------------")
+logger = getLogger()
+logger.addHandler(logging.StreamHandler())
+logger.setLevel(logging.INFO)
+logger.info("best")
+print("---------------------------")
 
 logger.info("hello friend")
 
