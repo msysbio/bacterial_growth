@@ -110,6 +110,8 @@ def populate_db(list_growth, list_metabolites, list_microbial_strains,raw_data_t
         print(num_rep_metadata)
 
 
+        return info_study
+
 
         #populating the study table
         if 'Study_Name' in info_study:
@@ -258,7 +260,7 @@ def populate_db(list_growth, list_metabolites, list_microbial_strains,raw_data_t
         print("im hereeeeeeeeee")
 
 
-        return project
+
 
 
         #populating perturbations table
