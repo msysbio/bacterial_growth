@@ -22,24 +22,25 @@ def execute(phrase):
                                       host=st.secrets.connections.BacterialGrowth.host,
                                       port=st.secrets.connections.BacterialGrowth.port,
                                       database=st.secrets.connections.BacterialGrowth.database)
-        cursor = cnx.cursor()
-        cursor.execute(phrase)
-        res = []
-        for row in cursor:
-            res.append(row)
-        # Fetch and handle warnings
-        warnings = cursor.fetchwarnings()
-        if warnings:
-            for warning in warnings:
-                print("\t\t ** Warning - ", warning)
+        # cursor = cnx.cursor()
+        # cursor.execute(phrase)
+        # res = []
+        # for row in cursor:
+        #     res.append(row)
+        # # Fetch and handle warnings
+        # warnings = cursor.fetchwarnings()
+        # if warnings:
+        #     for warning in warnings:
+        #         print("\t\t ** Warning - ", warning)
 
-        cursor.close()
-        cnx.commit()
-        cnx.close()
-        return res
+        # cursor.close()
+        # cnx.commit()
+        # cnx.close()
+        # return res
+        return cnx
     except mysql.connector.Error as err:
         print("\nSomething went wrong: {}".format(err),'\n')
-        exit()
+        return err
 
 
 
