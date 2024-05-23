@@ -65,8 +65,8 @@ def populate_db(list_growth, list_metabolites, list_microbial_strains,raw_data_t
 
     # checks that all the options selected by the user in the interface match the uploaded raw data template
     errors = get_techniques_metabolites(list_growth, list_metabolites,list_microbial_strains, raw_data_template)
-    errors = []
     erros_logic = []
+
     study_id = None
     project_id = None
 
@@ -470,6 +470,7 @@ def populate_db(list_growth, list_metabolites, list_microbial_strains,raw_data_t
                     db.addRecord('BioReplicatesMetadata', biorep_metadata_filtered)
                     print('\BioReplicatesMetadata Populated')
 
+        return study_id, errors, erros_logic, study['studyUniqueID'],study['projectUniqueID'], project_id
+
     else:
-        sys.exit()
-    return study_id, errors, erros_logic, study['studyUniqueID'],study['projectUniqueID'], project_id
+        return errors
