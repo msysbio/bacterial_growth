@@ -286,7 +286,8 @@ def db_search():
 
                 st.page_link("pages/Visualization_Dashboard.py", label="View selected on Dashboard")
 
-    '''
+
+
     conn = st.connection("BacterialGrowth", type="sql")
 
     # Perform query.
@@ -332,7 +333,6 @@ def db_search():
     df_MetabolitePerReplicates = conn.query('SELECT * from MetabolitePerExperiment;', ttl=600)
     st.dataframe(df_MetabolitePerReplicates)
 
-    '''
 
 
 

@@ -64,9 +64,11 @@ def populate_db(list_growth, list_metabolites, list_microbial_strains,raw_data_t
     """
     # checks that all the options selected by the user in the interface match the uploaded raw data template
     errors = get_techniques_metabolites(list_growth, list_metabolites,list_microbial_strains, raw_data_template)
+    errors = []
     erros_logic = []
     study_id = None
     project_id = None
+    print("tttttt",errors)
 
     if not errors:
 
@@ -94,6 +96,7 @@ def populate_db(list_growth, list_metabolites, list_microbial_strains,raw_data_t
         num_mem = len(info_mem['Member_ID'])
         num_comu = len(info_comu['Community_ID'])
         num_rep_metadata = len(replicate_metadata['Biological_Replicate_id'])
+        print(num_rep_metadata)
 
 
 
@@ -120,8 +123,9 @@ def populate_db(list_growth, list_metabolites, list_microbial_strains,raw_data_t
                 exit()
         
         if 'Project_UniqueID' in info_study:
+
             project = {
-                'project' : db.getProjectID(conn),
+                'projectId' : db.getProjectID(conn),
                 'projectName': project_name,
                 'projectDescription': project_description,
                 'projectUniqueID': info_study['Project_UniqueID'][0]
@@ -131,7 +135,7 @@ def populate_db(list_growth, list_metabolites, list_microbial_strains,raw_data_t
             #print(study_filtered)
             if len(project_filtered)>0:
                     project_id = db.addRecord('Project', project_filtered)
-                    print('\nSTUDY ID: ', project_id)
+                    print('\nProject ID: ', project_id)
             else:
                 print('You must introduce some study information')
                 exit()
@@ -193,7 +197,7 @@ def populate_db(list_growth, list_metabolites, list_microbial_strains,raw_data_t
                     'initialPh': info_compart['Initial_pH'][i],
                     'initialTemperature': info_compart['Initial_Temperature'][i],
                     'carbonSource': info_compart['Carbon_Source'][i],
-                    'mediaName': info_compart['Medium_Name'][i],
+                    'mediaNames': info_compart['Medium_Name'][i],
                     'mediaLink': info_compart['Medium_Link'][i]
                     }
                 compartments_filtered = {k: v for k, v in compartments.items() if v is not None}
@@ -247,7 +251,9 @@ def populate_db(list_growth, list_metabolites, list_microbial_strains,raw_data_t
                     else:
                         print('You must introduce some study information')
                         exit()
+        print("im hereeeeeeeeee")
 
+    
         #populating perturbations table
         if 'Perturbation_ID' in info_pertu:
             for i in range(num_pertu):
@@ -299,7 +305,9 @@ def populate_db(list_growth, list_metabolites, list_microbial_strains,raw_data_t
             for i in range(num_experiment):
                 comp_biorep = stripping_method(info['Compartment_ID'][i])
                 comu_biorep = stripping_method(info['Community_ID'][i])
+                print("hellpppppppp",compartments_id_list)
                 for j,k in zip(comp_biorep, itertools.cycle(comu_biorep)):
+                    print("hellpppppppp",j)
                     comp_per_biorep={
                         'studyId': study_id,
                         'experimentUniqueId': search_id(info['Experiment_ID'][i],biorep_id_list),
@@ -309,7 +317,7 @@ def populate_db(list_growth, list_metabolites, list_microbial_strains,raw_data_t
                         'comunityUniqueId': search_id(k,comu_id_list),
                         'comunityId': k
                     }
-                    comp_per_biorep_filtered = {k: v for k, v in comp_per_biorep.items() if v is not None}
+                    comp_per_biorep_filtered = {t: v for t, v in comp_per_biorep.items() if v is not None}
                     if len(comp_per_biorep_filtered)>0:
                         db.addRecord('CompartmentsPerExperiment', comp_per_biorep_filtered)
                         print('\CompartmentsPerExperiment Populated')
@@ -457,5 +465,5 @@ def populate_db(list_growth, list_metabolites, list_microbial_strains,raw_data_t
 
     else:
         sys.exit()
-    
+    print("qqqqqqqqqqqqqqqqqqq",compartments_id_list)
     return study_id, errors, erros_logic, study['studyUniqueID'],study['projectUniqueID'], project_id
