@@ -258,8 +258,8 @@ def populate_db(list_growth, list_metabolites, list_microbial_strains,raw_data_t
         print("im hereeeeeeeeee")
 
 
-
         return project
+
 
         #populating perturbations table
         if 'Perturbation_ID' in info_pertu:
@@ -267,24 +267,24 @@ def populate_db(list_growth, list_metabolites, list_microbial_strains,raw_data_t
                 biological_id_spec =  search_id(info_pertu['Experiment_ID'][i],biorep_id_list)
                 if biological_id_spec == None:
                     error_ms  = f"Experiment_ID {info_pertu['Experiment_ID'][i]} in PERTURBATIONS sheet is not defined in EXPERIMENTS. Please check!"
-                    erros_logic.append(error_ms)
+                    errors_logic.append(error_ms)
                     sys.exit()
                 if not isinstance(info_pertu['OLD_Compartment_ID'][i], float)  and  (info_pertu['OLD_Compartment_ID'][i] not in info_compart['Compartment_ID']):
                     error_ms = f"OLD_Compartment_ID {info_pertu['OLD_Compartment_ID'][i]} in PERTURBATIONS sheet is not defined in COMPARTMENTS. Please check!"
-                    erros_logic.append(error_ms)
+                    errors_logic.append(error_ms)
                     sys.exit()
                 if not isinstance(info_pertu['NEW_Compartment_ID'][i], float) and (info_pertu['NEW_Compartment_ID'][i] not in info_compart['Compartment_ID']):
                     error_ms = f"NEW_Compartment_ID {info_pertu['NEW_Compartment_ID'][i]} in PERTURBATIONS sheet is not defined in COMPARTMENTS. Please check!"
-                    erros_logic.append(error_ms)
+                    errors_logic.append(error_ms)
                     sys.exit()
                 print(type(info_pertu['OLD_Community_ID'][i]))
                 if not isinstance(info_pertu['OLD_Community_ID'][i], float) and info_pertu['OLD_Community_ID'][i] not in info_comu['Community_ID']:
                     error_ms = f"OLD_Community_ID {info_pertu['OLD_Community_ID'][i]} in PERTURBATIONS sheet is not defined in COMMUNITITES. Please check!"
-                    erros_logic.append(error_ms)
+                    errors_logic.append(error_ms)
                     sys.exit()
                 if not isinstance(info_pertu['NEW_Community_ID'][i], float) and (info_pertu['NEW_Community_ID'][i] not in info_comu['Community_ID']):
                     error_ms = f"NEW_Community_ID {info_pertu['NEW_Community_ID'][i]} in PERTURBATIONS sheet is not defined in COMMUNITITES. Please check!"
-                    erros_logic.append(error_ms)
+                    errors_logic.append(error_ms)
                     sys.exit()
                 perturbations = {
                     'studyId': study_id,
@@ -357,7 +357,7 @@ def populate_db(list_growth, list_metabolites, list_microbial_strains,raw_data_t
                     if not list_measures:
                         error_ms = f"Biological_Replicate_ID: {rep_biorep[j]} was not defined in the raw data template excel. Please correct!"
                         print(error_ms)
-                        erros_logic.append(error_ms)
+                        errors_logic.append(error_ms)
                         sys.exit()
 
                     elif list_measures:
@@ -470,7 +470,7 @@ def populate_db(list_growth, list_metabolites, list_microbial_strains,raw_data_t
                     db.addRecord('BioReplicatesMetadata', biorep_metadata_filtered)
                     print('\BioReplicatesMetadata Populated')
 
-        return study_id, errors, erros_logic, study['studyUniqueID'],study['projectUniqueID'], project_id
+        return study_id, errors, errors_logic, study['studyUniqueID'],study['projectUniqueID'], project_id
 
     else:
         return errors
