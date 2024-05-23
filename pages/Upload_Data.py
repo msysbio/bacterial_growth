@@ -822,7 +822,7 @@ def tab_step5(xls_1, xls_2, measure_tech, metabo_col, all_taxa, conn, project_na
     Submit data page
     """
     with tab5:
-        st.write("# 🔧 Data visibility")
+        st.subheader("Data visibility")
         st.write("By default your data will be visible and public in the database. Do you want to make your data visible now?")
         visibility_option = st.radio("Visibility options:",
                                    ["Yes, make my data visible now!",
@@ -893,6 +893,7 @@ def tab_step5(xls_1, xls_2, measure_tech, metabo_col, all_taxa, conn, project_na
             errors.append(test_perturbation_yaml(data_pertu))
 
             # Check that there is no error, otherwise, show error and do not upload data
+            print(errors)
             if not all(not sublist for sublist in errors):
                 for i in errors:
                     st.error(f"Data uploading unsuccessful: {i}. Please correct and try again!")
@@ -915,6 +916,7 @@ def tab_step5(xls_1, xls_2, measure_tech, metabo_col, all_taxa, conn, project_na
                                                                                                         project_description
                                                                                                         )
                 if not (errors and erros_logic) and (study_id and studyUniqueID and projectUniqueID and project_id):
+                    print("esty aquiiiiiiiiiiii")
                     st.success(f"""Thank you! your study has been successfully uploaded into our database,
                                **Unique Study ID**: {studyUniqueID} and **Study ID**: {study_id},
                                **Unique Project Id**: {projectUniqueID} and **Project ID**: {project_id}""")

@@ -67,7 +67,16 @@ def parse_ex_to_yaml(LOCAL_DIRECTORY_YAML, template_excel):
     template_filename_yaml_COMMUNITY_MEMBERS = os.path.join(LOCAL_DIRECTORY_YAML, 'COMMUNITY_MEMBERS.yaml')
     template_filename_yaml_COMMUNITIES = os.path.join(LOCAL_DIRECTORY_YAML, 'COMMUNITIES.yaml')
     template_filename_yaml_PERTURBATIONS = os.path.join(LOCAL_DIRECTORY_YAML, 'PERTURBATIONS.yaml')
-    
+
+    all_yamls = [template_filename_yaml_STUDY, template_filename_yaml_EXPERIMENTS, template_filename_yaml_COMPARTMENTS,
+                 template_filename_yaml_COMMUNITY_MEMBERS, template_filename_yaml_COMMUNITIES, template_filename_yaml_PERTURBATIONS]
+    for yaml in all_yamls:
+        if os.path.isfile(yaml):
+            os.remove(yaml)
+    print("\n\n\n\n\n  tmp yamls")
+    print(os.listdir(LOCAL_DIRECTORY_YAML))
+
+
     # Write YAML data to a file
     with open(template_filename_yaml_STUDY, "w") as yaml_file:
         yaml_file.write(yaml_data)
