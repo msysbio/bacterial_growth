@@ -2,6 +2,26 @@ import streamlit as st
 from streamlit_extras.app_logo import add_logo
 from streamlit_extras.badges import badge
 
+
+import logging
+
+# Configure the logging
+logging.basicConfig(
+    level=logging.DEBUG,  # Set the logging level to DEBUG
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',  # Log message format
+    datefmt='%Y-%m-%d %H:%M:%S',  # Date format
+    handlers=[
+        logging.FileHandler("app.log"),  # Log messages to a file named app.log
+        logging.StreamHandler()  # Also log messages to the console
+    ]
+)
+
+# Create a logger object
+logger = logging.getLogger(__name__)
+
+
+logger.info("hello friend")
+
 st.set_page_config(page_title="About Us", page_icon="📤", layout='wide')
 
 add_logo("figs/logo_sidebar3.png", height=100)
