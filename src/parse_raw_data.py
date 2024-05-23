@@ -1,5 +1,5 @@
 import pandas as pd
-
+from constants import *
 
 def get_techniques_metabolites(list_growth, list_metabolites, list_microbial_strains, raw_data_template):
 
@@ -14,24 +14,26 @@ def get_techniques_metabolites(list_growth, list_metabolites, list_microbial_str
         - error_messages: a list of all the errors detected
     """
     error_messages = []
+    growth_techniques = GrowthTechniques()
     try:
         #read the headers and check that the headers match the options choosen by the user in the interface
 
         # reads the data template sheet 1: Growth_Data_and_Metabolites
         df_excel_growth = pd.read_excel(raw_data_template, sheet_name='Growth_Data_and_Metabolites')
 
-        if '16S rRNA-seq' in list_growth or 'Flow Cytometry (FC)' in list_growth:
-            df_excel_abundances = pd.read_excel(raw_data_template, sheet_name='Sequencing_and_FC_Data')
+        if growth_techniques.rna in list_growth or growth_techniques.fc_ps or growth_techniques.plates_ps in list_growth:
+
+            df_excel_abundances = pd.read_excel(raw_data_template, sheet_name='growth_per_species')
             columns_abundances = df_excel_abundances.columns
 
             # check that all the mandatory columns are in the excel
-            assert 'Time' in columns_abundances, "ERROR, 'Time' missing in Sequencing_and_FC_Data"
-            assert'Biological_Replicate_id' in columns_abundances, "ERROR, 'Biological_Replicate_id' missing in Sequencing_and_FC_Data"
-            assert'Position' in columns_abundances, "ERROR, 'Position' missing in Sequencing_and_FC_Data"
+            assert 'Time' in columns_abundances, "ERROR, 'Time' missing in growth_per_species"
+            assert'Biological_Replicate_id' in columns_abundances, "ERROR, 'Biological_Replicate_id' missing in growth_per_species"
+            assert'Position' in columns_abundances, "ERROR, 'Position' missing in growth_per_species"
             empty_columns_abundances = df_excel_abundances.columns[df_excel_abundances.isnull().all()].tolist()
             filtered_empty_columns = [string for string in empty_columns_abundances if not string.endswith('_std')]
             # check that there is not empty columns in the sequencing reads sheet
-            assert len(filtered_empty_columns) ==  0, "ERROR: missing mandatoy columns in Sequencing_and_FC_Data"
+            assert len(filtered_empty_columns) ==  0, "ERROR: missing mandatoy columns in growth_per_species"
 
             #check all columns fro the microbial strains are in the excel
             for i in list_microbial_strains:
@@ -50,9 +52,10 @@ def get_techniques_metabolites(list_growth, list_metabolites, list_microbial_str
         columns_growth = df_excel_growth.columns
 
         # check that all the mandatory headers are in the growth data sheet
-        if 'Optical Density (OD)' in list_growth:
+        if growth_techniques.od in list_growth:
             assert 'OD' in columns_growth and 'OD_std' in columns_growth, "ERROR: 'OD' or 'OD_std' not found in template_raw_data"
-        if'Plate-Counts'in list_growth:
+
+        if growth_techniques.plates in list_growth:
             assert 'Plate_counts' in columns_growth and 'Plate_counts_std' in columns_growth, "ERROR: 'Plate_counts' or 'Plate_counts_std' not found in template_raw_data"
         if'Flow Cytometry (FC)'in list_growth:
             assert 'FC' in columns_growth and 'FC_std' in columns_growth, "ERROR: 'FC' or 'FC_std' not found in template_raw_data"
@@ -61,19 +64,19 @@ def get_techniques_metabolites(list_growth, list_metabolites, list_microbial_str
             metabolite_std = f'{i}_std'
             assert i in columns_growth, f'ERROR: metabolite {i} is missing in template_raw_data'
             assert metabolite_std in columns_growth, f'ERROR: column {metabolite_std} is missing in template_raw_data'
-        
+
         # Create a list of columns that are empty to check that all the mandatory columns are not empty
         empty_columns_growth = df_excel_growth.columns[df_excel_growth.isnull().all()].tolist()
         for i in empty_columns_growth:
             assert i.endswith('_std') or i == 'pH', f'ERROR: Column {i} is not expected to be missing'
-    
+
     # gets all the assertion errors
     except AssertionError as e:
         error_messages.append(str(e))  # Append the error message to the list
 
     return error_messages
 
-    
+
 def get_measures_growth(raw_data_template):
     """
     Function that creates a dictionary with replicate_id and the column name:
@@ -89,7 +92,7 @@ def get_measures_growth(raw_data_template):
     df_excel_growth = pd.read_excel(raw_data_template, sheet_name='Growth_Data_and_Metabolites')
 
     measures_per_replicate = {}
-    
+
     # Iterate over groups based on Replicate_id
     for replicate_id, group_df in df_excel_growth.groupby('Biological_Replicate_id'):
         # Drop the Replicate_id column and check for non-empty values in each column
@@ -101,7 +104,7 @@ def get_measures_growth(raw_data_template):
     # filters the ones that are not null per Biological_replicate_id
     filtered_measures_per_replicate = {key: [item for item in value if item in measures] for key, value in measures_per_replicate.items()}
     filtered_metabolites_per_replicate = {key: [item for item in value if item not in measures and not item.endswith('_std')] for key, value in measures_per_replicate.items()}
-    
+
     return filtered_measures_per_replicate, filtered_metabolites_per_replicate
 
 def get_measures_counts(raw_data_template):
@@ -112,12 +115,12 @@ def get_measures_counts(raw_data_template):
         - raw_data_template: raw data template uploaded by the user in the interface in step 4
 
     Returns:
-        - abundances_per_replicate: a dictionary with each replicate id completed in Sequencing_and_FC_Data and the microbial strains measured
+        - abundances_per_replicate: a dictionary with each replicate id completed in growth_per_species and the microbial strains measured
     """
-    df_excel_abundances = pd.read_excel(raw_data_template, sheet_name='Sequencing_and_FC_Data')
+    df_excel_abundances = pd.read_excel(raw_data_template, sheet_name='growth_per_species')
 
     abundances_per_replicate = {}
-    
+
     # Iterate over groups based on Replicate_id
     for replicate_id, group_df in df_excel_abundances.groupby('Biological_Replicate_id'):
         # Drop the Replicate_id column and check for non-empty values in each column
@@ -135,12 +138,12 @@ def get_measures_reads(raw_data_template):
         - raw_data_template: raw data template uploaded by the user in the interface in step 4
 
     Returns:
-        - reads_per_replicate: a dictionary with each replicate id completed in Sequencing_and_FC_Data and the microbial strains measured
+        - reads_per_replicate: a dictionary with each replicate id completed in growth_per_species and the microbial strains measured
     """
-    df_excel_reads = pd.read_excel(raw_data_template, sheet_name='Sequencing_and_FC_Data')
+    df_excel_reads = pd.read_excel(raw_data_template, sheet_name='growth_per_species')
 
     reads_per_replicate = {}
-    
+
     # Iterate over groups based on Replicate_id
     for replicate_id, group_df in df_excel_reads.groupby('Biological_Replicate_id'):
         # Drop the Replicate_id column and check for non-empty values in each column
@@ -187,7 +190,7 @@ def save_data_to_csv(output_csv_path_growth,output_csv_path_reads,raw_data_templ
     if not df_excel_growth.empty:
         df_excel_growth.to_csv(output_csv_path_growth, index=False)
 
-    df_excel_reads = pd.read_excel(raw_data_template, sheet_name='Sequencing_and_FC_Data')
+    df_excel_reads = pd.read_excel(raw_data_template, sheet_name='growth_per_species')
     # Drop columns with NaN values
     df_excel_reads = df_excel_reads.dropna(axis=1, how='all')
     subset_columns = df_excel_reads.columns.drop('Position')
