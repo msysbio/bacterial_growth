@@ -259,7 +259,7 @@ def populate_db(list_growth, list_metabolites, list_microbial_strains,raw_data_t
 
 
 
-        return errors_logic
+        return project
 
         #populating perturbations table
         if 'Perturbation_ID' in info_pertu:
