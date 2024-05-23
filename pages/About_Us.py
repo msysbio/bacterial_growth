@@ -11,14 +11,7 @@ from logging import getLogger
 
 import streamlit as st
 
-print("---------------------------")
-logger = getLogger()
-logger.addHandler(logging.StreamHandler())
-logger.setLevel(logging.INFO)
-logger.info("best")
-st.info("---------------------------")
 
-logger.info("hello friend")
 
 st.set_page_config(page_title="About Us", page_icon="📤", layout='wide')
 
@@ -56,3 +49,6 @@ iframe_code = '''
 
 with con2:
     st.markdown(iframe_code, unsafe_allow_html=True)
+
+
+st.info("---------------------------")
