@@ -18,7 +18,7 @@ df_metab_name = df_metab_name.rename(columns={'ChEBI_ID': 'cheb_id', 'Metabolite
 # Define the MySQL connection string
 def get_connection():
 
-    secrets_file = "../../../app/.streamlit/secrets.toml"
+    secrets_file = "../../../.streamlit/secrets.toml"
     secrets = [line.strip() for line in open(secrets_file, 'r').readlines() if line.strip()]
     secrets_dict = dict(line.split(' = ', 1) for line in secrets[1:])
 
