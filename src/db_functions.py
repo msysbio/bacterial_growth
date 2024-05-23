@@ -28,10 +28,11 @@ def execute(phrase):
 
         cursor = cnx.cursor()
         cursor.execute(phrase)
-        return cursor
+        # return cursor
         res = []
         for row in cursor:
             res.append(row)
+        # return res
         # Fetch and handle warnings
         warnings = cursor.fetchwarnings()
         if warnings:
@@ -60,27 +61,18 @@ def addRecord(table, args):
     """
     # Insert into table
     fields, values = getInsertFieldsValues(args)
-    # return fields, values
     phrase = "INSERT IGNORE INTO " +table+" "+fields+" VALUES "+values
-    print(phrase)
-    # return phrase
     res = execute(phrase)
-    print(res)
-    return res
 
     # Get the name of the primary key field
     phrase = "SHOW KEYS FROM "+table+" WHERE Key_name = 'PRIMARY'"
     res = execute(phrase)
-    print(res)
     pk = res[0][4]
-    print(pk)
 
     # Get the value of the primary key (this will return the value both if it was inserted or ignored)
     where_clause = getWhereClause(args)
-    print(where_clause)
     phrase = "SELECT "+pk+" FROM "+table+" "+where_clause
     res = execute(phrase)
-    print(res)
     if not res:
         last_id = 'WARNING'
     else:
