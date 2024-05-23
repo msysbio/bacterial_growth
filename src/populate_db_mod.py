@@ -110,9 +110,6 @@ def populate_db(list_growth, list_metabolites, list_microbial_strains,raw_data_t
         print(num_rep_metadata)
 
 
-        return info_study
-
-
         #populating the study table
         if 'Study_Name' in info_study:
             study = {
@@ -125,6 +122,8 @@ def populate_db(list_growth, list_metabolites, list_microbial_strains,raw_data_t
                 }
             if isinstance(info_study['Study_UniqueID'][0], float) :
                 study['studyUniqueID'] = generate_unique_id()
+
+            return study
 
             study_filtered = {k: v for k, v in study.items() if v is not None}
             if len(study_filtered)>0:
