@@ -58,14 +58,14 @@ def populate_db(list_growth, list_metabolites, list_microbial_strains,raw_data_t
     Returns:
         - study_id: study id of the uploaded study if susccessfull, if not it will be None
         - errors: List of all the errors resulting from the get_techniques_metabolites function
-        - erros_logic: List of all logial errors checked while populating the data into the database
+        - errors_logic: List of all logial errors checked while populating the data into the database
         - study['studyUniqueID']: Study Unique ID only if all was susscessful
         - study['projectUniqueID']: Project Unique ID only if all was susscessful
     """
 
     # checks that all the options selected by the user in the interface match the uploaded raw data template
     errors = get_techniques_metabolites(list_growth, list_metabolites,list_microbial_strains, raw_data_template)
-    erros_logic = []
+    errors_logic = []
 
     study_id = None
     project_id = None
@@ -241,7 +241,7 @@ def populate_db(list_growth, list_metabolites, list_microbial_strains,raw_data_t
                     strain_id = search_id(j,mem_id_list)
                     if strain_id == None:
                         error_ms  = 'Member_ID in COMMUNITIES sheet is not defined in COMMUNITY_MEMBERS. Please check!'
-                        erros_logic.append(error_ms)
+                        errors_logic.append(error_ms)
                         sys.exit()
                     comunities = {
                         'studyId': study_id,
@@ -258,6 +258,9 @@ def populate_db(list_growth, list_metabolites, list_microbial_strains,raw_data_t
                         exit()
         print("im hereeeeeeeeee")
 
+
+
+        return errors_logic
 
         #populating perturbations table
         if 'Perturbation_ID' in info_pertu:
