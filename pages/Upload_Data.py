@@ -920,8 +920,12 @@ def tab_step5(xls_1, xls_2, measure_tech, metabo_col, all_taxa, conn, project_na
                                                                                                         project_name,
                                                                                                         project_description
                                                                                                         )
+
+                st.info(errors)
+                st.info(erros_logic)
+
                 if not (errors and erros_logic) and (study_id and studyUniqueID and projectUniqueID and project_id):
-                    print("esty aquiiiiiiiiiiii")
+                    st.info("esty aquiiiiiiiiiiii")
                     st.success(f"""Thank you! your study has been successfully uploaded into our database,
                                **Unique Study ID**: {studyUniqueID} and **Study ID**: {study_id},
                                **Unique Project Id**: {projectUniqueID} and **Project ID**: {project_id}""")
