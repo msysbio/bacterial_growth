@@ -124,6 +124,7 @@ def populate_db(list_growth, list_metabolites, list_microbial_strains,raw_data_t
                 study['studyUniqueID'] = generate_unique_id()
 
             study_filtered = {k: v for k, v in study.items() if v is not None}
+            return study_filtered
             if len(study_filtered)>0:
                     study_id = db.addRecord('Study', study_filtered)
                     print('\nSTUDY ID: ', study_id)
