@@ -21,7 +21,7 @@ def execute(phrase):
             user="freedb_testDev",
             password="gktRWCV7NEf8*Kv",
             host="sql.freedb.tech",
-            port="3306"
+            port="3306",
             database="BacterialGrowth")
 
         # cursor = cnx.cursor()
@@ -40,6 +40,14 @@ def execute(phrase):
         # cnx.close()
         # return res
         return cnx
+
+        #     # st.connection()
+        # cnx =  st.connection("BacterialGrowth", type="sql")
+        # with cnx.session as session:
+        #     session.execute(phrase)
+        #     session.commit()
+
+
     except mysql.connector.Error as err:
         print("\nSomething went wrong: {}".format(err),'\n')
         return err
