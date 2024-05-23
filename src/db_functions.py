@@ -68,7 +68,6 @@ def addRecord(table, args):
     phrase = "SHOW KEYS FROM "+table+" WHERE Key_name = 'PRIMARY'"
     res = execute(phrase)
     pk = res[0][4]
-    return pk
 
     # Get the value of the primary key (this will return the value both if it was inserted or ignored)
     where_clause = getWhereClause(args)
