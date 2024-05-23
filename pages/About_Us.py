@@ -16,7 +16,7 @@ logger = getLogger()
 logger.addHandler(logging.StreamHandler())
 logger.setLevel(logging.INFO)
 logger.info("best")
-print("---------------------------")
+st.info("---------------------------")
 
 logger.info("hello friend")
 

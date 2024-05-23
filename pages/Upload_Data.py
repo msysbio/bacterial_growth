@@ -40,7 +40,7 @@ logging.basicConfig(
 
 # Create a logger object
 logger = logging.getLogger(__name__)
-
+print("check print")
 
 
 
