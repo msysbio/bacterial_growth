@@ -70,9 +70,9 @@ def parse_ex_to_yaml(LOCAL_DIRECTORY_YAML, template_excel):
 
     all_yamls = [template_filename_yaml_STUDY, template_filename_yaml_EXPERIMENTS, template_filename_yaml_COMPARTMENTS,
                  template_filename_yaml_COMMUNITY_MEMBERS, template_filename_yaml_COMMUNITIES, template_filename_yaml_PERTURBATIONS]
-    for yaml in all_yamls:
-        if os.path.isfile(yaml):
-            os.remove(yaml)
+    for yamlfile in all_yamls:
+        if os.path.isfile(yamlfile):
+            os.remove(yamlfile)
     print("\n\n\n\n\n  tmp yamls")
     print(os.listdir(LOCAL_DIRECTORY_YAML))
 
