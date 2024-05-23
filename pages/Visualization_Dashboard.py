@@ -120,9 +120,10 @@ def content(df_growth, df_reads, studyID_to_visualize, conn):
             else:
                 st.warning("Study does not contain growth data")
 
-
         experiment_with_bioreps = filter_dict_states(st.session_state)
         return experiment_with_bioreps
+
+
 
 def tabs_plots(experiment_with_bioreps):
 
@@ -235,7 +236,9 @@ if __name__ == "__main__":
     import streamlit as st
     df_growth, df_reads, studyID_to_visualize, conn = dashboard()
     col1, col2 = st.columns([0.35, 0.65])
-    df_growth,experiment_with_bioreps=content(df_growth, df_reads, studyID_to_visualize, conn)
-    print(experiment_with_bioreps)
-    tabs_plots(df_growth,experiment_with_bioreps)
+    try:
+        df_growth,experiment_with_bioreps=content(df_growth, df_reads, studyID_to_visualize, conn)
+        tabs_plots(df_growth,experiment_with_bioreps)
+    except:
+        st.write("nothing yet.")
     #content(df_growth, df_reads, studyID_to_visualize, conn)
