@@ -23,7 +23,7 @@ import db_functions as db
 from parse_raw_data import save_data_to_csv
 
 
-
+st.info(USER, PASSWORD, HOST, DATABASE, PORT )
 
 
 # Page config
