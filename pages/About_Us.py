@@ -50,5 +50,3 @@ iframe_code = '''
 with con2:
     st.markdown(iframe_code, unsafe_allow_html=True)
 
-
-st.info("---------------------------")

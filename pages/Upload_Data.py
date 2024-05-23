@@ -25,31 +25,6 @@ from parse_raw_data import save_data_to_csv
 
 
 
-import logging
-
-# Configure the logging
-logging.basicConfig(
-    level=logging.DEBUG,  # Set the logging level to DEBUG
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',  # Log message format
-    datefmt='%Y-%m-%d %H:%M:%S',  # Date format
-    handlers=[
-        logging.FileHandler("app.log"),  # Log messages to a file named app.log
-        logging.StreamHandler()  # Also log messages to the console
-    ]
-)
-
-# Create a logger object
-logger = logging.getLogger(__name__)
-print("check print")
-
-
-
-
-
-
-
-
-
 
 # Page config
 st.set_page_config(page_title="Upload Data", page_icon="📤", layout='wide')
@@ -874,9 +849,9 @@ def tab_step5(xls_1, xls_2, measure_tech, metabo_col, all_taxa, conn, project_na
         confirmation = st.checkbox('I am sure that the data uploaded is correct and I want to submit the data.')
 
 
-        logger.info("confirmation", confirmation )
-        logger.info("visibility:", visibility_option)
-        logger.info("mail:", email)
+        st.info("confirmation", confirmation )
+        st.info("visibility:", visibility_option)
+        st.info("mail:", email)
 
         st.session_state.hinderSubmit = (confirmation == False or visibility_option == None or email == "")
 
@@ -922,7 +897,7 @@ def tab_step5(xls_1, xls_2, measure_tech, metabo_col, all_taxa, conn, project_na
             errors.append(test_perturbation_yaml(data_pertu))
 
             # Check that there is no error, otherwise, show error and do not upload data
-            logger.info(errors)
+            st.info(errors)
             if not all(not sublist for sublist in errors):
                 for i in errors:
                     st.error(f"Data uploading unsuccessful: {i}. Please correct and try again!")
@@ -930,7 +905,7 @@ def tab_step5(xls_1, xls_2, measure_tech, metabo_col, all_taxa, conn, project_na
             # else, populate the db and give the unique ids to the user if not error
             # if errors during the population function then the function stops and the errors are printed
             else:
-                logger.info("ESTA AQUI")
+                st.info("ESTA AQUI")
                 study_id, errors, erros_logic, studyUniqueID, projectUniqueID, project_id = populate_db(measure_tech,
                                                                                                         metabo_col,
                                                                                                         all_taxa ,
