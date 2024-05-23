@@ -907,6 +907,15 @@ def tab_step5(xls_1, xls_2, measure_tech, metabo_col, all_taxa, conn, project_na
             # if errors during the population function then the function stops and the errors are printed
             else:
                 st.info("ESTA AQUI")
+                st.info(
+
+                    st.secrets.connections.BacterialGrowth.username,
+                    st.secrets.connections.BacterialGrowth.password,
+                    st.secrets.connections.BacterialGrowth.host,
+                    st.secrets.connections.BacterialGrowth.port,
+                    st.secrets.connections.BacterialGrowth.database
+
+                )
                 # study_id, errors, erros_logic, studyUniqueID, projectUniqueID, project_id  = populate_db(measure_tech,
                 cehck = populate_db(measure_tech,
                                                                                                         metabo_col,
