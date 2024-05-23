@@ -849,9 +849,9 @@ def tab_step5(xls_1, xls_2, measure_tech, metabo_col, all_taxa, conn, project_na
         confirmation = st.checkbox('I am sure that the data uploaded is correct and I want to submit the data.')
 
 
-        st.info("confirmation", confirmation )
-        st.info("visibility:", visibility_option)
-        st.info("mail:", email)
+        # st.info("confirmation", confirmation )
+        # st.info("visibility:", visibility_option)
+        # st.info("mail:", email)
 
         st.session_state.hinderSubmit = (confirmation == False or visibility_option == None or email == "")
 
