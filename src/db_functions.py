@@ -26,28 +26,21 @@ def execute(phrase):
             auth_plugin='mysql_native_password'
             )
 
-        # cursor = cnx.cursor()
-        # cursor.execute(phrase)
-        # res = []
-        # for row in cursor:
-        #     res.append(row)
-        # # Fetch and handle warnings
-        # warnings = cursor.fetchwarnings()
-        # if warnings:
-        #     for warning in warnings:
-        #         print("\t\t ** Warning - ", warning)
+        cursor = cnx.cursor()
+        cursor.execute(phrase)
+        res = []
+        for row in cursor:
+            res.append(row)
+        # Fetch and handle warnings
+        warnings = cursor.fetchwarnings()
+        if warnings:
+            for warning in warnings:
+                print("\t\t ** Warning - ", warning)
 
-        # cursor.close()
-        # cnx.commit()
-        # cnx.close()
-        # return res
-        return cnx
-
-        #     # st.connection()
-        # cnx =  st.connection("BacterialGrowth", type="sql")
-        # with cnx.session as session:
-        #     session.execute(phrase)
-        #     session.commit()
+        cursor.close()
+        cnx.commit()
+        cnx.close()
+        return res
 
 
     except mysql.connector.Error as err:
