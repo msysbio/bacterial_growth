@@ -39,6 +39,7 @@ file_types = ['abundanceFile', 'metabolitesFile', 'phFile']
 
 # Abundance options
 abundance_options = ['od', 'counts', 'qpcr', 'rnaseq']
+
 # Regex options
 abundance_regex = re.compile(r'.*time.* | .*liquid.* | .*active.* | .*OD.*', flags=re.I | re.X)
 # abundance_regex = re.compile(r'time | liquid | active | OD', flags=re.I | re.X)
@@ -49,3 +50,23 @@ qpcr_regex = re.compile(r'.*time.* | .*qpcr.*', flags=re.I | re.X)
 rnaseq_regex = re.compile(r'.*time.* | .*rna.*', flags=re.I | re.X)
 biol_rep_metadata_fields = ['plateId', 'platePosition', 'initialPh', 'initialTemperature', 'inoculumConcentration', 'inoculumVolume', 'carbonSource', 'antibiotic']
 pert_metadata_fields = ['property', 'newValue', 'startTime', 'endTime']
+
+
+class GrowthTechniques:
+    def __init__(self):
+        self.od = "Optical Density"
+        self.plates = "Plate Counts"
+        self.plates_ps = "Plate Counts (per species)"
+        self.fc = "Flow Cytometry"
+        self.fc_ps = "Flow Cytometry (per species)"
+        self.rna = "16S rRNA-seq"
+
+
+class Vessels:
+    def __init__(self):
+        # 'Bottles', 'Agar-plates', 'Well-plates', 'mini-bioreactors'
+        self.bottles = "Bottles"
+        self.agar_plates = "Agar plates"
+        self.well_plates = "Well plates"
+        self.mini_react = "mini bioreactors"
+

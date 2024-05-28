@@ -6,17 +6,18 @@ from openpyxl.utils import get_column_letter
 from openpyxl.styles import Alignment
 from tempfile import NamedTemporaryFile
 from openpyxl.styles import PatternFill
+from constants import *
 
-
-def generate_positions(type_vessel,number_vessels,number_columns,number_rows,number_timepoints):
+def generate_positions(type_vessel, number_vessels, number_columns, number_rows, number_timepoints):
     positions = []
-    if type_vessel == "Bottles" or type_vessel == "Agar-plates":
+    vessels = Vessels()
+    if type_vessel == vessels.bottles or type_vessel == vessels.agar_plates:
         if number_vessels and number_timepoints:
             for vessel_num in range(1, int(number_vessels)+ 1):
                 for _ in range(int(number_timepoints)):
                     positions.append(f"{type_vessel}{vessel_num}")
 
-    if type_vessel == "Well-plates" or type_vessel == "mini-bioreactors":
+    if type_vessel == vessels.well_plates or type_vessel == vessels.mini_react:
         if number_columns and number_rows and number_timepoints:
             for row in range(1, int(number_rows) + 1):
                 for col in range(1, int(number_columns) + 1):
@@ -33,7 +34,7 @@ def create_rawdata_excel_fun(
         number_columns,
         number_rows,
         number_timepoints,
-        keywords
+        taxa
     ):
     # Create a new workbook
     wb = Workbook()
@@ -63,7 +64,7 @@ def create_rawdata_excel_fun(
     wb.create_sheet(title="Growth_Data_and_Metabolites")
     ws = wb["Growth_Data_and_Metabolites"]
 
-
+    # Populate raw data template based on user's input
     positions = generate_positions(type_vessel,number_vessels,number_columns,number_rows,number_timepoints)
 
     headers1_constant = {
@@ -93,13 +94,18 @@ def create_rawdata_excel_fun(
 
     header1_color_white = ['pH','OD_std', 'Plate_counts_std','Biosample_link']
 
-
-    if 'Optical Density (OD)' in measure_options:
+    growth_techniques = GrowthTechniques()
+    if growth_techniques.od in measure_options:
         headers1_constant.update(header1_OD)
 
-    if 'Plate-Counts' in measure_options:
+    if growth_techniques.plates in measure_options:
         headers1_constant.update(header1_plate_counts)
 
+    if growth_techniques.fc in measure_options:
+        header1_FC.update(header1_FC)
+
+
+    # Add metabolites measured as column names
     for i in meta_options:
         header1_metabolites = {
             f'{i}' : 'Concentration values per time-point, use a period (.) as the decimal separator',
@@ -136,16 +142,16 @@ def create_rawdata_excel_fun(
         }
 
 
-    if '16S rRNA-seq' in measure_options:
-        for i in keywords:
+    if growth_techniques.rna in measure_options:
+        for i in taxa:
             header2_species = {
                 f'{i}_reads' : f'Abundances values per time-point for species {i}, use a period (.) as the decimal separator',
                 f'{i}_reads_std' : 'Standard deviation if more than 1 technical replicate, use a period (.) as the decimal separator'
             }
             headers2_constant.update(header2_species)
 
-    if 'Flow Cytometry (FC)' in measure_options:
-        for i in keywords:
+    if growth_techniques.fc_ps in measure_options:
+        for i in taxa:
             header2_species_fc = {
                 f'{i}_counts' : f'FC counts values per time-point for species {i}, use a period (.) as the decimal separator',
                 f'{i}_counts_std' : 'Standard deviation if more than 1 technical replicate, use a period (.) as the decimal separator'
@@ -153,9 +159,20 @@ def create_rawdata_excel_fun(
             }
             headers2_constant.update(header2_species_fc)
 
-    if '16S rRNA-seq' or 'Flow Cytometry (FC)' in measure_options:
-        wb.create_sheet(title="Sequencing_and_FC_Data")
-        ws2 = wb["Sequencing_and_FC_Data"]
+    if growth_techniques.plates_ps in measure_options:
+        for i in taxa:
+            header2_species_pc = {
+                f'{i}_Plate_counts' : f'FC counts values per time-point for species {i}, use a period (.) as the decimal separator',
+                f'{i}_Plate_counts_std' : 'Standard deviation if more than 1 technical replicate, use a period (.) as the decimal separator'
+
+            }
+            headers2_constant.update(header2_species_pc)
+
+
+
+    if growth_techniques.rna or growth_techniques.fc_ps or growth_techniques.plates_ps in measure_options:
+        wb.create_sheet(title="growth_per_species")
+        ws2 = wb["growth_per_species"]
 
         for col_idx, (header, description) in enumerate(headers2_constant.items(), start=1):
             cell = ws2.cell(row=1, column=col_idx, value=header)

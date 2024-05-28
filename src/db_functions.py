@@ -17,12 +17,22 @@ def execute(phrase):
     :return: list of str received from the database
     """
     try:
-        cnx = mysql.connector.connect(user=USER, password=PASSWORD, host='localhost', port=3306,database=DATABASE)
+        cnx = mysql.connector.connect(
+            user="freedb_testDev",
+            password="gktRWCV7NEf8*Kv",
+            host="sql.freedb.tech",
+            port="3306",
+            database="freedb_BacterialGrowth",
+            auth_plugin='mysql_native_password'
+            )
+
         cursor = cnx.cursor()
         cursor.execute(phrase)
+        # return cursor
         res = []
         for row in cursor:
             res.append(row)
+        # return res
         # Fetch and handle warnings
         warnings = cursor.fetchwarnings()
         if warnings:
@@ -33,9 +43,11 @@ def execute(phrase):
         cnx.commit()
         cnx.close()
         return res
+
+
     except mysql.connector.Error as err:
         print("\nSomething went wrong: {}".format(err),'\n')
-        exit()
+        return err
 
 
 
@@ -50,23 +62,17 @@ def addRecord(table, args):
     # Insert into table
     fields, values = getInsertFieldsValues(args)
     phrase = "INSERT IGNORE INTO " +table+" "+fields+" VALUES "+values
-    print(phrase)
     res = execute(phrase)
-    print(res)
 
     # Get the name of the primary key field
     phrase = "SHOW KEYS FROM "+table+" WHERE Key_name = 'PRIMARY'"
     res = execute(phrase)
-    print(res)
     pk = res[0][4]
-    print(pk)
 
     # Get the value of the primary key (this will return the value both if it was inserted or ignored)
     where_clause = getWhereClause(args)
-    print(where_clause)
     phrase = "SELECT "+pk+" FROM "+table+" "+where_clause
     res = execute(phrase)
-    print(res)
     if not res:
         last_id = 'WARNING'
     else:

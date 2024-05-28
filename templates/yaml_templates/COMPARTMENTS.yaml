@@ -1,48 +1,32 @@
 CO2%:
-- 10
-- 10
+- 80
 Carbon_Source:
-- 0
-- 0
+- 1
 Compartment_ID:
-- comp1
-- comp2
+- compartment1
 Compartment_Pressure:
 - 1
-- 1
 Compartment_StirringMode:
-- linear
-- linear
+- .nan
 Compartment_StirringSpeed:
-- 160
-- 160
+- .nan
 Compartment_Volume:
-- 120
-- 120
+- 10
 H2%:
-- 20
-- 20
+- 10
 Initial_Temperature:
-- 30
-- 30
+- 37
 Initial_pH:
-- 5
-- 6
+- 6.5
 Inoculum_Concentration:
-- 1
-- 1
+- 1000000
 Inoculum_Volume:
-- 10
-- 10
+- 1
 Medium_Link:
-- www.link.com
-- www.linkmucin.com
+- .nan
 Medium_Name:
-- WC
-- mucin
+- Wilkins-Chalgren Anerobe Broth (WC)
 N2%:
-- 30
-- 30
+- 10
 O2%:
-- 0
 - 0
