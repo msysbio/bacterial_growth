@@ -9,7 +9,7 @@ src/filtered_names.json
 __pycache__/
 
 # Server files
-Data/
+#Data/
 IntermediateFiles/
 
 # ========================================================================
