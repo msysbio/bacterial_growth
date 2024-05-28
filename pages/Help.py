@@ -11,6 +11,16 @@ st.image('figs/HelpBanner.png')
 
 st.markdown("![badge](https://img.shields.io/badge/status-under%20development-orange?style=for-the-badge)")
 
+css = '''
+<style>
+.stTabs [data-baseweb="tab-list"] button [data-testid="stMarkdownContainer"] p {
+    font-size:1.6rem;
+    font-weight: bold;
+    }
+</style>
+'''
+st.markdown(css, unsafe_allow_html=True)
+
 teo_info = st.expander("**Bacterial Growth Data**")
 teo_info.markdown(
     """
