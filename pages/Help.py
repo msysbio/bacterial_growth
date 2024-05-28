@@ -48,7 +48,7 @@ they obtain energy through fermentation and use organic or inorganic compounds a
 
 For microorganisms to be able to duplicate, they have to synthesize new cell components and macromolecules. 
 Carbon, nitrogen, sulfur, and phosphorus sources are fundamental, they provide the chemical elements that are necessary for 
-building cellular structures and support metabolic pathways [11]. How microbes obtain these nutrients varies between species. 
+building cellular structures and support metabolic pathways. How microbes obtain these nutrients varies between species. 
 For example, in the case of bacteria, they can obtain carbon from organic sources (chemoheterotrophs) or carbon dioxide 
 (chemoautotrophs and photoautotrophs), nitrogen can be obtained from proteins or the atmosphere (nitrogen-fixing bacteria), 
 sulfur can be obtained from proteins, sulfates, and hydrogen sulfide and phosphorus can be obtained from inorganic phosphate salts 
