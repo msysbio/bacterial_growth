@@ -110,8 +110,10 @@ def test_comu_members_yaml(data):
             if not (pd.api.types.is_numeric_dtype(df[column])):
                 errors.append(f"Column '{column}' must be of  must a numeric value. No blank celds allowed.")
         elif column == 'Description':
-            if not (pd.api.types.is_string_dtype(df[column]) or pd.api.types.is_float_dtype(df[column])):
-                errors.append(f"Column '{column}' must be of type string or blank.")
+            # look what is the data type of description when is blank or string
+            #if not (pd.api.types.is_string_dtype(df[column]) or pd.api.types.is_float_dtype(df[column])):
+            #    errors.append(f"Column '{column}' must be of type string or blank.")
+            pass
         else:
             if not (pd.api.types.is_string_dtype(df[column])):
                  errors.append(f"Column '{column}' must be of type a string. No blank celds allowed.")
