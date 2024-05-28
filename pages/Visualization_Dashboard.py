@@ -298,7 +298,7 @@ def tabs_plots(experiment_with_bioreps):
 # if __name__ == "__main__":
 
 df_growth, df_reads, studyID_to_visualize, conn = dashboard()
-st.info(df_growth)
+#st.info(df_growth)
 col1, col2 = st.columns([0.35, 0.65])
 try:
     df_growth,experiment_with_bioreps=content(df_growth, df_reads, studyID_to_visualize, conn)
