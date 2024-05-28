@@ -3,7 +3,7 @@ enableXsrfProtection=false
 
 [theme]
 primaryColor="#088395"
-backgroundColor="#f3f3f3"
+backgroundColor="#ffffff"
 secondaryBackgroundColor="#caeaea"
 textColor="#071952"
 
