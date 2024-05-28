@@ -230,7 +230,7 @@ with st.expander("**How to Upload My Data?**"):
             them containing the same culture of bacteria. **Total number of biological replicates per experiment: 3**.
             """
         )
-        st.image("figs/Example1.png",width=500)
+        st.image("figs/Example1.png")
         st.markdown(
             """
             ### 3. Identify the number of technical replicates per biological replicate:
@@ -256,7 +256,7 @@ with st.expander("**How to Upload My Data?**"):
             one measure per well the OD_std must be completed too. The same applies for all the other methods
             """
         )
-        st.image("figs/Example2.png",width=500)
+        st.image("figs/Example2.png")
         st.markdown(
             """
             #### Metabolite concentrations
@@ -272,7 +272,7 @@ with st.expander("**How to Upload My Data?**"):
             glucose and acetate for each time-point.
             """
         )
-        st.image("figs/Example3.png",width=500)
+        st.image("figs/Example3.png")
 
 
 ex_info = st.expander("**Uploading Data: Applied Examples**")
