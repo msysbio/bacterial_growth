@@ -230,7 +230,7 @@ with st.expander("**How to Upload My Data?**"):
             them containing the same culture of bacteria. **Total number of biological replicates per experiment: 3**.
             """
         )
-        st.image("figs/Example1.png",width=350)
+        st.image("figs/Example1.png",width=500)
         st.markdown(
             """
             ### 3. Identify the number of technical replicates per biological replicate:
@@ -256,7 +256,23 @@ with st.expander("**How to Upload My Data?**"):
             one measure per well the OD_std must be completed too. The same applies for all the other methods
             """
         )
-        st.image("figs/Example2.png",width=350)
+        st.image("figs/Example2.png",width=500)
+        st.markdown(
+            """
+            #### Metabolite concentrations
+
+            If in your data, you also measure the concentration of different metabolites per vessel (cuvette, well or tube), complete each column 
+            associated with each metabolite, every row will be associated with a time-point and a **biological replicate id**.
+
+            Let’s assume that for each of the previous well-plates (A1 and A2) you measured also the concentration of glucose and acetate. 
+            Transform your raw data if necessary  so it matches the Biological_Replicate_id column.  Fill the concentration values for each 
+            time-point and replicate_id (e.g. A1 and A2) in each of the metabolite columns.
+
+            Complete our template using the last toy example. For every Biological_Replicate_id we will complete the concentration values of 
+            glucose and acetate for each time-point.
+            """
+        )
+        st.image("figs/Example3.png",width=500)
 
 
 ex_info = st.expander("**Uploading Data: Applied Examples**")
