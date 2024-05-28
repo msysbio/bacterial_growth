@@ -223,7 +223,7 @@ with st.expander("**How to Upload My Data?**"):
             for each of them. **Total number of biological replicates per experiment: 1**.
             """
         )
-        st.image("figs/Example1.png",width=100)
+        st.image("figs/Example1.png",width=300)
 
 
 ex_info = st.expander("**Uploading Data: Applied Examples**")
