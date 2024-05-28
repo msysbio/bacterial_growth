@@ -263,9 +263,9 @@ def tab_step1():
             - [x] **Add a new study to a previous project:** Choose this option if you're updating a new study to an already existing project.
             - [x] **Add a new version of a study to a previous project:** Choose this option if you're updating a new study version to an already existing project.
 
-            **Unique study ID:** Please provide the unique study ID of the previous study you wish to update. This ensures continuity and helps us maintain the database up to data.
+            **Private study ID:** Please provide the unique study ID of the previous study you wish to update. This ensures continuity and helps us maintain the database up to data.
 
-            **Unique project ID:** Please provide the unique project ID of the existing project where you wish to add a new study or update a previous created study.
+            **Private project ID:** Please provide the unique project ID of the existing project where you wish to add a new study or update a previous created study.
 
             If you do not remember the unique IDs please follow the intructions in (link).
             """)
@@ -432,7 +432,7 @@ def tab_step2():
             st.markdown(
                 """
                 Using the search tap bellow, select all the microbial strains used in your study as well as any uncultured communities, click on 'add' to include the selected option.
-                Once you are sure all the different community members are defined, click on 'save'.
+                If you do not find all of the microbial strains define you own by specifying its name and parent strain species. Once you are sure all the different community members are defined, click on 'save'.
                 """
             )
             # Strains with NCBI Taxonomy Ids.
@@ -568,9 +568,6 @@ def tab_step3(keywords, list_taxa_id, all_strain_data,create_private_project_id,
 
             with colu1:
 
-                """
-                RAW DATA TEMPLATE
-                """
 
                 st.subheader("1. Download the Data Template")
                 st.markdown(
@@ -698,11 +695,11 @@ def tab_step3(keywords, list_taxa_id, all_strain_data,create_private_project_id,
                     """
                     Click in the button to download the study template Excel file. The file contains four sheets:
                     - **README:** Read first before complete the other sheet. This provides detailed instruction for each of the columns in every of the following sheets.
-                    - **STUDY:** In this sheet you will have to complete the basic information of the Study you are about to upload. A Study is always part of a Project so you will have to provide the corresponding **project unique ID**.
-                    - **EXPERIMENTS** In this sheet you will complete all the details of your study. Each row represent an **Experiment** and each column specific information about it. Fill as many rows as many different experiments you have in your study. **ORANGE COLUMNS** are present in other sheets and should be completed with the same values.
-                    - **COMPARTMENTS:** Details of the different compartments used for the experiments. If identical conditions across different experiments occur, these should be considered as a single compartment. So complete as many rows as different conditions setups you have among the experiments in your study (**EXPERIMENTS** rows).
-                    - **COMMUNITY_MEMBERS:** Information with respect to the various strains used in this study. Each row in this tab corresponds to a strain that has been part of at least one experiment.
-                    - **COMMUNITIES:** Definition of the microbial **COMMUNITIES** using the **Member_ID** auto-completed in **COMMUNITY_MEMBERS** sheet. Each row represents a different community. These **COMMUNITIES** are then used in the **EXPERIMENTS** sheet to describe the community used per experiment in each compartment.
+                    - **STUDY:** In this sheet you will have to complete the basic information of the Study you are about to upload.
+                    - **EXPERIMENTS** In this sheet you will complete all the details of each of the experiments in your study. Each row represent an **Experiment** and each column specific information about it. Fill as many rows as many different experiments you have in your study. **ORANGE COLUMNS** are present in other sheets and should be completed with the same values.
+                    - **COMPARTMENTS:** Details of the different compartments used for the experiments. If identical conditions across different experiments occur, these should be considered as a single compartment as long as they used the same microbial community. So complete as many rows as different conditions setups you have among the experiments in your study (**EXPERIMENTS** rows).
+                    - **COMMUNITY_MEMBERS:** Information with respect to the various strains used in this study. This tab will be dynamically generated. Please used the same Member_IDs in the **COMMUNITIES**.
+                    _ **COMMUNITIES:** Define all the different communities used in your study by using the Member_IDs given in the **COMMUNITY_MEMBERS** sheet.
                     - **PERTURBATIONS:** In this sheet you will fill all the information related to the different perturbations made to an experiment (**Experiment_ID**). There are two types of perturbations possible: when altering compartment conditions such as: pH, temperature etc. or when adding new microbial **COMMUNITIES** like: environmental samples or new microvial strains.
                     Complete each section carefully according to the instructions. **DO NOT** modify the file by adding or deleating columns.
                     """)
@@ -749,7 +746,7 @@ def tab_step4():
             st.markdown(
             """
             Upload below the Excel Data file once completed with all the data measured in your
-            study according to the instructions provided in the **Step 2**. Remember that no modifications are allowed after
+            study according to the instructions provided in the **Step 3**. Remember that no modifications are allowed after
             you submit the data. Please double check below that all the celds are correct.
             """)
             uploaded_file = st.file_uploader("Upload data file .xlsx here:", help='Only one .xlsx file allowed')
@@ -775,8 +772,8 @@ def tab_step4():
             st.subheader("2. Upload Study Template")
             st.markdown(
             """
-            Upload below the Excel Data file once completed with all the data measured in your
-            study according to the instructions provided in the **Step 2**. Remember that no modifications are allowed after
+            Upload below the Excel Study file once completed with all the data measured in your
+            study according to the instructions provided in the **Step 3**. Remember that no modifications are allowed after
             you submit the data. Please double check below that all the celds are correct.
             """)
 
