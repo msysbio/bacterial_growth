@@ -43,7 +43,7 @@ st.markdown(
 
     All the data at µGrowthDB is publically available for everyone. To further analyze and compare different datasets we offer the feature of downloading several datasets at once.
     """)
-st.page_link("pages/Upload_Data.py", label=":blue[**Upload your Microbial Growth Project and Studies]**", help="Click on to start a sharing")
+st.page_link("pages/Upload_Data.py", label=":blue[**Upload your Microbial Growth Project and Studies**]", help="Click on to start a sharing")
 st.markdown(
     """
     At µGrowthDB, we recognize the invaluable contributions of researchers in advancing our understanding of microbial dynamics. Sharing growth data publicly
