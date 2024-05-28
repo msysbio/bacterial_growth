@@ -218,12 +218,45 @@ with st.expander("**How to Upload My Data?**"):
 
             #### Cases: 
 
-            [x] You're studying how bacteria grow in different nutrient environments, you set up 3 separate flasks, each containing the same 
+            - [x] You're studying how bacteria grow in different nutrient environments, you set up 3 separate flasks, each containing the same 
             culture of bacteria  in a different nutrient solution. Each flask represents a different experiment with only one biological replicate 
             for each of them. **Total number of biological replicates per experiment: 1**.
+
+            - [x] You're studying how 3 bacterial strains grow in a nutrient environment, you set up 3 separate flasks, each containing a culture 
+            of one of the strains in the same nutrient solution. Each flask represents a separate experiment. **Total number of biological replicates
+              per experiment: 1**.
+
+            - [x] You're studying how bacteria grow in different tree different nutrient environments, you set up 3 separate flasks for each of 
+            them containing the same culture of bacteria. **Total number of biological replicates per experiment: 3**.
             """
         )
-        st.image("figs/Example1.png",width=300)
+        st.image("figs/Example1.png",width=350)
+        st.markdown(
+            """
+            ### 3. Identify the number of technical replicates per biological replicate:
+
+            #### What is a technical replicate?
+            
+            Technical replicates are repeated measurements of the same sample that demonstrate the variability of the protocol. 
+            Technical replicates are important because they address the reproducibility of the assay or technique. In case of having technical 
+            replicates please report the average and standard deviation per time-point measured in the corresponding data template.
+
+            ### 4. Let's complete the data template: Growth_Data_Metabolites
+
+            In this sheet you will have to complete only the measurements related to the following techniques: **OD, Plate-counts, Flow Cytometry 
+            per species, metabolite concentrations**
+
+            Weather you used a micro-plate, a cuvette, a bottle or a mini bioreactor, each individual vessel (cuvette, well or bottle) will 
+            represent a unique **Biological_Replicate_id**.
+
+            Let’s assume you used a micro-plate to measure OD in only 2 wells (positions A1 and A2). Your raw data could look like in the image below.
+            Let’s complete our template using this toy example. In this case we will have 2 biological replicate ids (A1 and A2) you can choose any alphanumerical 
+            option as long as is unique and informative to you. Then each row will represent a time-point measurement per replicate id. In this 
+            case only one measurement per well was taken, this indicates that the number of technical replicates is 1. In case you took more than 
+            one measure per well the OD_std must be completed too. The same applies for all the other methods
+            """
+        )
+        st.image("figs/Example2.png",width=350)
 
 
 ex_info = st.expander("**Uploading Data: Applied Examples**")
