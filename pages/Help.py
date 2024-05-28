@@ -166,7 +166,7 @@ data_info.markdown(
     """
 ## µGrowthDB 
 
-is a relational database written in MySQL. It contains 12 tables: project, study, experiment, biological replicate, biological 
+µGrowthDB is a relational database written in MySQL. It contains 12 tables: project, study, experiment, biological replicate, biological 
 replicate metadata, metabolite, metabolite per biological replicate, compartment, community, community member, taxa and perturbation. The 
 definition of the tables that are most important to understand how the microbial growth database is structured are provided below.
 
@@ -181,6 +181,7 @@ definition of the tables that are most important to understand how the microbial
 | **Community Member** | A microbial strain present in at least one experiment.                                                                                                                                                                                                                                                                                                                |
 | **Perturbation**   | Refers to a deliberate disturbance or alteration applied to a specific experiment. It may refer to a perturbation in the environmental conditions described in the corresponding compartment and/or changes to the community (e.g., introducing new strains).                                                                                                        |
 
+
 Given that µGrowthDB is a relational database, each table contains foreign keys to establish the different relationships between the tables. 
 For example, a project within the database contains a study. This relationship is created thanks to the projectId, which is a foreign key that 
 uniquely identifies a project (Project table row) to a study (Study table row).
@@ -188,11 +189,49 @@ uniquely identifies a project (Project table row) to a study (Study table row).
     """
 )
 
-upload_info = st.expander("**How to Upload My Data?**")
-upload_info.write('hello')
+with st.expander("**How to Upload My Data?**"):
+    st.markdown(
+        """
+    To Upload your data in µGrowthDB please follow the five steps provided in the **Upload data** page. Once you download the corresponding Excel 
+    templates for your study, you must complete these following the instructions provided within the **README** sheet. A detailed explanation step 
+    by step explanation on how to complete these templates is provided below.
+        """
+    )
+    tab1, tab2, tab3 = st.tabs(["Step 1", "Step 2", "Step 3"])
+    with tab1:
+        st.markdown(
+            """
+            ## Complete the data template:
+            ### 1. Identify the number of experiment study
+
+            #### What is an experiment?
+
+            An experiment represents a unique set of experimental conditions or treatments applied to a set/group of biological replicates. Control cases should be considered as distinct experiments.
+
+            ### 2. Identify the number of biological replicates in your experiment 
+
+            #### What is a biological replicate?
+
+            A biological replicate is a distinct sample/measurement within an experiment. Data regarding growth and/or metabolite levels should be 
+            provided for the available time points and for every biological replicate. Note: positive or negative controls are considered also as a 
+            separate experiment.
+
+            #### Cases: 
+
+            [x] You're studying how bacteria grow in different nutrient environments, you set up 3 separate flasks, each containing the same 
+            culture of bacteria  in a different nutrient solution. Each flask represents a different experiment with only one biological replicate 
+            for each of them. **Total number of biological replicates per experiment: 1**.
+            """
+        )
+        st.image("https://drive.google.com/file/d/17No0rMGIhrl0TGACmCDOpigvrXxFelx3/view?usp=sharing")
+
 
 ex_info = st.expander("**Uploading Data: Applied Examples**")
-ex_info.write('hello')
+ex_info.markdown(
+    """
+To Upload your data in µGrowthDB please follow the five steps provided in the **Upload data** page.
+    """
+)
 
 ques_info = st.expander("**Frequently Asked Questions**")
 ques_info.write('hello')
