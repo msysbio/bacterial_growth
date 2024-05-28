@@ -81,6 +81,10 @@ def dashboard():
         path = relative_path_to_src + f"/Data/Growth/{studyID_to_visualize}"
         growth_file = path + f"/Growth_Metabolites.csv"
         reads_file = path + f"/Sequencing_Reads.csv"
+        if os.path.exists(growth_file):
+            st.info("growth path exists")
+        else:
+            st.info("growth path DO NOT exists")
 
 
         try:
