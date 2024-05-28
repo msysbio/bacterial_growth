@@ -208,7 +208,7 @@ with st.expander("**How to Upload My Data?**"):
     by step explanation on how to complete these templates is provided below.
         """
     )
-    tab1, tab2, tab3 = st.tabs(["Step 1", "Step 2", "Step 3"])
+    tab1, tab2 = st.tabs(["Excel Data Template", "Excel Study Template"])
     with tab1:
         st.markdown(
             """
@@ -292,6 +292,17 @@ with st.expander("**How to Upload My Data?**"):
             In a similar way than in the other sheet, complete each row with the corresponding **Biological_replicate_id**,  **Time** and the values of per species.
             """
             )
+        
+    with tab2:
+        st.markdown(
+            """
+            ## Complete the study template:
+
+            The study template corresponds to the metadata of the study and are directly related to the tables of the database. This Excel file 
+            contains eight sheets: **README, STUDY, EXPERIMENTS, COMPARTMENTS, COMMUNITY_MEMBERS, COMMUNITIES and PERTURBATIONS**. Be aware that each of these sheets is explained in detail in **step 3 - Upload data page**, as well as in the **README** sheet.
+            """
+        )
+
 
 
 ex_info = st.expander("**Uploading Data: Applied Examples**")
