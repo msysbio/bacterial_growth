@@ -21,6 +21,14 @@ css = '''
 '''
 st.markdown(css, unsafe_allow_html=True)
 
+st.markdown("""
+    <style>
+    .streamlit-expanderHeader {
+        font-size: 24px !important;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
 teo_info = st.expander("**Bacterial Growth Data**")
 teo_info.markdown(
     """
