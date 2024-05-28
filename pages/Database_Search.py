@@ -119,7 +119,7 @@ def db_search():
     st.markdown("![badge](https://img.shields.io/badge/status-under%20development-orange?style=for-the-badge)")
     st.markdown(
         """
-        Discover studies and datasets by selecting one or more of the optional parameters: Study Name, Organism, Metabolite, chEBI ID, and pH.
+        Discover microbial growth studies and datasets by selecting one or more of the options.
         When conducting an advanced search, you can choose multiple logical operators to refine your query and extract precise information from the database.
 
         To download the results of your search, simply select the checkboxes next to the studies you wish to download and then click on "Download Data".

@@ -50,8 +50,8 @@ st.markdown(css, unsafe_allow_html=True)
 st.markdown("![badge](https://img.shields.io/badge/status-under%20development-orange?style=for-the-badge)")
 st.markdown(
     """
-    Thank you for choosing to share your Bacterial Growth data with us. Your commitment to sharing study and experimental data is essential
-    for advancing our understanding of gut microbiome dynamics. Your contribution plays a vital role in driving research forward and enhancing
+    Thank you for choosing to share your microbial growth data with us. Your commitment to sharing experimental data is essential
+    for advancing our understanding of microbiome dynamics. Your contribution plays a vital role in driving research forward and enhancing
     our collective knowledge in this field.
 
     To successfully submit your data, please ensure that you follow the instructions provided in each of the following steps. Adhering to these
