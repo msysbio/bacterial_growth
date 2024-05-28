@@ -223,7 +223,7 @@ with st.expander("**How to Upload My Data?**"):
             for each of them. **Total number of biological replicates per experiment: 1**.
             """
         )
-        st.image("https://drive.google.com/file/d/17No0rMGIhrl0TGACmCDOpigvrXxFelx3/view?usp=sharing")
+        st.image("figs/Example1.png")
 
 
 ex_info = st.expander("**Uploading Data: Applied Examples**")
