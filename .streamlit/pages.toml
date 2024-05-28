@@ -6,24 +6,24 @@ icon = ":house:"
 [[pages]]
 path = "pages/Database_Search.py"
 name = "Search"
-icon = ":paperclip:"
+icon = ":mag:"
 
 [[pages]]
 path = "pages/Visualization_Dashboard.py"
 name = "Dashboard"
-icon = ":books:"
+icon = ":chart_with_upwards_trend:"
 
 [[pages]]
 path = "pages/Upload_Data.py"
 name = "Upload data"
-icon = "📖"
+icon = ":outbox_tray:"
 
 [[pages]]
 path = "pages/Help.py"
 name = "Help"
-icon = "🧰"
+icon = ":question:"
 
 [[pages]]
 path = "pages/About_Us.py"
 name = "About us"
-icon = "✏️"
+icon = ":lab_coat:"
