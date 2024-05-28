@@ -1,44 +1,26 @@
 Biological_Replicate_IDs:
-- A1, A2, A3,sA1
-- A4
-- MULTIPLE VALUES ALLOWED
+- biorep1, biorep2, biorep3, biorep4, biorep5, biorep6
 Biological_Replicates_Number:
-- 1.0
-- 1.0
-- .nan
+- 6
 Community_ID:
-- community1
-- community2
-- MULTIPLE VALUES ALLOWED IN ORDER, IF ONLY ONE SAME COMUNITY PER COMPARTMENT
+- Synthetic_Community
 Compartment_ID:
-- comp1,comp2
-- comp1,comp2
-- MULTIPLE VALUES ALLOWED
+- compartment1
 Control:
-- .nan
-- .nan
-- .nan
+- biorep6
 Control_Description:
-- 0.0
-- 0.0
-- .nan
+- blank
 Cultivation_Mode:
-- batch
-- batch
-- .nan
+- chemostat
 Experiment_Description:
-- this is with bacteria A and B
-- this is with bacteria B and C
-- .nan
+- 'six parallel bioreactors in chemostat mode, total cell counts were obtained via
+  flow cytometry. The community was composed of gut bacterial species: Roseburia intestinalis
+  DSM 14610 (RI), Blautia hydrogenotrophica DSM 10507 (BH), Collinsella aerofaciens
+  RCC 1377 (CA), and Bacteroides thetaiotaomicron DSM 2079 (BT) and Prevotella copri
+  DSM18205 (PC).'
 Experiment_ID:
-- sample1
-- sample2
-- .nan
+- Synthetic_Human_Gut
 Measurement_Technique:
-- OD
-- OD
-- MULTIPLE VALUES ALLOWED
+- FC, 16S-RNASeq
 Measurement_Unit:
-- OD
-- OD
-- MULTIPLE VALUES ALLOWED
+- 'Cells/mL, Cells/mL '

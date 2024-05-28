@@ -2,6 +2,17 @@ import streamlit as st
 from streamlit_extras.app_logo import add_logo
 from streamlit_extras.badges import badge
 
+
+import logging
+
+# Configure the logging
+import logging
+from logging import getLogger
+
+import streamlit as st
+
+
+
 st.set_page_config(page_title="About Us", page_icon="📤", layout='wide')
 
 add_logo("figs/logo_sidebar3.png", height=100)
@@ -38,3 +49,4 @@ iframe_code = '''
 
 with con2:
     st.markdown(iframe_code, unsafe_allow_html=True)
+

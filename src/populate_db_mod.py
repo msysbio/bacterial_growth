@@ -26,11 +26,11 @@ yaml.Dumper.ignore_aliases = lambda self, data: True
 def load_yaml(file_path):
     with open(file_path, 'r') as file:
         return yaml.safe_load(file)
-    
+
 #function that defines unique ids as strings
 def generate_unique_id():
     return str(uuid.uuid4())
-        
+
 #function that stripst columns where more than one value is allowed
 def stripping_method(celd):
     if ',' in celd:
@@ -38,6 +38,15 @@ def stripping_method(celd):
         return samples
     else:
         return [celd.strip()]
+
+
+# function that search the id given a value
+def search_id(search_value, data_list):
+    # Using a for loop to iterate over the list of tuples
+    for key, value in data_list:
+        if key == search_value:
+            return value  # Return the value if the key is found
+    return None
 
 
 def populate_db(list_growth, list_metabolites, list_microbial_strains,raw_data_template,info_file_study,info_file_experiments,info_compart_file,info_mem_file,info_comu_file,info_pert_file, conn, project_name, project_description):
@@ -58,13 +67,15 @@ def populate_db(list_growth, list_metabolites, list_microbial_strains,raw_data_t
     Returns:
         - study_id: study id of the uploaded study if susccessfull, if not it will be None
         - errors: List of all the errors resulting from the get_techniques_metabolites function
-        - erros_logic: List of all logial errors checked while populating the data into the database
+        - errors_logic: List of all logial errors checked while populating the data into the database
         - study['studyUniqueID']: Study Unique ID only if all was susscessful
         - study['projectUniqueID']: Project Unique ID only if all was susscessful
     """
+
     # checks that all the options selected by the user in the interface match the uploaded raw data template
     errors = get_techniques_metabolites(list_growth, list_metabolites,list_microbial_strains, raw_data_template)
-    erros_logic = []
+    errors_logic = []
+
     study_id = None
     project_id = None
 
@@ -76,6 +87,7 @@ def populate_db(list_growth, list_metabolites, list_microbial_strains,raw_data_t
         counts_per_replicate = get_measures_counts(raw_data_template)
         replicate_metadata = get_replicate_metadata(raw_data_template)
 
+
         #reads all the yaml file
         info_study = read_yml(info_file_study)
         info = read_yml(info_file_experiments)
@@ -83,7 +95,8 @@ def populate_db(list_growth, list_metabolites, list_microbial_strains,raw_data_t
         info_pertu = read_yml(info_pert_file)
         info_mem = read_yml(info_mem_file)
         info_comu = read_yml(info_comu_file)
-            
+
+
         #defining dictionaries per every yaml file
         study_name_list = info_study['Study_Name']
         experiment_name_list = info['Experiment_ID']
@@ -94,7 +107,7 @@ def populate_db(list_growth, list_metabolites, list_microbial_strains,raw_data_t
         num_mem = len(info_mem['Member_ID'])
         num_comu = len(info_comu['Community_ID'])
         num_rep_metadata = len(replicate_metadata['Biological_Replicate_id'])
-
+        print(num_rep_metadata)
 
 
         #populating the study table
@@ -111,15 +124,17 @@ def populate_db(list_growth, list_metabolites, list_microbial_strains,raw_data_t
                 study['studyUniqueID'] = generate_unique_id()
 
             study_filtered = {k: v for k, v in study.items() if v is not None}
-            #print(study_filtered)
+
             if len(study_filtered)>0:
                     study_id = db.addRecord('Study', study_filtered)
                     print('\nSTUDY ID: ', study_id)
+
             else:
                 print('You must introduce some study information')
                 exit()
-        
+
         if 'Project_UniqueID' in info_study:
+
             project = {
                 'projectId' : db.getProjectID(conn),
                 'projectName': project_name,
@@ -128,10 +143,10 @@ def populate_db(list_growth, list_metabolites, list_microbial_strains,raw_data_t
             }
 
             project_filtered = {k: v for k, v in project.items() if v is not None}
-            #print(study_filtered)
+
             if len(project_filtered)>0:
                     project_id = db.addRecord('Project', project_filtered)
-                    print('\nSTUDY ID: ', project_id)
+                    print('\nProject ID: ', project_id)
             else:
                 print('You must introduce some study information')
                 exit()
@@ -144,13 +159,7 @@ def populate_db(list_growth, list_metabolites, list_microbial_strains,raw_data_t
         mem_name_id_list = []
         comu_id_list =[]
 
-        # function that search the id given a value
-        def search_id(search_value, data_list):
-            # Using a for loop to iterate over the list of tuples
-            for key, value in data_list:
-                if key == search_value:
-                    return value  # Return the value if the key is found
-            return None
+
 
         # populating strains table
         if 'Member_ID' in info_mem:
@@ -193,7 +202,7 @@ def populate_db(list_growth, list_metabolites, list_microbial_strains,raw_data_t
                     'initialPh': info_compart['Initial_pH'][i],
                     'initialTemperature': info_compart['Initial_Temperature'][i],
                     'carbonSource': info_compart['Carbon_Source'][i],
-                    'mediaName': info_compart['Medium_Name'][i],
+                    'mediaNames': info_compart['Medium_Name'][i],
                     'mediaLink': info_compart['Medium_Link'][i]
                     }
                 compartments_filtered = {k: v for k, v in compartments.items() if v is not None}
@@ -232,7 +241,7 @@ def populate_db(list_growth, list_metabolites, list_microbial_strains,raw_data_t
                     strain_id = search_id(j,mem_id_list)
                     if strain_id == None:
                         error_ms  = 'Member_ID in COMMUNITIES sheet is not defined in COMMUNITY_MEMBERS. Please check!'
-                        erros_logic.append(error_ms)
+                        errors_logic.append(error_ms)
                         sys.exit()
                     comunities = {
                         'studyId': study_id,
@@ -247,6 +256,11 @@ def populate_db(list_growth, list_metabolites, list_microbial_strains,raw_data_t
                     else:
                         print('You must introduce some study information')
                         exit()
+        print("im hereeeeeeeeee")
+
+
+
+
 
         #populating perturbations table
         if 'Perturbation_ID' in info_pertu:
@@ -254,24 +268,24 @@ def populate_db(list_growth, list_metabolites, list_microbial_strains,raw_data_t
                 biological_id_spec =  search_id(info_pertu['Experiment_ID'][i],biorep_id_list)
                 if biological_id_spec == None:
                     error_ms  = f"Experiment_ID {info_pertu['Experiment_ID'][i]} in PERTURBATIONS sheet is not defined in EXPERIMENTS. Please check!"
-                    erros_logic.append(error_ms)
+                    errors_logic.append(error_ms)
                     sys.exit()
                 if not isinstance(info_pertu['OLD_Compartment_ID'][i], float)  and  (info_pertu['OLD_Compartment_ID'][i] not in info_compart['Compartment_ID']):
                     error_ms = f"OLD_Compartment_ID {info_pertu['OLD_Compartment_ID'][i]} in PERTURBATIONS sheet is not defined in COMPARTMENTS. Please check!"
-                    erros_logic.append(error_ms)
+                    errors_logic.append(error_ms)
                     sys.exit()
                 if not isinstance(info_pertu['NEW_Compartment_ID'][i], float) and (info_pertu['NEW_Compartment_ID'][i] not in info_compart['Compartment_ID']):
                     error_ms = f"NEW_Compartment_ID {info_pertu['NEW_Compartment_ID'][i]} in PERTURBATIONS sheet is not defined in COMPARTMENTS. Please check!"
-                    erros_logic.append(error_ms)
+                    errors_logic.append(error_ms)
                     sys.exit()
                 print(type(info_pertu['OLD_Community_ID'][i]))
                 if not isinstance(info_pertu['OLD_Community_ID'][i], float) and info_pertu['OLD_Community_ID'][i] not in info_comu['Community_ID']:
                     error_ms = f"OLD_Community_ID {info_pertu['OLD_Community_ID'][i]} in PERTURBATIONS sheet is not defined in COMMUNITITES. Please check!"
-                    erros_logic.append(error_ms)
+                    errors_logic.append(error_ms)
                     sys.exit()
                 if not isinstance(info_pertu['NEW_Community_ID'][i], float) and (info_pertu['NEW_Community_ID'][i] not in info_comu['Community_ID']):
                     error_ms = f"NEW_Community_ID {info_pertu['NEW_Community_ID'][i]} in PERTURBATIONS sheet is not defined in COMMUNITITES. Please check!"
-                    erros_logic.append(error_ms)
+                    errors_logic.append(error_ms)
                     sys.exit()
                 perturbations = {
                     'studyId': study_id,
@@ -299,7 +313,9 @@ def populate_db(list_growth, list_metabolites, list_microbial_strains,raw_data_t
             for i in range(num_experiment):
                 comp_biorep = stripping_method(info['Compartment_ID'][i])
                 comu_biorep = stripping_method(info['Community_ID'][i])
+                print("hellpppppppp",compartments_id_list)
                 for j,k in zip(comp_biorep, itertools.cycle(comu_biorep)):
+                    print("hellpppppppp",j)
                     comp_per_biorep={
                         'studyId': study_id,
                         'experimentUniqueId': search_id(info['Experiment_ID'][i],biorep_id_list),
@@ -309,7 +325,7 @@ def populate_db(list_growth, list_metabolites, list_microbial_strains,raw_data_t
                         'comunityUniqueId': search_id(k,comu_id_list),
                         'comunityId': k
                     }
-                    comp_per_biorep_filtered = {k: v for k, v in comp_per_biorep.items() if v is not None}
+                    comp_per_biorep_filtered = {t: v for t, v in comp_per_biorep.items() if v is not None}
                     if len(comp_per_biorep_filtered)>0:
                         db.addRecord('CompartmentsPerExperiment', comp_per_biorep_filtered)
                         print('\CompartmentsPerExperiment Populated')
@@ -342,7 +358,7 @@ def populate_db(list_growth, list_metabolites, list_microbial_strains,raw_data_t
                     if not list_measures:
                         error_ms = f"Biological_Replicate_ID: {rep_biorep[j]} was not defined in the raw data template excel. Please correct!"
                         print(error_ms)
-                        erros_logic.append(error_ms)
+                        errors_logic.append(error_ms)
                         sys.exit()
 
                     elif list_measures:
@@ -455,7 +471,7 @@ def populate_db(list_growth, list_metabolites, list_microbial_strains,raw_data_t
                     db.addRecord('BioReplicatesMetadata', biorep_metadata_filtered)
                     print('\BioReplicatesMetadata Populated')
 
+        return study_id, errors, errors_logic, study['studyUniqueID'],study['projectUniqueID'], project_id
+
     else:
-        sys.exit()
-    
-    return study_id, errors, erros_logic, study['studyUniqueID'],study['projectUniqueID'], project_id
+        return errors
