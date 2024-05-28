@@ -1,0 +1,13 @@
+Position,Biological_Replicate_id,Time,OD,glucose,glucose_std
+A1,A1,1,1,2.0,1.0
+A1,A1,1,1,2.0,1.0
+A1,A1,1,1,2.0,
+B1,A2,1,1,2.0,
+B1,A2,1,1,2.0,
+B1,A2,1,1,2.0,
+A2,A3,1,1,2.0,
+A2,A3,1,1,2.0,
+A2,A3,1,1,2.0,
+B2,A4,1,1,,
+B2,A4,1,1,,
+B2,A4,1,1,,
