@@ -164,7 +164,9 @@ about the structure and dynamics of microbial communities.
 data_info = st.expander("**Our Database**")
 data_info.markdown(
     """
-## µGrowthDB is a relational database written in MySQL. It contains 12 tables: project, study, experiment, biological replicate, biological 
+## µGrowthDB 
+
+is a relational database written in MySQL. It contains 12 tables: project, study, experiment, biological replicate, biological 
 replicate metadata, metabolite, metabolite per biological replicate, compartment, community, community member, taxa and perturbation. The 
 definition of the tables that are most important to understand how the microbial growth database is structured are provided below.
 
