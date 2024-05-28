@@ -27,43 +27,32 @@ st.write('')
 
 st.markdown("![badge](https://img.shields.io/badge/status-under%20development-orange?style=for-the-badge)")
 
-
+st.subheader("**Welcome to µGrowthDB**")
 st.markdown(
     """
-    **Welcome to µGrowthDB**
-
-    This database aims to provide comprehensive information on the growth dynamics of bacterial species found in the human gut microbiome.
-    Users can explore growth rates, bacterial communities, pH, metabolites, and other relevant factors influencing bacterial proliferation
-    within the gut environment.
-
-    Our main objective is to serve as a comprehensive resource for researchers interested in studying the growth dynamics of bacterial species within the human gut microbiome.
-    By providing access to curated data and facilitating analysis and comparison of growth characteristics, we aim to contribute to advancements in gut microbiome research
-    and our understanding of its implications for human health and disease.
+    µGrowthDB is a relational database that provides a structure to store different types of microbial growth data. 
+    Our main objective is to serve as a comprehensive resource for researchers interested in studying the growth dynamics of microbial species.
+    By providing access to growth projects and studies uploaded by other researchers.
 
 
-    **Search Bacterial Growth Data:**
+    **Search Growth Studies:**
 
-    Users can search for experimental data collected from bacterial growth studies. The search can be filtered by different experimental conditions and characteristicas like
-    study name, bacterial strains, metabolites, culture media and pH.
+    Users can search for experimental data collected from microbial growth studies. The search can be filtered by different experimental conditions and characteristicas like
+    Project name, Study name, microbial strains, metabolites, culture media and pH.
 
     **Download Different Datasets:**
 
-    All the data at µGrowthDB is available for everyone. To further analyze and compare different datasets we offer the feature of downloading several datasets at ones. Accessing to
-    the raw data is usefull to further analize and visualize the growth data.
+    All the data at µGrowthDB is publically available for everyone. To further analyze and compare different datasets we offer the feature of downloading several datasets at once.
 
-    **Upload Bacterial Growth Data:**
+    **Upload your Microbial Growth Project and Studies:**
 
-    At µGrowthDB, we recognize the invaluable contributions of researchers in advancing our understanding of gut microbiome dynamics. To share bacterial growth data publicly
-    plays a crucial role in increasing scientific progress and collaboration within the research community. We allow reasearcher to upload their experimental growth data by following a series of
-    steps that allow us to keep an adquate quality control over the data.
+    At µGrowthDB, we recognize the invaluable contributions of researchers in advancing our understanding of microbial dynamics. Sharing growth data publicly
+    plays a crucial role in increasing scientific progress and collaboration within the research community. We allow reasearcher to upload their experimental data by following five steps 
+    that allow us to keep an adquate quality control over the data.
 
-    **Visualize Bacterial Growth Curves:**
+    **Visualize  Growth Data:**
 
-    Users can visualize all the different bacterial growth experiments in the database, this means plotting accurate growth curves accross different conditions. Another key feature is the possibility
-    to compare the growth curves between different studies at once.
-
-
-
+    Users can visualize all the different microbial growth experiments with its corresponding measured techniques in the database, this means plotting accurate growth curves accross different conditions.
 
     """)
 st.write('')
