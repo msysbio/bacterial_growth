@@ -251,10 +251,11 @@ with st.expander("**How to Upload My Data?**"):
             Technical replicates are important because they address the reproducibility of the assay or technique. In case of having technical 
             replicates please report the average and standard deviation per time-point measured in the corresponding data template.
 
-            ### 4. Let's complete the data template: Growth_Data_Metabolites
+            ### 4. Let's complete the data template: 
+            
+            #### Growth_Data_Metabolites
 
-            In this sheet you will have to complete only the measurements related to the following techniques: **OD, Plate-counts, Flow Cytometry 
-            per species, metabolite concentrations**
+            In this sheet you will have to complete only the measurements related to the following techniques: **OD, Plate-counts, Flow Cytometry total cell counts, metabolite concentrations**
 
             Weather you used a micro-plate, a cuvette, a bottle or a mini bioreactor, each individual vessel (cuvette, well or bottle) will 
             represent a unique **Biological_Replicate_id**.
@@ -269,7 +270,7 @@ with st.expander("**How to Upload My Data?**"):
         st.image("figs/Example2.png")
         st.markdown(
             """
-            #### Metabolite concentrations
+            #### Growth_Data_Metabolites: Metabolite concentrations
 
             If in your data, you also measure the concentration of different metabolites per vessel (cuvette, well or tube), complete each column 
             associated with each metabolite, every row will be associated with a time-point and a **biological replicate id**.
@@ -283,6 +284,13 @@ with st.expander("**How to Upload My Data?**"):
             """
         )
         st.image("figs/Example3.png")
+        st.markdown(
+            """
+            #### Growth_per_Species:
+            If in your data, you also measure abundances of more than one bacterial species (by Flow Cytometry or 16S rRNA gene sequencing), your data template will have another sheet (Growth_per_Species). 
+            In a similar way than in the other sheet, complete each row with the corresponding **Biological_replicate_id**,  **Time** and the values of per species.
+            """
+            )
 
 
 ex_info = st.expander("**Uploading Data: Applied Examples**")
