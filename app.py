@@ -32,28 +32,30 @@ st.markdown(
     """
     µGrowthDB is a relational database that provides a structure to store different types of microbial growth data. 
     Our main objective is to serve as a comprehensive resource for researchers interested in studying the growth dynamics of microbial species.
-    By providing access to growth projects and studies uploaded by other researchers.
+    By providing access to growth projects and studies uploaded by other researchers.µ
+    """)
 
-
-    **Search Growth Studies:**
-
+st.page_link("pages/Database_Search.py", label="Search Growth Studies", help="Click on to start a search")
+st.markdown(
+    """
     Users can search for experimental data collected from microbial growth studies. The search can be filtered by different experimental conditions and characteristicas like
     Project name, Study name, microbial strains, metabolites, culture media and pH.
 
-    **Download Different Datasets:**
-
     All the data at µGrowthDB is publically available for everyone. To further analyze and compare different datasets we offer the feature of downloading several datasets at once.
-
+    """)
+st.page_link("pages/Upload_Data.py", label="Upload your Microbial Growth Project and Studies", help="Click on to start a sharing")
+st.markdown(
+    """
     **Upload your Microbial Growth Project and Studies:**
 
     At µGrowthDB, we recognize the invaluable contributions of researchers in advancing our understanding of microbial dynamics. Sharing growth data publicly
     plays a crucial role in increasing scientific progress and collaboration within the research community. We allow reasearcher to upload their experimental data by following five steps 
     that allow us to keep an adquate quality control over the data.
-
-    **Visualize  Growth Data:**
-
+    """)
+st.page_link("pages/Visualization_Dashboard.py", label="Visualize Growth Data:", help="Click on to plot data")
+st.markdown(
+    """
     Users can visualize all the different microbial growth experiments with its corresponding measured techniques in the database, this means plotting accurate growth curves accross different conditions.
-
     """)
 st.write('')
 st.write('')
