@@ -130,7 +130,34 @@ Once the incubation time finishes the number of colonies present in the agar pla
 To avoid counting CFUs, another technique used to quantify growth is to measure the cell’s density by using a spectrophotometer. 
 When a microbial culture is placed in a cuvette and a beam of light passes through it, the light beam will be scattered by the bacterial cells. 
 How the beam scatters depends directly on the cell density and at the same time the cell density is proportional to the number of cells. If in a 
-sample the number of microorganisms increases, so does the
+sample the number of microorganisms increases, so does the the cell density and this is reflected in the turbidity of the sample, which is also known
+ as optical density (OD). In this way, a spectrophotometer is used to measure the absorbance of light by the bacterial sample at a specific 
+ wavelength. Using the resulting OD values to calculate the cell concentration is only possible if a calibration curve (OD values versus known 
+ cell concentrations) is available. In practice, the reading will highly depend on the wavelength used, how the light interacts with the sample 
+ (e.g. direct, reflected, etc.), the microbial strain, and if there is any light absorption by the medium instead of the cells. Although this 
+ method provides an indirect growth measurement, it is one of the most common techniques given its simplicity and speed.
+
+ ### Flow Cytometry (FC)
+
+ By using a flow cytometer different physical and chemical properties can be accurately measured in individual cells. 
+ The sample of interest is injected into a buffered saline solution also known as sheath fluid allowing the sample to run through the 
+ flow cytometer in a laminar flow. Each of the cells in the fluid sample passes by a beam of laser light and scatters light, which is collected 
+ by photodetectors. If the cell carries fluorophores, they can be excited by the laser light and emit light that is also collected. The scattered 
+ light is measured from two different angles: Forward Scatter (FSC) which is proportional to the cell size and Side Scatter (SSC) which relates 
+ to the cell’s internal complexity
+
+ ### 16S rRNA gene sequencing
+
+ The 16S ribosomal RNA (rRNA) gene is a highly conserved region within the prokaryotic genome that contains nine hypervariable regions (V1–V9) 
+ interspersed between highly conserved ones. These variable regions within the 16S rRNA gene provide considerable sequence diversity among 
+ different microbial taxa and in this way provide phylogenetic information and allow the classification of microbial taxa. The resulting sequences 
+ represent the relative abundances of taxa in microbial communities that were present in the original sample. After preprocessing the sequence 
+ reads, these are grouped with a certain level of divergence (usually around 97% identical) and form Operational Taxonomic Units (OTUs).
+The final result usually will be a count table, from which relative abundances can be obtained. Although 16S rRNA gene sequencing does not 
+produce a direct count of the number of microbial cells in a sample it is of high relevance for the study of microbial communities. The 
+quantification of the relative abundances of different taxa at once allows the analysis of the distribution of microbes and provides information 
+about the structure and dynamics of microbial communities.
+
 
     """)
 
