@@ -1,6 +1,9 @@
 import os
 import sys
 import streamlit as st
+from io import BytesIO
+from zipfile import ZipFile
+import pandas as pd
 from streamlit_extras.app_logo import add_logo
 import streamlit.components.v1 as components
 
@@ -104,6 +107,25 @@ def display_row(index):
                             on_click=lambda: toggle_container(index)):
                     st.session_state[f'delete_query_visible_{index}'] = False
     return advance_query
+
+def createzip(study_ids_list):
+    memory_file = BytesIO()
+    
+    with ZipFile(memory_file, 'w') as zf:
+        for study_id in study_ids_list:
+            path = relative_path_to_src + f"/Data/Growth/{study_id}"
+            growth_file = path + f"/Growth_Metabolites.csv"
+            reads_file = path + f"/Sequencing_Reads.csv"
+            try:
+                df_growth = pd.read_csv(growth_file)
+
+            except FileNotFoundError:
+                df_growth = pd.DataFrame()
+
+            try:
+                df_reads = pd.read_csv(reads_file)
+            except FileNotFoundError:
+                df_reads = pd.DataFrame()
 
 
 def db_search():
@@ -217,8 +239,9 @@ def db_search():
                 for i in range(len(df_studies)):
 
                     c1 , c2 = st.columns([0.05, 0.95])
+                    study_id = df_studies['studyId'][i]
                     with c1:
-                        down_check = st.checkbox(f"{i+1}",key=f'checkbox{i}')
+                        down_check = st.checkbox(f"{i+1}",key=f'checkbox{study_id}')
 
                     with c2:
                         study_id = df_studies['studyId'][i]
@@ -295,6 +318,8 @@ def db_search():
                 download = st.form_submit_button("Dowload Data", type = 'primary')
                 if download:
                     st.write('bla')
+                    selected_study_ids = [study_id for study_id in df_studies['studyId'] if st.session_state.get(f'checkbox{study_id}', False)]
+                    st.info(selected_study_ids)
 
 
             # Out of the form
