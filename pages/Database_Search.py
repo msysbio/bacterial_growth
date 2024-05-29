@@ -130,9 +130,9 @@ def createzip(study_ids_list):
             except FileNotFoundError:
                 df_reads = pd.DataFrame()
             if not df_growth.empty:
-                csv_zip.writestr(f"{study_id}_Growth_Metabolites.csv", df_growth.to_csv())
+                csv_zip.writestr("Growth_Metabolites.csv", df_growth.to_csv())
             if not df_reads.empty:
-                csv_zip.writestr(f"{study_id}_Sequencing_Reads.csv", df_reads.to_csv())
+                csv_zip.writestr("Sequencing_Reads.csv", df_reads.to_csv())
 
     buf.seek(0)
     st.download_button(
