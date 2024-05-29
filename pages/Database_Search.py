@@ -33,6 +33,8 @@ max_value_ph = 14.0
 min_value_ph_add = 0.0
 max_value_ph_add = 14.0
 
+def gosearch():
+    st.session_state.gosearch = True
 
 def increase_rows():
     index = len(st.session_state['rows'])
@@ -200,7 +202,8 @@ def db_search():
         '**Search Data**',
         key='search_button',
         disabled=st.session_state.preventSearching,
-        type='primary'
+        type='primary',
+        on_click=gosearch
     )
 
 
@@ -211,7 +214,7 @@ def db_search():
         st.session_state.form = False
 
     # if search_button or st.session_state.form:
-    if search_button or st.session_state.form:
+    if search_button or st.session_state.form or 'gosearch' in st.session_state:
 
         # Once search is clicked a table pops up
         # If a growth_df is clicked then jump into the dashboard page using that as input
