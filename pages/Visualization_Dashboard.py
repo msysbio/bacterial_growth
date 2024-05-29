@@ -94,7 +94,7 @@ def dashboard():
             subset_columns = df_growth.columns.drop('Position')
             # Drop rows where all values are NaN
             df_growth = df_growth.dropna(subset=subset_columns, how='all')
-            st.info(df_growth)
+            #st.info(df_growth)
             st.session_state['df_growth'] = 0
         except FileNotFoundError:
             df_growth = pd.DataFrame()
@@ -131,6 +131,7 @@ def content(df_growth, df_reads, studyID_to_visualize, conn):
                 st.warning("Study does not contain growth data")
 
         experiment_with_bioreps = filter_dict_states(st.session_state)
+        st.info(experiment_with_bioreps)
         return experiment_with_bioreps
 
 
