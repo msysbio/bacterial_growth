@@ -207,7 +207,7 @@ def tabs_plots(experiment_with_bioreps):
                     st.plotly_chart(fig, use_container_width=True)
 
             for exp, reads_df in result_reads_df_dict.items():
-                counts_col = [col for col in reads_df.columns if not col.endswith('_counts')]
+                counts_col = [col for col in reads_df.columns if not col.endswith('_reads') and not col.endswith('_std') and col not in ["Biological_Replicate_id", "Time","Position"]]
                 if counts_col:
                     with st.expander(f"**FC counts per Species: {exp}**"):
                         st.dataframe(reads_df)
