@@ -211,8 +211,7 @@ def display_strain_row(index):
 
                         info.append(
                             f'For more information about **{other_taxonomy}** go to the \
-                                NCBI Taxonomy ID:[{taxa_id}](https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id={taxa_id})',
-                            icon="❕"
+                                NCBI Taxonomy ID:[{taxa_id}](https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id={taxa_id})'
                         )
             if warning:
                 st.warning(warning)
