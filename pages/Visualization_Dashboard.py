@@ -307,6 +307,7 @@ df_growth, df_reads, studyID_to_visualize, conn = dashboard()
 #st.info(df_growth)
 col1, col2 = st.columns([0.35, 0.65])
 df_growth,experiment_with_bioreps=content(df_growth, df_reads, studyID_to_visualize, conn)
+st.info(experiment_with_bioreps)
 tabs_plots(df_growth,experiment_with_bioreps)
 #except:
 #    st.write("nothing yet.")
