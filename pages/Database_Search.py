@@ -321,8 +321,8 @@ def db_search():
                 download = st.form_submit_button("Dowload Data", type = 'primary')
                 if download:
                     st.write('bla')
-                    #selected_study_ids = [study_id for study_id in df_studies['studyId'] if st.session_state.get(f'checkbox{study_id}', False)]
-                    #st.info(selected_study_ids)
+                    selected_study_ids = [study_id for study_id in df_studies['studyId'] if st.session_state.get(f'checkbox{study_id}', False)]
+                    st.info(selected_study_ids)
 
 
             # Out of the form
