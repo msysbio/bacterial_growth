@@ -115,8 +115,6 @@ def createzip(study_ids_list):
     buf = BytesIO()
 
     with zipfile.ZipFile(buf, "x") as csv_zip:
-        csv_zip.writestr("data1.csv", pd.DataFrame(data1).to_csv())
-        csv_zip.writestr("data2.csv", pd.DataFrame(data2).to_csv())
         for study_id in study_ids_list:
             folder_path = relative_path_to_src + f"/Data/Growth/{study_id}"
             growth_file = folder_path + f"/Growth_Metabolites.csv"
