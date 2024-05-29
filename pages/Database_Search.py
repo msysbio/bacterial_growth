@@ -271,7 +271,8 @@ def db_search():
 
                         with st.expander("**Perturbations**"):
                             df_perturbation = getPerturbations(study_id, conn)
-                            st.dataframe(df_perturbation,hide_index=True,)
+                            if not df_perturbation.empty:
+                                st.dataframe(df_perturbation,hide_index=True,)
 
 
                 print("Checkboxes:", down_check)
