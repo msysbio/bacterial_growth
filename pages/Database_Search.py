@@ -121,6 +121,7 @@ def createzip(study_ids_list):
             reads_file = folder_path + f"/Sequencing_Reads.csv"
             try:
                 df_growth = pd.read_csv(growth_file)
+                st.info("ESTOY AQUI")
             except FileNotFoundError:
                 df_growth = pd.DataFrame()
             try:
