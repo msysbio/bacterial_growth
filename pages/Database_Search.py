@@ -121,6 +121,11 @@ def createzip(study_ids_list):
             st.info(folder_path)
             growth_file = folder_path + f"/Growth_Metabolites.csv"
             reads_file = folder_path + f"/Sequencing_Reads.csv"
+            try:
+                df_growth = pd.read_csv(growth_file)
+            # Continue with processing the dataframe...
+            except FileNotFoundError:
+                st.info(f"CSV file '{growth_file}' not found. Skipping...")
             df_growth = pd.read_csv(growth_file)
             st.info("ESTOY AQUI")
             df_reads = pd.read_csv(reads_file)
