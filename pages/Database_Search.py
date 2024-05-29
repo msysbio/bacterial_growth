@@ -2,7 +2,7 @@ import os
 import sys
 import streamlit as st
 from io import BytesIO
-from zipfile import ZipFile
+import zipfile
 import pandas as pd
 from streamlit_extras.app_logo import add_logo
 import streamlit.components.v1 as components
@@ -112,20 +112,34 @@ def display_row(index):
 
 def createzip(study_ids_list):
 
-    memory_file = BytesIO()
+    buf = BytesIO()
 
-    with ZipFile(memory_file, 'w') as zf:
+    with zipfile.ZipFile(buf, "x") as csv_zip:
+        csv_zip.writestr("data1.csv", pd.DataFrame(data1).to_csv())
+        csv_zip.writestr("data2.csv", pd.DataFrame(data2).to_csv())
         for study_id in study_ids_list:
             folder_path = relative_path_to_src + f"/Data/Growth/{study_id}"
-            if os.path.exists(folder_path) and os.path.isdir(folder_path):
-                for root, _, files in os.walk(folder_path):
-                    for file in files:
-                        file_path = os.path.join(root, file)
-                        arcname = os.path.relpath(file_path, folder_path)
-                        zf.write(file_path, os.path.join(folder_path, arcname))
-    
-    memory_file.seek(0)
-    return memory_file
+            growth_file = folder_path + f"/Growth_Metabolites.csv"
+            reads_file = folder_path + f"/Sequencing_Reads.csv"
+            try:
+                df_growth = pd.read_csv(growth_file)
+            except FileNotFoundError:
+                df_growth = pd.DataFrame()
+            try:
+                df_reads = pd.read_csv(reads_file)
+            except FileNotFoundError:
+                df_reads = pd.DataFrame()
+            if not df_growth.empty:
+                csv_zip.writestr(f"{study_id}_Growth_Metabolites.csv", df_growth.to_csv())
+            if not df_reads.empty:
+                csv_zip.writestr(f"{study_id}_Sequencing_Reads.csv", df_reads.to_csv())
+
+    st.download_button(
+            label="Download zip",
+            data=buf.getvalue(),
+            file_name="MySearch.zip",
+            mime="application/zip",
+        )
 
 
 
@@ -325,13 +339,8 @@ def db_search():
 
             # Out of the form
             if selected_study_ids:
-                        memory_file = createzip(selected_study_ids)  # Create zip file from selected folders
-                        st.download_button(
-                            label="Download ZIP",
-                            data=memory_file,
-                            file_name="search_data.zip",
-                            mime="application/zip"
-                        )
+                createzip(selected_study_ids)  # Create zip file from selected folders
+                        
             if not df_general.empty:
                 st.session_state.to_dashboard = study_ids[-1]
 
