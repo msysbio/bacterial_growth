@@ -50,9 +50,9 @@ def toggle_container(index):
 
 
 def display_row(index):
-    """
-    Filters for advanced search
-    """
+    # """
+    # Filters for advanced search
+    # """
     advance_query = {}
 
     if index not in st.session_state['rows']:
@@ -289,50 +289,50 @@ def db_search():
 
 
 
-    conn = st.connection("BacterialGrowth", type="sql")
+    # conn = st.connection("BacterialGrowth", type="sql")
 
-    # Perform query.
-    df_study = conn.query('SELECT * from Study;', ttl=600)
-    st.dataframe(df_study)
+    # # Perform query.
+    # df_study = conn.query('SELECT * from Study;', ttl=600)
+    # st.dataframe(df_study)
 
-    df_biologicalrep = conn.query('SELECT * from Experiments;', ttl=600)
-    st.dataframe(df_biologicalrep)
+    # df_biologicalrep = conn.query('SELECT * from Experiments;', ttl=600)
+    # st.dataframe(df_biologicalrep)
 
-    df_technicalrep = conn.query('SELECT * from Compartments;', ttl=600)
-    st.dataframe(df_technicalrep)
+    # df_technicalrep = conn.query('SELECT * from Compartments;', ttl=600)
+    # st.dataframe(df_technicalrep)
 
-    df_ReactorSetUp = conn.query('SELECT * from Strains;', ttl=600)
-    st.dataframe(df_ReactorSetUp)
+    # df_ReactorSetUp = conn.query('SELECT * from Strains;', ttl=600)
+    # st.dataframe(df_ReactorSetUp)
 
-    df_Compartments = conn.query('SELECT * from Community;', ttl=600)
-    st.dataframe(df_Compartments)
+    # df_Compartments = conn.query('SELECT * from Community;', ttl=600)
+    # st.dataframe(df_Compartments)
 
-    df_Bacteria = conn.query('SELECT * from CompartmentsPerExperiment;', ttl=600)
-    st.dataframe(df_Bacteria)
+    # df_Bacteria = conn.query('SELECT * from CompartmentsPerExperiment;', ttl=600)
+    # st.dataframe(df_Bacteria)
 
-    df_metabolites = conn.query('SELECT * from TechniquesPerExperiment;', ttl=600)
-    st.dataframe(df_metabolites)
+    # df_metabolites = conn.query('SELECT * from TechniquesPerExperiment;', ttl=600)
+    # st.dataframe(df_metabolites)
 
-    df_metabolitesyn = conn.query('SELECT * from BioReplicatesPerExperiment;', ttl=600)
-    st.dataframe(df_metabolitesyn)
+    # df_metabolitesyn = conn.query('SELECT * from BioReplicatesPerExperiment;', ttl=600)
+    # st.dataframe(df_metabolitesyn)
 
-    df_metabolite_repl = conn.query('SELECT * from Perturbation;', ttl=600)
-    st.dataframe(df_metabolite_repl)
+    # df_metabolite_repl = conn.query('SELECT * from Perturbation;', ttl=600)
+    # st.dataframe(df_metabolite_repl)
 
-    df_metabolitedb = conn.query('SELECT * from Metabolites;', ttl=600)
-    st.dataframe(df_metabolitedb)
+    # df_metabolitedb = conn.query('SELECT * from Metabolites;', ttl=600)
+    # st.dataframe(df_metabolitedb)
 
-    df_Abundances = conn.query('SELECT * from Abundances;', ttl=600)
-    st.dataframe(df_Abundances)
+    # df_Abundances = conn.query('SELECT * from Abundances;', ttl=600)
+    # st.dataframe(df_Abundances)
 
-    df_FC_couts = conn.query('SELECT * from FC_Counts;', ttl=600)
-    st.dataframe(df_FC_couts)
+    # df_FC_couts = conn.query('SELECT * from FC_Counts;', ttl=600)
+    # st.dataframe(df_FC_couts)
 
-    df_BioReplicatesMetadata = conn.query('SELECT * from BioReplicatesMetadata', ttl=600)
-    st.dataframe(df_BioReplicatesMetadata)
+    # df_BioReplicatesMetadata = conn.query('SELECT * from BioReplicatesMetadata', ttl=600)
+    # st.dataframe(df_BioReplicatesMetadata)
 
-    df_MetabolitePerReplicates = conn.query('SELECT * from MetabolitePerExperiment;', ttl=600)
-    st.dataframe(df_MetabolitePerReplicates)
+    # df_MetabolitePerReplicates = conn.query('SELECT * from MetabolitePerExperiment;', ttl=600)
+    # st.dataframe(df_MetabolitePerReplicates)
 
 
 

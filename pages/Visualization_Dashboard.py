@@ -31,10 +31,10 @@ conn = st.connection("BacterialGrowth", type="sql")
 
 
 def dashboard():
-    """
-    If df_growth then init page with selected from Search page data
-    else init the whole page.
-    """
+    # """
+    # If df_growth then init page with selected from Search page data
+    # else init the whole page.
+    # """
 
     df_growth = pd.DataFrame()
     df_reads = pd.DataFrame()

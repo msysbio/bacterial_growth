@@ -115,10 +115,10 @@ def load_yaml(file_path):
 
 @st.cache_data
 def taxonomy_df_for_taxa_list(taxa_list, _conn):
-    """
-    Using an already established connection to the db, get a dataframe with hits for a list of taxa.
-    NOTE: Remebmer that it takes a list as input, thus if you are about to query for a single term, make a list with sole element.
-    """
+    # """
+    # Using an already established connection to the db, get a dataframe with hits for a list of taxa.
+    # NOTE: Remebmer that it takes a list as input, thus if you are about to query for a single term, make a list with sole element.
+    # ""
     dfs = []
     for taxon in taxa_list:
         if taxon == "":
@@ -130,9 +130,9 @@ def taxonomy_df_for_taxa_list(taxa_list, _conn):
 
 
 def display_strain_row(index):
-    """
-    Add 4-cols template for addin a new strain without an NCBI Taxonomy Id when other_strains is "No"
-    """
+    # """
+    # Add 4-cols template for addin a new strain without an NCBI Taxonomy Id when other_strains is "No"
+    # """
     row_strain_data = {}
 
     if index not in st.session_state['rows_communities']:
@@ -396,16 +396,16 @@ def tab_step1():
 
 
 def tab_step2():
-    """
-    Main upload function:
-    invokes the display_strain_row() function for each new entry of novel taxa (without an NCBI Taxonomy Id.)
+    # """
+    # Main upload function:
+    # invokes the display_strain_row() function for each new entry of novel taxa (without an NCBI Taxonomy Id.)
 
-    Returns:
-        - keywords:         species names with exact NCBI Taxonomy Ids
-        - list_taxa_id:     NCBI Taxonomy Ids of the keywords
-        - all_strain_data:  species names that do not match to an exact NCBI Taxonomy Ids
-        - other_taxa_list:  NCBI Taxonomy Ids of the parent taxa of the all_strain_data
-    """
+    # Returns:
+    #     - keywords:         species names with exact NCBI Taxonomy Ids
+    #     - list_taxa_id:     NCBI Taxonomy Ids of the keywords
+    #     - all_strain_data:  species names that do not match to an exact NCBI Taxonomy Ids
+    #     - other_taxa_list:  NCBI Taxonomy Ids of the parent taxa of the all_strain_data
+    # """
     keywords = []
     all_strain_data = []
     list_taxa_id = []
@@ -424,9 +424,9 @@ def tab_step2():
     with tab2:
 
         if st.session_state['verify'] == 1:
-            """
-            Step 2: Describing the strains
-            """
+            # """
+            # Step 2: Describing the strains
+            # """
             df_taxonomy = ""
             st.subheader("2. Select all the microbial strains used in the study")
             st.markdown(
@@ -551,9 +551,9 @@ def tab_step2():
 
 
 def tab_step3(keywords, list_taxa_id, all_strain_data,create_private_project_id, unique_study_id_val):
-    """
-    Step 3: Download templates tab
-    """
+    # """
+    # Step 3: Download templates tab
+    # """
     metabo_col = []
     measure_tech = []
     all_taxa = []
@@ -819,9 +819,9 @@ def tab_step4():
 
 
 def tab_step5(xls_1, xls_2, measure_tech, metabo_col, all_taxa, conn, project_name, project_description):
-    """
-    Submit data page
-    """
+    # """
+    # Submit data page
+    # """
     with tab5:
         st.subheader("Data visibility")
         st.write("By default your data will be visible and public in the database. Do you want to make your data visible now?")

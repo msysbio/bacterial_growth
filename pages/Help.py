@@ -305,15 +305,11 @@ with st.expander("**How to Upload My Data?**"):
 
 
 
-ex_info = st.expander("**Uploading Data: Applied Examples**")
-ex_info.markdown(
-    """
-To Upload your data in µGrowthDB please follow the five steps provided in the **Upload data** page.
-    """
-)
+#ex_info = st.expander("**Uploading Data: Applied Examples**")
 
-ques_info = st.expander("**Frequently Asked Questions**")
-ques_info.write('hello')
 
-more_info = st.expander("**Need More information?**")
-more_info.write('hello')
+#ques_info = st.expander("**Frequently Asked Questions**")
+#ques_info.write('hello')
+
+#more_info = st.expander("**Need More information?**")
+#more_info.write('hello')
