@@ -352,7 +352,7 @@ def db_search():
             if not df_general.empty:
                 st.session_state.to_dashboard = study_ids[-1]
 
-                st.page_link("pages/Visualization_Dashboard.py", label="View selected on Dashboard")
+                st.page_link("pages/Visualization_Dashboard.py", label="**View selected study on Dashboard**")
 
 
 
