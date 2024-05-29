@@ -135,17 +135,17 @@ def createzip(study_ids_list):
                 csv_zip.writestr("Sequencing_Reads.csv", df_reads.to_csv())
 
     buf.seek(0)
-    zip_name = "example.zip"
-    b64 = base64.b64encode(buf.read()).decode()
-    del buf
-    href = f'<a href=\"data:file/zip;base64,{b64}\" download="{zip_name}">Click Here To download</a>'
-    st.markdown(href, unsafe_allow_html=True)
-    # st.download_button(
-    #         label="Download zip",
-    #         data=buf.getvalue(),
-    #         file_name="MySearch.zip",
-    #         mime="application/zip",
-    #     )
+    # zip_name = "example.zip"
+    # b64 = base64.b64encode(buf.read()).decode()
+    # del buf
+    # href = f'<a href=\"data:file/zip;base64,{b64}\" download="{zip_name}">Click Here To download</a>'
+    # st.markdown(href, unsafe_allow_html=True)
+    st.download_button(
+            label="Download zip",
+            data=buf.getvalue(),
+            file_name="MySearch.zip",
+            mime="application/zip",
+        )
 
 
 
