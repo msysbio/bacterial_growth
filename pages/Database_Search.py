@@ -111,23 +111,22 @@ def display_row(index):
     return advance_query
 
 def createzip(study_ids_list):
+
     memory_file = BytesIO()
-    
+
     with ZipFile(memory_file, 'w') as zf:
         for study_id in study_ids_list:
-            path = relative_path_to_src + f"/Data/Growth/{study_id}"
-            growth_file = path + f"/Growth_Metabolites.csv"
-            reads_file = path + f"/Sequencing_Reads.csv"
-            try:
-                df_growth = pd.read_csv(growth_file)
+            folder_path = relative_path_to_src + f"/Data/Growth/{study_id}"
+            if os.path.exists(folder_path) and os.path.isdir(folder_path):
+                for root, _, files in os.walk(folder_path):
+                    for file in files:
+                        file_path = os.path.join(root, file)
+                        arcname = os.path.relpath(file_path, folder_path)
+                        zf.write(file_path, os.path.join(folder_path, arcname))
+    
+    memory_file.seek(0)
+    return memory_file
 
-            except FileNotFoundError:
-                df_growth = pd.DataFrame()
-
-            try:
-                df_reads = pd.read_csv(reads_file)
-            except FileNotFoundError:
-                df_reads = pd.DataFrame()
 
 
 def db_search():
@@ -320,12 +319,19 @@ def db_search():
                 space2 = st.text("")
                 download = st.form_submit_button("Dowload Data", type = 'primary')
                 if download:
-                    st.write('bla')
                     selected_study_ids = [study_id for study_id in df_studies['studyId'] if st.session_state.get(f'checkbox{study_id}', False)]
-                    st.info(selected_study_ids)
+                    
 
 
             # Out of the form
+            if selected_study_ids:
+                        memory_file = createzip(selected_study_ids)  # Create zip file from selected folders
+                        st.download_button(
+                            label="Download ZIP",
+                            data=memory_file,
+                            file_name="search_data.zip",
+                            mime="application/zip"
+                        )
             if not df_general.empty:
                 st.session_state.to_dashboard = study_ids[-1]
 
