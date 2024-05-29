@@ -170,6 +170,8 @@ def display_strain_row(index):
 
             # Columns for taxa with NCBI Tax Id available
             col3_add, col4_add, col6_add= st.columns([0.39, 0.39, 0.10])
+            info = []
+            warning = []
             with col3_add:
                 input_other_taxa = st.text_input(
                     '*Search microbial strain species:',
@@ -190,28 +192,32 @@ def display_strain_row(index):
                         help='Select only one microbial strain species, then click on add',
                         key=f'other_taxonomy_{index}'
                     )
-                if other_taxonomy is not None:
-                    if other_name == "":
-                        st.warning("Please make sure you provide a name before you continue.")
-                    if other_description == "":
-                        st.warning("Please make sure you provide a description to before you continue.")
+                    if other_taxonomy is not None:
+                        if other_name == "":
+                            warning.append("Please make sure you provide a name before you continue.")
+                        if other_description == "":
+                            warning.append("Please make sure you provide a description to before you continue.")
 
-                    row_strain_data["case_number"] = index
-                    row_strain_data['parent_taxon'] = other_taxonomy
-                    row_strain_data['parent_taxon_id'] = df_other_taxonomy[
-                                df_other_taxonomy["tax_names"] == other_taxonomy
-                                ]["tax_id"].item()
+                        row_strain_data["case_number"] = index
+                        row_strain_data['parent_taxon'] = other_taxonomy
+                        row_strain_data['parent_taxon_id'] = df_other_taxonomy[
+                                    df_other_taxonomy["tax_names"] == other_taxonomy
+                                    ]["tax_id"].item()
 
-                    parent_strains_df = taxonomy_df_for_taxa_list([other_taxonomy], conn)
-                    strains_df = parent_strains_df[ parent_strains_df['tax_names'] == other_taxonomy ]
-                    taxa_id = strains_df.iloc[0]['tax_id']
-                    row_strain_data['parent_taxon_id'] = taxa_id
+                        parent_strains_df = taxonomy_df_for_taxa_list([other_taxonomy], conn)
+                        strains_df = parent_strains_df[ parent_strains_df['tax_names'] == other_taxonomy ]
+                        taxa_id = strains_df.iloc[0]['tax_id']
+                        row_strain_data['parent_taxon_id'] = taxa_id
 
-                    st.info(
-                        f'For more information about **{other_taxonomy}** go to the \
-                            NCBI Taxonomy ID:[{taxa_id}](https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id={taxa_id})',
-                        icon="❕"
-                    )
+                        info.append(
+                            f'For more information about **{other_taxonomy}** go to the \
+                                NCBI Taxonomy ID:[{taxa_id}](https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id={taxa_id})',
+                            icon="❕"
+                        )
+            if warning:
+                st.warning(warning)
+            if info:
+                st.info(info)
 
         # Buttons
         with col6_add:
