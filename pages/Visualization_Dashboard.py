@@ -270,7 +270,7 @@ def tabs_plots(experiment_with_bioreps):
 
         with tab6:
             for exp, growth_df in result_growth_df_dict.items():
-                columns_to_keep = [col for col in growth_df.columns if not col.endswith('_std') and col not in ["Biological_Replicate_id", "Time", "FC", "OD","Plate_counts","Position"]]
+                columns_to_keep = [col for col in growth_df.columns if not col.endswith('_std') and col not in ["Biological_Replicate_id", "Time", "FC", "OD","Plate_counts","Position","pH"]]
                 if columns_to_keep:
                     with st.expander(f"**Metabolites: {exp}**"):
                         st.dataframe(growth_df)
