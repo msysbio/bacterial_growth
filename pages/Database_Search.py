@@ -124,7 +124,6 @@ def createzip(study_ids_list):
             df_growth = pd.read_csv(growth_file)
             st.info("ESTOY AQUI")
             df_reads = pd.read_csv(reads_file)
-            df_reads = pd.DataFrame()
             if not df_growth.empty:
                 csv_zip.writestr("Growth_Metabolites.csv", df_growth.to_csv())
             if not df_reads.empty:
