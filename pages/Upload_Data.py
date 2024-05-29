@@ -214,9 +214,11 @@ def display_strain_row(index):
                                 NCBI Taxonomy ID:[{taxa_id}](https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id={taxa_id})'
                         )
             if warning:
-                st.warning(warning)
+                for i in warning:
+                    st.warning(i)
             if info:
-                st.info(info)
+                for j in info:
+                    st.info(j)
 
         # Buttons
         with col6_add:
