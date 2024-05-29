@@ -3,6 +3,7 @@ import sys
 import streamlit as st
 from io import BytesIO
 import zipfile
+import base64
 import pandas as pd
 from streamlit_extras.app_logo import add_logo
 import streamlit.components.v1 as components
@@ -114,33 +115,33 @@ def createzip(study_ids_list):
 
     buf = BytesIO()
 
-    with zipfile.ZipFile(buf, "x") as csv_zip:
+    with zipfile.ZipFile(buf, 'w', zipfile.ZIP_DEFLATED) as csv_zip:
         for study_id in study_ids_list:
             folder_path = relative_path_to_src + f"/Data/Growth/{study_id}"
             st.info(folder_path)
             growth_file = folder_path + f"/Growth_Metabolites.csv"
             reads_file = folder_path + f"/Sequencing_Reads.csv"
-            try:
-                df_growth = pd.read_csv(growth_file)
-                st.info("ESTOY AQUI")
-            except FileNotFoundError:
-                df_growth = pd.DataFrame()
-            try:
-                df_reads = pd.read_csv(reads_file)
-            except FileNotFoundError:
-                df_reads = pd.DataFrame()
+            df_growth = pd.read_csv(growth_file)
+            st.info("ESTOY AQUI")
+            df_reads = pd.read_csv(reads_file)
+            df_reads = pd.DataFrame()
             if not df_growth.empty:
                 csv_zip.writestr("Growth_Metabolites.csv", df_growth.to_csv())
             if not df_reads.empty:
                 csv_zip.writestr("Sequencing_Reads.csv", df_reads.to_csv())
 
     buf.seek(0)
-    st.download_button(
-            label="Download zip",
-            data=buf.getvalue(),
-            file_name="MySearch.zip",
-            mime="application/zip",
-        )
+    zip_name = "example.zip"
+    b64 = base64.b64encode(buf.read()).decode()
+    del buf
+    href = f'<a href=\"data:file/zip;base64,{b64}\" download="{zip_name}">Click Here To download</a>'
+    st.markdown(href, unsafe_allow_html=True)
+    # st.download_button(
+    #         label="Download zip",
+    #         data=buf.getvalue(),
+    #         file_name="MySearch.zip",
+    #         mime="application/zip",
+    #     )
 
 
 
