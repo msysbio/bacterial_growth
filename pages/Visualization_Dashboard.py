@@ -276,7 +276,7 @@ def tabs_plots(experiment_with_bioreps):
                         st.dataframe(growth_df)
                     unique_biorep_ids = growth_df['Biological_Replicate_id'].unique()
                     for biorepID in unique_biorep_ids:
-                        filtered_per_biorep_df = growth_df[reads_df['Biological_Replicate_id'] == biorepID]
+                        filtered_per_biorep_df = growth_df[growth_df['Biological_Replicate_id'] == biorepID]
                         filtered_per_biorep_df = filtered_per_biorep_df.dropna(axis=1, how='all')
                         metabolites_columns = filtered_per_biorep_df.filter(columns_to_keep).columns
                         melted_df = filtered_per_biorep_df.melt(id_vars=['Time', 'Biological_Replicate_id'],
