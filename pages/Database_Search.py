@@ -132,6 +132,7 @@ def createzip(study_ids_list):
             if not df_reads.empty:
                 csv_zip.writestr(f"{study_id}_Sequencing_Reads.csv", df_reads.to_csv())
 
+    buf.seek(0)
     st.download_button(
             label="Download zip",
             data=buf.getvalue(),
