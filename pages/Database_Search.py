@@ -268,11 +268,10 @@ def db_search():
                             st.dataframe(df_Metabolite,hide_index=True,)
 
                         space = st.text("")
-
-                        with st.expander("**Perturbations**"):
-                            df_perturbation = getPerturbations(study_id, conn)
-                            if not df_perturbation.empty:
-                                st.dataframe(df_perturbation,hide_index=True,)
+                        df_perturbation = getPerturbations(study_id, conn)
+                        if not df_perturbation.empty:
+                            with st.expander("**Perturbations**"):
+                                    st.dataframe(df_perturbation,hide_index=True,)
 
 
                 print("Checkboxes:", down_check)
