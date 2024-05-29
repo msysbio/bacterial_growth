@@ -172,6 +172,8 @@ def db_search():
     all_advance_query = []
     first_query = {}
 
+    selected_study_ids = []
+
     # Use columns to lay out the elements side by side
     col1, col2 = st.columns([1, 2])
 
