@@ -250,22 +250,37 @@ def db_search():
                         space = st.text("")
 
                         with st.expander("**Microbial Strains and Communities**"):
-                            df_Compartment = getCommunities(study_id, conn)
-                            st.dataframe(df_Compartment,hide_index=True,)
+                            df_Community = getCommunities(study_id, conn)
+                            if not df_Community.empty:
+                                st.write("**Communities information**")
+                                st.dataframe(df_Compartment,hide_index=True,)
                             df_strains = getMicrobialStrains(study_id, conn)
-                            st.dataframe(df_strains,hide_index=True,)
+                            if not df_strains.empty:
+                                st.write("**Community Members information**")
+                                st.dataframe(df_strains,hide_index=True,)
 
                         space = st.text("")
 
                         with st.expander("**Biological Replicates, Growth and Metabolites Measurements**"):
                             df_biorep = getBiorep(study_id, conn)
-                            st.dataframe(df_biorep,hide_index=True,)
+                            if not df_biorep.empty:
+                                st.write("**Biological Replicates Metadata**")
+                                st.dataframe(df_biorep,hide_index=True,)
+                            
                             df_abundance = getAbundance(study_id, conn)
-                            st.dataframe(df_abundance,hide_index=True,)
+                            if not df_abundance.empty:
+                                st.write("**Abundance data per Biological Replicates and microbial species**")
+                                st.dataframe(df_abundance,hide_index=True,)
+
                             df_FC = getFC(study_id, conn)
-                            st.dataframe(df_FC,hide_index=True,)
+                            if not df_FC.empty:
+                                st.write("**Flow Cytometry Counts data per Biological Replicates and microbial species**")
+                                st.dataframe(df_FC,hide_index=True,)
+
                             df_Metabolite = getMetabolite(study_id, conn)
-                            st.dataframe(df_Metabolite,hide_index=True,)
+                            if not df_Metabolite.empty:
+                                st.write("**Metabolites measured per Biological Replicates**")
+                                st.dataframe(df_Metabolite,hide_index=True,)
 
                         space = st.text("")
                         df_perturbation = getPerturbations(study_id, conn)
