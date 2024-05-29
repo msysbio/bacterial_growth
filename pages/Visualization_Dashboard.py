@@ -27,6 +27,13 @@ with open("style.css") as css:
 
 st.title("Visualizing Study Data")
 st.markdown("![badge](https://img.shields.io/badge/status-under%20development-orange?style=for-the-badge)")
+st.markdown(
+    """
+    Search the study that you want to visualize. Select the Biological replicates from the experiments you want to plot. You can also download the
+    raw data of the selected experiments by clicking in the right corner of the tables found on the expandable sections. You can visualiwe different plots 
+    corresponding to Optical density, Flow cytometry, Plate counts, 16S rRNA sequencing, and metabolites concentrations. By clicking of the camera icon at the right corner 
+    of each plot, the images can be save locally in your computer as .png files.
+    """)
 conn = st.connection("BacterialGrowth", type="sql")
 
 
