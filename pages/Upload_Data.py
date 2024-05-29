@@ -685,7 +685,7 @@ def tab_step3(keywords, list_taxa_id, all_strain_data,create_private_project_id,
                 st.text('')
                 down_button = st.download_button(label='Click here to Download the Data Template',
                                     data=excel_rawdata,
-                                    file_name='template_raw_data.xlsx',
+                                    file_name='raw_data_template.xlsx',
                                     mime='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
                                     type="primary",
                                     use_container_width = True,
@@ -727,7 +727,7 @@ def tab_step3(keywords, list_taxa_id, all_strain_data,create_private_project_id,
 
                 down_study_button = st.download_button(label='Click here to Download the Study Template',
                                                        data=excel_data,
-                                                       file_name='raw_data.xlsx',
+                                                       file_name='study_template.xlsx',
                                                        mime='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
                                                        type="primary",
                                                        use_container_width = True
