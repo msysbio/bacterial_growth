@@ -81,11 +81,12 @@ def dashboard():
         path = relative_path_to_src + f"/Data/Growth/{studyID_to_visualize}"
         growth_file = path + f"/Growth_Metabolites.csv"
         reads_file = path + f"/Sequencing_Reads.csv"
-        st.info(path)
-        if os.path.exists(path):
-            st.info("growth path exists")
-        else:
-            st.info("growth path DO NOT exists")
+        
+        #st.info(path)
+        #if os.path.exists(path):
+        #    st.info("growth path exists")
+        #else:
+        #    st.info("growth path DO NOT exists")
 
 
         try:
@@ -305,9 +306,8 @@ def tabs_plots(experiment_with_bioreps):
 df_growth, df_reads, studyID_to_visualize, conn = dashboard()
 #st.info(df_growth)
 col1, col2 = st.columns([0.35, 0.65])
-try:
-    df_growth,experiment_with_bioreps=content(df_growth, df_reads, studyID_to_visualize, conn)
-    tabs_plots(df_growth,experiment_with_bioreps)
-except:
-    st.write("nothing yet.")
+df_growth,experiment_with_bioreps=content(df_growth, df_reads, studyID_to_visualize, conn)
+tabs_plots(df_growth,experiment_with_bioreps)
+#except:
+#    st.write("nothing yet.")
 
