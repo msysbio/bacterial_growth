@@ -117,6 +117,7 @@ def createzip(study_ids_list):
     with zipfile.ZipFile(buf, "x") as csv_zip:
         for study_id in study_ids_list:
             folder_path = relative_path_to_src + f"/Data/Growth/{study_id}"
+            st.info(folder_path)
             growth_file = folder_path + f"/Growth_Metabolites.csv"
             reads_file = folder_path + f"/Sequencing_Reads.csv"
             try:
