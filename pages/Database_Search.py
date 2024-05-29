@@ -135,17 +135,17 @@ def createzip(study_ids_list):
                 csv_zip.writestr(f"{study_id}_Sequencing_Reads.csv", df_reads.to_csv())
 
     buf.seek(0)
-    # zip_name = "example.zip"
-    # b64 = base64.b64encode(buf.read()).decode()
-    # del buf
-    # href = f'<a href=\"data:file/zip;base64,{b64}\" download="{zip_name}">Click Here To download</a>'
-    # st.markdown(href, unsafe_allow_html=True)
-    st.download_button(
-            label="Download zip",
-            data=buf.getvalue(),
-            file_name="MySearch.zip",
-            mime="application/zip",
-        )
+    zip_name = "MySearch.zip"
+    b64 = base64.b64encode(buf.read()).decode()
+    del buf
+    href = f'<a href=\"data:file/zip;base64,{b64}\" download="{zip_name}">Click Here To download Zip file</a>'
+    st.markdown(href, unsafe_allow_html=True)
+    # st.download_button(
+    #         label="Download zip",
+    #         data=buf.getvalue(),
+    #         file_name="MySearch.zip",
+    #         mime="application/zip",
+    #     )
 
 
 
@@ -342,12 +342,12 @@ def db_search():
                 download = st.form_submit_button("Dowload Data", type = 'primary')
                 if download:
                     selected_study_ids = [study_id for study_id in df_studies['studyId'] if st.session_state.get(f'checkbox{study_id}', False)]
+                    if selected_study_ids:
+                        createzip(selected_study_ids)  # Create zip file from selected folders
                     
 
 
             # Out of the form
-            if selected_study_ids:
-                createzip(selected_study_ids)  # Create zip file from selected folders
                         
             if not df_general.empty:
                 st.session_state.to_dashboard = study_ids[-1]
