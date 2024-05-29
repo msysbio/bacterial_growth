@@ -224,7 +224,7 @@ def db_search():
                         study_ids.append(study_id)
                         df_general = getGeneralInfo(study_id, conn)
                         print(df_general)
-                        study_name = df_general['studyName'][i]
+                        study_name = df_general['studyName'][0]
                         st.info(study_name)
                         transposed_df = df_general.T
                         studyname = st.page_link("pages/Visualization_Dashboard.py",
