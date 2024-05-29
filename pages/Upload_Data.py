@@ -190,28 +190,28 @@ def display_strain_row(index):
                         help='Select only one microbial strain species, then click on add',
                         key=f'other_taxonomy_{index}'
                     )
-                    if other_taxonomy is not None:
-                        if other_name == "":
-                            st.warning("Please make sure you provide a name before you continue.")
-                        if other_description == "":
-                            st.warning("Please make sure you provide a description to before you continue.")
+            if other_taxonomy is not None:
+                if other_name == "":
+                    st.warning("Please make sure you provide a name before you continue.")
+                if other_description == "":
+                    st.warning("Please make sure you provide a description to before you continue.")
 
-                        row_strain_data["case_number"] = index
-                        row_strain_data['parent_taxon'] = other_taxonomy
-                        row_strain_data['parent_taxon_id'] = df_other_taxonomy[
+                row_strain_data["case_number"] = index
+                row_strain_data['parent_taxon'] = other_taxonomy
+                row_strain_data['parent_taxon_id'] = df_other_taxonomy[
                             df_other_taxonomy["tax_names"] == other_taxonomy
                             ]["tax_id"].item()
 
-                        parent_strains_df = taxonomy_df_for_taxa_list([other_taxonomy], conn)
-                        strains_df = parent_strains_df[ parent_strains_df['tax_names'] == other_taxonomy ]
-                        taxa_id = strains_df.iloc[0]['tax_id']
-                        row_strain_data['parent_taxon_id'] = taxa_id
+                parent_strains_df = taxonomy_df_for_taxa_list([other_taxonomy], conn)
+                strains_df = parent_strains_df[ parent_strains_df['tax_names'] == other_taxonomy ]
+                taxa_id = strains_df.iloc[0]['tax_id']
+                row_strain_data['parent_taxon_id'] = taxa_id
 
-                        st.info(
-                            f'For more information about **{other_taxonomy}** go to the \
-                                NCBI Taxonomy ID:[{taxa_id}](https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id={taxa_id})',
-                            icon="❕"
-                        )
+                st.info(
+                    f'For more information about **{other_taxonomy}** go to the \
+                        NCBI Taxonomy ID:[{taxa_id}](https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id={taxa_id})',
+                    icon="❕"
+                )
 
         # Buttons
         with col6_add:
