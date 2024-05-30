@@ -247,6 +247,9 @@ def db_search():
         conn = st.connection("BacterialGrowth", type="sql")
         df_studies = conn.query(final_query)  # , ttl=None
 
+        if df_studies.empty:
+            st.warning("Please contact the developers (sofia.monsalveduarte@student.kuleuven.be or haris.zafeiropoulos@kuleuven.be) to fire the database first.")
+
         num_results = len(df_studies)
 
         if num_results == 0:
