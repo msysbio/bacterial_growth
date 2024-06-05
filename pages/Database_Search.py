@@ -16,7 +16,6 @@ current_dir = os.path.dirname(filepath)
 root_dir = os.path.dirname(current_dir)
 relative_path_to_src = os.path.join(root_dir, 'src')
 sys.path.append(relative_path_to_src)
-
 from Visualization_Dashboard import dashboard
 from db_functions import dynamical_query, getGeneralInfo, getExperiments, \
     getCompartment, getCommunities, getMicrobialStrains, getBiorep, getAbundance, \
