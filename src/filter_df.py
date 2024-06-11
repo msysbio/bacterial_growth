@@ -9,7 +9,12 @@ def filter_df(experiment_with_bioreps,df_growth,df_reads):
             columns_to_keep = [col for col in df_growth.columns if not col.endswith('_std')]
             print("columns_to_keep",columns_to_keep)
             filtered_df = df_growth[columns_to_keep]
+            mean_df = filtered_df.groupby('Time').mean().reset_index()
+            mean_df['Biological_Replicate_id'] = 'Mean of Biological Replicates'
+            filtered_df=filtered_df.append(mean_df, ignore_index=True)
             print(filtered_df)
+            print(mean_df)
+            fil = pd.DataFrame()
             for exp, biorep in experiment_with_bioreps.items():
                 fil = filtered_df[filtered_df['Biological_Replicate_id'].isin(biorep)]
                 print(biorep,fil)
