@@ -131,6 +131,7 @@ def content(df_growth, df_reads, studyID_to_visualize, conn):
                     with st.expander(f"{i}"):
                         st.write(f"{j}")
                         biorep_list = k.split(",")
+                        biorep_list.append("Mean of Biological Replicates")
                         for rep in biorep_list:
                             checkbox_key = f"checkbox{i}:biologicalreplicate:{rep}"
                             checkbox_states[checkbox_key] = st.checkbox(f"{rep}", key=checkbox_key, value=checkbox_states.get(checkbox_key, False))
