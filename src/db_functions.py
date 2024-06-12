@@ -31,7 +31,7 @@ def execute(phrase):
               host=st.secrets.connections.BacterialGrowth.host,
               port=st.secrets.connections.BacterialGrowth.port,
               database=st.secrets.connections.BacterialGrowth.database,
-              ssl_ca = "C:/Users/sofia/Desktop/bacterial_growth/isrgrootx1.pem",
+              ssl_ca = CA_PATH,
               ssl_verify_cert = True,
               ssl_verify_identity = True
             )

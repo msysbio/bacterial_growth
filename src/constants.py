@@ -18,7 +18,7 @@ LOCAL_DIRECTORY = os.path.join(root_folder, "")
 LOCAL_DIRECTORY_APP = os.path.join(LOCAL_DIRECTORY, "app")
 LOCAL_DIRECTORY_TEMPLATES = os.path.join(LOCAL_DIRECTORY_APP, "templates")
 LOCAL_DIRECTORY_YAML = os.path.join(LOCAL_DIRECTORY_TEMPLATES, "yaml_templates")
-
+CA_PATH = os.path.join(LOCAL_DIRECTORY, "isrgrootx1.pem")
 
 # Bash files needed to run the code
 BIOLOGICAL_REPLICATE_ANALYSIS_FILE = 'src/bash_scripts/lab_files_analysis.sh'
