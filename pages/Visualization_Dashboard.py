@@ -36,6 +36,16 @@ st.markdown(
     """)
 conn = st.connection("BacterialGrowth", type="sql")
 
+def study_ids_states(states):
+    true_checkboxes ={}
+    if states:
+        true_checkboxes = {k:v for (k,v) in states.items() if k.startswith('study_id') and v == True}
+        if true_checkboxes:
+            first_key = next(iter(true_checkboxes))
+            first_study_id = first_key.split('_')[-1]  # Assuming study_id is the part after the last underscore
+            st.session_state.to_dashboard = first_study_id
+    else:
+        st.session_state.to_dashboard = ""
 
 def dashboard():
     # """
@@ -47,8 +57,12 @@ def dashboard():
     df_reads = pd.DataFrame()
 
     # temporar
+
+    #study_ids_states(st.session_state)
+    print(st.session_state)
     if "to_dashboard" in st.session_state and st.session_state["to_dashboard"] != "":
         studyID_to_visualize = str(st.session_state["to_dashboard"])
+        print(studyID_to_visualize)
     else:
         studyID_to_visualize = None
 
@@ -318,10 +332,11 @@ def tabs_plots(experiment_with_bioreps, biorep_per_exp):
 
 df_growth, df_reads, studyID_to_visualize, conn = dashboard()
 #st.info(df_growth)
-col1, col2 = st.columns([0.35, 0.65])
-experiment_with_bioreps,  biorep_per_exp=content(df_growth, df_reads, studyID_to_visualize, conn)
-#st.info(experiment_with_bioreps)
-tabs_plots(experiment_with_bioreps, biorep_per_exp)
-#except:
-#    st.write("nothing yet.")
+if studyID_to_visualize != None and (not df_growth.empty or not df_reads.empty):
+    col1, col2 = st.columns([0.35, 0.65])
+    experiment_with_bioreps,  biorep_per_exp = content(df_growth, df_reads, studyID_to_visualize, conn)
+    #st.info(experiment_with_bioreps)
+    tabs_plots(experiment_with_bioreps, biorep_per_exp)
+    #except:
+    #    st.write("nothing yet.")
 

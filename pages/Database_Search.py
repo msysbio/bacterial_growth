@@ -53,6 +53,18 @@ def decrease_rows(index):
 def toggle_container(index):
     st.session_state['rows'][index] = not st.session_state['rows'][index]
 
+def study_ids_states(states):
+    true_checkboxes ={}
+    if states:
+        true_checkboxes = {k:v for (k,v) in states.items() if k.startswith('study_id') and v == True}
+        if true_checkboxes:
+            first_key = next(iter(true_checkboxes))
+            first_study_id = first_key.split('_')[-1]  # Assuming study_id is the part after the last underscore
+            st.session_state.to_dashboard = first_study_id
+    else:
+        st.session_state.to_dashboard = ""
+
+st.session_state.to_dashboard = ""
 
 def display_row(index):
     # """
@@ -240,9 +252,8 @@ def db_search():
         # If a growth_df is clicked then jump into the dashboard page using that as input
         # thanks to the st.session_state
 
-
+        print(st.session_state)
         final_query = dynamical_query(all_advance_query)
-
         conn = st.connection("BacterialGrowth", type="sql")
         
         if conn is None:
@@ -267,7 +278,7 @@ def db_search():
                     c1 , c2 = st.columns([0.05, 0.95])
                     study_id = df_studies['studyId'][i]
                     with c1:
-                        down_check = st.checkbox(f"{i+1}",key=f'checkbox{study_id}')
+                        down_check = st.checkbox(f"{i+1}",key=f'study_id_{study_id}')
 
                     with c2:
                         study_id = df_studies['studyId'][i]
@@ -341,20 +352,30 @@ def db_search():
                 print("Checkboxes:", down_check)
 
                 space2 = st.text("")
-                download = st.form_submit_button("Dowload Data", type = 'primary')
+                download = st.form_submit_button("Download or Visualize Selected Studies", type = 'primary')
                 if download:
-                    selected_study_ids = [study_id for study_id in df_studies['studyId'] if st.session_state.get(f'checkbox{study_id}', False)]
+                    selected_study_ids = [study_id for study_id in df_studies['studyId'] if st.session_state.get(f'study_id_{study_id}', False)]
+                    print(selected_study_ids)
                     if selected_study_ids:
                         createzip(selected_study_ids)  # Create zip file from selected folders
+                        st.session_state.to_dashboard = selected_study_ids[0]
+                        st.page_link("pages/Visualization_Dashboard.py", label="**View selected study on Dashboard**")
+                    
                     
 
 
             # Out of the form
-                        
-            if not df_general.empty:
-                st.session_state.to_dashboard = study_ids[-1]
-
-                st.page_link("pages/Visualization_Dashboard.py", label="**View selected study on Dashboard**")
+            # st.session_state.to_dashboard = ""
+            # study_ids_states(st.session_state)
+            # print('ppppp',st.session_state.to_dashboard)
+            # st.page_link("pages/Visualization_Dashboard.py", label="**View selected study on Dashboard**")
+            # if not df_general.empty:
+            #     ind_study_ids = ""
+            #     sel_study_ids = [study_id for study_id in df_studies['studyId'] if st.session_state.get(f'checkbox{study_id}', False)]
+            #     ind_study_ids = sel_study_ids[0]
+            #     st.session_state.to_dashboard = sel_study_ids
+            #     print('ppppp',st.session_state.to_dashboard)
+            #     st.page_link("pages/Visualization_Dashboard.py", label="**View selected study on Dashboard**")
 
 
 
@@ -425,3 +446,8 @@ else:
 add_logo("figs/logo_sidebar3.png", height=100)
 
 db_search()
+
+# st.session_state.to_dashboard = ""
+# study_ids_states(st.session_state)
+# print('ppppp',st.session_state.to_dashboard)
+#st.page_link("pages/Visualization_Dashboard.py", label="**View selected study on Dashboard**")
