@@ -11,7 +11,7 @@ def filter_df(experiment_with_bioreps,df_growth,df_reads):
             filtered_df = df_growth[columns_to_keep]
             mean_df = filtered_df.groupby('Time').mean().reset_index()
             mean_df['Biological_Replicate_id'] = 'Mean of Biological Replicates'
-            filtered_df=filtered_df.append(mean_df, ignore_index=True)
+            filtered_df=pd.concat([filtered_df, mean_df], ignore_index=True)
             print(filtered_df)
             print(mean_df)
             fil = pd.DataFrame()
