@@ -1,10 +1,13 @@
 Project_UniqueID:
-- 3dc57cba-6acd-4c1f-8ad2-b3b652eec42f
+- 8a4883f4-64b2-43dd-9f3e-1445cfcb078c
 Study_Description:
-- fsgnfklvzxcv
+- "We collected six biological replicates for a community initially consisting of\
+  \ five common gut bacterial species that fill different metabolic niches. After\
+  \ an initial 12 hours in batch mode, we switched to chemostat mode and observed\
+  \ the community to stabilize after 2\u2013 3 days."
 Study_Name:
-- dasdasda
+- Synthetic human gut bacterial community using an automated fermentation system
 Study_PublicationURL:
-- sdasdasd
+- https://doi.org/10.1080/19490976.2022.2155019
 Study_UniqueID:
 - .nan

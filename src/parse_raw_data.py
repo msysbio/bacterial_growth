@@ -36,17 +36,19 @@ def get_techniques_metabolites(list_growth, list_metabolites, list_microbial_str
             assert len(filtered_empty_columns) ==  0, "ERROR: missing mandatoy columns in growth_per_species"
 
             #check all columns fro the microbial strains are in the excel
-            for i in list_microbial_strains:
-                microbial_count = f'{i}_counts'
-                #microbial_read = f'{i}_reads'
+            if growth_techniques.rna in list_growth:
+                for i in list_microbial_strains:
+                    microbial_read = f'{i}_reads'
+                    microbial_reads_std = f'{i}_reads_std'
+                    assert microbial_read in columns_abundances, f'ERROR: column {microbial_read} information is missing in template_raw_data'
+                    assert microbial_reads_std in columns_abundances, f'ERROR: column {microbial_reads_std} is missing in template_raw_data'
+            if growth_techniques.fc_ps in list_growth:
+                for i in list_microbial_strains:
+                    microbial_count = f'{i}_counts'
+                    microbial_count_std = f'{i}_counts_std'
+                    assert microbial_count in columns_abundances, f'ERROR: column {microbial_count} information is missing in template_raw_data'
+                    assert microbial_count_std in columns_abundances, f'ERROR: column {microbial_count_std} is missing in template_raw_data'
 
-                microbial_count_std = f'{i}_counts_std'
-                #microbial_reads_std = f'{i}_reads_std'
-
-                assert microbial_count in columns_abundances, f'ERROR: column {microbial_count} information is missing in template_raw_data'
-                #assert microbial_read in columns_abundances, f'ERROR: column {microbial_read} information is missing in template_raw_data'
-                assert microbial_count_std in columns_abundances, f'ERROR: column {microbial_count_std} is missing in template_raw_data'
-                #assert microbial_reads_std in columns_abundances, f'ERROR: column {microbial_reads_std} is missing in template_raw_data'
 
 
         columns_growth = df_excel_growth.columns

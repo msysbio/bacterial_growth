@@ -78,7 +78,7 @@ CREATE TABLE IF NOT EXISTS Community (
 );
 
 CREATE TABLE IF NOT EXISTS Metabolites (
-    cheb_id VARCHAR(255), 
+    cheb_id VARCHAR(255),
     metabo_name VARCHAR(255) DEFAULT NULL,
     PRIMARY KEY (cheb_id)
 );

@@ -896,7 +896,7 @@ def tab_step5(xls_1, xls_2, measure_tech, metabo_col, all_taxa, conn, project_na
             errors.append(test_perturbation_yaml(data_pertu))
 
             # Check that there is no error, otherwise, show error and do not upload data
-            st.info(errors)
+            #st.info(errors)
             if not all(not sublist for sublist in errors):
                 for i in errors:
                     st.error(f"Data uploading unsuccessful: {i}. Please correct and try again!")

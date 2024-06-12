@@ -74,6 +74,7 @@ def populate_db(list_growth, list_metabolites, list_microbial_strains,raw_data_t
 
     # checks that all the options selected by the user in the interface match the uploaded raw data template
     errors = get_techniques_metabolites(list_growth, list_metabolites,list_microbial_strains, raw_data_template)
+    print(errors)
     errors_logic = []
 
     study_id = None
