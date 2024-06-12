@@ -119,6 +119,8 @@ def dashboard():
 def content(df_growth, df_reads, studyID_to_visualize, conn):
 
     checkbox_states = {}
+    biorep_per_exp = {}
+    biorep_list =[]
 
     with col1:
         st.subheader("Experiments")
@@ -127,11 +129,13 @@ def content(df_growth, df_reads, studyID_to_visualize, conn):
         with col1:
             if not df_growth.empty:
                 df_experiments = getExperiments(studyID_to_visualize, conn)
+                
                 for i, j, k in zip(df_experiments["experimentId"], df_experiments["experimentDescription"],  df_experiments["bioreplicateIds"]):
                     with st.expander(f"{i}"):
                         st.write(f"{j}")
                         biorep_list = k.split(",")
-                        biorep_list.append("Mean of Biological Replicates")
+                        biorep_per_exp[i] = biorep_list
+                        biorep_list.append(f"Mean of Biological Replicates")
                         for rep in biorep_list:
                             checkbox_key = f"checkbox{i}:biologicalreplicate:{rep}"
                             checkbox_states[checkbox_key] = st.checkbox(f"{rep}", key=checkbox_key, value=checkbox_states.get(checkbox_key, False))
@@ -140,14 +144,14 @@ def content(df_growth, df_reads, studyID_to_visualize, conn):
 
         experiment_with_bioreps = filter_dict_states(st.session_state)
         #st.info(experiment_with_bioreps)
-        return experiment_with_bioreps
+        return experiment_with_bioreps, biorep_per_exp
 
 
 
-def tabs_plots(experiment_with_bioreps):
+def tabs_plots(experiment_with_bioreps, biorep_per_exp):
 
     with col2:
-        result_growth_df_dict, result_reads_df_dict = filter_df(experiment_with_bioreps,df_growth,df_reads)
+        result_growth_df_dict, result_reads_df_dict = filter_df(experiment_with_bioreps,biorep_per_exp,df_growth,df_reads)
         #print(result_growth_df_dict)
         #print(result_reads_df_dict)
         tab1, tab2, tab3, tab4, tab5,tab6 = st.tabs(["OD", "Plate Counts","pH","FC Counts","Reads 16S rRNA Seq","Metabolites"])
@@ -315,9 +319,9 @@ def tabs_plots(experiment_with_bioreps):
 df_growth, df_reads, studyID_to_visualize, conn = dashboard()
 #st.info(df_growth)
 col1, col2 = st.columns([0.35, 0.65])
-experiment_with_bioreps=content(df_growth, df_reads, studyID_to_visualize, conn)
+experiment_with_bioreps,  biorep_per_exp=content(df_growth, df_reads, studyID_to_visualize, conn)
 #st.info(experiment_with_bioreps)
-tabs_plots(experiment_with_bioreps)
+tabs_plots(experiment_with_bioreps, biorep_per_exp)
 #except:
 #    st.write("nothing yet.")
 
