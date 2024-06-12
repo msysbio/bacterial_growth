@@ -254,114 +254,117 @@ def db_search():
 
         print(st.session_state)
         final_query = dynamical_query(all_advance_query)
-        conn = st.connection("BacterialGrowth", type="sql")
-        
-        if conn is None:
-            st.warning("Please contact the developers (sofia.monsalveduarte@student.kuleuven.be or haris.zafeiropoulos@kuleuven.be) to fire the database first.")
-
-        df_studies = conn.query(final_query)  # , ttl=None
-        num_results = len(df_studies)
-
-        if num_results == 0:
-            st.warning("Sorry, there is no studies in the database that match your search.")
-
+        if final_query == "SELECT DISTINCT studyId  ;":
+            clean_dashboard()
         else:
-            study_ids = []
-            st.write(f'**{num_results}** search results')
+            conn = st.connection("BacterialGrowth", type="sql")
+            
+            if conn is None:
+                st.warning("Please contact the developers (sofia.monsalveduarte@student.kuleuven.be or haris.zafeiropoulos@kuleuven.be) to fire the database first.")
 
-            with st.form(key="Results"):
+            df_studies = conn.query(final_query)  # , ttl=None
+            num_results = len(df_studies)
 
-                #c1 , c2 = st.columns([0.05, 0.95])
+            if num_results == 0:
+                st.warning("Sorry, there is no studies in the database that match your search.")
 
-                for i in range(len(df_studies)):
+            else:
+                study_ids = []
+                st.write(f'**{num_results}** search results')
 
-                    c1 , c2 = st.columns([0.05, 0.95])
-                    study_id = df_studies['studyId'][i]
-                    with c1:
-                        down_check = st.checkbox(f"{i+1}",key=f'study_id_{study_id}')
+                with st.form(key="Results"):
 
-                    with c2:
+                    #c1 , c2 = st.columns([0.05, 0.95])
+
+                    for i in range(len(df_studies)):
+
+                        c1 , c2 = st.columns([0.05, 0.95])
                         study_id = df_studies['studyId'][i]
-                        study_ids.append(study_id)
-                        df_general = getGeneralInfo(study_id, conn)
-                        print(df_general)
-                        study_name = df_general['studyName'][0]
-                        transposed_df = df_general.T
-                        studyname = st.page_link("pages/Visualization_Dashboard.py",
-                                                label= f':blue[**{study_name}**]'
-                                    )
+                        with c1:
+                            down_check = st.checkbox(f"{i+1}",key=f'study_id_{study_id}')
 
-                        formatted_html = transposed_df.to_html(render_links=True, escape=False, justify='justify', header = False)
-                        styled_html = f"<style>table {{ font-size: 13px; }}</style>{formatted_html}"
-                        table = st.markdown(styled_html, unsafe_allow_html=True)
+                        with c2:
+                            study_id = df_studies['studyId'][i]
+                            study_ids.append(study_id)
+                            df_general = getGeneralInfo(study_id, conn)
+                            print(df_general)
+                            study_name = df_general['studyName'][0]
+                            transposed_df = df_general.T
+                            studyname = st.page_link("pages/Visualization_Dashboard.py",
+                                                    label= f':blue[**{study_name}**]'
+                                        )
 
-                        space = st.text("")
+                            formatted_html = transposed_df.to_html(render_links=True, escape=False, justify='justify', header = False)
+                            styled_html = f"<style>table {{ font-size: 13px; }}</style>{formatted_html}"
+                            table = st.markdown(styled_html, unsafe_allow_html=True)
 
-                        with st.expander("**Experiments**"):
-                            df_experiments = getExperiments(study_id, conn)
-                            st.dataframe(df_experiments,hide_index=True,)
+                            space = st.text("")
 
-                        space = st.text("")
+                            with st.expander("**Experiments**"):
+                                df_experiments = getExperiments(study_id, conn)
+                                st.dataframe(df_experiments,hide_index=True,)
 
-                        with st.expander("**Compartments**"):
-                            df_Compartment = getCompartment(study_id, conn)
-                            st.dataframe(df_Compartment,hide_index=True,)
+                            space = st.text("")
 
-                        space = st.text("")
-
-                        with st.expander("**Microbial Strains and Communities**"):
-                            df_Community = getCommunities(study_id, conn)
-                            if not df_Community.empty:
-                                st.write("**Communities information**")
+                            with st.expander("**Compartments**"):
+                                df_Compartment = getCompartment(study_id, conn)
                                 st.dataframe(df_Compartment,hide_index=True,)
-                            df_strains = getMicrobialStrains(study_id, conn)
-                            if not df_strains.empty:
-                                st.write("**Community Members information**")
-                                st.dataframe(df_strains,hide_index=True,)
 
-                        space = st.text("")
+                            space = st.text("")
 
-                        with st.expander("**Biological Replicates, Growth and Metabolites Measurements**"):
-                            df_biorep = getBiorep(study_id, conn)
-                            if not df_biorep.empty:
-                                st.write("**Biological Replicates Metadata**")
-                                st.dataframe(df_biorep,hide_index=True,)
-                            
-                            df_abundance = getAbundance(study_id, conn)
-                            if not df_abundance.empty:
-                                st.write("**Abundance data per Biological Replicates and microbial species**")
-                                st.dataframe(df_abundance,hide_index=True,)
+                            with st.expander("**Microbial Strains and Communities**"):
+                                df_Community = getCommunities(study_id, conn)
+                                if not df_Community.empty:
+                                    st.write("**Communities information**")
+                                    st.dataframe(df_Compartment,hide_index=True,)
+                                df_strains = getMicrobialStrains(study_id, conn)
+                                if not df_strains.empty:
+                                    st.write("**Community Members information**")
+                                    st.dataframe(df_strains,hide_index=True,)
 
-                            df_FC = getFC(study_id, conn)
-                            if not df_FC.empty:
-                                st.write("**Flow Cytometry Counts data per Biological Replicates and microbial species**")
-                                st.dataframe(df_FC,hide_index=True,)
+                            space = st.text("")
 
-                            df_Metabolite = getMetabolite(study_id, conn)
-                            if not df_Metabolite.empty:
-                                st.write("**Metabolites measured per Biological Replicates**")
-                                st.dataframe(df_Metabolite,hide_index=True,)
+                            with st.expander("**Biological Replicates, Growth and Metabolites Measurements**"):
+                                df_biorep = getBiorep(study_id, conn)
+                                if not df_biorep.empty:
+                                    st.write("**Biological Replicates Metadata**")
+                                    st.dataframe(df_biorep,hide_index=True,)
+                                
+                                df_abundance = getAbundance(study_id, conn)
+                                if not df_abundance.empty:
+                                    st.write("**Abundance data per Biological Replicates and microbial species**")
+                                    st.dataframe(df_abundance,hide_index=True,)
 
-                        space = st.text("")
-                        df_perturbation = getPerturbations(study_id, conn)
-                        if not df_perturbation.empty:
-                            with st.expander("**Perturbations**"):
-                                    st.dataframe(df_perturbation,hide_index=True,)
+                                df_FC = getFC(study_id, conn)
+                                if not df_FC.empty:
+                                    st.write("**Flow Cytometry Counts data per Biological Replicates and microbial species**")
+                                    st.dataframe(df_FC,hide_index=True,)
+
+                                df_Metabolite = getMetabolite(study_id, conn)
+                                if not df_Metabolite.empty:
+                                    st.write("**Metabolites measured per Biological Replicates**")
+                                    st.dataframe(df_Metabolite,hide_index=True,)
+
+                            space = st.text("")
+                            df_perturbation = getPerturbations(study_id, conn)
+                            if not df_perturbation.empty:
+                                with st.expander("**Perturbations**"):
+                                        st.dataframe(df_perturbation,hide_index=True,)
 
 
-                print("Checkboxes:", down_check)
+                    print("Checkboxes:", down_check)
 
-                space2 = st.text("")
-                download = st.form_submit_button("Download or Visualize Selected Studies", type = 'primary')
-                if download:
-                    selected_study_ids = [study_id for study_id in df_studies['studyId'] if st.session_state.get(f'study_id_{study_id}', False)]
-                    print(selected_study_ids)
-                    if selected_study_ids:
-                        createzip(selected_study_ids)  # Create zip file from selected folders
-                        st.session_state.to_dashboard = selected_study_ids[0]
-                        st.page_link("pages/Visualization_Dashboard.py", label="**View selected study on Dashboard**")
-                    
-                    
+                    space2 = st.text("")
+                    download = st.form_submit_button("Download or Visualize Selected Studies", type = 'primary')
+                    if download:
+                        selected_study_ids = [study_id for study_id in df_studies['studyId'] if st.session_state.get(f'study_id_{study_id}', False)]
+                        print(selected_study_ids)
+                        if selected_study_ids:
+                            createzip(selected_study_ids)  # Create zip file from selected folders
+                            st.session_state.to_dashboard = selected_study_ids[0]
+                            st.page_link("pages/Visualization_Dashboard.py", label="**View selected study on Dashboard**")
+                        
+                        
 
 
             # Out of the form
