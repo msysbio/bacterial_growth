@@ -135,7 +135,7 @@ def content(df_growth, df_reads, studyID_to_visualize, conn):
                         st.write(f"{j}")
                         biorep_list = k.split(",")
                         biorep_per_exp[i] = biorep_list
-                        biorep_list.append(f"Mean of Biological Replicates")
+                        biorep_list.append(f"Average {i}")
                         for rep in biorep_list:
                             checkbox_key = f"checkbox{i}:biologicalreplicate:{rep}"
                             checkbox_states[checkbox_key] = st.checkbox(f"{rep}", key=checkbox_key, value=checkbox_states.get(checkbox_key, False))
@@ -251,7 +251,7 @@ def tabs_plots(experiment_with_bioreps, biorep_per_exp):
 
         with tab5:
             for exp, reads_df in result_reads_df_dict.items():
-                reads_col = [col for col in reads_df.columns if not col.endswith('_reads')]
+                reads_col = [col for col in reads_df.columns if not col.endswith('_counts') and not col.endswith('_std') and col not in ["Biological_Replicate_id", "Time","Position"]]
                 if reads_col:
                     with st.expander(f"**16S rRNA Sequencing: {exp}**"):
                         st.dataframe(reads_df)
