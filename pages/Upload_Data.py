@@ -337,15 +337,15 @@ def tab_step1():
             col1, col2 = st.columns([0.85,0.15])
             with col1:
                 project_id = st.text_input(
-                    'Project unique ID:',
-                    help='Provide the unique ID of the project you want to add a new study',
-                    placeholder='1. Provide the unique project ID'
+                    'Private unique ID:',
+                    help='Provide the private ID of the project you want to add a new study',
+                    placeholder='1. Provide the Private project ID'
                 )
                 st.session_state.dontAdd = project_id == ""
             with col2:
                 st.write('')
                 st.write('')
-                verify_button = st.button("Verify unique ID", disabled=st.session_state.dontAdd, type="primary")
+                verify_button = st.button("Verify private ID", disabled=st.session_state.dontAdd, type="primary")
 
             if verify_button and project_id:
                 df_proyect_id = db.getPrivateProjectID(project_id,conn)
@@ -354,7 +354,7 @@ def tab_step1():
                     project_name = project_info_df['projectName'][0]
                     project_description = project_info_df['projectDescription'][0]
                     update_verify()
-                    st.info(f"Go to **Step 2** and folow the instructions!", icon="✅")
+                    st.info(f"Go to **Step 2** and follow the instructions!", icon="✅")
                 else:
                     st.warning("Incorrect Private Project ID, try again.")
 
@@ -365,14 +365,14 @@ def tab_step1():
             col1, col2 = st.columns([0.8,0.2])
             with col1:
                 project_id = st.text_input(
-                    'Project unique ID:',
-                    help='Provide the unique ID of the study project you want to add a new version',
-                    placeholder='1. Provide the unique project ID'
+                    'Private project ID:',
+                    help='Provide the private ID of the study project you want to add a new version',
+                    placeholder='1. Provide the private project ID'
                 )
                 study_id = st.text_input(
-                    'Study unique ID:',
-                    help='Provide the unique ID of the study you want to add a new version',
-                    placeholder='2. Provide the unique study ID'
+                    'Private study ID:',
+                    help='Provide the private ID of the study you want to add a new version',
+                    placeholder='2. Provide the private study ID'
                 )
                 st.session_state.dontUpdate = (project_id == "" or study_id == "")
             with col2:
@@ -383,7 +383,7 @@ def tab_step1():
                 st.write('')
                 st.write('')
                 st.write('')
-                verify2_button = st.button("Verify unique IDs", disabled=st.session_state.dontUpdate, type="primary")
+                verify2_button = st.button("Verify private IDs", disabled=st.session_state.dontUpdate, type="primary")
 
             if verify2_button and project_id and study_id:
                 df_proyect_id = db.getPrivateProjectID(project_id,conn)
