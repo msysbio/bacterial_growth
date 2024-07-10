@@ -64,8 +64,10 @@ def populate_db(args):
             # MEDIA ==> MEDIA_ID
             if biological_replicate['MEDIA']['MEDIA_PATH']['value']:
                 media_file = os.path.abspath(biological_replicate['MEDIA']['MEDIA_PATH']['value'])
-                path_end = max(findOccurrences(media_file, "/"))
+                print(media_file)
+                path_end = max(findOccurrences(media_file, "\\"))
                 media_file_name = media_file[path_end+1:]
+                print(media_file_name)
 
                 media_analysis_file = PROJECT_DIRECTORY + MEDIA_ANALYSIS_FILE
                 media_args = [PROJECT_DIRECTORY, media_file, media_file_name]
