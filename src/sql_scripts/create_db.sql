@@ -1,10 +1,6 @@
-DROP DATABASE BacterialGrowth;
-CREATE DATABASE BacterialGrowth;
-USE BacterialGrowth;
-
 CREATE TABLE IF NOT EXISTS Project (
-	projectId VARCHAR(100),
-    projectName VARCHAR(100) DEFAULT NULL, 
+    projectId VARCHAR(100),
+    projectName VARCHAR(100) DEFAULT NULL,
     projectDescription TEXT DEFAULT NULL,
     projectUniqueID VARCHAR(100),
     PRIMARY KEY (projectId),
@@ -12,9 +8,9 @@ CREATE TABLE IF NOT EXISTS Project (
 );
 
 CREATE TABLE IF NOT EXISTS Study (
-	studyId VARCHAR(100),
+    studyId VARCHAR(100),
     projectUniqueID VARCHAR(100),
-    studyName VARCHAR(100) DEFAULT NULL, 
+    studyName VARCHAR(100) DEFAULT NULL,
     studyDescription TEXT DEFAULT NULL,
     studyURL VARCHAR(100) DEFAULT NULL,
     studyUniqueID VARCHAR(100) DEFAULT NULL,
@@ -24,8 +20,8 @@ CREATE TABLE IF NOT EXISTS Study (
 
 CREATE TABLE IF NOT EXISTS Experiments (
     studyId VARCHAR(100),
-	experimentUniqueId INT AUTO_INCREMENT,
-    experimentId VARCHAR(20), 
+    experimentUniqueId INT AUTO_INCREMENT,
+    experimentId VARCHAR(20),
     experimentDescription TEXT,
     cultivationMode  VARCHAR(50),
     controlDescription TEXT,
@@ -46,7 +42,7 @@ CREATE TABLE IF NOT EXISTS Compartments (
     H2  FLOAT(7,2) DEFAULT 0,
     N2 FLOAT(7,2) DEFAULT 0,
     inoculumConcentration FLOAT(10,2) DEFAULT 0,
-	inoculumVolume FLOAT(7,2) DEFAULT 0,
+    inoculumVolume FLOAT(7,2) DEFAULT 0,
     initialPh FLOAT(7,2) DEFAULT 0,
     initialTemperature FLOAT(7,2) DEFAULT 0,
     carbonSource BOOLEAN DEFAULT FALSE,
@@ -84,20 +80,20 @@ CREATE TABLE IF NOT EXISTS Metabolites (
 );
 
 CREATE TABLE IF NOT EXISTS Taxa (
-    tax_id VARCHAR(255), 
+    tax_id VARCHAR(255),
     tax_names VARCHAR(255),
     PRIMARY KEY (tax_id)
 );
 
 /*
 CREATE TABLE IF NOT EXISTS MetaboliteSynonym (
-    syn_id INT AUTO_INCREMENT PRIMARY KEY, 
+    syn_id INT AUTO_INCREMENT PRIMARY KEY,
     synonym_value VARCHAR(255) DEFAULT NULL,
     cheb_id VARCHAR(255),
     FOREIGN KEY (cheb_id) REFERENCES Metabolites(cheb_id)
 );
 
-*/
+ */
 
 
 CREATE TABLE CompartmentsPerExperiment (
@@ -219,7 +215,3 @@ CREATE TABLE IF NOT EXISTS FC_Counts (
     FOREIGN KEY (strainId) REFERENCES Strains (strainId) ON UPDATE CASCADE ON DELETE CASCADE,
     FOREIGN KEY (studyId) REFERENCES Study (studyId) ON UPDATE CASCADE ON DELETE CASCADE
 );
-
-
-
-

@@ -708,7 +708,7 @@ def tab_step3(keywords, list_taxa_id, all_strain_data,create_private_project_id,
                     - **COMMUNITY_MEMBERS:** Information with respect to the various strains used in this study. This tab will be dynamically generated. Please used the same Member_IDs in the **COMMUNITIES**.
                     _ **COMMUNITIES:** Define all the different communities used in your study by using the Member_IDs given in the **COMMUNITY_MEMBERS** sheet.
                     - **PERTURBATIONS:** In this sheet you will fill all the information related to the different perturbations made to an experiment (**Experiment_ID**). There are two types of perturbations possible: when altering compartment conditions such as: pH, temperature etc. or when adding new microbial **COMMUNITIES** like: environmental samples or new microvial strains.
-                    Complete each section carefully according to the instructions. **DO NOT** modify the file by adding or deleating columns.
+                    Complete each section carefully according to the instructions. **DO NOT** modify the file by adding or deleting columns.
                     """)
 
 

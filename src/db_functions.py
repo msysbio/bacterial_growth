@@ -26,7 +26,7 @@ def execute(phrase):
         #     auth_plugin='mysql_native_password'
         #     )
         cnx = mysql.connector.connect(
-              username=st.secrets.connections.BacterialGrowth.username, 
+              username=st.secrets.connections.BacterialGrowth.username,
               password=st.secrets.connections.BacterialGrowth.password,
               host=st.secrets.connections.BacterialGrowth.host,
               port=st.secrets.connections.BacterialGrowth.port,
