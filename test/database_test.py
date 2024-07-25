@@ -12,7 +12,9 @@ class DatabaseTest(unittest.TestCase):
 
         # Connect to the test database:
         config = tomllib.loads(Path('config/database.toml').read_text())
-        self.db = mysql.connector.connect(**config['test'], use_pure=False)
+        self.test_config = config['test']
+
+        self.db = mysql.connector.connect(**self.test_config, use_pure=False)
 
         # Clean up database state before each test:
         with self.db.cursor() as conn:
@@ -23,3 +25,20 @@ class DatabaseTest(unittest.TestCase):
 
     def tearDown(self):
         self.db.close()
+
+    def create_streamlit_connection(self):
+        import streamlit as st
+
+        username = self.test_config['username']
+        password = self.test_config['password']
+        host     = self.test_config['host']
+        port     = self.test_config['port']
+        database = self.test_config['database']
+
+        other = ''
+        if 'unix_socket' in self.test_config:
+            other += f"?unix_socket={self.test_config['unix_socket']}"
+
+        st_url = f"mysql://{username}:{password}@{host}:{port}/{database}{other}"
+
+        return st.connection("sql", url=st_url)

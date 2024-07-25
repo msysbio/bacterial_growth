@@ -44,5 +44,25 @@ class TestDbFunctions(DatabaseTest):
             big_studies = getRecords('Study', {'studyName'}, {'projectUniqueID': 'p_big'})
             self.assertEqual(big_studies, [('Big study',)])
 
+    def test_getStudyID(self):
+        # Create 2 studies
+        with self.db.cursor() as conn:
+            factories.create_study(conn)
+            factories.create_study(conn)
+            self.db.commit()
+
+        st_conn = self.create_streamlit_connection()
+
+        # Next study will have an ID of 3
+        self.assertEqual(getStudyID(st_conn), "SMGDB00000003")
+
+        # Create 1 study
+        with self.db.cursor() as conn:
+            factories.create_study(conn)
+            self.db.commit()
+
+        # Next study will have an ID of 4
+        self.assertEqual(getStudyID(st_conn), "SMGDB00000004")
+
 if __name__ == '__main__':
     unittest.main()
