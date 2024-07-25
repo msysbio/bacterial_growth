@@ -1,25 +1,48 @@
+import init
+import factories
+from database_test import DatabaseTest
+
 import unittest
-import tomllib
-from pathlib import Path
 
-import mysql.connector
+from db_functions import *
 
-class TestDbFunctions(unittest.TestCase):
-    def setUp(self):
-        config      = tomllib.loads(Path('config/database.toml').read_text())
-        test_config = config['test']
 
-        self.db = mysql.connector.connect(**test_config, use_pure=False)
+class TestDbFunctions(DatabaseTest):
+    def test_getInsertFieldValues(self):
+        values = { 'foo': 'bar', 'Baz': 42 }
+        result = getInsertFieldsValues(values)
 
-    def tearDown(self):
-        self.db.close()
+        self.assertEqual(result, ['(foo,Baz)', "('bar','42')"])
 
-    def test_example(self):
+        values = {}
+        result = getInsertFieldsValues(values)
+
+        self.assertEqual(result, ['', ''])
+
+    def test_getChebiId(self):
         with self.db.cursor() as conn:
-            conn.execute('select count(*) from Study')
-            result = conn.fetchone()
-            print(result)
+            metabolite1 = factories.create_metabolite(conn, metabo_name="Caffeine")
+            metabolite2 = factories.create_metabolite(conn, metabo_name="Sucrose")
 
+            self.db.commit()
+
+            self.assertEqual(getChebiId("Caffeine"), metabolite1)
+            self.assertEqual(getChebiId("Sucrose"), metabolite2)
+            self.assertEqual(getChebiId("Nonexistent"), None)
+
+    def test_getRecords_can_retrieve_studies(self):
+        with self.db.cursor() as conn:
+            study1 = factories.create_study(conn, studyName='Small study', projectUniqueID='p_small')
+            study2 = factories.create_study(conn, studyName='Big study', projectUniqueID='p_big')
+
+            self.db.commit()
+
+            all_studies = getRecords('Study', {'studyName'}, {})
+            all_studies.sort()
+            self.assertEqual(all_studies, [('Big study',), ('Small study',)])
+
+            big_studies = getRecords('Study', {'studyName'}, {'projectUniqueID': 'p_big'})
+            self.assertEqual(big_studies, [('Big study',)])
 
 if __name__ == '__main__':
     unittest.main()
