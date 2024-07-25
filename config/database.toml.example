@@ -1,0 +1,13 @@
+[development]
+username = "<username>"
+password = "<password>"
+host = "localhost"
+port = 3306
+database = "BacterialGrowth"
+
+[test]
+username = "<username>"
+password = "<passwod>"
+host = "localhost"
+port = 3306
+database = "BacterialGrowthTest"
