@@ -8,7 +8,7 @@ import mysql.connector
 
 class DatabaseTest(unittest.TestCase):
     def setUp(self):
-        assert(os.environ['APP_ENV'] == 'test')
+        assert os.environ['APP_ENV'] == 'test'
 
         # Connect to the test database:
         config = tomllib.loads(Path('config/database.toml').read_text())
@@ -31,8 +31,8 @@ class DatabaseTest(unittest.TestCase):
 
         username = self.test_config['username']
         password = self.test_config['password']
-        host     = self.test_config['host']
-        port     = self.test_config['port']
+        host = self.test_config['host']
+        port = self.test_config['port']
         database = self.test_config['database']
 
         other = ''

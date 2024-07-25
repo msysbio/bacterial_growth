@@ -4,18 +4,18 @@ from database_test import DatabaseTest
 
 import unittest
 
-from db_functions import *
+import db_functions
 
 
 class TestDbFunctions(DatabaseTest):
     def test_getInsertFieldValues(self):
-        values = { 'foo': 'bar', 'Baz': 42 }
-        result = getInsertFieldsValues(values)
+        values = {'foo': 'bar', 'Baz': 42}
+        result = db_functions.getInsertFieldsValues(values)
 
         self.assertEqual(result, ['(foo,Baz)', "('bar','42')"])
 
         values = {}
-        result = getInsertFieldsValues(values)
+        result = db_functions.getInsertFieldsValues(values)
 
         self.assertEqual(result, ['', ''])
 
@@ -26,22 +26,22 @@ class TestDbFunctions(DatabaseTest):
 
             self.db.commit()
 
-            self.assertEqual(getChebiId("Caffeine"), metabolite1)
-            self.assertEqual(getChebiId("Sucrose"), metabolite2)
-            self.assertEqual(getChebiId("Nonexistent"), None)
+            self.assertEqual(db_functions.getChebiId("Caffeine"), metabolite1)
+            self.assertEqual(db_functions.getChebiId("Sucrose"), metabolite2)
+            self.assertEqual(db_functions.getChebiId("Nonexistent"), None)
 
     def test_getRecords_can_retrieve_studies(self):
         with self.db.cursor() as conn:
-            study1 = factories.create_study(conn, studyName='Small study', projectUniqueID='p_small')
-            study2 = factories.create_study(conn, studyName='Big study', projectUniqueID='p_big')
+            factories.create_study(conn, studyName='Small study', projectUniqueID='p_small')
+            factories.create_study(conn, studyName='Big study', projectUniqueID='p_big')
 
             self.db.commit()
 
-            all_studies = getRecords('Study', {'studyName'}, {})
+            all_studies = db_functions.getRecords('Study', {'studyName'}, {})
             all_studies.sort()
             self.assertEqual(all_studies, [('Big study',), ('Small study',)])
 
-            big_studies = getRecords('Study', {'studyName'}, {'projectUniqueID': 'p_big'})
+            big_studies = db_functions.getRecords('Study', {'studyName'}, {'projectUniqueID': 'p_big'})
             self.assertEqual(big_studies, [('Big study',)])
 
     def test_getStudyID(self):
@@ -54,7 +54,7 @@ class TestDbFunctions(DatabaseTest):
         st_conn = self.create_streamlit_connection()
 
         # Next study will have an ID of 3
-        self.assertEqual(getStudyID(st_conn), "SMGDB00000003")
+        self.assertEqual(db_functions.getStudyID(st_conn), "SMGDB00000003")
 
         # Create 1 study
         with self.db.cursor() as conn:
@@ -62,7 +62,8 @@ class TestDbFunctions(DatabaseTest):
             self.db.commit()
 
         # Next study will have an ID of 4
-        self.assertEqual(getStudyID(st_conn), "SMGDB00000004")
+        self.assertEqual(db_functions.getStudyID(st_conn), "SMGDB00000004")
+
 
 if __name__ == '__main__':
     unittest.main()

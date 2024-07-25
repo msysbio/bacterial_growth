@@ -1,9 +1,10 @@
 import uuid
 
 # Will be auto-incremented to create sequential database ids:
-STUDY_ID    = 0
+STUDY_ID = 0
 PROJECT_UID = 0
-CHEB_ID     = 0
+CHEB_ID = 0
+
 
 def create_study(conn, **params):
     global STUDY_ID
@@ -29,6 +30,7 @@ def create_study(conn, **params):
             %(studyName)s, %(studyDescription)s, %(studyURL)s, %(studyUniqueID)s
         )
     """, params)
+
 
 def create_metabolite(conn, **params):
     global CHEB_ID
