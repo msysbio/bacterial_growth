@@ -1,11 +1,9 @@
 #! /usr/bin/env python3
 
 import os
-import tomllib
-from pathlib import Path
+from flask_app.app.db import get_config
 
-env = os.getenv('APP_ENV', 'development')
-config = tomllib.loads(Path('config/database.toml').read_text())[env]
+config = get_config()
 
 os.execv(
     '/usr/bin/mysql', [
