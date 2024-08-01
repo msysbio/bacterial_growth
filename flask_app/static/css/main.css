@@ -1,5 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Public+Sans&display=swap');
 
+.clear {
+  clear: both;
+}
+
 :root {
   --sidebar-width: 320px;
 }
@@ -29,4 +33,15 @@ header img {
   padding-left: 50px;
   padding-right: 50px;
   padding-bottom: 100px;
+}
+
+.about-page .map {
+  float: left;
+  width: 50%;
+  background-color: gray;
+}
+
+.about-page .info {
+  float: left;
+  width: 50%;
 }

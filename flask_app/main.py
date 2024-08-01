@@ -11,7 +11,8 @@ def create_app():
         EXPLAIN_TEMPLATE_LOADING=True,
     )
 
-    app.add_url_rule("/", view_func=views.index)
+    app.add_url_rule("/",      view_func=views.index)
+    app.add_url_rule("/about", view_func=views.about)
 
     return app
 
