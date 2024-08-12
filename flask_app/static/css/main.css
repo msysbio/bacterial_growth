@@ -5,7 +5,7 @@
 }
 
 :root {
-  --sidebar-width: 320px;
+  --sidebar-width: 340px;
 }
 
 body *{
@@ -17,7 +17,7 @@ body *{
   width: var(--sidebar-width);
   background-color: #caeaea;
   height: 100%;
-  padding-top: 20px;
+  padding: 20px;
 }
 
 #main {

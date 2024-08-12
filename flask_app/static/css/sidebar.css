@@ -1,0 +1,46 @@
+#page_sidebar {
+  ul {
+    list-style: none;
+    margin: 0 auto;
+    padding-left: 0;
+  }
+
+  ul li {
+    border-radius: 0.25rem;
+    line-height: 1.8;
+    display: flex;
+    align-items: center;
+    padding-left: 10px;
+    padding-right: 10px;
+    margin-bottom: 4px;
+
+    &:hover {
+      background-color: rgba(121, 200, 200, 0.25);
+    }
+
+    .icon {
+      font-size: 20px;
+    }
+
+    a {
+      flex-grow: 1;
+      font-size: 16px;
+      text-decoration: none;
+      padding-left: 0.5rem;
+      padding-right: 0.5rem;
+      color: rgba(7, 25, 82, 0.6);
+      font-weight: 400;
+    }
+    a:visited {
+      color: inherit;
+    }
+  }
+
+  ul li.current-path {
+    background-color: rgba(121, 200, 200, 0.15);
+    a {
+      color: rgba(7, 25, 82, 1.0);
+      font-weight: 600;
+    }
+  }
+}

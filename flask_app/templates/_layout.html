@@ -34,16 +34,30 @@
           <img src={{ url_for('static', filename='images/logo_sidebar3.png') }} />
         </header>
 
-        <ul>
+        <ul class="nav-links">
           <li>
-            <a href="/" class="home-link">🏠 Home</a>
+            <idv class="icon">🏠</idv>
+            <a href="{{ url_for('index_page') }}" class="home-link">Home</a>
           </li>
-          <li>🔍 Search</li>
-          <li>📈 Dashboard</li>
-          <li>📤 Upload data</li>
-          <li>❓ Help</li>
           <li>
-            <a href="{{ url_for('about') }}">🥼 About us</a>
+            <div class="icon">🔍</div>
+            <a href="{{ url_for('search_page') }}">Search</a>
+          </li>
+          <li>
+            <div class="icon">📈</div>
+            <a href="{{ url_for('dashboard_page') }}">Dashboard</a>
+          </li>
+          <li>
+            <div class="icon">📤</div>
+            <a href="{{ url_for('upload_page') }}">Upload data</a>
+          </li>
+          <li>
+            <div class="icon">❓</div>
+            <a href="{{ url_for('help_page') }}">Help</a>
+          </li>
+          <li>
+            <div class="icon">🥼</div>
+            <a href="{{ url_for('about_page') }}">About us</a>
           </li>
         </ul>
       </nav>
