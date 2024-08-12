@@ -1,95 +1,59 @@
-<html>
-  <head>
-    <title>µGrowthDB</title>
+{% extends '_layout.html' %}
 
-    <link
-        rel="stylesheet"
-        href="{{ url_for('static', filename='css/reset.css') }}"
-        type="text/css"
-        media="screen" />
-    <link
-        rel="stylesheet"
-        href="{{ url_for('static', filename='css/main.css') }}"
-        type="text/css"
-        media="screen" />
-  </head>
+{% block title %}: About{% endblock %}
 
-  <body>
-    <aside id="page_sidebar">
-      <nav>
-        <header>
-          <img src={{ url_for('static', filename='images/logo_sidebar3.png') }} />
-        </header>
+{% block content %}
+<header>
+  <img height="200" src={{ url_for('static', filename='images/logo.png') }} />
+</header>
 
-        <ul>
-          <li>
-            <a href="/">🏠 Home</a>
-          </li>
-          <li>🔍 Search</li>
-          <li>📈 Dashboard</li>
-          <li>📤 Upload data</li>
-          <li>❓ Help</li>
-          <li>
-            <a href="{{ url_for('about') }}">🥼 About us</a>
-          </li>
-        </ul>
-      </nav>
-    </aside>
+<div class="container">
+  <article>
+    <h2>Lab of Microbial Systems Biology</h2>
 
-    <main id="main" class="about-page">
-      <header>
-        <img height="200" src={{ url_for('static', filename='images/logo.png') }} />
-      </header>
+    <br>
 
-      <div class="container">
-        <article>
-          <h2>Lab of Microbial Systems Biology</h2>
+    <div style="text-align: justify;">
+      We study the structure and dynamics of microbial communities with
+      systems biology methods. Our main interest is to explore microbial
+      community structure and dynamics in silico and in vitro. We
+      therefore work at the boundary of microbial ecology, systems
+      biology and bioinformatics.
+    </div>
 
-          <br>
+    <div class="info">
+      <h3>Address</h3>
 
-          <div style="text-align: justify;">
-            We study the structure and dynamics of microbial communities with
-            systems biology methods. Our main interest is to explore microbial
-            community structure and dynamics in silico and in vitro. We
-            therefore work at the boundary of microbial ecology, systems
-            biology and bioinformatics.
-          </div>
+      <p>
+        Laboratory of Molecular Bacteriology<br>
+        Department of Microbiology, Immunology and Transplantation (Rega Institute)<br>
+        KU Leuven<br>
+        Rega institute, 7th floor (Room 7.B142)<br>
+        Bus: 1028<br>
+        Campus Gasthuisberg<br>
+        Herestraat 49<br>
+        3000 Leuven<br>
+        Belgium
+      </p>
 
-          <div class="info">
-            <h3>Address</h3>
+      <h3>More</h3>
 
-            <p>
-              Laboratory of Molecular Bacteriology<br>
-              Department of Microbiology, Immunology and Transplantation (Rega Institute)<br>
-              KU Leuven<br>
-              Rega institute, 7th floor (Room 7.B142)<br>
-              Bus: 1028<br>
-              Campus Gasthuisberg<br>
-              Herestraat 49<br>
-              3000 Leuven<br>
-              Belgium
-            </p>
+      <p>
+        <a href="https://github.com/msysbio">Go to our website</a>
+      </p>
 
-            <h3>More</h3>
+      <p>
+        <a href="https://github.com/msysbio" target="_blank" rel="noopener noreferrer">
+          <img src="https://img.shields.io/github/stars/msysbio.svg?style=social&label=Star&maxAge=2592000">
+        </a>
+      </p>
+    </div>
 
-            <p>
-              <a href="https://github.com/msysbio">Go to our website</a>
-            </p>
+    <div class="map">
+      <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40278.006351395336!2d4.634398779101553!3d50.87976210000002!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47c160df3fa2d3f3%3A0x8e85c1ed71c08d2d!2sREGA%20INSTITUTE%20KU%20LEUVEN!5e0!3m2!1sen!2sus!4v1712232819219!5m2!1sen!2sus" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+    </div>
+  </article>
+</div>
 
-            <p>
-              <a href="https://github.com/msysbio" target="_blank" rel="noopener noreferrer">
-                <img src="https://img.shields.io/github/stars/msysbio.svg?style=social&label=Star&maxAge=2592000">
-              </a>
-            </p>
-          </div>
-
-          <div class="map">
-            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40278.006351395336!2d4.634398779101553!3d50.87976210000002!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47c160df3fa2d3f3%3A0x8e85c1ed71c08d2d!2sREGA%20INSTITUTE%20KU%20LEUVEN!5e0!3m2!1sen!2sus!4v1712232819219!5m2!1sen!2sus" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-          </div>
-        </article>
-      </div>
-
-      <div class="clear"></div>
-    </main>
-  </body>
-</html>
+<div class="clear"></div>
+{% endblock %}
