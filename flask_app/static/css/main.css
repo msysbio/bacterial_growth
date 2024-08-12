@@ -35,13 +35,50 @@ header img {
   padding-bottom: 100px;
 }
 
-.about-page .map {
-  float: left;
-  width: 50%;
-  background-color: gray;
+table.simple-table {
+  border-collapse: collapse;
+
+  th, td {
+    padding: 6px 13px;
+    border: 1px solid rgba(7, 25, 82, 0.2);
+  }
 }
 
-.about-page .info {
-  float: left;
-  width: 50%;
+.dashboard-page {
+  h1 {
+    text-align: center;
+    color: #078294;
+    font-weight: 700;
+    font-size: 42px;
+  }
+}
+
+.about-page .address {
+  display: flex;
+  padding-top: 40px;
+
+  .text {
+    width: 40%;
+    h3 { margin-top: 0; }
+  }
+
+  .map {
+    width: 60%;
+    background: no-repeat center url('/static/images/loader.svg');
+    background-size: 50px;
+    border: 1px solid gray;
+  }
+}
+
+.help-page {
+  details {
+    border: 1px solid black;
+    border-radius: 4px;
+    padding: 10px;
+    margin-bottom: 20px;
+  }
+
+  summary:hover {
+    cursor: pointer;
+  }
 }

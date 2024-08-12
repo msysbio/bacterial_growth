@@ -1,4 +1,8 @@
 #page_sidebar {
+  header img {
+    height: 135px;
+  }
+
   ul {
     list-style: none;
     margin: 0 auto;

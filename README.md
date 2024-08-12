@@ -1,9 +1,11 @@
 # How to run the app
 
-This is a branch dedicated for the streamlit cloud. 
+This is a branch dedicated for the streamlit cloud.
 
-It has 
-
-
+It has
 
 
+
+## References
+
+- SVG Spinners: <https://github.com/n3r4zzurr0/svg-spinners>

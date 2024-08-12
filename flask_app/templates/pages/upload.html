@@ -3,5 +3,31 @@
 {% block title %}: Upload{% endblock %}
 
 {% block content %}
-TODO
+<header>
+  <img height="100" src={{ url_for('static', filename='images/upload_banner.png') }} />
+</header>
+
+<div class="container">
+  <article>
+    <p>
+      Thank you for choosing to share your microbial growth data with us. Your
+      commitment to sharing experimental data is essential for advancing our
+      understanding of microbiome dynamics. Your contribution plays a vital
+      role in driving research forward and enhancing our collective knowledge
+      in this field.
+    </p>
+
+    <p>
+      To successfully submit your data, please ensure that you follow the
+      instructions provided in each of the following steps. Adhering to these
+      instructions helps us maintain the quality of our database and ensures
+      the accuracy and reliability of the information stored within it. Thank
+      you for your cooperation in maintaining data integrity and reliability.
+    </p>
+
+    <p>
+      TODO upload wizard
+    </p>
+  </article>
+</div>
 {% endblock %}
