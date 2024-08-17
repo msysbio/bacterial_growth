@@ -28,12 +28,18 @@
   </head>
 
   <body>
-    <aside id="page_sidebar">
-      <nav>
-        <header>
-          <img src={{ url_for('static', filename='images/logo_sidebar3.png') }} />
-        </header>
+    <aside id="page-sidebar">
+      <div class="close-sidebar">
+        <a href="#">
+          <img alt="Close sidebar" src="{{ url_for('static', filename='images/chevrons-left.svg') }}" />
+        </a>
+      </div>
 
+      <header>
+        <img style="min-width: 300px;" src={{ url_for('static', filename='images/logo_sidebar3.png') }} />
+      </header>
+
+      <nav>
         <ul class="nav-links">
           <li>
             <div class="icon">🏠</div>
@@ -64,6 +70,12 @@
     </aside>
 
     <main id="main">
+      <div class="open-sidebar">
+        <a href="#">
+          <img alt="Open sidebar" src="{{ url_for('static', filename='images/chevrons-right.svg') }}" />
+        </a>
+      </div>
+
       {% block content %}{% endblock %}
     </main>
   </body>

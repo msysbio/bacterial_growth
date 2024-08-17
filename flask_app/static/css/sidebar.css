@@ -1,4 +1,4 @@
-#page_sidebar {
+#page-sidebar {
   header img {
     height: 135px;
   }
@@ -19,7 +19,7 @@
     margin-bottom: 4px;
 
     &:hover {
-      background-color: rgba(121, 200, 200, 0.25);
+      background-color: var(--hover-color);
     }
 
     .icon {
