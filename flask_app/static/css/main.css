@@ -161,9 +161,19 @@ form.simple-form {
   flex-direction: column;
   row-gap: 10px;
 
+  .no-label {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+  }
+
   .form-row {
     display: flex;
     column-gap: 10px;
+
+    label.full {
+      flex-grow: 1;
+    }
 
     .form-input-full {
       width: 100%;

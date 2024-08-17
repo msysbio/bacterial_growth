@@ -18,7 +18,23 @@
     </p>
 
     <p>
-      TODO form
+      <form action="{{ url_for('dashboard_page') }}" method="GET" class="simple-form">
+        <div class="form-row">
+          <label class="full">
+            <span>Study ID</span>
+            <input
+                type="text"
+                name="studyId"
+                required="true"
+                placeholder="Enter the Study ID whose data you want to visualize"
+                class="form-input-full" />
+          </label>
+
+          <div class="no-label">
+            <input type="submit" value="Go!" />
+          </div>
+        </div>
+      </form>
     </p>
   </article>
 </div>
