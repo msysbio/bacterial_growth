@@ -19,7 +19,7 @@
     margin-bottom: 4px;
 
     &:hover {
-      background-color: var(--hover-color);
+      background-color: var(--sidebar-hover-color);
     }
 
     .icon {
