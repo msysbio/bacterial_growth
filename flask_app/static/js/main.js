@@ -23,6 +23,7 @@ $(document).ready(function() {
 
     $(':root').css('--sidebar-width', '0px');
     $('#main .open-sidebar').css('width', '50px');
+    $('#main .open-sidebar a').focus();
   });
 
   $('#main .open-sidebar a').on('click', function(e) {
@@ -30,5 +31,6 @@ $(document).ready(function() {
 
     $(':root').css('--sidebar-width', '340px');
     $('#main .open-sidebar').css('width', '0px');
+    $('#page-sidebar .close-sidebar a').focus();
   });
 });
