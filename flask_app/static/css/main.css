@@ -188,3 +188,30 @@ form.simple-form {
     }
   }
 }
+
+.tabs {
+  .tab-headers {
+    display: flex;
+    column-gap: 20px;
+    border-bottom: 2px solid rgba(7, 25, 82, 0.1);
+    font-size: 24px;
+
+    span {
+      cursor: pointer;
+    }
+
+    span.active {
+      color: rgb(7, 110, 126);
+      border-bottom: 2px solid rgb(7, 110, 126);
+      margin-bottom: -2px;
+    }
+  }
+
+  .tab-body {
+    display: none;
+  }
+
+  .tab-body.active {
+    display: block;
+  }
+}

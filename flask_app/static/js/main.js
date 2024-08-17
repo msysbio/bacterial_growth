@@ -18,7 +18,7 @@ $(document).ready(function() {
     }
   });
 
-  $('#page-sidebar .close-sidebar a').log().on('click', function(e) {
+  $('#page-sidebar .close-sidebar a').on('click', function(e) {
     e.preventDefault();
 
     $(':root').css('--sidebar-width', '0px');
@@ -32,5 +32,22 @@ $(document).ready(function() {
     $(':root').css('--sidebar-width', '340px');
     $('#main .open-sidebar').css('width', '0px');
     $('#page-sidebar .close-sidebar a').focus();
+  });
+
+  $('.js-tabs .tab-headers span').log().on('click', function(e) {
+    e.preventDefault();
+
+    let $clickedHeader = $(this);
+    let $container = $clickedHeader.parents('.js-tabs')
+
+    let $headers = $container.find('.tab-headers span');
+    let $bodies = $clickedHeader.parents('.js-tabs').find('.tab-body');
+
+    $headers.removeClass('active');
+    $clickedHeader.addClass('active');
+
+    let clickedIndex = $headers.index(this);
+    $bodies.log().removeClass('active');
+    $($bodies[clickedIndex]).addClass('active');
   });
 });
