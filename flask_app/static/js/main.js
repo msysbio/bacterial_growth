@@ -23,7 +23,9 @@ $(document).ready(function() {
 
     $(':root').css('--sidebar-width', '0px');
     $('#main .open-sidebar').css('width', '50px');
-    $('#main .open-sidebar a').focus();
+
+    // Experimental: focus sidebar opener afterwards
+    // $('#main .open-sidebar a').focus();
   });
 
   $('#main .open-sidebar a').on('click', function(e) {
@@ -31,7 +33,9 @@ $(document).ready(function() {
 
     $(':root').css('--sidebar-width', '340px');
     $('#main .open-sidebar').css('width', '0px');
-    $('#page-sidebar .close-sidebar a').focus();
+
+    // Experimental: focus sidebar closer afterwards
+    // $('#page-sidebar .close-sidebar a').focus();
   });
 
   $('.js-tabs .tab-headers span').log().on('click', function(e) {

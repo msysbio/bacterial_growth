@@ -18,6 +18,11 @@ body *{
   }
 }
 
+a:hover {
+  transition: color 150ms;
+  color: #0060df;
+}
+
 #page-sidebar {
   position: fixed;
   width: var(--sidebar-width);
