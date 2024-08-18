@@ -1,0 +1,4 @@
+Flask
+Flask-Assets
+cssmin
+jsmin
