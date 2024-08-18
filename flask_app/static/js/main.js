@@ -38,7 +38,7 @@ $(document).ready(function() {
     // $('#page-sidebar .close-sidebar a').focus();
   });
 
-  $('.js-tabs .tab-headers span').log().on('click', function(e) {
+  $('.js-tabs .tab-headers span').on('click', function(e) {
     e.preventDefault();
 
     let $clickedHeader = $(this);
@@ -51,7 +51,7 @@ $(document).ready(function() {
     $clickedHeader.addClass('active');
 
     let clickedIndex = $headers.index(this);
-    $bodies.log().removeClass('active');
+    $bodies.removeClass('active');
     $($bodies[clickedIndex]).addClass('active');
   });
 });
