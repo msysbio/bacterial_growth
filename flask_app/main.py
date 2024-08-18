@@ -1,3 +1,7 @@
+# TODO only necessary while we dip into the streamlit structure
+import sys
+sys.path.append('src')
+
 from flask import Flask
 import flask_assets
 
@@ -30,10 +34,11 @@ def create_app():
         ASSETS_DEBUG=True,
         TEMPLATES_AUTO_RELOAD=True,
         EXPLAIN_TEMPLATE_LOADING=True,
+        SECRET_KEY='development_key',
     )
 
     app.add_url_rule("/",          view_func=views.index_page)
-    app.add_url_rule("/search",    view_func=views.search_page)
+    app.add_url_rule("/search",    view_func=views.search_page, methods=["GET", "POST"])
     app.add_url_rule("/dashboard", view_func=views.dashboard_page)
     app.add_url_rule("/upload",    view_func=views.upload_page)
     app.add_url_rule("/help",      view_func=views.help_page)

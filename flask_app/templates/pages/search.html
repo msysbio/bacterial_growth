@@ -22,26 +22,18 @@
     </p>
 
     <p>
-      <form action="{{ url_for('search_page') }}" method="GET" class="simple-form">
+      <form action="{{ url_for('search_page') }}" method="POST" class="simple-form">
+        {{ form.csrf_token }}
+
         <div class="form-row">
           <label>
             <span>Select an option:</span>
-            <select name="identifier" class="form-input-full">
-              <option value="Project Name">Project Name</option>
-              <option value="Project ID">Project ID</option>
-              <option value="Study Name">Study Name</option>
-              <option value="Study ID">Study ID</option>
-              <option value="Microbial Strain">Microbial Strain</option>
-              <option value="NCBI ID">NCBI ID</option>
-              <option value="Metabolites">Metabolites</option>
-              <option value="chEBI ID">chEBI ID</option>
-              <option value="pH">pH</option>
-            </select>
+            {{ form.option(class="form-input-full") }}
           </label>
 
           <label class="flex-grow">
             <span>Enter text here:</span>
-            <input type="text" name="value" class="form-input-full" />
+            {{ form.value(class="form-input-full", required="true") }}
           </label>
         </div>
 
