@@ -10,13 +10,24 @@
     padding-right: 16px;
   }
 
-  ul li {
-    border-radius: 0.25rem;
-    line-height: 1.8;
+  ul li a {
+    border-radius: 4px;
     display: flex;
     align-items: center;
+    margin-bottom: 6px;
+    padding: 4px 10px;
+
+    flex-grow: 1;
+    font-size: 16px;
+    text-decoration: none;
     padding-left: 10px;
-    margin-bottom: 4px;
+    padding-right: 10px;
+    color: rgba(7, 25, 82, 0.6);
+    font-weight: 400;
+
+    &:visited {
+      color: inherit;
+    }
 
     &:hover {
       background-color: var(--sidebar-hover-color);
@@ -24,25 +35,14 @@
 
     .icon {
       font-size: 20px;
-    }
-
-    a {
-      flex-grow: 1;
-      font-size: 16px;
-      text-decoration: none;
-      padding-left: 10px;
-      padding-right: 10px;
-      color: rgba(7, 25, 82, 0.6);
-      font-weight: 400;
-    }
-    a:visited {
-      color: inherit;
+      color: rgba(7, 25, 82, 1.0);
+      margin-right: 8px;
     }
   }
 
   ul li.current-path {
-    background-color: rgba(121, 200, 200, 0.15);
     a {
+      background-color: rgba(121, 200, 200, 0.15);
       color: rgba(7, 25, 82, 1.0);
       font-weight: 600;
     }

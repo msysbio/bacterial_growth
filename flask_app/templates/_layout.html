@@ -31,28 +31,40 @@
       <nav>
         <ul class="nav-links">
           <li>
-            <div class="icon">🏠</div>
-            <a href="{{ url_for('index_page') }}" class="home-link">Home</a>
+            <a href="{{ url_for('index_page') }}" class="home-link">
+              <div class="icon">🏠</div>
+              Home
+            </a>
           </li>
           <li>
-            <div class="icon">🔍</div>
-            <a href="{{ url_for('search_page') }}">Search</a>
+            <a href="{{ url_for('search_page') }}">
+              <div class="icon">🔍</div>
+              Search
+            </a>
           </li>
           <li>
-            <div class="icon">📈</div>
-            <a href="{{ url_for('dashboard_page') }}">Dashboard</a>
+            <a href="{{ url_for('dashboard_page') }}">
+              <div class="icon">📈</div>
+              Dashboard
+            </a>
           </li>
           <li>
-            <div class="icon">📤</div>
-            <a href="{{ url_for('upload_page') }}">Upload data</a>
+            <a href="{{ url_for('upload_page') }}">
+              <div class="icon">📤</div>
+              Upload data
+            </a>
           </li>
           <li>
-            <div class="icon">❓</div>
-            <a href="{{ url_for('help_page') }}">Help</a>
+            <a href="{{ url_for('help_page') }}">
+              <div class="icon">❓</div>
+              Help
+            </a>
           </li>
           <li>
-            <div class="icon">🥼</div>
-            <a href="{{ url_for('about_page') }}">About us</a>
+            <a href="{{ url_for('about_page') }}">
+              <div class="icon">🥼</div>
+              About us
+            </a>
           </li>
         </ul>
       </nav>
