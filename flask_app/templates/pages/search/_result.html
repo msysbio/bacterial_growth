@@ -1,0 +1,29 @@
+{% macro render_result(result) %}
+<div class="search-result">
+  <h3>{{ result['studyName'][0] }}</h3>
+  <p>
+    {{ result['studyDescription'][0] }}
+  </p>
+
+  <p>
+    {% if result['studyURL'][0]: %}
+    <strong>URL</strong>: <a href="{{ result['studyURL'][0] }}">{{ result['studyURL'][0] }}</a>
+    <br>
+    {% endif %}
+
+    <strong>Techniques</strong>: {{ result['techniques'][0] }}
+  </p>
+
+  <h4>Species</h4>
+
+  <p>
+    {{ result['memberName'][0] }}
+  </p>
+
+  <h4>Metabolites</h4>
+
+  <p>
+    {{ result['metabolites'][0] }}
+  </p>
+</div>
+{% endmacro %}

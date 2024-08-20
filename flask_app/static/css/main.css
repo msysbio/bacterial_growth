@@ -103,6 +103,13 @@ header img {
   flex-grow: 1;
 }
 
+.error-message {
+  display: block;
+  background: pink;
+  padding: 10px;
+  border-left: 4px solid #d02631;
+}
+
 table.simple-table {
   border-collapse: collapse;
 

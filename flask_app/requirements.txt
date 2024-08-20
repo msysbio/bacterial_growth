@@ -3,3 +3,4 @@ Flask-Assets
 Flask-WTF
 cssmin
 jsmin
+pandas

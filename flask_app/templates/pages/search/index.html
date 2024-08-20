@@ -1,3 +1,5 @@
+{% from 'pages/search/_result.html' import render_result %}
+
 {% extends '_layout.html' %}
 
 {% block title %}: Search{% endblock %}
@@ -22,7 +24,7 @@
     </p>
 
     <p>
-      <form action="{{ url_for('search_page') }}" method="POST" class="simple-form">
+      <form action="{{ url_for('search_index_page') }}" method="POST" class="simple-form">
         {{ form.csrf_token }}
 
         <div class="form-row">
@@ -38,17 +40,25 @@
         </div>
 
         <div class="form-row">
-          <input type="submit" value="Search Data" />
-        </div>
-
-        <div class="form-row">
-          TODO results
-        </div>
-
-        <div class="form-row">
           TODO advanced search
         </div>
+
+        <div class="form-row">
+          <input type="submit" value="Search Data" />
+        </div>
       </form>
+
+      {% if results: %}
+      <ul>
+        {% for result in results: %}
+        <li>{{ render_result(result) }}</li>
+        {% endfor %}
+      </ul>
+      {% elif error: %}
+      <p>
+        <div class="error-message">{{ error }}</div>
+      </p>
+      {% endif %}
     </p>
   </article>
 </div>
