@@ -116,6 +116,11 @@ table.simple-table {
   th, td {
     padding: 6px 13px;
     border: 1px solid var(--border-color);
+    vertical-align: top;
+  }
+
+  ul {
+    padding-left: 10px;
   }
 }
 

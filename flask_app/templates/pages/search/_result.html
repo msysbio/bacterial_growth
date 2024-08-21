@@ -1,29 +1,55 @@
 {% macro render_result(result) %}
 <div class="search-result">
-  <h3>{{ result['studyName'][0] }}</h3>
+  <h3>{{ result['studyName'] }}</h3>
   <p>
-    {{ result['studyDescription'][0] }}
+    {{ result['studyDescription'] }}
   </p>
 
   <p>
-    {% if result['studyURL'][0]: %}
-    <strong>URL</strong>: <a href="{{ result['studyURL'][0] }}">{{ result['studyURL'][0] }}</a>
+    {% if result['studyURL']: %}
+    <strong>URL</strong>: <a href="{{ result['studyURL'] }}">{{ result['studyURL'] }}</a>
     <br>
     {% endif %}
-
-    <strong>Techniques</strong>: {{ result['techniques'][0] }}
   </p>
 
-  <h4>Species</h4>
-
   <p>
-    {{ result['memberName'][0] }}
-  </p>
+    <table class="simple-table">
+      <tr>
+        <th>Techniques</th>
+        <th>Species</th>
+        <th>Metabolites</th>
+      </tr>
 
-  <h4>Metabolites</h4>
+      <tr>
+        <td>
+          <ul>
+            {% for name in result['techniques']: %}
+            <li>{{ name }}</li>
+            {% endfor %}
+          </ul>
+        </td>
 
-  <p>
-    {{ result['metabolites'][0] }}
+        <td>
+          <ul>
+            {% for (name, id) in result['members']: %}
+            <li>
+              <a href="{{ url_for('strain_show_page', id=id) }}">{{ name }}</a>
+            </li>
+            {% endfor %}
+          </ul>
+        </td>
+
+        <td>
+          <ul>
+            {% for (name, cheb_id) in result['metabolites']: %}
+            <li>
+              <a href="{{ url_for('metabolite_show_page', cheb_id=cheb_id) }}">{{ name }}</a>
+            </li>
+            {% endfor %}
+          </ul>
+        </td>
+      </tr>
+    </table>
   </p>
 </div>
 {% endmacro %}

@@ -45,34 +45,41 @@ def search_index_page():
 
 
 
-def get_general_info(studyID, conn):
-    query = f"SELECT * FROM Study WHERE studyId = '{studyID}';"
-    df_general = pd.read_sql(query, conn)
-    columns_to_exclude = ['studyId','projectUniqueID','studyUniqueID']
-    df_general = df_general.drop(columns_to_exclude, axis=1)
+def get_general_info(studyId, conn):
+    params = { 'studyId': studyId }
 
     query = f"""
-        SELECT CONCAT(memberName, ' (', NCBId, ')') AS transformed_output
-        FROM Strains
-        WHERE studyId = '{studyID}';
+        SELECT studyId, studyName, studyDescription, studyURL
+        FROM Study
+        WHERE studyId = :studyId
     """
-    micro_strains = pd.read_sql(query, conn)
-    df_general['memberName'] = ', '.join(micro_strains['transformed_output'])
+    result = conn.execute(sql.text(query), params).one()._asdict()
+
+    query = f"""
+        SELECT memberName, NCBId
+        FROM Strains
+        WHERE studyId = :studyId
+        ORDER BY memberName ASC
+    """
+    micro_strains = conn.execute(sql.text(query), params).all()
+    result['members'] = [(name, id) for (name, id) in micro_strains]
 
     query = f"""
         SELECT DISTINCT technique
         FROM TechniquesPerExperiment
-        WHERE studyId = '{studyID}';
+        WHERE studyId = :studyId
+        ORDER BY technique ASC
     """
-    techniques = pd.read_sql(query, conn)
-    df_general['techniques'] = ', '.join(techniques['technique'])
+    techniques = conn.execute(sql.text(query), params).scalars()
+    result['techniques'] = [name for name in techniques]
 
     query = f"""
-        SELECT DISTINCT CONCAT(metabo_name, ' (', cheb_id, ')') AS transformed_output
+        SELECT DISTINCT metabo_name, cheb_id
         FROM MetabolitePerExperiment
-        WHERE studyId = '{studyID}';
+        WHERE studyId = :studyId
+        ORDER BY metabo_name ASC
     """
-    metabolites = pd.read_sql(query, conn)
-    df_general['metabolites'] = ', '.join(metabolites['transformed_output'])
+    metabolites = conn.execute(sql.text(query), params).all()
+    result['metabolites'] = [(name, cheb_id) for (name, cheb_id) in metabolites]
 
-    return df_general
+    return result
