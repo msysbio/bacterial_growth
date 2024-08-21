@@ -1,5 +1,5 @@
 from flask import render_template
 
 
-def index():
+def upload_index_page():
     return render_template("pages/upload.html")

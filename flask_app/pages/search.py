@@ -7,8 +7,8 @@ from flask import render_template
 import sqlalchemy as sql
 import pandas as pd
 
-from flask_app.app.db import get_connection
-from flask_app.app.forms.search_form import SearchForm
+from flask_app.db import get_connection
+from flask_app.forms.search_form import SearchForm
 
 from src.db_functions import dynamical_query
 
@@ -20,7 +20,7 @@ from src.db_functions import dynamical_query
 # TODO (2024-08-20) Use SQLalchemy model instead
 
 
-def index():
+def search_index_page():
     form = SearchForm()
 
     if form.validate_on_submit():
