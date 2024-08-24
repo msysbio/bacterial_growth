@@ -49,11 +49,11 @@
       </form>
 
       {% if results: %}
-      <ul>
+      <ol class="results-list">
         {% for result in results: %}
         <li>{{ render_result(result) }}</li>
         {% endfor %}
-      </ul>
+      </ol>
       {% elif error: %}
       <p>
         <div class="error-message">{{ error }}</div>

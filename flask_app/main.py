@@ -27,8 +27,10 @@ def create_app():
 
     stylesheets = flask_assets.Bundle(
         'css/reset.css',
+        'css/utils.css',
         'css/main.css',
         'css/sidebar.css',
+        'css/search.css',
         filters='cssmin',
         output='build/bundle.css'
     )

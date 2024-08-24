@@ -1,3 +1,5 @@
+{% from 'utils/_dataframe.html' import render_dataframe %}
+
 {% macro render_result(result) %}
 <div class="search-result">
   <h3>{{ result['studyName'] }}</h3>
@@ -50,6 +52,16 @@
         </td>
       </tr>
     </table>
+
+    <p>
+      <details>
+        <summary>Experiments</summary>
+
+        <p>
+          {{ render_dataframe(result['experiments']) }}
+        </p>
+      </details>
+    </p>
   </p>
 </div>
 {% endmacro %}

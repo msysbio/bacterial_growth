@@ -1,0 +1,127 @@
+.clear {
+  clear: both;
+}
+
+.flex-grow {
+  flex-grow: 1;
+}
+
+.error-message {
+  display: block;
+  background: pink;
+  padding: 10px;
+  border-left: 4px solid #d02631;
+}
+
+table.simple-table {
+  border-collapse: collapse;
+
+  th, td {
+    padding: 6px 13px;
+    border: 1px solid var(--border-color);
+    vertical-align: top;
+  }
+
+  ul {
+    padding-left: 10px;
+  }
+}
+
+table.dataframe-table {
+  border-collapse: collapse;
+  font-size: 13px;
+
+  th {
+    background-color: var(--sidebar-color);
+  }
+
+  th, td {
+    padding: 6px 13px;
+    border: 1px solid var(--border-color);
+    vertical-align: top;
+  }
+
+  /* tr:last-child td:first-child { */
+  /*   border: 1px solid var(--border-color); */
+  /*   border-bottom-left-radius: 10px; */
+  /* } */
+  /* tr:last-child td:last-child { */
+  /*   border: 1px solid var(--border-color); */
+  /*   border-bottom-right-radius: 10px; */
+  /* } */
+}
+
+form.simple-form {
+  display: flex;
+  flex-direction: column;
+  row-gap: 10px;
+
+  .no-label {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+  }
+
+  .form-row {
+    display: flex;
+    column-gap: 10px;
+
+    label.full {
+      flex-grow: 1;
+    }
+
+    .form-input-full {
+      width: 100%;
+      padding: 0.7rem;
+      background-color: rgb(202, 234, 234);
+      border: 1px solid transparent;
+      border-radius: 8px;
+    }
+
+    input[type="submit"] {
+      cursor: pointer;
+      padding: 0.7rem;
+      border: 1px solid rgb(8, 131, 149);
+      border-radius: 8px;
+      background-color: rgb(8, 131, 149);
+      color: white;
+
+      &:hover {
+        background-color: rgb(7, 110, 126);
+      }
+    }
+
+    label span {
+      font-size: 14px;
+      font-weight: 400;
+      line-height: 2;
+    }
+  }
+}
+
+.tabs {
+  .tab-headers {
+    display: flex;
+    column-gap: 20px;
+    border-bottom: 2px solid rgba(7, 25, 82, 0.1);
+    font-size: 24px;
+
+    span {
+      cursor: pointer;
+    }
+
+    span.active {
+      color: rgb(7, 110, 126);
+      border-bottom: 2px solid rgb(7, 110, 126);
+      margin-bottom: -2px;
+    }
+  }
+
+  .tab-body {
+    display: none;
+  }
+
+  .tab-body.active {
+    display: block;
+  }
+}
