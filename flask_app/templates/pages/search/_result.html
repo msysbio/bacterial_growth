@@ -62,6 +62,50 @@
         </p>
       </details>
     </p>
+
+    <p>
+      <details>
+        <summary>Compartments</summary>
+
+        <p>
+          {{ render_dataframe(result['compartments']) }}
+        </p>
+      </details>
+    </p>
+
+    <p>
+      <details>
+        <summary>Microbial strains and communities</summary>
+
+        <h4>Communities information</h4>
+        <p>{{ render_dataframe(result['communities']) }}</p>
+
+        <h4>Community members information</h4>
+        <p>{{ render_dataframe(result['microbial_strains']) }}</p>
+      </details>
+    </p>
+
+    <p>
+      <details>
+        <summary>Biological replicates, growth and metabolites measurements</summary>
+
+        <h4>Biological replicates metadata</h4>
+        <p>{{ render_dataframe(result['biological_replicates']) }}</p>
+
+        {% if result['abundances'].size > 0: %}
+        <h4>Abundance data per Biological Replicates and microbial species</h4>
+        <p>{{ render_dataframe(result['abundances']) }}</p>
+        {% endif %}
+
+        {% if result['fc_counts'].size > 0: %}
+        <h4>Flow Cytometry Counts data per Biological Replicates and microbial species</h4>
+        <p>{{ render_dataframe(result['fc_counts']) }}</p>
+        {% endif %}
+
+        <h4>Metabolites measured per Biological Replicates</h4>
+        <p>{{ render_dataframe(result['metabolites_per_replicate']) }}</p>
+      </details>
+    </p>
   </p>
 </div>
 {% endmacro %}
