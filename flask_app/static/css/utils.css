@@ -27,6 +27,10 @@ table.simple-table {
   }
 }
 
+.dataframe-container {
+  overflow-x: auto;
+}
+
 table.dataframe-table {
   border-spacing: 0;
   font-size: 13px;

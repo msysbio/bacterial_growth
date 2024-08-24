@@ -2,7 +2,11 @@
 
 {% macro render_result(result) %}
 <div class="search-result">
-  <h3>{{ result['studyName'] }}</h3>
+  <h3>
+    <a href="{{ url_for('study_show_page', studyId=result['studyId']) }}">
+      {{ result['studyName'] }}
+    </a>
+  </h3>
   <p>
     {{ result['studyDescription'] }}
   </p>
