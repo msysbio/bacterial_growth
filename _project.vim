@@ -1,3 +1,4 @@
 runtime! projects/flask.vim
 
-AckIgnore .micromamba/
+silent AckIgnore .micromamba/
+silent TagsExclude .micromamba/*
