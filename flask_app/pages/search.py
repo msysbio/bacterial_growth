@@ -12,11 +12,6 @@ from flask_app.forms.search_form import SearchForm
 
 from src.db_functions import dynamical_query
 
-# TODO (2024-08-20) Put structured data into data frame, render properly
-# -> Link to metabolite/member
-# -> Metabolite page (pages/metabolite.py)
-# -> Strain page (pages/strain.py)
-#
 # TODO (2024-08-20) Use SQLalchemy model instead
 
 
@@ -61,8 +56,7 @@ def get_general_info(studyId, conn):
         WHERE studyId = :studyId
         ORDER BY memberName ASC
     """
-    micro_strains = conn.execute(sql.text(query), params).all()
-    result['members'] = [(name, id) for (name, id) in micro_strains]
+    result['members'] = list(conn.execute(sql.text(query), params).all())
 
     query = f"""
         SELECT DISTINCT technique
@@ -70,8 +64,7 @@ def get_general_info(studyId, conn):
         WHERE studyId = :studyId
         ORDER BY technique ASC
     """
-    techniques = conn.execute(sql.text(query), params).scalars()
-    result['techniques'] = [name for name in techniques]
+    result['techniques'] = list(conn.execute(sql.text(query), params).scalars())
 
     query = f"""
         SELECT DISTINCT metabo_name, cheb_id
@@ -79,7 +72,6 @@ def get_general_info(studyId, conn):
         WHERE studyId = :studyId
         ORDER BY metabo_name ASC
     """
-    metabolites = conn.execute(sql.text(query), params).all()
-    result['metabolites'] = [(name, cheb_id) for (name, cheb_id) in metabolites]
+    result['metabolites'] = list(conn.execute(sql.text(query), params).all())
 
     return result
