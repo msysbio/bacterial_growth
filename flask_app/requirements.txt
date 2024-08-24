@@ -4,3 +4,10 @@ Flask-WTF
 cssmin
 jsmin
 pandas
+sqlalchemy
+pymysql
+# Streamlit app:
+pyyaml
+prettytable
+mysql-connector-python
+matplotlib
