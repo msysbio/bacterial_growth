@@ -7,15 +7,18 @@ from flask import render_template
 import sqlalchemy as sql
 
 from flask_app.db import get_connection
-from flask_app.forms.search_form import SearchForm
+from flask_app.forms.search_form import SearchForm, SearchFormClause
 import flask_app.models.study_dfs as study_dfs
 
 
 def search_index_page():
     form = SearchForm()
 
+    template_clause = SearchFormClause()
+    results = []
+
     if form.validate_on_submit():
-        query = study_dfs.dynamical_query([{ 'option': form.option.data, 'value': form.value.data }])
+        query = study_dfs.dynamical_query(form.data['clauses'])
 
         with get_connection() as conn:
             studyIds = [studyId for (studyId,) in conn.execute(sql.text(query))]
@@ -24,7 +27,6 @@ def search_index_page():
                 message = "Couldn't find a study with these parameters."
                 return render_template("pages/search/index.html", form=form, error=message)
 
-            results = []
             for studyId in studyIds:
                 result = study_dfs.get_general_info(studyId, conn)
 
@@ -39,10 +41,9 @@ def search_index_page():
 
                 results.append(result)
 
-            return render_template(
-                "pages/search/index.html",
-                form=form,
-                results=results,
-            )
-
-    return render_template("pages/search/index.html", form=form)
+    return render_template(
+        "pages/search/index.html",
+        form=form,
+        template_clause=template_clause,
+        results=results
+    )

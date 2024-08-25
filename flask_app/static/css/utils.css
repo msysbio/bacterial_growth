@@ -6,6 +6,10 @@
   flex-grow: 1;
 }
 
+.flex-right {
+  margin-left: auto;
+}
+
 .error-message {
   display: block;
   background: pink;
@@ -106,6 +110,37 @@ form.simple-form {
       font-weight: 400;
       line-height: 2;
     }
+  }
+}
+
+a.green-button {
+  display: inline-block;
+  padding: 0.7rem;
+  border: 1px solid rgb(8, 131, 149);
+  border-radius: 8px;
+  background-color: rgb(8, 131, 149);
+  color: white;
+  text-decoration: none;
+  line-height: 1.1;
+
+  &:hover {
+    background-color: rgb(7, 110, 126);
+    color: white;
+  }
+}
+
+a.white-button {
+  display: inline-block;
+  padding: 0.7rem;
+  border: 1px solid rgb(8, 131, 149);
+  border-radius: 8px;
+  background-color: white;
+  text-decoration: none;
+  line-height: 1.1;
+
+  &:hover {
+    background-color: #eee;
+    color: inherit;
   }
 }
 

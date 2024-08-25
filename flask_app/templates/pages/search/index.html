@@ -9,7 +9,7 @@
   <img height="100" src={{ url_for('static', filename='images/search_banner.png') }} />
 </header>
 
-<div class="container">
+<div class="container search-page">
   <article>
     <p>
       Discover microbial growth studies and datasets by selecting one or more of
@@ -27,24 +27,47 @@
       <form action="{{ url_for('search_index_page') }}" method="POST" class="simple-form">
         {{ form.csrf_token }}
 
-        <div class="form-row">
+        {% for clause in form.clauses: %}
+
+        <div class="form-row clause">
+          {{ clause.csrf_token }}
+
+          {% if loop.index > 1: %}
+          <label>
+            <span>Select logic operator:</span>
+            {{ clause.logic_operator(class="form-input-full") }}
+          </label>
+          {% endif %}
+
           <label>
             <span>Select an option:</span>
-            {{ form.option(class="form-input-full") }}
+            {{ clause.option(class="form-input-full") }}
           </label>
 
           <label class="flex-grow">
             <span>Enter text here:</span>
-            {{ form.value(class="form-input-full", required="true") }}
+            {{ clause.value(class="form-input-full", required="true") }}
           </label>
         </div>
 
+        {% if loop.index == 1: %}
         <div class="form-row">
-          TODO advanced search
+          <input type="checkbox" name="advanced-search" id="advanced-search-input" />
+          <label for="advanced-search-input">Advanced search</label>
         </div>
+        {% endif %}
+
+        {% endfor %}
+
+        {% if form.clauses|length > 1: %}
+        <div class="form-row">
+          <a href="#" class="green-button add-clause">Add clause</a>
+        </div>
+        {% endif %}
 
         <div class="form-row">
           <input type="submit" value="Search Data" />
+          <a href="{{ url_for('search_index_page') }}" class="white-button flex-right">Reset</a>
         </div>
       </form>
 
@@ -61,5 +84,30 @@
       {% endif %}
     </p>
   </article>
+
+  <template id="form-clause-template">
+    <div class="form-row clause">
+      {{ template_clause.csrf_token }}
+
+      <label>
+        <span>Select logic operator:</span>
+        {{ template_clause.logic_operator(class="form-input-full") }}
+      </label>
+
+      <label>
+        <span>Select an option:</span>
+        {{ template_clause.option(class="form-input-full") }}
+      </label>
+
+      <label class="flex-grow">
+        <span>Enter text here:</span>
+        {{ template_clause.value(class="form-input-full", required="true") }}
+      </label>
+
+      <div class="no-label">
+        <a href="#" class="green-button remove-clause">Remove</a>
+      </div>
+    </div>
+  </template>
 </div>
 {% endblock %}

@@ -1,8 +1,8 @@
 from flask_wtf import FlaskForm
-from wtforms import SelectField, StringField
-from wtforms.validators import DataRequired
+from wtforms import SelectField, StringField, FormField, FieldList
+from wtforms.validators import DataRequired, Optional
 
-class SearchForm(FlaskForm):
+class SearchFormClause(FlaskForm):
     option = SelectField('option', choices=[
         'Project Name',
         'Project ID',
@@ -15,3 +15,8 @@ class SearchForm(FlaskForm):
         'pH',
     ])
     value = StringField('value', validators=[DataRequired()])
+    logic_operator = SelectField('logic_operator', validators=[Optional()], choices=['AND', 'OR', 'NOT'])
+
+
+class SearchForm(FlaskForm):
+    clauses = FieldList(FormField(SearchFormClause), min_entries=1)

@@ -20,7 +20,9 @@ def create_app():
 
     javascripts = flask_assets.Bundle(
         'js/vendor/jquery-3.7.1.js',
+        'js/util.js',
         'js/main.js',
+        'js/search.js',
         filters='jsmin',
         output='build/bundle.js'
     )
