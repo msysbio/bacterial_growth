@@ -13,7 +13,8 @@ import pandas as pd
 # TODO (2024-08-24) Sanitize: return (query, params)
 def dynamical_query(all_advance_query):
     base_query = "SELECT DISTINCT studyId"
-    search_final_query =  ""
+    search_final_query = ""
+
     for query_dict in all_advance_query:
         where_clause = ""
         if query_dict['option']:
