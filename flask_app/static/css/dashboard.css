@@ -1,0 +1,31 @@
+.dashboard-page {
+  .columns-container {
+    display: flex;
+    column-gap: 20px;
+
+    h2 {
+      margin-top: 0;
+      line-height: 1.5;
+    }
+  }
+
+  .tab-headers {
+    font-size: 24px;
+    line-height: 1.5;
+  }
+
+  .experiments-column {
+    width: 30%;
+  }
+
+  .experiments-column .experiment {
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 10px;
+    margin-bottom: 10px;
+
+    h3 {
+      margin-top: 0;
+    }
+  }
+}

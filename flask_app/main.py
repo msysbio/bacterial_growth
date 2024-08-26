@@ -40,6 +40,7 @@ def create_app():
         'css/main.css',
         'css/sidebar.css',
         'css/search.css',
+        'css/dashboard.css',
         filters='cssmin',
         output='build/bundle.css'
     )

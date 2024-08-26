@@ -1,3 +1,5 @@
+{% from 'pages/dashboard/_study.html' import render_study %}
+
 {% extends '_layout.html' %}
 
 {% block title %}: Visualization Dashboard{% endblock %}
@@ -36,10 +38,8 @@
       </form>
     </p>
 
-    {% if studyName: %}
-    <p>
-      TODO Show results for Study {{ studyId }}: {{ studyName }}
-    </p>
+    {% if studyName and studyId: %}
+    {{ render_study(studyId, experiments) }}
     {% elif studyId: %}
     <p>
       Study not found: {{ studyId }}
