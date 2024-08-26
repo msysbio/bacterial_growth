@@ -25,8 +25,7 @@
             <input
                 type="text"
                 name="studyId"
-                required="true"
-                placeholder="Enter the Study ID whose data you want to visualize"
+                value="{{ request.args['studyId'] }}"
                 class="form-input-full" />
           </label>
 
@@ -36,6 +35,16 @@
         </div>
       </form>
     </p>
+
+    {% if studyName: %}
+    <p>
+      TODO Show results for Study {{ studyId }}: {{ studyName }}
+    </p>
+    {% elif studyId: %}
+    <p>
+      Study not found: {{ studyId }}
+    </p>
+    {% endif %}
   </article>
 </div>
 {% endblock %}

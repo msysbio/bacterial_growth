@@ -137,9 +137,14 @@ a.white-button {
   background-color: white;
   text-decoration: none;
   line-height: 1.1;
+  color: black;
 
   &:hover {
     background-color: #eee;
+    color: inherit;
+  }
+
+  &:visited {
     color: inherit;
   }
 }

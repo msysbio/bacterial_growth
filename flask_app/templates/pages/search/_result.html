@@ -7,6 +7,7 @@
       {{ result['studyName'] }}
     </a>
   </h3>
+
   <p>
     {{ result['studyDescription'] }}
   </p>
@@ -16,6 +17,16 @@
     <strong>URL</strong>: <a href="{{ result['studyURL'] }}">{{ result['studyURL'] }}</a>
     <br>
     {% endif %}
+  </p>
+
+  <p>
+    <a href="{{ url_for('dashboard_index_page', studyId=result['studyId']) }}" class="white-button">
+      📊 Visualize
+    </a>
+
+    <a href="{{ url_for('study_download_page', studyId=result['studyId']) }}" class="white-button">
+      ⬇ Download data as ZIP
+    </a>
   </p>
 
   <p>

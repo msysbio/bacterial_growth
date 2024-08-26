@@ -54,7 +54,9 @@ def create_app():
     app.add_url_rule("/dashboard", view_func=dashboard_pages.dashboard_index_page)
     app.add_url_rule("/upload",    view_func=upload_pages.upload_index_page)
 
-    app.add_url_rule("/study/<string:studyId>",      view_func=study_pages.study_show_page)
+    app.add_url_rule("/study/<string:studyId>",     view_func=study_pages.study_show_page)
+    app.add_url_rule("/study/<string:studyId>.zip", view_func=study_pages.study_download_page)
+
     app.add_url_rule("/strain/<int:id>",             view_func=strain_pages.strain_show_page)
     app.add_url_rule("/metabolite/<string:cheb_id>", view_func=metabolite_pages.metabolite_show_page)
 
