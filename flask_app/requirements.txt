@@ -1,0 +1,15 @@
+Flask
+Flask-Assets
+Flask-WTF
+cssmin
+jsmin
+pandas
+pymysql
+pytest
+sqlalchemy
+
+# Streamlit app:
+matplotlib
+mysql-connector-python
+prettytable
+pyyaml

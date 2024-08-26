@@ -39,6 +39,6 @@ class DatabaseTest(unittest.TestCase):
         if 'unix_socket' in self.test_config:
             other += f"?unix_socket={self.test_config['unix_socket']}"
 
-        st_url = f"mysql://{username}:{password}@{host}:{port}/{database}{other}"
+        st_url = f"mysql+pymysql://{username}:{password}@{host}:{port}/{database}{other}"
 
         return st.connection("sql", url=st_url)

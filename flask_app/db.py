@@ -15,7 +15,7 @@ def _create_engine():
     database = config.pop('database')
 
     return sqlalchemy.create_engine(
-        f"mysql+mysqldb://{username}:{password}@{host}:3306/{database}",
+        f"mysql+pymysql://{username}:{password}@{host}:3306/{database}",
         connect_args=config,
     )
 

@@ -1,8 +1,3 @@
-$.fn.log = function() {
-  console.log($(this));
-  return this;
-}
-
 $(document).ready(function() {
   let currentPath = window.location.pathname;
 

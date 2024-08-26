@@ -1,0 +1,20 @@
+{% macro render_dataframe(df) %}
+
+<table class="dataframe-table">
+  <tr>
+    {% for column in df.columns: %}
+    <th>{{ column }}</th>
+    {% endfor %}
+  </tr>
+
+  {% for row in df.itertuples(index=False): %}
+  <tr>
+    {% for value in row: %}
+    <td>
+      {{ value }}
+    </td>
+    {% endfor %}
+  </tr>
+  {% endfor %}
+</table>
+{% endmacro %}

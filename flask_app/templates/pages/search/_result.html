@@ -1,0 +1,126 @@
+{% from 'utils/_dataframe.html' import render_dataframe %}
+
+{% macro render_result(result) %}
+<div class="search-result">
+  <h3>
+    <a href="{{ url_for('study_show_page', studyId=result['studyId']) }}">
+      {{ result['studyName'] }}
+    </a>
+  </h3>
+
+  <p>
+    {{ result['studyDescription'] }}
+  </p>
+
+  <p>
+    {% if result['studyURL']: %}
+    <strong>URL</strong>: <a href="{{ result['studyURL'] }}">{{ result['studyURL'] }}</a>
+    <br>
+    {% endif %}
+  </p>
+
+  <p>
+    <a href="{{ url_for('dashboard_index_page', studyId=result['studyId']) }}" class="white-button">
+      📊 Visualize
+    </a>
+
+    <a href="{{ url_for('study_download_page', studyId=result['studyId']) }}" class="white-button">
+      ⬇ Download data as ZIP
+    </a>
+  </p>
+
+  <p>
+    <table class="simple-table">
+      <tr>
+        <th>Techniques</th>
+        <th>Species</th>
+        <th>Metabolites</th>
+      </tr>
+
+      <tr>
+        <td>
+          <ul>
+            {% for name in result['techniques']: %}
+            <li>{{ name }}</li>
+            {% endfor %}
+          </ul>
+        </td>
+
+        <td>
+          <ul>
+            {% for (name, id) in result['members']: %}
+            <li>
+              <a href="{{ url_for('strain_show_page', id=id) }}">{{ name }}</a>
+            </li>
+            {% endfor %}
+          </ul>
+        </td>
+
+        <td>
+          <ul>
+            {% for (name, cheb_id) in result['metabolites']: %}
+            <li>
+              <a href="{{ url_for('metabolite_show_page', cheb_id=cheb_id) }}">{{ name }}</a>
+            </li>
+            {% endfor %}
+          </ul>
+        </td>
+      </tr>
+    </table>
+
+    <p>
+      <details>
+        <summary>Experiments</summary>
+
+        <p>
+          {{ render_dataframe(result['experiments']) }}
+        </p>
+      </details>
+    </p>
+
+    <p>
+      <details>
+        <summary>Compartments</summary>
+
+        <p>
+          {{ render_dataframe(result['compartments']) }}
+        </p>
+      </details>
+    </p>
+
+    <p>
+      <details>
+        <summary>Microbial strains and communities</summary>
+
+        <h4>Communities information</h4>
+        <p>{{ render_dataframe(result['communities']) }}</p>
+
+        <h4>Community members information</h4>
+        <p>{{ render_dataframe(result['microbial_strains']) }}</p>
+      </details>
+    </p>
+
+    <p>
+      <details>
+        <summary>Biological replicates, growth and metabolites measurements</summary>
+
+        <h4>Biological replicates metadata</h4>
+        <p>{{ render_dataframe(result['biological_replicates']) }}</p>
+
+        {% if result['abundances'].size > 0: %}
+        <h4>Abundance data per Biological Replicates and microbial species</h4>
+        <p>{{ render_dataframe(result['abundances']) }}</p>
+        {% endif %}
+
+        {% if result['fc_counts'].size > 0: %}
+        <h4>Flow Cytometry Counts data per Biological Replicates and microbial species</h4>
+        <p>{{ render_dataframe(result['fc_counts']) }}</p>
+        {% endif %}
+
+        <h4>Metabolites measured per Biological Replicates</h4>
+        <p>{{ render_dataframe(result['metabolites_per_replicate']) }}</p>
+      </details>
+    </p>
+  </p>
+</div>
+{% endmacro %}

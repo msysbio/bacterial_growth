@@ -26,3 +26,10 @@ app/templates/yaml_templates/
 
 # Configuration contains passwords, copy config/database.toml.example:
 config/database.toml
+
+# Compiled assets:
+flask_app/static/build/*
+flask_app/static/.webassets-cache/*
+
+# Micromamba environment
+.micromamba/*

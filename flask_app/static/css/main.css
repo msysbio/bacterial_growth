@@ -1,12 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Public+Sans&display=swap');
 
-.clear {
-  clear: both;
-}
-
 :root {
   --sidebar-width: 340px;
   --border-color: rgba(7, 25, 82, 0.2);
+  --sidebar-color: #caeaea;
   --sidebar-hover-color: rgba(121, 200, 200, 0.25);
 }
 
@@ -28,7 +25,7 @@ a:hover {
   width: var(--sidebar-width);
   transition: width 300ms;
   overflow-x: hidden;
-  background-color: #caeaea;
+  background-color: var(--sidebar-color);
   height: 100%;
   padding-top: 20px;
 
@@ -99,19 +96,6 @@ header img {
   padding-bottom: 100px;
 }
 
-.flex-grow {
-  flex-grow: 1;
-}
-
-table.simple-table {
-  border-collapse: collapse;
-
-  th, td {
-    padding: 6px 13px;
-    border: 1px solid var(--border-color);
-  }
-}
-
 .dashboard-page {
   h1 {
     text-align: center;
@@ -153,80 +137,5 @@ table.simple-table {
   summary:focus {
     outline: none;
     font-weight: 600;
-  }
-}
-
-form.simple-form {
-  display: flex;
-  flex-direction: column;
-  row-gap: 10px;
-
-  .no-label {
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-  }
-
-  .form-row {
-    display: flex;
-    column-gap: 10px;
-
-    label.full {
-      flex-grow: 1;
-    }
-
-    .form-input-full {
-      width: 100%;
-      padding: 0.7rem;
-      background-color: rgb(202, 234, 234);
-      border: 1px solid transparent;
-      border-radius: 8px;
-    }
-
-    input[type="submit"] {
-      cursor: pointer;
-      padding: 0.7rem;
-      border: 1px solid rgb(8, 131, 149);
-      border-radius: 8px;
-      background-color: rgb(8, 131, 149);
-      color: white;
-
-      &:hover {
-        background-color: rgb(7, 110, 126);
-      }
-    }
-
-    label span {
-      font-size: 14px;
-      font-weight: 400;
-      line-height: 2;
-    }
-  }
-}
-
-.tabs {
-  .tab-headers {
-    display: flex;
-    column-gap: 20px;
-    border-bottom: 2px solid rgba(7, 25, 82, 0.1);
-    font-size: 24px;
-
-    span {
-      cursor: pointer;
-    }
-
-    span.active {
-      color: rgb(7, 110, 126);
-      border-bottom: 2px solid rgb(7, 110, 126);
-      margin-bottom: -2px;
-    }
-  }
-
-  .tab-body {
-    display: none;
-  }
-
-  .tab-body.active {
-    display: block;
   }
 }
