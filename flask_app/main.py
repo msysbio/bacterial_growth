@@ -1,3 +1,5 @@
+from jinja2.environment import Template
+
 from flask import Flask
 import flask_assets
 
@@ -12,6 +14,14 @@ import flask_app.pages.upload as upload_pages
 
 def create_app():
     app = Flask(__name__)
+    app.config.update(
+        DEBUG=True,
+        ASSETS_DEBUG=True,
+        TEMPLATES_AUTO_RELOAD=True,
+        EXPLAIN_TEMPLATE_LOADING=True,
+        SECRET_KEY='development_key',
+    )
+
     assets = flask_assets.Environment(app)
 
     javascripts = flask_assets.Bundle(
@@ -34,14 +44,6 @@ def create_app():
         output='build/bundle.css'
     )
     assets.register('css_bundle', stylesheets)
-
-    app.config.update(
-        DEBUG=True,
-        ASSETS_DEBUG=True,
-        TEMPLATES_AUTO_RELOAD=True,
-        EXPLAIN_TEMPLATE_LOADING=True,
-        SECRET_KEY='development_key',
-    )
 
     app.add_url_rule("/",      view_func=static_pages.static_home_page)
     app.add_url_rule("/help",  view_func=static_pages.static_help_page)
