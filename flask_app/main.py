@@ -1,7 +1,3 @@
-# TODO only necessary while we dip into the streamlit structure
-import sys
-sys.path.append('src')
-
 from flask import Flask
 import flask_assets
 

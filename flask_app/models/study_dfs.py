@@ -9,7 +9,6 @@ it's just bags of data that are rendered as tables.
 import sqlalchemy as sql
 import pandas as pd
 
-# TODO (2024-08-24) Test
 # TODO (2024-08-24) Sanitize: return (query, params)
 def dynamical_query(all_advance_query):
     base_query = "SELECT DISTINCT studyId"
