@@ -150,6 +150,17 @@ a.white-button {
 }
 
 .tabs {
+  /* Reference: https://stackoverflow.com/a/38994837 */
+  .tab-headers-container {
+    display: flex;
+    overflow-x: auto;
+    -ms-overflow-style: none;  /* Internet Explorer 10+ */
+    scrollbar-width: none;  /* Firefox */
+  }
+  .tab-headers-container::-webkit-scrollbar {
+    display: none;  /* Safari and Chrome */
+  }
+
   .tab-headers {
     display: flex;
     column-gap: 20px;
@@ -158,6 +169,7 @@ a.white-button {
 
     span {
       cursor: pointer;
+      white-space: nowrap;
     }
 
     span.active {
