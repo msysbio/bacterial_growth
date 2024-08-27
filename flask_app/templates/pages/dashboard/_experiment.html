@@ -1,0 +1,51 @@
+{% macro render_experiment(experiment) %}
+
+{% set (identifier, description, bioreplicate_ids) = experiment %}
+
+<div class="experiment" data-experiment-id="{{ identifier }}">
+  <div class="controls-column">
+    <h3>{{ identifier }}</h2>
+    <p>{{ description }}</p>
+
+    <p>
+      <form class="simple-form chart-form">
+        <div class="form-row">
+          <select name="measurement">
+            <option>OD</option>
+            <option>Plate Counts</option>
+            <option>pH</option>
+            <option value="FC">FC Counts</option>
+            <option>Reads 16S rRNA Seq</option>
+            <option>Metabolites</option>
+          </select>
+        </div>
+
+        {% for bioreplicate_id in bioreplicate_ids %}
+        {% set key = "bioreplicate:{}".format(bioreplicate_id) %}
+        <div class="form-row">
+          <input type="checkbox" name="{{ key }}" id="{{ key }}" />
+          <label for="{{ key }}">
+            {{ bioreplicate_id }}
+          </label>
+        </div>
+        {% endfor %}
+
+        {% set key = "bioreplicate:_average".format(identifier) %}
+        <div class="form-row">
+          <input type="checkbox" name="{{ key }}" id="{{ key }}" />
+          <label for="{{ key }}">
+            Average {{ identifier }} (TODO)
+          </label>
+        </div>
+      </form>
+    </p>
+  </div>
+
+  <div class="chart-column chart">
+    <div class="chart-placeholder">
+      📊
+    </div>
+  </div>
+</div>
+
+{% endmacro %}

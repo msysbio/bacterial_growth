@@ -1,4 +1,4 @@
-{% from 'pages/dashboard/_study.html' import render_study %}
+{% from 'pages/dashboard/_experiment.html' import render_experiment %}
 
 {% extends '_layout.html' %}
 
@@ -39,7 +39,13 @@
     </p>
 
     {% if studyName and studyId: %}
-    {{ render_study(studyId, experiments) }}
+    <p>
+      <h2>Experiments</h2>
+
+      {% for experiment in experiments: %}
+      {{ render_experiment(experiment) }}
+      {% endfor %}
+    </p>
     {% elif studyId: %}
     <p>
       Study not found: {{ studyId }}
