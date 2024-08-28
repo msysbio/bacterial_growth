@@ -26,9 +26,11 @@ def create_app():
 
     javascripts = flask_assets.Bundle(
         'js/vendor/jquery-3.7.1.js',
+        'js/vendor/plotly-2.34.0.min.js',
         'js/util.js',
         'js/main.js',
         'js/search.js',
+        'js/dashboard.js',
         filters='jsmin',
         output='build/bundle.js'
     )
@@ -40,6 +42,7 @@ def create_app():
         'css/main.css',
         'css/sidebar.css',
         'css/search.css',
+        'css/dashboard.css',
         filters='cssmin',
         output='build/bundle.css'
     )
@@ -49,7 +52,9 @@ def create_app():
     app.add_url_rule("/help",  view_func=static_pages.static_help_page)
     app.add_url_rule("/about", view_func=static_pages.static_about_page)
 
-    app.add_url_rule("/dashboard", view_func=dashboard_pages.dashboard_index_page)
+    app.add_url_rule("/dashboard",       view_func=dashboard_pages.dashboard_index_page)
+    app.add_url_rule("/dashboard/chart", view_func=dashboard_pages.dashboard_chart_fragment)
+
     app.add_url_rule("/upload",    view_func=upload_pages.upload_index_page)
 
     app.add_url_rule("/study/<string:studyId>",     view_func=study_pages.study_show_page)

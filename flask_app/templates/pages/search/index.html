@@ -30,18 +30,18 @@
           {% if loop.index > 1: %}
           <label>
             <span>Select logic operator:</span>
-            {{ clause.logic_operator(class="form-input-full") }}
+            {{ clause.logic_operator(class="form-input-full form-input-blue") }}
           </label>
           {% endif %}
 
           <label>
             <span>Select an option:</span>
-            {{ clause.option(class="form-input-full") }}
+            {{ clause.option(class="form-input-full form-input-blue") }}
           </label>
 
           <label class="flex-grow">
             <span>Enter text here:</span>
-            {{ clause.value(class="form-input-full", required="true") }}
+            {{ clause.value(class="form-input-full form-input-blue", required="true") }}
           </label>
         </div>
 
@@ -86,17 +86,17 @@
 
       <label>
         <span>Select logic operator:</span>
-        {{ template_clause.logic_operator(class="form-input-full") }}
+        {{ template_clause.logic_operator(class="form-input-full form-input-blue") }}
       </label>
 
       <label>
         <span>Select an option:</span>
-        {{ template_clause.option(class="form-input-full") }}
+        {{ template_clause.option(class="form-input-full form-input-blue") }}
       </label>
 
       <label class="flex-grow">
         <span>Enter text here:</span>
-        {{ template_clause.value(class="form-input-full", required="true") }}
+        {{ template_clause.value(class="form-input-full form-input-blue", required="true") }}
       </label>
 
       <div class="no-label">

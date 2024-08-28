@@ -84,12 +84,15 @@ form.simple-form {
       flex-grow: 1;
     }
 
-    .form-input-full {
-      width: 100%;
-      padding: 0.7rem;
+    .form-input-blue {
       background-color: rgb(202, 234, 234);
       border: 1px solid transparent;
       border-radius: 8px;
+      padding: 0.7rem;
+    }
+
+    .form-input-full {
+      width: 100%;
     }
 
     input[type="submit"] {
@@ -158,6 +161,7 @@ a.white-button {
 
     span {
       cursor: pointer;
+      white-space: nowrap;
     }
 
     span.active {

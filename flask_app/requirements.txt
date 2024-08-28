@@ -4,6 +4,7 @@ Flask-WTF
 cssmin
 jsmin
 pandas
+plotly
 pymysql
 pytest
 sqlalchemy
