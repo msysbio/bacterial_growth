@@ -1,4 +1,4 @@
-{% macro render_experiment(experiment) %}
+{% macro render_experiment(experiment, available_growth_measurements) %}
 
 {% set (identifier, description, bioreplicate_ids) = experiment %}
 
@@ -12,11 +12,14 @@
       <p>
         <form class="simple-form chart-form">
           <div class="form-row">
-            <select name="measurement">
-              <option>OD</option>
-              <option>Plate Counts</option>
-              <option>pH</option>
+            <select name="measurement" class="form-input-blue">
+              {% for measurement in available_growth_measurements: %}
+              {% if measurement == 'FC' %}
               <option value="FC">FC Counts</option>
+              {% else %}
+              <option>{{ measurement }}</option>
+              {% endif %}
+              {% endfor %}
               <option>Reads 16S rRNA Seq</option>
               <option>Metabolites</option>
             </select>
@@ -32,7 +35,7 @@
           </div>
           {% endfor %}
 
-          {% set key = "bioreplicate:_average".format(identifier) %}
+          {% set key = "bioreplicate:{}:_average".format(identifier) %}
           <div class="form-row">
             <input type="checkbox" name="{{ key }}" id="{{ key }}" />
             <label for="{{ key }}">

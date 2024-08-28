@@ -13,10 +13,14 @@
       Search the study that you want to visualize. Select the Biological replicates
       from the experiments you want to plot. You can also download the raw data of
       the selected experiments by clicking in the right corner of the tables found on
-      the expandable sections. You can visualize different plots corresponding to
-      Optical density, Flow cytometry, Plate counts, 16S rRNA sequencing, and
-      metabolites concentrations. By clicking of the camera icon at the right corner
-      of each plot, the images can be save locally in your computer as .png files.
+      the expandable sections.
+    </p>
+
+    <p>
+      You can visualize different plots corresponding to Optical density, Flow
+      cytometry, Plate counts, 16S rRNA sequencing, and metabolite
+      concentrations. By clicking on the camera icon at the right corner of
+      each plot, the images can be saved locally on your computer as .png files.
     </p>
 
     <p>
@@ -28,7 +32,7 @@
                 type="text"
                 name="studyId"
                 value="{{ request.args['studyId'] }}"
-                class="form-input-full" />
+                class="form-input-full form-input-blue" />
           </label>
 
           <div class="no-label">
@@ -43,7 +47,7 @@
       <h2>Experiments</h2>
 
       {% for experiment in experiments: %}
-      {{ render_experiment(experiment) }}
+      {{ render_experiment(experiment, available_growth_measurements) }}
       {% endfor %}
     </p>
     {% elif studyId: %}

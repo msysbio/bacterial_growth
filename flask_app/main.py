@@ -53,7 +53,7 @@ def create_app():
     app.add_url_rule("/about", view_func=static_pages.static_about_page)
 
     app.add_url_rule("/dashboard",       view_func=dashboard_pages.dashboard_index_page)
-    app.add_url_rule("/dashboard/chart", view_func=dashboard_pages.dashboard_chart_page)
+    app.add_url_rule("/dashboard/chart", view_func=dashboard_pages.dashboard_chart_fragment)
 
     app.add_url_rule("/upload",    view_func=upload_pages.upload_index_page)
 

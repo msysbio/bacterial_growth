@@ -16,6 +16,10 @@
     }
   }
 
+  .chart-form select {
+    padding: 0.4rem !important;
+  }
+
   .experiment {
     display: flex;
     column-gap: 20px;

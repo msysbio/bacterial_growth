@@ -13,6 +13,7 @@ def dashboard_index_page():
     studyName = None
     studyId = request.args.get('studyId')
     experiments = []
+    available_growth_measurements = []
 
     with get_connection() as conn:
         if studyId:
@@ -26,14 +27,23 @@ def dashboard_index_page():
                 [b_ids.split(',') for b_ids in df_experiments["bioreplicateIds"]]
             )
 
+            df_growth, _ = get_chart_data(studyId)
+            growth_keys = set(df_growth.keys())
+            available_growth_measurements = [
+                measurement
+                for measurement in ['OD', 'Plate Counts', 'pH', 'FC']
+                if measurement in growth_keys
+            ]
+
         return render_template(
             "pages/dashboard/index.html",
             studyId=studyId,
             studyName=studyName,
             experiments=experiments,
+            available_growth_measurements=available_growth_measurements
         )
 
-def dashboard_chart_page():
+def dashboard_chart_fragment():
     args = request.args.to_dict()
 
     studyId      = args.pop('studyId')
@@ -41,22 +51,29 @@ def dashboard_chart_page():
     width        = args.pop('width')
     measurement  = args.pop('measurement')
 
-    bioreplicate_ids = []
-    include_average = False
+    if measurement == 'Reads 16S rRNA Seq':
+        # TODO (2024-08-28) Not ready yet
+        figs = generate_reads_figures()
+    elif measurement == 'Metabolites':
+        figs = generate_metabolite_figures(studyId, measurement, experimentId, args)
+    else:
+        figs = generate_growth_figures(studyId, measurement, experimentId, args)
 
-    for arg in args:
-        if arg.endswith(':_average'):
-            include_average = True
-        elif arg.startswith('bioreplicate:'):
-            bioreplicate_ids.append(arg[len('bioreplicate:'):])
+    fig_htmls = [
+        fig.to_html(
+            full_html=False,
+            include_plotlyjs=False,
+            default_width=f"{width}px",
+        )
+        for fig in figs
+    ]
 
-    df_growth, df_reads = get_chart_data(studyId)
-    df_growth = df_growth[df_growth['Biological_Replicate_id'].isin(bioreplicate_ids)]
+    return render_template('pages/dashboard/_figs.html', fig_htmls=fig_htmls)
 
-    if include_average:
-        mean_df_specific_ids = df_growth.groupby('Time')[measurement].mean().reset_index()
-        mean_df_specific_ids['Biological_Replicate_id'] = f"Average {experimentId}"
-        df_growth = pd.concat([df_growth, mean_df_specific_ids], ignore_index=True)
+
+def generate_growth_figures(studyId, measurement, experimentId, args):
+    df_growth, _ = get_chart_data(studyId)
+    df_growth, _ = filter_bioreplicates(df_growth, measurement, experimentId, args)
 
     fig = px.line(
         df_growth,
@@ -68,13 +85,43 @@ def dashboard_chart_page():
         markers=True
     )
 
-    result = fig.to_html(
-        full_html=False,
-        include_plotlyjs=False,
-        default_width=f"{width}px",
-    )
+    return [fig]
 
-    return result
+def generate_metabolite_figures(studyId, measurement, experimentId, args):
+    df_growth, _ = get_chart_data(studyId)
+    df_growth, bioreplicate_ids = filter_bioreplicates(df_growth, measurement, experimentId, args)
+
+    non_metabolite_keys = set([
+        'Position', 'Biological_Replicate_id', 'Time',
+        'OD', 'Plate Counts', 'pH', 'FC',
+    ])
+    metabolite_keys = set(df_growth.keys()).difference(non_metabolite_keys)
+
+    figures = []
+    for bioreplicate_id in bioreplicate_ids:
+        filtered_df = df_growth[df_growth['Biological_Replicate_id'] == bioreplicate_id]
+        melted_df = filtered_df.melt(
+            id_vars=['Time', 'Biological_Replicate_id'],
+            value_vars=metabolite_keys,
+            var_name='Metabolites',
+            value_name='mM'
+        )
+
+        figures.append(px.line(
+            melted_df,
+            x='Time',
+            y='mM',
+            color='Metabolites',
+            title=f'Metabolite Concentrations: {bioreplicate_id} per Metabolite',
+            labels={'Time': 'Hours'},
+            markers=True
+        ))
+
+    return figures
+
+def generate_reads_figures(studyId, experimentId, args):
+    return []
+
 
 # TODO: Hack, reads static files
 def get_chart_data(studyId):
@@ -95,3 +142,47 @@ def get_chart_data(studyId):
     df_reads = pd.read_csv(reads_file)
 
     return (df_growth, df_reads)
+
+
+def first_bioreplicate(data, args):
+    bioreplicate_id = None
+    include_average = False
+    label = None
+
+    for arg in args:
+        if arg.endswith(':_average'):
+            include_average = True
+            break
+        elif arg.startswith('bioreplicate:'):
+            bioreplicate_id = arg[len('bioreplicate:'):]
+            break
+
+    if include_average:
+        data = data.groupby('Time')[measurement].mean().reset_index()
+        label = f"Average {experimentId}"
+        data['Biological_Replicate_id'] = label
+    elif bioreplicate_id is not None:
+        data = data[data['Biological_Replicate_id'] == bioreplicate_id]
+        label = bioreplicate_id
+
+    return (data, label)
+
+
+def filter_bioreplicates(data, measurement, experimentId, args):
+    bioreplicate_ids = []
+    include_average = False
+
+    for arg in args:
+        if arg.endswith(':_average'):
+            include_average = True
+        elif arg.startswith('bioreplicate:'):
+            bioreplicate_ids.append(arg[len('bioreplicate:'):])
+
+    data = data[data['Biological_Replicate_id'].isin(bioreplicate_ids)]
+
+    if include_average:
+        mean_df_specific_ids = data.groupby('Time')[measurement].mean().reset_index()
+        mean_df_specific_ids['Biological_Replicate_id'] = f"Average {experimentId}"
+        data = pd.concat([data, mean_df_specific_ids], ignore_index=True)
+
+    return data, bioreplicate_ids
