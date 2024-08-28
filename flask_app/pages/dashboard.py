@@ -144,30 +144,6 @@ def get_chart_data(studyId):
     return (df_growth, df_reads)
 
 
-def first_bioreplicate(data, args):
-    bioreplicate_id = None
-    include_average = False
-    label = None
-
-    for arg in args:
-        if arg.endswith(':_average'):
-            include_average = True
-            break
-        elif arg.startswith('bioreplicate:'):
-            bioreplicate_id = arg[len('bioreplicate:'):]
-            break
-
-    if include_average:
-        data = data.groupby('Time')[measurement].mean().reset_index()
-        label = f"Average {experimentId}"
-        data['Biological_Replicate_id'] = label
-    elif bioreplicate_id is not None:
-        data = data[data['Biological_Replicate_id'] == bioreplicate_id]
-        label = bioreplicate_id
-
-    return (data, label)
-
-
 def filter_bioreplicates(data, measurement, experimentId, args):
     bioreplicate_ids = []
     include_average = False
