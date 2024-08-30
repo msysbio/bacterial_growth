@@ -17,6 +17,7 @@ def _create_engine():
     return sqlalchemy.create_engine(
         f"mysql+pymysql://{username}:{password}@{host}:3306/{database}",
         connect_args=config,
+        echo=True
     )
 
 

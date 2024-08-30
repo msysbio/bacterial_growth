@@ -8,7 +8,7 @@ def init_config(app):
             DEBUG=True,
             ASSETS_DEBUG=True,
             TEMPLATES_AUTO_RELOAD=True,
-            EXPLAIN_TEMPLATE_LOADING=True,
+            EXPLAIN_TEMPLATE_LOADING=False,
             SECRET_KEY='development_key',
         )
     elif app_env == 'test':
