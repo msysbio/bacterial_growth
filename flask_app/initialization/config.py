@@ -1,7 +1,10 @@
 import os
+import logging
 
 def init_config(app):
-    app_env = os.getenv('APP_ENV', 'development')
+    app_env   = os.getenv('APP_ENV', 'development')
+    log_level = os.getenv('LOG_LEVEL', None)
+    timing    = os.getenv('TIME')
 
     if app_env == 'development':
         app.config.update(
@@ -30,5 +33,11 @@ def init_config(app):
         )
     else:
         raise KeyError(f"Unknown APP_ENV: {app_env}")
+
+    if log_level:
+        app.logger.setLevel(log_level.upper())
+
+    if timing:
+        app.logger.getChild('timing').setLevel('INFO')
 
     return app
