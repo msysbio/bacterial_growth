@@ -1,6 +1,5 @@
 import os
 import tomllib
-import logging
 from pathlib import Path
 
 import sqlalchemy
@@ -11,12 +10,12 @@ def _create_engine():
 
     username = config.pop('username', '')
     password = config.pop('password', '')
-    host = config.pop('host', 'localhost')
-    port = config.pop('port', '3306')
+    host     = config.pop('host', 'localhost')
+    port     = config.pop('port', '3306')
     database = config.pop('database')
 
     engine = sqlalchemy.create_engine(
-        f"mysql+pymysql://{username}:{password}@{host}:3306/{database}",
+        f"mysql+pymysql://{username}:{password}@{host}:{port}/{database}",
         connect_args=config,
         # Set echo=True for full query logging:
         echo=False,
@@ -32,5 +31,6 @@ def get_config():
 
 def get_connection():
     return DB.connect()
+
 
 DB = _create_engine()
