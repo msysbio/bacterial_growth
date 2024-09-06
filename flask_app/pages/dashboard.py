@@ -18,7 +18,7 @@ def dashboard_index_page():
     with get_connection() as conn:
         if studyId:
             query = "SELECT studyName FROM Study WHERE studyId = :studyId LIMIT 1"
-            studyName = conn.execute(sql.text(query), { 'studyId': studyId }).scalar()
+            studyName = conn.execute(sql.text(query), {'studyId': studyId}).scalar()
 
             df_experiments = get_experiments(studyId, conn)
             experiments = zip(
@@ -42,6 +42,7 @@ def dashboard_index_page():
             experiments=experiments,
             available_growth_measurements=available_growth_measurements
         )
+
 
 def dashboard_chart_fragment():
     args = request.args.to_dict()
@@ -87,6 +88,7 @@ def generate_growth_figures(studyId, measurement, experimentId, args):
 
     return [fig]
 
+
 def generate_metabolite_figures(studyId, measurement, experimentId, args):
     df_growth, _ = get_chart_data(studyId)
     df_growth, bioreplicate_ids = filter_bioreplicates(df_growth, measurement, experimentId, args)
@@ -119,6 +121,7 @@ def generate_metabolite_figures(studyId, measurement, experimentId, args):
 
     return figures
 
+
 def generate_reads_figures(studyId, experimentId, args):
     return []
 
@@ -131,8 +134,8 @@ def get_chart_data(studyId):
     relative_path_to_src = os.path.join(root_dir, '../src')
 
     path = relative_path_to_src + f"/Data/Growth/{studyId}"
-    growth_file = path + f"/Growth_Metabolites.csv"
-    reads_file = path + f"/Sequencing_Reads.csv"
+    growth_file = path + "/Growth_Metabolites.csv"
+    reads_file = path + "/Sequencing_Reads.csv"
 
     df_growth = pd.read_csv(growth_file)
     subset_columns = df_growth.columns.drop('Position')

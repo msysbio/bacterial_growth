@@ -9,6 +9,7 @@ it's just bags of data that are rendered as tables.
 import sqlalchemy as sql
 import pandas as pd
 
+
 # TODO (2024-08-24) Sanitize: return (query, params)
 def dynamical_query(all_advance_query):
     base_query = "SELECT DISTINCT studyId"
@@ -19,7 +20,7 @@ def dynamical_query(all_advance_query):
         if query_dict['option']:
             if query_dict['option'] == 'Project Name':
                 project_name = query_dict['value']
-                if project_name !=  '':
+                if project_name != '':
                     where_clause = f"""
                     FROM Study
                     WHERE projectUniqueID IN (
@@ -101,7 +102,7 @@ def dynamical_query(all_advance_query):
 
 
 def get_general_info(studyId, conn):
-    params = { 'studyId': studyId }
+    params = {'studyId': studyId}
 
     query = """
         SELECT studyId, studyName, studyDescription, studyURL
@@ -169,15 +170,15 @@ def get_experiments(studyId, conn):
         E.cultivationMode,
         E.controlDescription;
     """
-    df_experiments = pd.read_sql(query, conn, params={ 'studyId': studyId })
+    df_experiments = pd.read_sql(query, conn, params={'studyId': studyId})
     columns_to_exclude = ['experimentUniqueId']
     return df_experiments.drop(columns=columns_to_exclude)
 
 
 def get_compartments(studyId, conn):
     query = "SELECT DISTINCT * FROM Compartments WHERE studyId = %(studyId)s;"
-    df_compartments = pd.read_sql(query, conn, params={ 'studyId': studyId })
-    columns_to_exclude = ['studyId','compartmentUniqueId']
+    df_compartments = pd.read_sql(query, conn, params={'studyId': studyId})
+    columns_to_exclude = ['studyId', 'compartmentUniqueId']
     return df_compartments.drop(columns=columns_to_exclude)
 
 
@@ -198,13 +199,13 @@ def get_communities(studyId, conn):
     GROUP BY
         C.comunityId;
     """
-    df_communities = pd.read_sql(query, conn, params={ 'studyId': studyId })
+    df_communities = pd.read_sql(query, conn, params={'studyId': studyId})
     return df_communities
 
 
 def get_microbial_strains(studyId, conn):
     query = "SELECT * FROM Strains WHERE studyId = %(studyId)s;"
-    df_strains = pd.read_sql(query, conn, params={ 'studyId': studyId })
+    df_strains = pd.read_sql(query, conn, params={'studyId': studyId})
     columns_to_exclude = ['studyId']
     return df_strains.drop(columns=columns_to_exclude)
 
@@ -227,9 +228,10 @@ def get_biological_replicates(studyId, conn):
     WHERE
         B.studyId = %(studyId)s;
         """
-    df_bioreps = pd.read_sql(query, conn, params={ 'studyId': studyId })
+    df_bioreps = pd.read_sql(query, conn, params={'studyId': studyId})
     columns_to_exclude = ['bioreplicateUniqueId']
     return df_bioreps.drop(columns=columns_to_exclude)
+
 
 def get_abundances(studyId, conn):
     query = """
@@ -244,7 +246,7 @@ def get_abundances(studyId, conn):
     WHERE
         A.studyId = %(studyId)s;
         """
-    df_abundances = pd.read_sql(query, conn, params={ 'studyId': studyId })
+    df_abundances = pd.read_sql(query, conn, params={'studyId': studyId})
     return df_abundances
 
 
@@ -261,12 +263,12 @@ def get_fc_counts(studyId, conn):
     WHERE
         F.studyId = %(studyId)s;
         """
-    df_fc_counts = pd.read_sql(query, conn, params={ 'studyId': studyId })
+    df_fc_counts = pd.read_sql(query, conn, params={'studyId': studyId})
     return df_fc_counts
 
 
 def get_metabolites_per_replicate(studyId, conn):
     query = "SELECT * FROM MetabolitePerExperiment WHERE studyId = %(studyId)s;"
-    df_metabolites = pd.read_sql(query, conn, params={ 'studyId': studyId })
-    columns_to_exclude = ['experimentUniqueId','experimentId','bioreplicateUniqueId']
+    df_metabolites = pd.read_sql(query, conn, params={'studyId': studyId})
+    columns_to_exclude = ['experimentUniqueId', 'experimentId', 'bioreplicateUniqueId']
     return df_metabolites.drop(columns=columns_to_exclude)

@@ -1,5 +1,6 @@
 import flask_assets
 
+
 def init_assets(app):
     assets = flask_assets.Environment(app)
 

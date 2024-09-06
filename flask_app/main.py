@@ -1,6 +1,5 @@
 import os
 
-from jinja2.environment import Template
 from flask import Flask
 
 from flask_app.initialization.config import init_config

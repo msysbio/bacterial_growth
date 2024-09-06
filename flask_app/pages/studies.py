@@ -8,6 +8,7 @@ from flask import render_template, send_file
 import flask_app.models.study_dfs as study_dfs
 from flask_app.db import get_connection
 
+
 def study_show_page(studyId):
     with get_connection() as conn:
         study = study_dfs.get_general_info(studyId, conn)
@@ -22,6 +23,7 @@ def study_show_page(studyId):
         study['metabolites_per_replicate'] = study_dfs.get_metabolites_per_replicate(studyId, conn)
 
         return render_template("pages/studies/show.html", study=study)
+
 
 def study_download_page(studyId):
     zip_file = createzip([studyId])
@@ -46,9 +48,9 @@ def createzip(study_ids_list):
     with zipfile.ZipFile(buf, 'w', zipfile.ZIP_DEFLATED) as csv_zip:
         for study_id in study_ids_list:
             folder_path = relative_path_to_src + f"/Data/Growth/{study_id}"
-            #st.info(folder_path)
-            growth_file = folder_path + f"/Growth_Metabolites.csv"
-            reads_file = folder_path + f"/Sequencing_Reads.csv"
+            # st.info(folder_path)
+            growth_file = folder_path + "/Growth_Metabolites.csv"
+            reads_file = folder_path + "/Sequencing_Reads.csv"
             try:
                 df_growth = pd.read_csv(growth_file)
             # Continue with processing the dataframe...

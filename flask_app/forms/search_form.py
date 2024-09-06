@@ -2,6 +2,7 @@ from flask_wtf import FlaskForm
 from wtforms import SelectField, StringField, FormField, FieldList
 from wtforms.validators import DataRequired, Optional
 
+
 class SearchFormClause(FlaskForm):
     option = SelectField('option', choices=[
         'Project Name',

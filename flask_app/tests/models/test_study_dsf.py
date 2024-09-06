@@ -1,9 +1,10 @@
-import flask_app.tests.init
+import flask_app.tests.init  # noqa: F401
 
 import unittest
 import re
 
 import flask_app.models.study_dfs as study_dfs
+
 
 class TestStudyDsf(unittest.TestCase):
     def assertSqlQuery(self, actual, expected):
@@ -49,6 +50,7 @@ class TestStudyDsf(unittest.TestCase):
                 WHERE metabo_name LIKE '%acetyl%'
             )
         """)
+
 
 if __name__ == '__main__':
     unittest.main()

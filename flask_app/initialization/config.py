@@ -1,5 +1,5 @@
 import os
-import logging
+
 
 def init_config(app):
     app_env   = os.getenv('APP_ENV', 'development')

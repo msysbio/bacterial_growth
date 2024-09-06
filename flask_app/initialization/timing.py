@@ -1,6 +1,4 @@
 import time
-import datetime
-import logging
 
 from flask import g, current_app, request
 from sqlalchemy import event as sql_event
@@ -36,6 +34,7 @@ def log_request_timing(response):
 def start_db_timing(conn, cursor, statement, parameters, context, executemany):
     start_time = time.monotonic_ns()
     conn.info.setdefault("start_time", []).append(start_time)
+
 
 @sql_event.listens_for(Engine, "after_cursor_execute")
 def log_db_timing(conn, cursor, statement, parameters, context, executemany):
