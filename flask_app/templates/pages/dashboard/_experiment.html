@@ -1,19 +1,17 @@
-{% macro render_experiment(experiment, available_growth_measurements) %}
-
-{% set (identifier, description, bioreplicate_ids) = experiment %}
+{% macro render_experiment_form(form) %}
 
 <details class="experiment-container">
-  <summary>{{ identifier }}</summary>
+  <summary>{{ form.experiment_id }}</summary>
 
-  <div class="experiment" data-experiment-id="{{ identifier }}">
+  <div class="experiment" data-experiment-id="{{ form.experiment_id }}">
     <div class="controls-column">
-      <p>{{ description }}</p>
+      <p>{{ form.description }}</p>
 
       <p>
         <form class="simple-form chart-form">
           <div class="form-row">
             <select name="measurement" class="form-input-blue">
-              {% for measurement in available_growth_measurements: %}
+              {% for measurement in form.available_growth_measurements: %}
               {% if measurement == 'FC' %}
               <option value="FC">FC Counts</option>
               {% else %}
@@ -25,7 +23,7 @@
             </select>
           </div>
 
-          {% for bioreplicate_id in bioreplicate_ids %}
+          {% for bioreplicate_id in form.bioreplicate_ids %}
           {% set key = "bioreplicate:{}".format(bioreplicate_id) %}
           <div class="form-row">
             <input type="checkbox" name="{{ key }}" id="{{ key }}" />
@@ -35,11 +33,11 @@
           </div>
           {% endfor %}
 
-          {% set key = "bioreplicate:{}:_average".format(identifier) %}
+          {% set key = "bioreplicate:{}:_average".format(form.experiment_id) %}
           <div class="form-row">
             <input type="checkbox" name="{{ key }}" id="{{ key }}" />
             <label for="{{ key }}">
-              Average {{ identifier }}
+              Average {{ form.experiment_id }}
             </label>
           </div>
 
