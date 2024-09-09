@@ -5,6 +5,7 @@ from flask import Flask
 from flask_app.initialization.config import init_config
 from flask_app.initialization.assets import init_assets
 from flask_app.initialization.routes import init_routes
+from flask_app.initialization.plotly import init_plotly
 from flask_app.initialization.timing import init_timing
 
 
@@ -14,6 +15,8 @@ def create_app(env):
     app = init_config(app)
     app = init_assets(app)
     app = init_routes(app)
+
+    init_plotly()
 
     if env == 'development' or os.getenv('TIME'):
         app = init_timing(app)
