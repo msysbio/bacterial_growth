@@ -1,5 +1,6 @@
 from plotly import graph_objects as go
 
+
 # Plotly seems to have a bug where it needs to be initialized before it can be used properly.
 #
 # Community issue (from 2021!):

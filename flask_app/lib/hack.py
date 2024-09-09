@@ -1,6 +1,7 @@
 import os
 import pandas as pd
 
+
 # TODO: Needs to read data from the database and be moved somewhere
 # appropriate with a `conn` argument. Or it might be removed.
 def get_chart_data(studyId):

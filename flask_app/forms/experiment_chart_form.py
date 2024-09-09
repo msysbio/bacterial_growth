@@ -3,6 +3,8 @@ import pandas as pd
 
 from flask_app.lib.hack import get_chart_data
 
+PLOTLY_TEMPLATE = 'plotly_white'
+
 
 class ExperimentChartForm:
     @classmethod
@@ -36,6 +38,7 @@ class ExperimentChartForm:
             color='Biological_Replicate_id',
             title=f'{measurement} Plot for Experiment: {self.experiment_id} per Biological replicate',
             labels={'Time': 'Hours'},
+            template=PLOTLY_TEMPLATE,
             markers=True
         )
 
@@ -62,9 +65,8 @@ class ExperimentChartForm:
                 y='Cells/mL',
                 color='Species',
                 title=f'FC Counts: {bioreplicate_id} per Microbial Strain',
-                labels={
-                    'Time': 'Hours',
-                },
+                labels={'Time': 'Hours'},
+                template=PLOTLY_TEMPLATE,
                 markers=True
             ))
 
@@ -96,6 +98,7 @@ class ExperimentChartForm:
                 color='Metabolites',
                 title=f'Metabolite Concentrations: {bioreplicate_id} per Metabolite',
                 labels={'Time': 'Hours'},
+                template=PLOTLY_TEMPLATE,
                 markers=True
             ))
 
