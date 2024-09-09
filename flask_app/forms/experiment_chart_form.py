@@ -44,7 +44,31 @@ class ExperimentChartForm:
     def generate_reads_figures(self, args):
         df_reads, selected_bioreplicate_ids = self._filter_reads(args)
 
-        print(df_reads)
+        figs = []
+        for bioreplicate_id in selected_bioreplicate_ids:
+            filtered_df = df_reads[df_reads['Biological_Replicate_id'] == bioreplicate_id]
+            species_columns = filtered_df.filter(like='_counts').columns
+
+            melted_df = filtered_df.melt(
+                id_vars=['Time', 'Biological_Replicate_id'],
+                value_vars=species_columns,
+                var_name='Species',
+                value_name='Cells/mL'
+            )
+
+            figs.append(px.line(
+                melted_df,
+                x='Time',
+                y='Cells/mL',
+                color='Species',
+                title=f'FC Counts: {bioreplicate_id} per Microbial Strain',
+                labels={
+                    'Time': 'Hours',
+                },
+                markers=True
+            ))
+
+        return figs
 
     def generate_metabolite_figures(self, args):
         df_growth, selected_bioreplicate_ids = self._filter_growth(args)
@@ -103,21 +127,33 @@ class ExperimentChartForm:
         return filtered_data, selected_bioreplicate_ids
 
     def _filter_reads(self, args):
-        columns_to_keep = [col for col in df_reads.columns if not col.endswith('_std') and col != 'Position']
-        filtered_df = df_reads[columns_to_keep]
+        columns_to_keep = [
+            col
+            for col in self.df_reads.columns
+            if not col.endswith('_std') and col != 'Position'
+        ]
+        filtered_data = self.df_reads[columns_to_keep]
 
-        return filtered_df, []
+        selected_bioreplicate_ids = []
+        include_average = False
 
-        numeric_cols = filtered_df.select_dtypes(include='number').columns.drop('Time')
-        print(filtered_df)
-        for exp, biorep in experiment_with_bioreps.items():
-            biological_replicate_ids_reads = biorep_per_exp[exp]
-            print(biological_replicate_ids_reads)
-            if f"Average {exp}" in biological_replicate_ids_reads:
-                biological_replicate_ids_reads.remove(f"Average {exp}")
-            filtered_df_per_exp = filtered_df[filtered_df['Biological_Replicate_id'].isin(biological_replicate_ids_reads)]
-            mean_df_specific_ids = filtered_df_per_exp.groupby('Time')[numeric_cols].mean().reset_index()
-            mean_df_specific_ids['Biological_Replicate_id'] = f"Average {exp}"
-            filtered_df=pd.concat([filtered_df, mean_df_specific_ids], ignore_index=True)
-            fil = filtered_df[filtered_df['Biological_Replicate_id'].isin(biorep)]
-            result_reads_df_dict[exp]=fil
+        for arg in args:
+            if arg.endswith(':_average'):
+                include_average = True
+            elif arg.startswith('bioreplicate:'):
+                selected_bioreplicate_ids.append(arg[len('bioreplicate:'):])
+
+        filtered_data = filtered_data[filtered_data['Biological_Replicate_id'].isin(selected_bioreplicate_ids)]
+
+        if include_average:
+            numeric_cols = filtered_data.select_dtypes(include='number').columns.drop('Time')
+            bioreplicate_label = f"Average {self.experiment_id}"
+
+            experiment_data = self.df_reads[self.df_reads['Biological_Replicate_id'].isin(self.bioreplicate_ids)]
+            mean_df_specific_ids = experiment_data.groupby('Time')[numeric_cols].mean().reset_index()
+            mean_df_specific_ids['Biological_Replicate_id'] = bioreplicate_label
+
+            filtered_data = pd.concat([filtered_data, mean_df_specific_ids], ignore_index=True)
+            selected_bioreplicate_ids.append(bioreplicate_label)
+
+        return filtered_data, selected_bioreplicate_ids
