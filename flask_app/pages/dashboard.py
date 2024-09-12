@@ -47,7 +47,9 @@ def dashboard_chart_fragment():
         # "reads" function, determine which to show based on reads CSV keys
 
         if measurement == 'Reads 16S rRNA Seq':
-            figs = form.generate_reads_figures(args)
+            figs = form.generate_reads_figures('reads', args)
+        elif measurement == 'FC counts per species':
+            figs = form.generate_reads_figures('counts', args)
         elif measurement == 'Metabolites':
             figs = form.generate_metabolite_figures(args)
         else:
@@ -63,7 +65,3 @@ def dashboard_chart_fragment():
         ]
 
         return render_template('pages/dashboard/_figs.html', fig_htmls=fig_htmls)
-
-
-def generate_reads_figures(studyId, experimentId, args):
-    return []

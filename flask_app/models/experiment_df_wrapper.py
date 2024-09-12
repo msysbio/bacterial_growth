@@ -10,6 +10,9 @@ class ExperimentDfWrapper:
     def keys(self):
         return self.df.keys()
 
+    def has_keys_matching(self, string):
+        return any(k for k in self.keys() if k.find(string) >= 0)
+
     def bioreplicate_dfs(self):
         return self.df.groupby('Biological_Replicate_id')
 

@@ -28,6 +28,13 @@ class ExperimentChartForm:
             if measurement in df_growth.keys()
         ]
 
+        self.available_reads_measurements = []
+
+        if self.reads_data.has_keys_matching('_counts'):
+            self.available_reads_measurements.append('FC counts per species')
+        if self.reads_data.has_keys_matching('_reads'):
+            self.available_reads_measurements.append('Reads 16S rRNA Seq')
+
     def generate_growth_figures(self, measurement, args):
         selected_bioreplicate_ids = self.extract_args(args)
         self.growth_data.select_bioreplicates(selected_bioreplicate_ids)
@@ -45,27 +52,45 @@ class ExperimentChartForm:
 
         return [fig]
 
-    def generate_reads_figures(self, args):
+    def generate_reads_figures(self, read_type, args):
         selected_bioreplicate_ids = self.extract_args(args)
         self.reads_data.select_bioreplicates(selected_bioreplicate_ids)
 
         figs = []
         for bioreplicate_id, bioreplicate_df in self.reads_data.bioreplicate_dfs():
-            species_columns = bioreplicate_df.filter(like='_counts').columns
+            if read_type == 'reads':
+                title = f'16S reads: {bioreplicate_id} per Microbial Strain'
+                species_columns = bioreplicate_df.filter(regex='_reads$').columns
+                std_columns = bioreplicate_df.filter(regex='_reads_std$').columns
+            else:
+                title = f'FC Counts: {bioreplicate_id} per Microbial Strain'
+                species_columns = bioreplicate_df.filter(like='_counts').columns
+                std_columns = None
 
             melted_df = bioreplicate_df.melt(
                 id_vars=['Time', 'Biological_Replicate_id'],
-                value_vars=species_columns,
+                value_vars=sorted(species_columns),
                 var_name='Species',
                 value_name='Cells/mL'
             )
+            error_y = None
+
+            if std_columns is not None:
+                std_df = bioreplicate_df.melt(
+                    id_vars=['Time', 'Biological_Replicate_id'],
+                    value_vars=sorted(std_columns),
+                    var_name='Species',
+                    value_name='STD'
+                )
+                error_y=std_df['STD']
 
             figs.append(px.line(
                 melted_df,
                 x='Time',
                 y='Cells/mL',
+                error_y=error_y,
                 color='Species',
-                title=f'FC Counts: {bioreplicate_id} per Microbial Strain',
+                title=title,
                 labels={'Time': 'Hours'},
                 template=PLOTLY_TEMPLATE,
                 markers=True

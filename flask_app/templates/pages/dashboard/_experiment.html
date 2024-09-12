@@ -18,7 +18,11 @@
               <option>{{ measurement }}</option>
               {% endif %}
               {% endfor %}
-              <option>Reads 16S rRNA Seq</option>
+
+              {% for measurement in form.available_reads_measurements: %}
+              <option>{{ measurement }}</option>
+              {% endfor %}
+
               <option>Metabolites</option>
             </select>
           </div>
