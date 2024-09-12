@@ -1,3 +1,5 @@
+import re
+
 import plotly.express as px
 
 from flask_app.lib.hack import get_chart_data
@@ -72,6 +74,10 @@ class ExperimentChartForm:
                 value_vars=sorted(species_columns),
                 var_name='Species',
                 value_name='Cells/mL'
+            )
+
+            melted_df['Species'] = melted_df['Species'].map(
+                lambda s: re.sub(r'_(reads|counts)$', '', s)
             )
             error_y = None
 
