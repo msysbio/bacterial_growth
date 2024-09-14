@@ -91,7 +91,7 @@ class ExperimentChartForm:
             )
             error_y = None
 
-            if std_columns is not None and not apply_log:
+            if std_columns is not None and not apply_log[index]:
                 std_df = bioreplicate_df.melt(
                     id_vars=['Time', 'Biological_Replicate_id'],
                     value_vars=sorted(std_columns),
