@@ -1,6 +1,6 @@
 runtime! projects/flask.vim
 
-silent AckIgnore .micromamba/
+silent AckIgnore .micromamba/ flask_app/static/build/ flask_app/static/js/vendor/
 silent TagsExclude .micromamba/* flask_app/static/build/* flask_app/static/js/vendor/*
 
 set tags+=micromamba.tags
