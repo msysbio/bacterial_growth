@@ -84,13 +84,6 @@ form.simple-form {
       flex-grow: 1;
     }
 
-    .form-input-blue {
-      background-color: rgb(202, 234, 234);
-      border: 1px solid transparent;
-      border-radius: 8px;
-      padding: 0.7rem;
-    }
-
     .form-input-full {
       width: 100%;
     }
@@ -114,6 +107,13 @@ form.simple-form {
       line-height: 2;
     }
   }
+}
+
+.form-input-blue {
+  background-color: rgb(202, 234, 234);
+  border: 1px solid transparent;
+  border-radius: 8px;
+  padding: 0.7rem;
 }
 
 a.green-button {
