@@ -19,8 +19,10 @@ $(document).ready(function() {
     $(':root').css('--sidebar-width', '0px');
     $('#main .open-sidebar').css('width', '50px');
 
-    // Experimental: focus sidebar opener afterwards
-    // $('#main .open-sidebar a').focus();
+    let transitionLengthMs = parseInt($(':root').css('--transition-length'), 10);
+    setTimeout(function() {
+      $(document).trigger('x-sidebar-resize')
+    }, transitionLengthMs + 1);
   });
 
   $('#main .open-sidebar a').on('click', function(e) {
@@ -29,8 +31,10 @@ $(document).ready(function() {
     $(':root').css('--sidebar-width', '340px');
     $('#main .open-sidebar').css('width', '0px');
 
-    // Experimental: focus sidebar closer afterwards
-    // $('#page-sidebar .close-sidebar a').focus();
+    let transitionLengthMs = parseInt($(':root').css('--transition-length'), 10);
+    setTimeout(function() {
+      $(document).trigger('x-sidebar-resize')
+    }, transitionLengthMs + 1);
   });
 
   $('.js-tabs .tab-headers span').on('click', function(e) {

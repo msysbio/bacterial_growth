@@ -48,6 +48,7 @@
 
     .chart-column {
       width: 70%;
+      overflow-x: hidden;
     }
 
     .chart-placeholder {

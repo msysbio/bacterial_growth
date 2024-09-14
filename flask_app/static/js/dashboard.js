@@ -14,6 +14,15 @@ $(document).ready(function() {
     }
   });
 
+  $(document).on('x-sidebar-resize', function() {
+    $('.js-plotly-plot').each(function() {
+      let $chart = $(this);
+      let width = Math.floor($chart.parents('.chart').width());
+
+      Plotly.relayout($chart[0], { 'width': width }, 0);
+    });
+  });
+
   $page.on('change', 'form.chart-form', function(e) {
     let $form = $(e.currentTarget);
     update_chart($form);
