@@ -7,7 +7,7 @@ $(document).ready(function() {
   $page.find('details.experiment-container').each(function(e) {
     $details = $(this);
 
-    if ($details.find('input[type=checkbox]:checked').log().length > 0) {
+    if ($details.find('input[type=checkbox]:checked').length > 0) {
       $details.prop('open', true);
       let $form = $details.find('form');
       update_chart($form);
