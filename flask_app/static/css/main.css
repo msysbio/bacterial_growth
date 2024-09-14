@@ -5,6 +5,7 @@
   --border-color: rgba(7, 25, 82, 0.2);
   --sidebar-color: #caeaea;
   --sidebar-hover-color: rgba(121, 200, 200, 0.25);
+  --transition-length: 300ms;
 }
 
 body *{
@@ -23,7 +24,7 @@ a:hover {
 #page-sidebar {
   position: fixed;
   width: var(--sidebar-width);
-  transition: width 300ms;
+  transition: width var(--transition-length);
   overflow-x: hidden;
   background-color: var(--sidebar-color);
   height: 100%;
@@ -36,12 +37,12 @@ a:hover {
 
 #main {
   margin-left: var(--sidebar-width);
-  transition: margin-left 300ms;
+  transition: margin-left var(--transition-length);
   padding-top: 20px;
 }
 
 .open-sidebar {
-  position: absolute;
+  position: fixed;
   top: 20px;
   left: 0px;
   background-color: #caeaea;
@@ -50,7 +51,7 @@ a:hover {
   /* Expanded to 40px when sidebar is closed: */
   width: 0px;
 
-  transition: width 300ms;
+  transition: width var(--transition-length);
   font-size: 24px;
   text-align: right;
   overflow: hidden;

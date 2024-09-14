@@ -1,4 +1,4 @@
-{% from 'pages/dashboard/_experiment.html' import render_experiment %}
+{% from 'pages/dashboard/_experiment.html' import render_experiment_form %}
 
 {% extends '_layout.html' %}
 
@@ -31,7 +31,7 @@
             <input
                 type="text"
                 name="studyId"
-                value="{{ request.args['studyId'] }}"
+                value="{{ studyId if studyId }}"
                 class="form-input-full form-input-blue" />
           </label>
 
@@ -46,8 +46,8 @@
     <p>
       <h2>Experiments</h2>
 
-      {% for experiment in experiments: %}
-      {{ render_experiment(experiment, available_growth_measurements) }}
+      {% for experiment_form in experiment_forms: %}
+      {{ render_experiment_form(experiment_form) }}
       {% endfor %}
     </p>
     {% elif studyId: %}
@@ -57,4 +57,8 @@
     {% endif %}
   </article>
 </div>
+
+{% assets "plotly_js" %}
+<script src="{{ ASSET_URL }}" type="text/javascript"></script>
+{% endassets %}
 {% endblock %}

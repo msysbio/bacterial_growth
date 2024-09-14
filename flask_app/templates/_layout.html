@@ -7,11 +7,11 @@
 
     <link rel="icon" href="{{ url_for('static', filename='images/favicon.ico') }}" sizes="72x72">
 
-    {% assets "css_bundle" %}
+    {% assets "app_css" %}
     <link rel="stylesheet" href="{{ ASSET_URL }}" type="text/css" media="screen" />
     {% endassets %}
 
-    {% assets "js_bundle" %}
+    {% assets "app_js" %}
     <script src="{{ ASSET_URL }}" type="text/javascript"></script>
     {% endassets %}
   </head>

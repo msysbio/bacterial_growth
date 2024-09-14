@@ -16,11 +16,22 @@
     }
   }
 
+  .chart-form {
+    width: 100%;
+
+    .controls-column {
+      display: flex;
+      flex-direction: column;
+      row-gap: 6px;
+    }
+  }
+
   .chart-form select {
     padding: 0.4rem !important;
   }
 
   .experiment {
+    width: 100%;
     display: flex;
     column-gap: 20px;
 
@@ -30,6 +41,7 @@
 
     .chart-column {
       width: 70%;
+      overflow-x: hidden;
     }
 
     .chart-placeholder {

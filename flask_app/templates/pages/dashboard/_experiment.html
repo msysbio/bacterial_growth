@@ -1,61 +1,61 @@
-{% macro render_experiment(experiment, available_growth_measurements) %}
-
-{% set (identifier, description, bioreplicate_ids) = experiment %}
+{% macro render_experiment_form(form) %}
 
 <details class="experiment-container">
-  <summary>{{ identifier }}</summary>
+  <summary>{{ form.experiment_id }}</summary>
 
-  <div class="experiment" data-experiment-id="{{ identifier }}">
-    <div class="controls-column">
-      <p>{{ description }}</p>
+  <form class="chart-form">
+    <div class="experiment" data-experiment-id="{{ form.experiment_id }}">
+      <div class="controls-column">
+        <p>{{ form.description }}</p>
 
-      <p>
-        <form class="simple-form chart-form">
-          <div class="form-row">
-            <select name="measurement" class="form-input-blue">
-              {% for measurement in available_growth_measurements: %}
-              {% if measurement == 'FC' %}
-              <option value="FC">FC Counts</option>
-              {% else %}
-              <option>{{ measurement }}</option>
-              {% endif %}
-              {% endfor %}
-              <option>Reads 16S rRNA Seq</option>
-              <option>Metabolites</option>
-            </select>
-          </div>
+        <div class="form-row">
+          <select name="measurement" class="form-input-blue">
+            {% for measurement in form.available_growth_measurements: %}
+            {% if measurement == 'FC' %}
+            <option value="FC">FC Counts</option>
+            {% else %}
+            <option>{{ measurement }}</option>
+            {% endif %}
+            {% endfor %}
 
-          {% for bioreplicate_id in bioreplicate_ids %}
-          {% set key = "bioreplicate:{}".format(bioreplicate_id) %}
-          <div class="form-row">
-            <input type="checkbox" name="{{ key }}" id="{{ key }}" />
-            <label for="{{ key }}">
-              {{ bioreplicate_id }}
-            </label>
-          </div>
-          {% endfor %}
+            {% for measurement in form.available_reads_measurements: %}
+            <option>{{ measurement }}</option>
+            {% endfor %}
 
-          {% set key = "bioreplicate:{}:_average".format(identifier) %}
-          <div class="form-row">
-            <input type="checkbox" name="{{ key }}" id="{{ key }}" />
-            <label for="{{ key }}">
-              Average {{ identifier }}
-            </label>
-          </div>
+            <option>Metabolites</option>
+          </select>
+        </div>
 
-          <div>
-            <a href="#" class="white-button clear-chart">Clear</a>
-          </div>
-        </form>
-      </p>
-    </div>
+        {% for bioreplicate_id in form.bioreplicate_ids %}
+        {% set key = "bioreplicate:{}".format(bioreplicate_id) %}
+        <div class="form-row">
+          <input type="checkbox" name="{{ key }}" id="{{ key }}" />
+          <label for="{{ key }}">
+            {{ bioreplicate_id }}
+          </label>
+        </div>
+        {% endfor %}
 
-    <div class="chart-column chart">
-      <div class="chart-placeholder">
-        📊
+        {% set key = "bioreplicate:{}:_average".format(form.experiment_id) %}
+        <div class="form-row">
+          <input type="checkbox" name="{{ key }}" id="{{ key }}" />
+          <label for="{{ key }}">
+            Average {{ form.experiment_id }}
+          </label>
+        </div>
+
+        <div class="form-row">
+          <a href="#" class="white-button clear-chart">Clear</a>
+        </div>
+      </div>
+
+      <div class="chart-column chart">
+        <div class="chart-placeholder">
+          📊
+        </div>
       </div>
     </div>
-  </div>
+  </form>
 </details>
 
 {% endmacro %}
