@@ -16,11 +16,29 @@
     }
   }
 
+  .chart-form {
+    width: 100%;
+
+    .form-input-blue {
+      background-color: rgb(202, 234, 234);
+      border: 1px solid transparent;
+      border-radius: 8px;
+      padding: 0.7rem;
+    }
+
+    .controls-column {
+      display: flex;
+      flex-direction: column;
+      row-gap: 6px;
+    }
+  }
+
   .chart-form select {
     padding: 0.4rem !important;
   }
 
   .experiment {
+    width: 100%;
     display: flex;
     column-gap: 20px;
 

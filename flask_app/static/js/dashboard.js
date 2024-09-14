@@ -29,11 +29,13 @@ $(document).ready(function() {
   });
 
   function update_chart($form) {
-    let $experiment = $form.parents('.experiment');
+    let $experiment = $form.find('.experiment');
     let $chart      = $experiment.find('.chart');
 
     let width        = Math.floor($chart.width());
-    let experimentId = $experiment.data('experimentId')
+    let experimentId = $experiment.data('experimentId');
+
+    let scrollPosition = $(document).scrollTop();
 
     $.ajax({
       url: `/dashboard/chart?studyId=${studyId || ''}&experimentId=${experimentId}&width=${width}`,
@@ -41,6 +43,7 @@ $(document).ready(function() {
       data: $form.serializeArray(),
       success: function(response) {
         $chart.html(response);
+        $(document).scrollTop(scrollPosition);
       }
     })
   }

@@ -32,6 +32,7 @@ def dashboard_chart_fragment():
     args = request.args.to_dict()
 
     width = args.pop('width')
+    show_log_toggle = False
 
     studyId      = args.pop('studyId')
     experimentId = args.pop('experimentId')
@@ -43,25 +44,32 @@ def dashboard_chart_fragment():
 
         form = ExperimentChartForm(df_growth, df_reads, experiment)
 
-        # TODO (2024-09-09) Reads and FC counts are different, add another
-        # "reads" function, determine which to show based on reads CSV keys
-
         if measurement == 'Reads 16S rRNA Seq':
+            show_log_toggle = True
             figs = form.generate_reads_figures('reads', args)
         elif measurement == 'FC counts per species':
+            show_log_toggle = True
             figs = form.generate_reads_figures('counts', args)
         elif measurement == 'Metabolites':
             figs = form.generate_metabolite_figures(args)
         else:
             figs = form.generate_growth_figures(measurement, args)
 
-        fig_htmls = [
-            fig.to_html(
+        fig_htmls = []
+        for fig in figs:
+            fig.update_layout(
+                margin=dict(l=0, r=0, t=60, b=40),
+                title=dict(x=0)
+            )
+
+            fig_htmls.append(fig.to_html(
                 full_html=False,
                 include_plotlyjs=False,
                 default_width=f"{width}px",
-            )
-            for fig in figs
-        ]
+            ))
 
-        return render_template('pages/dashboard/_figs.html', fig_htmls=fig_htmls)
+        return render_template(
+            'pages/dashboard/_figs.html',
+            fig_htmls=fig_htmls,
+            show_log_toggle=show_log_toggle
+        )

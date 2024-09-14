@@ -1,6 +1,7 @@
 import re
 
 import plotly.express as px
+import numpy as np
 
 from flask_app.lib.hack import get_chart_data
 from flask_app.models.experiment_df_wrapper import ExperimentDfWrapper
@@ -38,7 +39,7 @@ class ExperimentChartForm:
             self.available_reads_measurements.append('Reads 16S rRNA Seq')
 
     def generate_growth_figures(self, measurement, args):
-        selected_bioreplicate_ids = self.extract_args(args)
+        selected_bioreplicate_ids, _ = self.extract_args(args)
         self.growth_data.select_bioreplicates(selected_bioreplicate_ids)
 
         fig = px.line(
@@ -55,11 +56,11 @@ class ExperimentChartForm:
         return [fig]
 
     def generate_reads_figures(self, read_type, args):
-        selected_bioreplicate_ids = self.extract_args(args)
+        selected_bioreplicate_ids, apply_log = self.extract_args(args)
         self.reads_data.select_bioreplicates(selected_bioreplicate_ids)
 
         figs = []
-        for bioreplicate_id, bioreplicate_df in self.reads_data.bioreplicate_dfs():
+        for index, (bioreplicate_id, bioreplicate_df) in enumerate(self.reads_data.bioreplicate_dfs()):
             if read_type == 'reads':
                 title = f'16S reads: {bioreplicate_id} per Microbial Strain'
                 species_columns = bioreplicate_df.filter(regex='_reads$').columns
@@ -69,19 +70,28 @@ class ExperimentChartForm:
                 species_columns = bioreplicate_df.filter(like='_counts').columns
                 std_columns = None
 
+            linear_y_label = 'Cells/mL'
+            log_y_label = 'log(Cells)/mL'
+
             melted_df = bioreplicate_df.melt(
                 id_vars=['Time', 'Biological_Replicate_id'],
                 value_vars=sorted(species_columns),
                 var_name='Species',
-                value_name='Cells/mL'
+                value_name=linear_y_label
             )
+
+            if apply_log[index]:
+                # If we have 0 values, we'll get NaNs, which is okay for
+                # rendering purposes, so we ignore the error:
+                with np.errstate(divide='ignore'):
+                    melted_df[log_y_label] = np.log10(melted_df[linear_y_label])
 
             melted_df['Species'] = melted_df['Species'].map(
                 lambda s: re.sub(r'_(reads|counts)$', '', s)
             )
             error_y = None
 
-            if std_columns is not None:
+            if std_columns is not None and not apply_log:
                 std_df = bioreplicate_df.melt(
                     id_vars=['Time', 'Biological_Replicate_id'],
                     value_vars=sorted(std_columns),
@@ -93,7 +103,7 @@ class ExperimentChartForm:
             figs.append(px.line(
                 melted_df,
                 x='Time',
-                y='Cells/mL',
+                y=(log_y_label if apply_log[index] else linear_y_label),
                 error_y=error_y,
                 color='Species',
                 title=title,
@@ -105,7 +115,7 @@ class ExperimentChartForm:
         return figs
 
     def generate_metabolite_figures(self, args):
-        selected_bioreplicate_ids = self.extract_args(args)
+        selected_bioreplicate_ids, _ = self.extract_args(args)
         self.growth_data.select_bioreplicates(selected_bioreplicate_ids)
 
         non_metabolite_keys = set([
@@ -139,14 +149,18 @@ class ExperimentChartForm:
     def extract_args(self, args):
         selected_bioreplicate_ids = []
         include_average = False
+        apply_log = [False for _ in args]
 
         for arg in args:
             if arg.endswith(':_average'):
                 include_average = True
             elif arg.startswith('bioreplicate:'):
                 selected_bioreplicate_ids.append(arg[len('bioreplicate:'):])
+            elif arg.startswith('apply_log:'):
+                index = int(arg[len('apply_log:'):])
+                apply_log[index] = True
 
         if include_average:
             selected_bioreplicate_ids.append(f"Average {self.experiment_id}")
 
-        return selected_bioreplicate_ids
+        return selected_bioreplicate_ids, apply_log
