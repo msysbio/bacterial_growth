@@ -8,3 +8,5 @@ set tags+=micromamba.tags
 let bacterial_growth_db_roots = ['.', 'flask_app']
 
 call bacterial_growth_db#Init()
+
+nnoremap ,t :tabnew _project.vim<cr>
