@@ -2,6 +2,10 @@
   clear: both;
 }
 
+.hidden {
+  display: none !important;
+}
+
 .flex-grow {
   flex-grow: 1;
 }
