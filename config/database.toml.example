@@ -7,7 +7,7 @@ database = "BacterialGrowth"
 
 [test]
 username = "<username>"
-password = "<passwod>"
+password = "<password>"
 host = "localhost"
 port = 3306
 database = "BacterialGrowthTest"
