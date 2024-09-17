@@ -9,6 +9,7 @@ os.execv(
     '/usr/bin/mysql', [
         '/usr/bin/mysql',
         '--local-infile',
+        f'-h{config["host"]}',
         f'-u{config["username"]}',
         f'-p{config["password"]}',
         config['database']
