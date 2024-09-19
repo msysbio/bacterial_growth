@@ -7,6 +7,10 @@
     font-size: 22px;
     border-bottom: 2px solid rgba(7, 25, 82, 0.1);
     padding-bottom: 10px;
+
+    a {
+      float: right;
+    }
   }
 
   .upload-steps .step-content.active h2 {

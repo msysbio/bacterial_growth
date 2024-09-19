@@ -1,5 +1,5 @@
 {% from 'pages/upload/_step1_form.html' import render_step1_form %}
-{# from 'pages/upload/_step2_form.html' import render_step2_form #}
+{% from 'pages/upload/_step2_form.html' import render_step2_form %}
 {# from 'pages/upload/_step3_form.html' import render_step3_form #}
 {# from 'pages/upload/_step4_form.html' import render_step4_form #}
 {# from 'pages/upload/_step5_form.html' import render_step5_form #}
@@ -38,14 +38,40 @@
     </p>
 
     <div class="upload-steps">
-      <div class="step-content step-1 active">
-        <h2>Step 1: Enter project and study information</h2>
+      <div class="step-content step-1 {{ 'active' if step == 1 }}">
+        <h2>
+          Step 1: Enter project and study information
+
+          {% if step != 1 %}
+          <a href="{{ url_for('upload_index_page', step=1) }}">
+            <img src="{{ url_for('static', filename='images/edit.svg') }}" />
+          </a>
+          {% endif %}
+        </h2>
+
+        {% if step == 1 %}
         {{ render_step1_form() }}
+        {% else %}
+        {{ render_step1_status() }}
+        {% endif %}
       </div>
 
-      <div class="step-content step-2 disabled">
-        <h2>Step 2: Pick microbial strains</h2>
+      <div class="step-content step-2 {{ 'active' if step == 2 }} {{ 'disabled' if step < 2 }}">
+        <h2>
+          Step 2: Pick microbial strains
+
+          {% if step != 2 %}
+          <a href="{{ url_for('upload_index_page', step=2) }}">
+            <img src="{{ url_for('static', filename='images/edit.svg') }}" />
+          </a>
+          {% endif %}
+        </h2>
+
+        {% if step == 2 %}
+        {{ render_step2_form() }}
+        {% else %}
         {{ render_step2_status() }}
+        {% endif %}
       </div>
 
       <div class="step-content step-3 disabled">
