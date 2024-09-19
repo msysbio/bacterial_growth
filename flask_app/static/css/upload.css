@@ -1,5 +1,5 @@
 .upload-page {
-  .upload-steps .step-content {
+  .upload-steps .step-content.active {
     padding-bottom: 20px;
   }
 
@@ -17,7 +17,33 @@
     opacity: 0.5;
   }
 
+  .upload-status {
+    opacity: 0.5;
+    padding-left: 0;
+  }
+
+  .upload-status li {
+    list-style: none;
+    display: flex;
+    align-items: center;
+
+    .icon {
+      width: 18px;
+      height: 18px;
+      margin-right: 4px;
+      background-size: cover;
+    }
+
+    &.complete .icon {
+      background-image: url('/static/images/green-check.svg');
+    }
+    &.incomplete .icon {
+      background-image: url('/static/images/orange-minus.svg');
+    }
+  }
+
   .submission-forms {
     margin-top: 20px;
   }
+
 }

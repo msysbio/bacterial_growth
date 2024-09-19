@@ -1,0 +1,123 @@
+{% macro render_step1_form() %}
+
+<p>Data Submission Options:</p>
+
+<ul>
+  <li>
+    <strong>Add a new study to a new project:</strong> Choose this
+    option if you're uploading study data from a new, non-existent
+    project.
+  </li>
+  <li>
+    <strong>Add a new study to a previous project:</strong> Choose this
+    option if you're adding a new study to an already existing
+    project.
+  </li>
+  <li>
+    <strong>Add a new version of a study to a previous project:</strong>
+    Choose this option if you're updating an existing study in an
+    already existing project.
+  </li>
+</ul>
+
+<p>
+  <strong>Private study ID:</strong> Please provide the unique study ID
+  of the previous study you wish to update. This ensures continuity and
+  helps us maintain the database up to date.
+</p>
+
+<p>
+  <strong>Private project ID:</strong> Please provide the unique
+  project ID of the existing project where you wish to add a new study
+  or update a previously created study.
+</p>
+
+<p>
+  If you do not remember the unique IDs please follow the instructions
+  in (TODO link).
+</p>
+
+<p>
+  <select class="form-input-blue js-submission-type">
+    <option value="">Choose an option</option>
+    <option value="new-project">Add a new study to a new project</option>
+    <option value="new-study">Add a new study to a previous project</option>
+    <option value="update-study">Add a new version of a study to a previous project</option>
+  </select>
+</p>
+
+<div class="submission-forms">
+  <form class="simple-form hidden" id="form-new-project">
+    <div class="form-row">
+      <label class="full">
+        <span>Project name:</span>
+        <input
+            type="text"
+            name="project-name"
+            id="project-name"
+            class="form-input-full form-input-blue"
+            placeholder="1. Provide a name for your project" />
+    </div>
+
+    <div class="form-row">
+      <label class="full">
+        <span>Project description:</span>
+        <textarea
+            name="project-description"
+            id="project-description"
+            class="form-input-full form-input-blue"
+            placeholder="2. Provide a project description"></textarea>
+    </div>
+
+    <div class="form-row">
+      <input type="submit" value="Create project" />
+    </div>
+  </form>
+
+  <form class="simple-form hidden" id="form-new-study">
+    <div class="form-row">
+      <label class="full">
+        <span>Private project ID:</span>
+        <input
+            type="text"
+            name="project-uuid"
+            class="form-input-full form-input-blue"
+            placeholder="1. Provide the private project ID" />
+      </label>
+    </div>
+
+    <div class="form-row">
+      <input type="submit" value="Verify private ID" />
+    </div>
+  </form>
+
+  <form class="hidden simple-form" id="form-update-study">
+    <div class="form-row">
+      <label class="full">
+        <span>Private project ID:</span>
+        <input
+            type="text"
+            name="project-uuid"
+            class="form-input-full form-input-blue"
+            placeholder="1. Provide the private project ID" />
+      </label>
+    </div>
+
+    <div class="form-row">
+      <label class="full">
+        <span>Private study ID:</span>
+        <input
+            type="text"
+            name="study-uuid"
+            class="form-input-full form-input-blue"
+            placeholder="1. Provide the private study ID" />
+      </label>
+    </div>
+
+    <div class="form-row">
+      <input type="submit" value="Verify private IDs" />
+    </div>
+  </form>
+</div>
+
+{% endmacro %}

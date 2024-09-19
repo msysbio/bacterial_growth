@@ -1,0 +1,68 @@
+{% from 'pages/upload/_step1_form.html' import render_step1_form %}
+{# from 'pages/upload/_step2_form.html' import render_step2_form #}
+{# from 'pages/upload/_step3_form.html' import render_step3_form #}
+{# from 'pages/upload/_step4_form.html' import render_step4_form #}
+{# from 'pages/upload/_step5_form.html' import render_step5_form #}
+
+{% from 'pages/upload/_step1_status.html' import render_step1_status %}
+{% from 'pages/upload/_step2_status.html' import render_step2_status %}
+{% from 'pages/upload/_step3_status.html' import render_step3_status %}
+{% from 'pages/upload/_step4_status.html' import render_step4_status %}
+{% from 'pages/upload/_step5_status.html' import render_step5_status %}
+
+{% extends '_layout.html' %}
+
+{% block title %}: Upload{% endblock %}
+
+{% block content %}
+<header>
+  <img height="100" src={{ url_for('static', filename='images/upload_banner.png') }} />
+</header>
+
+<div class="container upload-page">
+  <article>
+    <p>
+      Thank you for choosing to share your microbial growth data with us. Your
+      commitment to sharing experimental data is essential for advancing our
+      understanding of microbiome dynamics. Your contribution plays a vital
+      role in driving research forward and enhancing our collective knowledge
+      in this field.
+    </p>
+
+    <p>
+      To successfully submit your data, please ensure that you follow the
+      instructions provided in each of the following steps. Adhering to these
+      instructions helps us maintain the quality of our database and ensures
+      the accuracy and reliability of the information stored within it. Thank
+      you for your cooperation in maintaining data integrity and reliability.
+    </p>
+
+    <div class="upload-steps">
+      <div class="step-content step-1 active">
+        <h2>Step 1: Enter project and study information</h2>
+        {{ render_step1_form() }}
+      </div>
+
+      <div class="step-content step-2 disabled">
+        <h2>Step 2: Pick microbial strains</h2>
+        {{ render_step2_status() }}
+      </div>
+
+      <div class="step-content step-3 disabled">
+        <h2>Step 3: Download templates</h2>
+        {{ render_step3_status() }}
+      </div>
+
+      <div class="step-content step-4 disabled">
+        <h2>Step 4: Upload data</h2>
+        {{ render_step4_status() }}
+      </div>
+
+      <div class="step-content step-5 disabled">
+        <h2>Step 5: Publish data</h2>
+        {{ render_step5_status() }}
+      </div>
+    </div>
+  </article>
+</div>
+{% endblock %}
