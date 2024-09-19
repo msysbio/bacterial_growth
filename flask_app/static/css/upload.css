@@ -14,11 +14,11 @@
   }
 
   .upload-steps .step-content.disabled h2 {
-    opacity: 0.5;
+    opacity: 0.6;
   }
 
   .upload-status {
-    opacity: 0.5;
+    opacity: 0.6;
     padding-left: 0;
   }
 
