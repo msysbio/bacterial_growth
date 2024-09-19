@@ -5,8 +5,8 @@ silent TagsExclude .micromamba/* flask_app/static/build/* flask_app/static/js/ve
 
 set tags+=micromamba.tags
 
-let bacterial_growth_db_roots = ['.', 'flask_app']
+let vim_bacterial_growth_roots = ['.', 'flask_app']
 
-call bacterial_growth_db#Init()
+call vim_bacterial_growth#Init()
 
 nnoremap ,t :tabnew _project.vim<cr>
