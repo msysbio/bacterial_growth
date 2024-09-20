@@ -15,6 +15,7 @@ $(document).ready(function() {
   $page.find('.js-microbial-strain-select').select2({
     multiple: true,
     width: '100%',
+    theme: 'custom',
     ajax: {
       url: '/strains/completion',
       dataType: 'json',

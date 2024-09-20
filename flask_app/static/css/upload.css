@@ -14,7 +14,7 @@
   }
 
   .upload-steps .step-content.active h2 {
-    color: var(--light-blue);
+    color: var(--dark-blue);
   }
 
   .upload-steps .step-content.disabled h2 {
@@ -49,10 +49,4 @@
   .submission-forms {
     margin-top: 20px;
   }
-
-  /*
-  .strain-select-wrapper .select2-search__field {
-    margin-top: 6px;
-  }
-  */
 }

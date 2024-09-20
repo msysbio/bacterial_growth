@@ -4,7 +4,8 @@
   --sidebar-width: 340px;
   --border-color: rgba(7, 25, 82, 0.2);
   --black: rgb(7, 25, 82);
-  --light-blue: rgb(8, 131, 149);
+  --light-blue: rgb(202, 234, 234);
+  --dark-blue: rgb(8, 131, 149);
   --sidebar-color: #caeaea;
   --sidebar-hover-color: rgba(121, 200, 200, 0.25);
   --transition-length: 300ms;
