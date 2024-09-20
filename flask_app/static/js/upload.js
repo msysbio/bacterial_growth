@@ -12,6 +12,17 @@ $(document).ready(function() {
   let $select = $step1.find('.js-submission-type');
   show_forms($select.val());
 
+  $page.find('.js-microbial-strain-select').select2({
+    multiple: true,
+    width: '100%',
+    ajax: {
+      url: '/strains/completion',
+      dataType: 'json',
+      delay: 100,
+      cache: true,
+    }
+  });
+
   function show_forms(submissionType) {
     $forms = $step1.find('.submission-forms form');
     $forms.addClass('hidden');
