@@ -1,41 +1,12 @@
+{% from 'pages/upload/_step1_status.html' import render_step1_status %}
+
 {% macro render_step1_form() %}
 
-<p>Data Submission Options:</p>
-
-<ul>
-  <li>
-    <strong>Add a new study to a new project:</strong> Choose this
-    option if you're uploading study data from a new, non-existent
-    project.
-  </li>
-  <li>
-    <strong>Add a new study to a previous project:</strong> Choose this
-    option if you're adding a new study to an already existing
-    project.
-  </li>
-  <li>
-    <strong>Add a new version of a study to a previous project:</strong>
-    Choose this option if you're updating an existing study in an
-    already existing project.
-  </li>
-</ul>
-
-<p>
-  <strong>Private study ID:</strong> Please provide the unique study ID
-  of the previous study you wish to update. This ensures continuity and
-  helps us maintain the database up to date.
-</p>
-
-<p>
-  <strong>Private project ID:</strong> Please provide the unique
-  project ID of the existing project where you wish to add a new study
-  or update a previously created study.
-</p>
-
-<p>
-  If you do not remember the unique IDs please follow the instructions
-  in (TODO link).
-</p>
+{% if session['project_uuid'] %}
+{{ render_step1_status()  }}
+{% else %}
+{% include 'pages/upload/_step1_info.html' %}
+{% endif %}
 
 <p>
   <select class="form-input-blue js-submission-type">
@@ -48,10 +19,10 @@
 
 <div class="submission-forms">
   <form
-    method="POST"
-    action="{{ url_for('submit_step_1_upload') }}"
-    class="simple-form hidden"
-    id="form-new-project">
+      method="POST"
+      action="{{ url_for('submit_step_1_upload') }}"
+      class="simple-form hidden"
+      id="form-new-project">
     <input type="hidden" name="submission-type" value="new-project" />
 
     <div class="form-row">
