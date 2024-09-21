@@ -27,7 +27,7 @@ def init_routes(app):
     app.add_url_rule("/study/<string:studyId>.zip", view_func=study_pages.study_download_page)
 
     app.add_url_rule("/strain/<int:id>",    view_func=strain_pages.strain_show_page)
-    app.add_url_rule("/strains/completion", view_func=strain_pages.strain_completion_json)
+    app.add_url_rule("/strains/completion", view_func=strain_pages.taxa_completion_json)
 
     app.add_url_rule("/metabolite/<string:cheb_id>", view_func=metabolite_pages.metabolite_show_page)
 

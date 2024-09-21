@@ -16,18 +16,40 @@ def strain_show_page(id):
 
         return render_template("pages/strains/show.html", strain=strain, study=study)
 
-def strain_completion_json():
+def taxa_completion_json():
+    term     = request.args.get('term', '').lower()
+    page     = int(request.args.get('page', '1'))
+    per_page = 10
+
+    # TODO (2024-09-21) Extract to model and test
+
     with get_connection() as conn:
-        term = request.args.get('term', '')
         query = """
             SELECT
                 tax_id AS id,
                 tax_names AS text
             FROM Taxa
-            WHERE LOWER(tax_names) LIKE LOWER(:q)
+            WHERE LOWER(tax_names) LIKE :term
             ORDER BY tax_names ASC
+            LIMIT :per_page
+            OFFSET :offset
         """
-        results = conn.execute(sql.text(query), {'q': f'{term}%'}).all()
+        results = conn.execute(sql.text(query), {
+            'term': f'%{term}%',
+            'per_page': per_page,
+            'offset': (page - 1) * per_page,
+        }).all()
         results = [row._asdict() for row in results]
 
-        return json.dumps({ 'results': results })
+        count_query = """
+            SELECT COUNT(*)
+            FROM Taxa
+            WHERE LOWER(tax_names) LIKE LOWER(:term)
+        """
+        total_count = conn.execute(sql.text(count_query), {'term': f'%{term}%'}).scalar()
+        has_more = (page * per_page < total_count)
+
+        return json.dumps({
+            'results': results,
+            'pagination': { 'more': has_more  },
+        })

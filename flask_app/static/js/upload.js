@@ -24,7 +24,14 @@ $(document).ready(function() {
       dataType: 'json',
       delay: 100,
       cache: true,
-    }
+    },
+    data: function(params) {
+      let query = {
+        term: params.term,
+        page: params.page || 1,
+      }
+      return query;
+    },
   });
 
   $microbialStrains.on('change', function() {
