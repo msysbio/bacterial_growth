@@ -38,36 +38,41 @@
     </p>
 
     <div class="upload-steps">
-      <div class="step-content step-1 {{ 'active' if step == 1 }}">
+      <div class="step-content step-1 {{ 'active' if submission.step == 1 }}">
         <h2>
           Step 1: Enter project and study information
 
-          {% if step != 1 %}
+          {% if submission.step != 1 %}
           <a href="{{ url_for('upload_index_page', step=1) }}">
             <img src="{{ url_for('static', filename='images/edit.svg') }}" />
           </a>
           {% endif %}
         </h2>
 
-        {% if step == 1 %}
-        {{ render_step1_form() }}
+        {% if submission.step == 1 %}
+        {{ render_step1_form(submission) }}
         {% else %}
-        {{ render_step1_status() }}
+        {{ render_step1_status(submission) }}
         {% endif %}
       </div>
 
-      <div class="step-content step-2 {{ 'active' if step == 2 }} {{ 'disabled' if step < 2 }}">
+      {% set step2_classes = [
+        'active' if submission.step == 2,
+        'disabled' if submission.step < 2,
+      ]|join(' ') %}
+
+      <div class="step-content step-2 {{ step2_classes }}">
         <h2>
           Step 2: Pick microbial strains
 
-          {% if step != 2 %}
+          {% if submission.step != 2 %}
           <a href="{{ url_for('upload_index_page', step=2) }}">
             <img src="{{ url_for('static', filename='images/edit.svg') }}" />
           </a>
           {% endif %}
         </h2>
 
-        {% if step == 2 %}
+        {% if submission.step == 2 %}
         {{ render_step2_form() }}
         {% else %}
         {{ render_step2_status() }}

@@ -2,43 +2,55 @@ from uuid import uuid4
 
 from flask import render_template, session, request, redirect, url_for
 
+from flask_app.db import get_connection
+from flask_app.models.submission import Submission
 
-def upload_index_page(step=1):
+
+def upload_index_page(step=None):
+    submission = Submission(session.get('submission', {}), current_step=step)
+
     return render_template(
         "pages/upload/index.html",
-        step=step,
+        submission=submission
     )
 
+# TODO (2024-09-19) Validate project uuid in database: Render step 1 with error
+#
 def submit_step_1_upload():
-    submission_type = request.form['submission-type']
+    with get_connection() as conn:
+        submission = Submission(session.get('submission', {}), current_step=1)
+        submission.type = request.form['submission_type']
 
-    if submission_type == 'new-project':
-        session['project_uuid'] = uuid4()
-        session['study_uuid']   = uuid4()
+        if submission.type == 'new_project':
+            if submission.project_uuid is None:
+                submission.project_uuid = uuid4()
+            if submission.study_uuid is None:
+                submission.study_uuid = uuid4()
 
-        session['project'] = {
-            'name':        request.form['project-name'],
-            'description': request.form['project-description'],
-        }
-    elif submission_type == 'new-study':
-        # TODO (2024-09-19) Validate project uuid in database
-        session['project_uuid'] = request.form['project-uuid']
-        session['study_uuid']   = uuid4()
+            submission.project = {
+                'name':        request.form['project_name'],
+                'description': request.form['project_description'],
+            }
+        elif submission.type == 'new_study':
+            submission.project_uuid = request.form['project_uuid']
+            if submission.study_uuid is None:
+                submission.study_uuid = uuid4()
 
-        session['project'] = {
-            'name':        f"[TODO] Name of project {session['project-uuid']}",
-            'description': f"[TODO] Description of project {session['project-uuid']}",
-        }
-    elif submission_type == 'update-study':
-        # TODO (2024-09-19) Validate project and study uuid in database
-        session['project_uuid'] = request.form['project-uuid']
-        session['study_uuid']   = request.form['study-uuid']
+            submission.project = {
+                'name':        f"[TODO] Name of project {submission.project_uuid}",
+                'description': f"[TODO] Description of project {submission.project_uuid}",
+            }
+        elif submission.type == 'update_study':
+            submission.project_uuid = request.form['project_uuid']
+            submission.study_uuid   = request.form['study_uuid']
 
-        session['project'] = {
-            'name':        f"[TODO] Name of project {session['project-uuid']}",
-            'description': f"[TODO] Description of project {session['project-uuid']}",
-        }
-    else:
-        raise KeyError("Unknown submission type: {}".format(submission_type))
+            submission.project = {
+                'name':        f"[TODO] Name of project {submission.project_uuid}",
+                'description': f"[TODO] Description of project {submission.project_uuid}",
+            }
+        else:
+            raise KeyError("Unknown submission type: {}".format(submission_type))
 
-    return redirect(url_for('upload_index_page', step=2))
+        session['submission'] = submission._asdict()
+
+        return redirect(url_for('upload_index_page', step=2))

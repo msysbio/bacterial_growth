@@ -1,9 +1,9 @@
 {% from 'pages/upload/step1/_status.html' import render_step1_status %}
 
-{% macro render_step1_form() %}
+{% macro render_step1_form(submission) %}
 
-{% if session['project_uuid'] %}
-{{ render_step1_status()  }}
+{% if submission.project_uuid %}
+{{ render_step1_status(submission)  }}
 {% else %}
 {% include 'pages/upload/step1/_info.html' %}
 {% endif %}
@@ -11,9 +11,15 @@
 <p>
   <select class="form-input-blue js-submission-type">
     <option value="">Choose an option</option>
-    <option value="new-project">Add a new study to a new project</option>
-    <option value="new-study">Add a new study to a previous project</option>
-    <option value="update-study">Add a new version of a study to a previous project</option>
+    <option value="new_project" {{ 'selected' if submission.type == 'new_project' }}>
+    Add a new study to a new project
+    </option>
+    <option value="new_study" {{ 'selected' if submission.type == 'new_study' }}>
+    Add a new study to a previous project
+    </option>
+    <option value="update_study" {{ 'selected' if submission.type == 'update_study' }}>
+    Add a new version of a study to a previous project
+    </option>
   </select>
 </p>
 
@@ -22,16 +28,16 @@
       method="POST"
       action="{{ url_for('submit_step_1_upload') }}"
       class="simple-form hidden"
-      id="form-new-project">
-    <input type="hidden" name="submission-type" value="new-project" />
+      id="form-new_project">
+    <input type="hidden" name="submission_type" value="new_project" />
 
     <div class="form-row">
       <label class="full">
         <span>Project name:</span>
         <input
             type="text"
-            name="project-name"
-            id="project-name"
+            name="project_name"
+            value="{{ submission.project['name'] }}"
             class="form-input-full form-input-blue"
             placeholder="1. Provide a name for your project" />
     </div>
@@ -40,26 +46,27 @@
       <label class="full">
         <span>Project description:</span>
         <textarea
-            name="project-description"
-            id="project-description"
+            name="project_description"
             class="form-input-full form-input-blue"
-            placeholder="2. Provide a project description"></textarea>
+            placeholder="2. Provide a project description">{{ submission.project['description'] }}</textarea>
     </div>
 
     <div class="form-row">
-      <input type="submit" value="Create project" />
+      <input
+          type="submit"
+          value="{{ 'Update project' if submission.project_uuid else 'Create project' }}" />
     </div>
   </form>
 
-  <form class="simple-form hidden" id="form-new-study">
-    <input type="hidden" name="submission-type" value="new-study" />
+  <form class="simple-form hidden" id="form-new_study">
+    <input type="hidden" name="submission_type" value="new_study" />
 
     <div class="form-row">
       <label class="full">
         <span>Private project ID:</span>
         <input
             type="text"
-            name="project-uuid"
+            name="project_uuid"
             class="form-input-full form-input-blue"
             placeholder="1. Provide the private project ID" />
       </label>
@@ -70,15 +77,15 @@
     </div>
   </form>
 
-  <form class="hidden simple-form" id="form-update-study">
-    <input type="hidden" name="submission-type" value="update-study" />
+  <form class="hidden simple-form" id="form-update_study">
+    <input type="hidden" name="submission_type" value="update_study" />
 
     <div class="form-row">
       <label class="full">
         <span>Private project ID:</span>
         <input
             type="text"
-            name="project-uuid"
+            name="project_uuid"
             class="form-input-full form-input-blue"
             placeholder="1. Provide the private project ID" />
       </label>
