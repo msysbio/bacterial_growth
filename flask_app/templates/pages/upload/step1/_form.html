@@ -1,11 +1,11 @@
-{% from 'pages/upload/_step1_status.html' import render_step1_status %}
+{% from 'pages/upload/step1/_status.html' import render_step1_status %}
 
 {% macro render_step1_form() %}
 
 {% if session['project_uuid'] %}
 {{ render_step1_status()  }}
 {% else %}
-{% include 'pages/upload/_step1_info.html' %}
+{% include 'pages/upload/step1/_info.html' %}
 {% endif %}
 
 <p>
