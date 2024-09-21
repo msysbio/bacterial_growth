@@ -1,6 +1,6 @@
 {% from 'pages/upload/step1/_status.html' import render_step1_status %}
 
-{% macro render_step1_form(submission) %}
+{% macro render_step1_form(submission, error) %}
 
 {% if submission.project_uuid %}
 {{ render_step1_status(submission)  }}
@@ -23,6 +23,10 @@
   </select>
 </p>
 
+{% if error %}
+<p class="error-message">{{ error }}</p>
+{% endif %}
+
 <div class="submission-forms">
   <form
       method="POST"
@@ -37,6 +41,7 @@
         <input
             type="text"
             name="project_name"
+            required
             value="{{ submission.project['name'] }}"
             class="form-input-full form-input-blue"
             placeholder="1. Provide a name for your project" />
@@ -47,6 +52,7 @@
         <span>Project description:</span>
         <textarea
             name="project_description"
+            required
             class="form-input-full form-input-blue"
             placeholder="2. Provide a project description">{{ submission.project['description'] }}</textarea>
     </div>
@@ -58,7 +64,11 @@
     </div>
   </form>
 
-  <form class="simple-form hidden" id="form-new_study">
+  <form
+      method="POST"
+      action="{{ url_for('submit_step_1_upload') }}"
+      class="simple-form hidden"
+      id="form-new_study">
     <input type="hidden" name="submission_type" value="new_study" />
 
     <div class="form-row">
@@ -67,6 +77,7 @@
         <input
             type="text"
             name="project_uuid"
+            value="{{ submission.project_uuid }}"
             class="form-input-full form-input-blue"
             placeholder="1. Provide the private project ID" />
       </label>
@@ -77,7 +88,11 @@
     </div>
   </form>
 
-  <form class="hidden simple-form" id="form-update_study">
+  <form
+      method="POST"
+      action="{{ url_for('submit_step_1_upload') }}"
+      class="simple-form hidden"
+      id="form-update_study">
     <input type="hidden" name="submission_type" value="update_study" />
 
     <div class="form-row">
@@ -86,6 +101,7 @@
         <input
             type="text"
             name="project_uuid"
+            value="{{ submission.project_uuid }}"
             class="form-input-full form-input-blue"
             placeholder="1. Provide the private project ID" />
       </label>
@@ -97,6 +113,7 @@
         <input
             type="text"
             name="study-uuid"
+            value="{{ submission.study_uuid }}"
             class="form-input-full form-input-blue"
             placeholder="1. Provide the private study ID" />
       </label>

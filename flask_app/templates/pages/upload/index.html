@@ -50,7 +50,7 @@
         </h2>
 
         {% if submission.step == 1 %}
-        {{ render_step1_form(submission) }}
+        {{ render_step1_form(submission, error) }}
         {% else %}
         {{ render_step1_status(submission) }}
         {% endif %}
