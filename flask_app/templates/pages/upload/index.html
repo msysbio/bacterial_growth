@@ -73,9 +73,9 @@
         </h2>
 
         {% if submission.step == 2 %}
-        {{ render_step2_form() }}
+        {{ render_step2_form(submission) }}
         {% else %}
-        {{ render_step2_status() }}
+        {{ render_step2_status(submission) }}
         {% endif %}
       </div>
 

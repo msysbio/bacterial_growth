@@ -1,4 +1,4 @@
-{% macro render_step2_form() %}
+{% macro render_step2_form(submission) %}
 
 {% include 'pages/upload/step2/_info.html' %}
 
@@ -9,14 +9,19 @@
         <span>Search microbial strain:</span>
         <select
             name="microbial-strain"
-            class="strain-select js-microbial-strain-select">
+            class="strain-select js-multiple-strain-select">
         </select>
       </label>
     </div>
 
     <div class="form-row">
       <ul class="strain-list">
+        <li>Select strains from the list</li>
       </ul>
+    </div>
+
+    <div class="form-row">
+      <a href="#" class="green-button js-add-strain">Add new strain</a>
     </div>
 
     <template class="strain-list-item">
@@ -24,6 +29,43 @@
         <strong>${name}</strong>:
         <a href="https://www.ncbi.nlm.nih.gov/datasets/taxonomy/${id}/">NCBI:${id}</a>
       </li>
+    </template>
+
+    <template class="new-strain">
+      <div class="form-row js-new-strain-row-1">
+        <label style="width: 50%;">
+          <span>Name of the microbial strain:</span>
+          <input
+              required
+              type="text"
+              class="form-input-full form-input-blue"
+              name="new-strains-0-name" />
+        </label>
+
+        <label style="width: 50%;">
+          <span>Species:</span>
+          <select
+              required
+              class="form-input-full form-input-blue js-single-strain-select"
+              name="new-strains-0-species">
+          </select>
+        </label>
+      </div>
+
+      <div class="form-row js-new-strain-row-2">
+        <label class="full">
+          <div>Description</div>
+          <textarea
+              required
+              rows=2
+              class="form-input-full form-input-blue"
+              name="new-strains-0-description"></textarea>
+        </label>
+
+        <div class="no-label">
+          <a href="#" class="green-button js-remove-new-strain">Remove</a>
+        </div>
+      </div>
     </template>
   </form>
 </p>

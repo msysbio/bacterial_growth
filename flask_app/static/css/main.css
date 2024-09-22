@@ -3,6 +3,7 @@
 :root {
   --sidebar-width: 340px;
   --border-color: rgba(7, 25, 82, 0.2);
+  --border-radius: 6px;
   --black: rgb(7, 25, 82);
   --light-blue: rgb(202, 234, 234);
   --dark-blue: rgb(8, 131, 149);

@@ -21,14 +21,14 @@ $(document).ready(function() {
     }
   });
 
-  $page.on('click', '.remove-clause', function(e) {
+  $page.on('click', '.js-remove-clause', function(e) {
     e.preventDefault();
 
     $clause = $(e.currentTarget).parents('.form-row.clause');
     $clause.remove();
   });
 
-  $page.on('click', '.add-clause', function(e) {
+  $page.on('click', '.js-add-clause', function(e) {
     e.preventDefault();
 
     $button = $(e.currentTarget);
