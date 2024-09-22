@@ -5,6 +5,9 @@
   "flask_app/forms/*.py": {
     "type": "form"
   },
+  "flask_app/models/*.py": {
+    "type": "model"
+  },
   "flask_app/pages/*.py": {
     "type": "page"
   },
