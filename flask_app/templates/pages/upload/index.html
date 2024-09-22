@@ -73,7 +73,7 @@
         </h2>
 
         {% if submission.step == 2 %}
-        {{ render_step2_form(submission) }}
+        {{ render_step2_form(submission, step2_form) }}
         {% else %}
         {{ render_step2_status(submission) }}
         {% endif %}

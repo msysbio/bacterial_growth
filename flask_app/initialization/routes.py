@@ -17,11 +17,9 @@ def init_routes(app):
 
     app.add_url_rule("/upload",            view_func=upload_pages.upload_index_page)
     app.add_url_rule("/upload/<int:step>", view_func=upload_pages.upload_index_page)
-    app.add_url_rule(
-        "/upload/1/submit",
-        view_func=upload_pages.submit_step_1_upload,
-        methods=["POST"],
-    )
+
+    app.add_url_rule("/upload/1/submit", view_func=upload_pages.submit_step_1_upload, methods=["POST"])
+    app.add_url_rule("/upload/2/submit", view_func=upload_pages.submit_step_2_upload, methods=["POST"])
 
     app.add_url_rule("/study/<string:studyId>",     view_func=study_pages.study_show_page)
     app.add_url_rule("/study/<string:studyId>.zip", view_func=study_pages.study_download_page)

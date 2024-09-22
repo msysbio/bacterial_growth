@@ -1,15 +1,22 @@
-{% macro render_step2_form(submission) %}
+{% macro render_step2_form(submission, form) %}
 
 {% include 'pages/upload/step2/_info.html' %}
 
 <p>
-  <form class="simple-form">
+  <form
+      class="simple-form"
+      action="{{ url_for('submit_step_2_upload') }}"
+      method="POST">
     <div class="form-row strain-select-wrapper">
       <label class="full">
         <span>Search microbial strain:</span>
         <select
-            name="microbial-strain"
+            name="strains"
+            multiple="multiple"
             class="strain-select js-multiple-strain-select">
+          {% for (id, name) in submission.fetch_strains(): %}
+          <option value={{ id }} selected="selected">{{ name }}</option>
+          {% endfor %}
         </select>
       </label>
     </div>
@@ -22,6 +29,9 @@
 
     <div class="form-row">
       <a href="#" class="green-button js-add-strain">Add new strain</a>
+      <div class="flex-right">
+        <input type="submit" class="green-button" value="Save" />
+      </div>
     </div>
 
     <template class="strain-list-item">
@@ -31,7 +41,7 @@
       </li>
     </template>
 
-    <template class="new-strain">
+    <template class="new-strain" data-initial='{{ submission.new_strains|tojson }}'>
       <div class="form-row js-new-strain-row-1">
         <label style="width: 50%;">
           <span>Name of the microbial strain:</span>
@@ -39,7 +49,7 @@
               required
               type="text"
               class="form-input-full form-input-blue"
-              name="new-strains-0-name" />
+              name="name" />
         </label>
 
         <label style="width: 50%;">
@@ -47,7 +57,7 @@
           <select
               required
               class="form-input-full form-input-blue js-single-strain-select"
-              name="new-strains-0-species">
+              name="species">
           </select>
         </label>
       </div>
@@ -59,7 +69,7 @@
               required
               rows=2
               class="form-input-full form-input-blue"
-              name="new-strains-0-description"></textarea>
+              name="description"></textarea>
         </label>
 
         <div class="no-label">
