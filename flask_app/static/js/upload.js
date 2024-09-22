@@ -70,14 +70,6 @@ $(document).ready(function() {
     $newStrain2.remove();
   });
 
-  // Initalize new strains from server-side data:
-  let $template = $multipleStrainSelect.parents('form').find('template.new-strain');
-  let $addStrainButton = $step2.find('.js-add-strain');
-
-  for (let newStrain of $template.data('initial')) {
-    add_new_strain_form($addStrainButton, newStrain);
-  }
-
   function show_forms(submissionType) {
     $forms = $step1.find('.submission-forms form');
     $forms.addClass('hidden');
@@ -112,7 +104,7 @@ $(document).ready(function() {
     });
   }
 
-  // TODO: Just render it server-side, simplify this function, call `select2` on all `.js-single-strain-select`
+  initialize_single_strain_select($step2.find('.js-single-strain-select'));
 
   function add_new_strain_form($addStrainButton, newStrain) {
     // We need to prepend all names and ids with "new-strain-N" for uniqueness:
@@ -121,22 +113,24 @@ $(document).ready(function() {
     let templateHtml = $page.find('template.new-strain').html();
     let $newForm = $(templateHtml);
 
-    // Modify names and fill with initial values:
+    // Modify names:
     $newForm.find('input[name=name]').
-      attr('value', newStrain.name).
       attr('name', `new_strains-${newStrainIndex}-name`);
     $newForm.find('textarea[name=description]').
-      html(newStrain.description).
       attr('name', `new_strains-${newStrainIndex}-description`);
     $newForm.find('select[name=species]').
-      html(new Option(newStrain.species, '', true, true)).
       attr('name', `new_strains-${newStrainIndex}-species`);
 
     // Insert into DOM
     $addStrainButton.parents('.form-row').before($newForm);
 
+    // Initialize single-strain selection:
     let $strainSelect = $newForm.find('.js-single-strain-select');
-    $strainSelect.select2({
+    initialize_single_strain_select($strainSelect);
+  }
+
+  function initialize_single_strain_select($select) {
+    $select.select2({
       placeholder: 'Select parent species',
       theme: 'custom',
       width: '100%',
@@ -147,7 +141,5 @@ $(document).ready(function() {
         cache: true,
       },
     });
-
-    $strainSelect.trigger('change');
   }
 });

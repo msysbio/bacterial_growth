@@ -10,8 +10,6 @@ from flask_app.forms.upload_step2_form import UploadStep2Form
 def upload_index_page(step=None):
     with get_connection() as conn:
         submission = Submission(session.get('submission', {}), current_step=step, db_conn=conn)
-        print(submission._asdict())
-
         step2_form = UploadStep2Form(request.form, obj=submission) if step == 2 else None
 
         return render_template(

@@ -52,6 +52,8 @@ class Submission:
         if len(self.strains) == 0:
             return []
 
+        # TODO (2024-09-22) Figure out a sensible way to bind ids
+
         query = f"""
             SELECT
                 tax_id AS id,
@@ -59,12 +61,29 @@ class Submission:
             FROM Taxa
             WHERE tax_id IN ({','.join(self.strains)})
         """
-        # strains = sql.bindparam('strains', value=','.join(self.strains), expanding=True)
         result = self.db_conn.execute(sql.text(query)).all()
 
-        print(result)
-
         return [(entry.id, entry.name) for entry in result]
+
+    def fetch_new_strains(self):
+        if len(self.new_strains) == 0:
+            return []
+
+        new_strains = sorted(self.new_strains, key=lambda s: int(s['species']))
+        species_ids = [s['species'] for s in new_strains]
+
+        query = f"""
+            SELECT tax_names
+            FROM Taxa
+            WHERE tax_id IN ({','.join(species_ids)})
+            ORDER BY tax_id
+        """
+        species_names = self.db_conn.execute(sql.text(query)).scalars()
+
+        for strain, name in zip(new_strains, species_names):
+            strain['species_name'] = name
+
+        return new_strains
 
     def _asdict(self):
         return {
