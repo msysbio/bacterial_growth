@@ -3,8 +3,8 @@ from uuid import uuid4
 import sqlalchemy as sql
 
 class Submission:
-    def __init__(self, data, current_step=1, db_conn=None):
-        self.step = current_step
+    def __init__(self, data, current_step=None, db_conn=None):
+        self.step = current_step or 1
         self.db_conn = db_conn
 
         # Step 1:

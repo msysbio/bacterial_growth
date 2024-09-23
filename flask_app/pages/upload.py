@@ -38,7 +38,7 @@ def submit_step_1_upload():
 
 def submit_step_2_upload():
     with get_connection() as conn:
-        submission = Submission(session.get('submission', {}), current_step=1, db_conn=conn)
+        submission = Submission(session.get('submission', {}), current_step=2, db_conn=conn)
         form = UploadStep2Form(request.form)
 
         # TODO (2024-09-22) Validate form

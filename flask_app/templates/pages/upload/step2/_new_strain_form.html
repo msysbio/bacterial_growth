@@ -1,10 +1,10 @@
-{% macro render_new_strain_form(index, data) %}
+{% macro render_new_strain_form(data, prefix) %}
 
 <div class="form-row js-new-strain-row-1">
   <label style="width: 50%;">
     <span>Name of the microbial strain:</span>
     <input
-        name="{{ 'new_strains-{}-'.format(index) if index is number else '' }}name"
+        name="{{ prefix }}name"
         type="text"
         class="form-input-full form-input-blue"
         value="{{ data['name'] if data }}"
@@ -14,7 +14,7 @@
   <label style="width: 50%;">
     <span>Species:</span>
     <select
-        name="{{ 'new_strains-{}-'.format(index) if index is number else '' }}species"
+        name="{{ prefix }}species"
         class="form-input-full form-input-blue js-single-strain-select"
         required>
       {% if data %}
@@ -28,7 +28,7 @@
   <label class="full">
     <div>Description</div>
     <textarea
-        name="{{ 'new_strains-{}-'.format(index) if index is number else '' }}description"
+        name="{{ prefix }}description"
         class="form-input-full form-input-blue"
         required
         rows=2>{{ data['description'] if data }}</textarea>

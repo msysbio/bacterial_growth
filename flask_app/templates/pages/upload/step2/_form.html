@@ -30,7 +30,7 @@
     </div>
 
     {% for newStrain in submission.fetch_new_strains(): %}
-    {{ render_new_strain_form(loop.index0, newStrain) }}
+    {{ render_new_strain_form(data=newStrain, prefix='new_strains-{}-'.format(loop.index0)) }}
     {% endfor %}
 
     <div class="form-row">
@@ -49,7 +49,7 @@
     </template>
 
     <template class="new-strain" data-initial='{{ submission.new_strains|tojson }}'>
-      {{ render_new_strain_form(None, None) }}
+      {{ render_new_strain_form(data=None, prefix='') }}
     </template>
   </form>
 </p>
