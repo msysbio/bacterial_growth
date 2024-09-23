@@ -44,9 +44,9 @@ class Submission:
         else:
             raise KeyError("Unknown self type: {}".format(submission_type))
 
-    def update_strains(self, form):
-        self.strains     = form.data['strains']
-        self.new_strains = form.data['new_strains']
+    def update_strains(self, data):
+        self.strains     = data['strains']
+        self.new_strains = data['new_strains']
 
     def fetch_strains(self):
         if len(self.strains) == 0:

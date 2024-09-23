@@ -1,6 +1,6 @@
 {% from 'pages/upload/step1/_form.html' import render_step1_form %}
 {% from 'pages/upload/step2/_form.html' import render_step2_form %}
-{# from 'pages/upload/step3/_form.html' import render_step3_form #}
+{% from 'pages/upload/step3/_form.html' import render_step3_form %}
 {# from 'pages/upload/step4/_form.html' import render_step4_form #}
 {# from 'pages/upload/step5/_form.html' import render_step5_form #}
 
@@ -9,6 +9,14 @@
 {% from 'pages/upload/step3/_status.html' import render_step3_status %}
 {% from 'pages/upload/step4/_status.html' import render_step4_status %}
 {% from 'pages/upload/step5/_status.html' import render_step5_status %}
+
+{% macro edit_link(current_step, target_step) %}
+{% if target_step != current_step %}
+<a href="{{ url_for('upload_index_page', step=target_step) }}">
+  <img src="{{ url_for('static', filename='images/edit.svg') }}" />
+</a>
+{% endif %}
+{% endmacro %}
 
 {% extends '_layout.html' %}
 
@@ -41,12 +49,7 @@
       <div class="step-content step-1 {{ 'active' if submission.step == 1 }}">
         <h2>
           Step 1: Enter project and study information
-
-          {% if submission.step != 1 %}
-          <a href="{{ url_for('upload_index_page', step=1) }}">
-            <img src="{{ url_for('static', filename='images/edit.svg') }}" />
-          </a>
-          {% endif %}
+          {{ edit_link(submission.step, 1) }}
         </h2>
 
         {% if submission.step == 1 %}
@@ -64,24 +67,32 @@
       <div class="step-content step-2 {{ step2_classes }}">
         <h2>
           Step 2: Pick microbial strains
-
-          {% if submission.step != 2 %}
-          <a href="{{ url_for('upload_index_page', step=2) }}">
-            <img src="{{ url_for('static', filename='images/edit.svg') }}" />
-          </a>
-          {% endif %}
+          {{ edit_link(submission.step, 2) }}
         </h2>
 
         {% if submission.step == 2 %}
-        {{ render_step2_form(submission, step2_form) }}
+        {{ render_step2_form(submission) }}
         {% else %}
         {{ render_step2_status(submission) }}
         {% endif %}
       </div>
 
-      <div class="step-content step-3 disabled">
-        <h2>Step 3: Download templates</h2>
-        {{ render_step3_status() }}
+      {% set step3_classes = [
+        'active' if submission.step == 3,
+        'disabled' if submission.step < 3,
+      ]|join(' ') %}
+
+      <div class="step-content step-3 {{ step3_classes }}">
+        <h2>
+          Step 3: Download templates
+          {{ edit_link(submission.step, 3) }}
+        </h2>
+
+        {% if submission.step == 3 %}
+        {{ render_step3_form(submission) }}
+        {% else %}
+        {{ render_step3_status(submission) }}
+        {% endif %}
       </div>
 
       <div class="step-content step-4 disabled">
