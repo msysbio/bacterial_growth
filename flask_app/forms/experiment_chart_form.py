@@ -98,7 +98,7 @@ class ExperimentChartForm:
                     var_name='Species',
                     value_name='STD'
                 )
-                error_y=std_df['STD']
+                error_y = std_df['STD']
 
             figs.append(px.line(
                 melted_df,

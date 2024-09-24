@@ -6,10 +6,12 @@ def init_assets(app):
 
     assets.register('app_js', flask_assets.Bundle(
         'js/vendor/jquery-3.7.1.js',
+        'js/vendor/select2-4.0.13.js',
         'js/util.js',
         'js/main.js',
         'js/search.js',
         'js/dashboard.js',
+        'js/upload.js',
         filters='rjsmin',
         output='build/app.js'
     ))
@@ -20,12 +22,15 @@ def init_assets(app):
     ))
 
     assets.register('app_css', flask_assets.Bundle(
+        'css/vendor/select2-4.0.13.css',
+        'css/select2-custom.css',
         'css/reset.css',
         'css/utils.css',
         'css/main.css',
         'css/sidebar.css',
         'css/search.css',
         'css/dashboard.css',
+        'css/upload.css',
         filters='cssmin',
         output='build/app.css'
     ))

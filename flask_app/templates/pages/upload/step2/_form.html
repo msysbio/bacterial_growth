@@ -1,0 +1,57 @@
+{% from 'pages/upload/step2/_new_strain_form.html' import render_new_strain_form %}
+
+{% macro render_step2_form(submission) %}
+
+{% include 'pages/upload/step2/_info.html' %}
+
+<p>
+  <form
+      class="simple-form"
+      action="{{ url_for('upload_step2_page') }}"
+      method="POST">
+    <div class="form-row strain-select-wrapper">
+      <label class="full">
+        <span>Search microbial strain:</span>
+        <select
+            name="strains"
+            multiple="multiple"
+            class="strain-select js-multiple-strain-select">
+          {% for (id, name) in submission.fetch_strains(): %}
+          <option value={{ id }} selected="selected">{{ name }}</option>
+          {% endfor %}
+        </select>
+      </label>
+    </div>
+
+    <div class="form-row">
+      <ul class="strain-list">
+        <li>Select strains from the list</li>
+      </ul>
+    </div>
+
+    {% for newStrain in submission.fetch_new_strains(): %}
+    {{ render_new_strain_form(data=newStrain, prefix='new_strains-{}-'.format(loop.index0)) }}
+    {% endfor %}
+
+    <div class="form-row">
+      <a href="#" class="green-button js-add-strain">Add new strain</a>
+
+      <div class="flex-right">
+        <input type="submit" class="green-button" value="Save" />
+      </div>
+    </div>
+
+    <template class="strain-list-item">
+      <li>
+        <strong>${name}</strong>:
+        <a href="https://www.ncbi.nlm.nih.gov/datasets/taxonomy/${id}/">NCBI:${id}</a>
+      </li>
+    </template>
+
+    <template class="new-strain" data-initial='{{ submission.new_strains|tojson }}'>
+      {{ render_new_strain_form(data=None, prefix='') }}
+    </template>
+  </form>
+</p>
+
+{% endmacro %}

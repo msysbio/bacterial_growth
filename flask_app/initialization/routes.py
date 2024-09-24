@@ -15,12 +15,17 @@ def init_routes(app):
     app.add_url_rule("/dashboard",       view_func=dashboard_pages.dashboard_index_page)
     app.add_url_rule("/dashboard/chart", view_func=dashboard_pages.dashboard_chart_fragment)
 
-    app.add_url_rule("/upload",    view_func=upload_pages.upload_index_page)
+    app.add_url_rule("/upload/1", view_func=upload_pages.upload_step1_page, methods=["GET", "POST"])
+    app.add_url_rule("/upload/2", view_func=upload_pages.upload_step2_page, methods=["GET", "POST"])
+    app.add_url_rule("/upload/3", view_func=upload_pages.upload_step3_page, methods=["GET", "POST"])
+    app.add_url_rule("/upload/4", view_func=upload_pages.upload_step4_page, methods=["GET", "POST"])
 
     app.add_url_rule("/study/<string:studyId>",     view_func=study_pages.study_show_page)
     app.add_url_rule("/study/<string:studyId>.zip", view_func=study_pages.study_download_page)
 
-    app.add_url_rule("/strain/<int:id>",             view_func=strain_pages.strain_show_page)
+    app.add_url_rule("/strain/<int:id>",    view_func=strain_pages.strain_show_page)
+    app.add_url_rule("/strains/completion", view_func=strain_pages.taxa_completion_json)
+
     app.add_url_rule("/metabolite/<string:cheb_id>", view_func=metabolite_pages.metabolite_show_page)
 
     app.add_url_rule(

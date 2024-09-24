@@ -2,7 +2,7 @@
 
 {% block content %}
 <header>
-  <img width="640" height="200" src={{ url_for('static', filename='images/logo.png') }} />
+  <img width="640" height="200" src="{{ url_for('static', filename='images/logo.png') }}" />
 </header>
 
 <div class="container">
@@ -37,7 +37,7 @@
     </p>
 
     <h3>
-      <a href="{{ url_for('upload_index_page') }}">
+      <a href="{{ url_for('upload_step1_page') }}">
         Upload your Microbial Growth Project and Studies
       </a>
     </h3>
