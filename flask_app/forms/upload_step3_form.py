@@ -9,7 +9,7 @@ class UploadStep3Form(FlaskForm):
         ('agar_plates', "Agar plates"),
         ('well_plates', "Well plates"),
         ('mini_react',  "mini bioreactors"),
-    ], validators=DataRequired())
+    ], validators=[DataRequired()])
 
     bottle_count = IntegerField('bottle_count')
     plate_count  = IntegerField('plate_count')
@@ -25,6 +25,6 @@ class UploadStep3Form(FlaskForm):
         ('fc',        "Flow Cytometry"),
         ('fc_ps',     "Flow Cytometry (per species)"),
         ('rna',       "16S rRNA-seq"),
-    ], validators=DataRequired())
+    ], validators=[DataRequired()])
 
     technique_type = SelectMultipleField('metabolites')
