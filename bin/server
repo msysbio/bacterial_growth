@@ -2,7 +2,8 @@
 
 python flask_app/main.py
 
-# If there's a syntax error, the python will crash, let's rerun it on change:
+# If there's a syntax error, the flask server will crash, let's rerun it on
+# change:
 
 inotifywait -m -e modify flask_app/** |
   while read file_path file_event file_name; do

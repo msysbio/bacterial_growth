@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import SelectField, SelectMultipleField, StringField, IntegerField
-from wtforms.validators import DataRequired, Optional
+from wtforms import SelectField, SelectMultipleField, IntegerField
+from wtforms.validators import DataRequired
 
 
 class UploadStep3Form(FlaskForm):
@@ -9,14 +9,14 @@ class UploadStep3Form(FlaskForm):
         ('agar_plates', "Agar plates"),
         ('well_plates', "Well plates"),
         ('mini_react',  "mini bioreactors"),
-    ])
+    ], validators=DataRequired())
 
     bottle_count = IntegerField('bottle_count')
     plate_count  = IntegerField('plate_count')
     column_count = IntegerField('column_count')
     row_count    = IntegerField('row_count')
 
-    timepoint_count = IntegerField('timepoint_count')
+    timepoint_count = IntegerField('timepoint_count', validators=[DataRequired()])
 
     technique_type = SelectField('technique_type', choices=[
         ('od',        "Optical Density"),
@@ -25,7 +25,6 @@ class UploadStep3Form(FlaskForm):
         ('fc',        "Flow Cytometry"),
         ('fc_ps',     "Flow Cytometry (per species)"),
         ('rna',       "16S rRNA-seq"),
-    ])
+    ], validators=DataRequired())
 
     technique_type = SelectMultipleField('metabolites')
-

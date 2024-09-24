@@ -1,5 +1,3 @@
-from uuid import uuid4
-
 from flask import render_template, session, request, redirect, url_for
 
 from flask_app.db import get_connection

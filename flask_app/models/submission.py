@@ -2,6 +2,7 @@ from uuid import uuid4
 
 import sqlalchemy as sql
 
+
 class Submission:
     def __init__(self, data, current_step=None, db_conn=None):
         self.step = current_step or 1
@@ -30,19 +31,19 @@ class Submission:
                 'description': data['project_description'],
             }
         elif self.type == 'new_study':
-            self.project = _get_project_data(db_conn, data['project_uuid'])
+            self.project = _get_project_data(self.db_conn, data['project_uuid'])
             if self.project:
                 self.project_uuid = data['project_uuid']
 
             self.study_uuid = uuid4()
         elif self.type == 'update_study':
-            self.project = _get_project_data(db_conn, data['project_uuid'])
+            self.project = _get_project_data(self.db_conn, data['project_uuid'])
             if self.project:
                 self.project_uuid = data['project_uuid']
 
             self.study_uuid = data['study_uuid']
         else:
-            raise KeyError("Unknown self type: {}".format(submission_type))
+            raise KeyError("Unknown self type: {}".format(self.submission_type))
 
     def update_strains(self, data):
         self.strains     = data['strains']
@@ -97,6 +98,7 @@ class Submission:
             'strains':      self.strains,
             'new_strains':  self.new_strains,
         }
+
 
 def _get_project_data(db_conn, uuid):
     query = """

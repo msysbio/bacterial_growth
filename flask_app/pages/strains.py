@@ -16,6 +16,7 @@ def strain_show_page(id):
 
         return render_template("pages/strains/show.html", strain=strain, study=study)
 
+
 def taxa_completion_json():
     term     = request.args.get('term', '').lower()
     page     = int(request.args.get('page', '1'))
@@ -51,5 +52,5 @@ def taxa_completion_json():
 
         return json.dumps({
             'results': results,
-            'pagination': { 'more': has_more  },
+            'pagination': {'more': has_more},
         })
