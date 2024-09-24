@@ -13,7 +13,7 @@ def upload_step1_page():
         submission = Submission(session.get('submission', {}), current_step=1, db_conn=conn)
         error = None
 
-        if request.form:
+        if request.method == 'POST':
             submission.update_project(request.form)
 
             if submission.project:
@@ -34,7 +34,7 @@ def upload_step2_page():
         submission = Submission(session.get('submission', {}), current_step=2, db_conn=conn)
         form = UploadStep2Form(request.form)
 
-        if form.validate_on_submit():
+        if request.method == 'POST':
             submission.update_strains(form.data)
             session['submission'] = submission._asdict()
 
@@ -51,7 +51,7 @@ def upload_step3_page():
         submission = Submission(session.get('submission', {}), current_step=3, db_conn=conn)
         form = UploadStep3Form(request.form)
 
-        if form.validate_on_submit():
+        if request.method == 'POST':
             submission.update_study_design(form.data)
             session['submission'] = submission._asdict()
 

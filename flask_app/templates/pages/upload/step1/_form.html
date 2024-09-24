@@ -42,7 +42,7 @@
             type="text"
             name="project_name"
             required
-            value="{{ submission.project['name'] }}"
+            value="{{ submission.project['name'] or '' }}"
             class="form-input-full form-input-blue"
             placeholder="1. Provide a name for your project" />
     </div>
@@ -52,9 +52,9 @@
         <span>Project description:</span>
         <textarea
             name="project_description"
-            required
+            placeholder="2. Provide a project description"
             class="form-input-full form-input-blue"
-            placeholder="2. Provide a project description">{{ submission.project['description'] }}</textarea>
+            required>{{ submission.project['description'] or '' }}</textarea>
     </div>
 
     <div class="form-row">
@@ -77,7 +77,7 @@
         <input
             type="text"
             name="project_uuid"
-            value="{{ submission.project_uuid }}"
+            value="{{ submission.project_uuid or '' }}"
             class="form-input-full form-input-blue"
             placeholder="1. Provide the private project ID" />
       </label>
@@ -101,7 +101,7 @@
         <input
             type="text"
             name="project_uuid"
-            value="{{ submission.project_uuid }}"
+            value="{{ submission.project_uuid or '' }}"
             class="form-input-full form-input-blue"
             placeholder="1. Provide the private project ID" />
       </label>
@@ -113,7 +113,7 @@
         <input
             type="text"
             name="study-uuid"
-            value="{{ submission.study_uuid }}"
+            value="{{ submission.study_uuid or '' }}"
             class="form-input-full form-input-blue"
             placeholder="1. Provide the private study ID" />
       </label>
