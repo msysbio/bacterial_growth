@@ -10,3 +10,6 @@ let vim_bacterial_growth_roots = ['.', 'flask_app']
 call vim_bacterial_growth#Init()
 
 nnoremap ,t :tabnew _project.vim<cr>
+
+command! Eroutes :e flask_app/initialization/routes.py
+command! Eschema :e src/sql_scripts/create_db.sql
