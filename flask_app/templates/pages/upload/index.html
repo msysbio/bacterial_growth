@@ -10,9 +10,9 @@
 {% from 'pages/upload/step4/_status.html' import render_step4_status %}
 {% from 'pages/upload/step5/_status.html' import render_step5_status %}
 
-{% macro edit_link(current_step, target_step) %}
+{% macro edit_link(current_step, target_step, page) %}
 {% if target_step != current_step %}
-<a href="{{ url_for('upload_index_page', step=target_step) }}">
+<a href="{{ url_for(page) }}">
   <img src="{{ url_for('static', filename='images/edit.svg') }}" />
 </a>
 {% endif %}
@@ -49,7 +49,7 @@
       <div class="step-content step-1 {{ 'active' if submission.step == 1 }}">
         <h2>
           Step 1: Enter project and study information
-          {{ edit_link(submission.step, 1) }}
+          {{ edit_link(submission.step, 1, 'upload_step1_page') }}
         </h2>
 
         {% if submission.step == 1 %}
@@ -67,7 +67,7 @@
       <div class="step-content step-2 {{ step2_classes }}">
         <h2>
           Step 2: Pick microbial strains
-          {{ edit_link(submission.step, 2) }}
+          {{ edit_link(submission.step, 2, 'upload_step2_page') }}
         </h2>
 
         {% if submission.step == 2 %}
@@ -85,7 +85,7 @@
       <div class="step-content step-3 {{ step3_classes }}">
         <h2>
           Step 3: Download templates
-          {{ edit_link(submission.step, 3) }}
+          {{ edit_link(submission.step, 3, 'upload_step3_page') }}
         </h2>
 
         {% if submission.step == 3 %}

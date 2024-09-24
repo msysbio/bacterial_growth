@@ -30,7 +30,7 @@
 <div class="submission-forms">
   <form
       method="POST"
-      action="{{ url_for('submit_step_1_upload') }}"
+      action="{{ url_for('upload_step1_page') }}"
       class="simple-form hidden"
       id="form-new_project">
     <input type="hidden" name="submission_type" value="new_project" />
@@ -66,7 +66,7 @@
 
   <form
       method="POST"
-      action="{{ url_for('submit_step_1_upload') }}"
+      action="{{ url_for('upload_step1_page') }}"
       class="simple-form hidden"
       id="form-new_study">
     <input type="hidden" name="submission_type" value="new_study" />
@@ -90,7 +90,7 @@
 
   <form
       method="POST"
-      action="{{ url_for('submit_step_1_upload') }}"
+      action="{{ url_for('upload_step1_page') }}"
       class="simple-form hidden"
       id="form-update_study">
     <input type="hidden" name="submission_type" value="update_study" />

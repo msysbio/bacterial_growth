@@ -48,6 +48,9 @@ class Submission:
         self.strains     = data['strains']
         self.new_strains = data['new_strains']
 
+    def update_study_design(self, data):
+        pass
+
     def fetch_strains(self):
         if len(self.strains) == 0:
             return []
