@@ -1,68 +1,67 @@
 {% extends '_layout.html' %}
 
 {% block content %}
-<header>
-  <img width="640" height="200" src="{{ url_for('static', filename='images/logo.png') }}" />
-</header>
+  <header>
+    <img width="640" height="200" src="{{ url_for('static', filename='images/logo.png') }}" />
+  </header>
 
-<div class="container">
-  <article>
-    <h2>Welcome to µGrowthDB</h2>
+  <div class="container">
+    <article>
+      <h2>Welcome to µGrowthDB</h2>
 
-    <p>
-      µGrowthDB is a relational database that provides a structure to store
-      different types of microbial growth data. Our main objective is to
-      serve as a comprehensive resource for researchers interested in
-      studying the growth dynamics of microbial species by providing
-      access to growth projects and studies uploaded by other researchers.
-    </p>
+      <p>
+        µGrowthDB is a relational database that provides a structure to store
+        different types of microbial growth data. Our main objective is to
+        serve as a comprehensive resource for researchers interested in
+        studying the growth dynamics of microbial species by providing access
+        to growth projects and studies uploaded by other researchers.
+      </p>
 
-    <h3>
-      <a href="{{ url_for('search_index_page') }}">
-        Search Growth Studies
-      </a>
-    </h3>
+      <h3>
+        <a href="{{ url_for('search_index_page') }}">
+          Search Growth Studies
+        </a>
+      </h3>
 
-    <p>
-      Users can search for experimental data collected from microbial
-      growth studies. The search can be filtered by different experimental
-      conditions and characteristicas like project name, study name,
-      microbial strains, metabolites, culture media and pH.
-    </p>
+      <p>
+        Users can search for experimental data collected from microbial growth
+        studies. The search can be filtered by different experimental
+        conditions and characteristicas like project name, study name,
+        microbial strains, metabolites, culture media and pH.
+      </p>
 
-    <p>
-      All the data at µGrowthDB is publically available for everyone. To
-      further analyze and compare different datasets we offer the feature
-      of downloading several datasets at once.
-    </p>
+      <p>
+        All the data at µGrowthDB is publically available for everyone. To
+        further analyze and compare different datasets we offer the feature of
+        downloading several datasets at once.
+      </p>
 
-    <h3>
-      <a href="{{ url_for('upload_step1_page') }}">
-        Upload your Microbial Growth Project and Studies
-      </a>
-    </h3>
+      <h3>
+        <a href="{{ url_for('upload_step1_page') }}">
+          Upload your Microbial Growth Project and Studies
+        </a>
+      </h3>
 
-    <p>
-      At µGrowthDB, we recognize the invaluable contributions of
-      researchers in advancing our understanding of microbial dynamics.
-      Sharing growth data publicly plays a crucial role in increasing
-      scientific progress and collaboration within the research community.
-      We allow reasearcher to upload their experimental data by following
-      five steps that allow us to keep an adquate quality control over the
-      data.
-    </p>
+      <p>
+        At µGrowthDB, we recognize the invaluable contributions of researchers
+        in advancing our understanding of microbial dynamics. Sharing growth
+        data publicly plays a crucial role in increasing scientific progress
+        and collaboration within the research community. We allow reasearcher
+        to upload their experimental data by following five steps that allow us
+        to keep an adquate quality control over the data.
+      </p>
 
-    <h3>
-      <a href="{{ url_for('dashboard_index_page') }}">
-        Visualize Growth Data
-      </a>
-    </h3>
+      <h3>
+        <a href="{{ url_for('dashboard_index_page') }}">
+          Visualize Growth Data
+        </a>
+      </h3>
 
-    <p>
-      Users can visualize all the different microbial growth experiments
-      with its corresponding measured techniques in the database, this
-      means plotting accurate growth curves accross different conditions.
-    </p>
-  </article>
-</div>
+      <p>
+        Users can visualize all the different microbial growth experiments with
+        its corresponding measured techniques in the database, this means
+        plotting accurate growth curves accross different conditions.
+      </p>
+    </article>
+  </div>
 {% endblock %}

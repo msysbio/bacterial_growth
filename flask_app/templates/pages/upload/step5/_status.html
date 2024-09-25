@@ -1,15 +1,15 @@
 {% macro render_step5_status() %}
 
-<ul class="upload-status">
-  {% if False %}
-  <li class="complete">
-    <span class="icon"></span> Data published
-  </li>
-  {% else %}
-  <li class="incomplete">
-    <span class="icon"></span> Data not yet published
-  </li>
-  {% endif %}
-</ul>
+  <ul class="upload-status">
+    {% if False %}
+      <li class="complete">
+        <span class="icon"></span> Data published
+      </li>
+    {% else %}
+      <li class="incomplete">
+        <span class="icon"></span> Data not yet published
+      </li>
+    {% endif %}
+  </ul>
 
 {% endmacro %}

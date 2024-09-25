@@ -2,127 +2,127 @@
 
 {% macro render_step1_form(submission, error) %}
 
-{% if submission.project_uuid %}
-{{ render_step1_status(submission)  }}
-{% else %}
-{% include 'pages/upload/step1/_info.html' %}
-{% endif %}
+  {% if submission.project_uuid %}
+    {{ render_step1_status(submission)  }}
+  {% else %}
+    {% include 'pages/upload/step1/_info.html' %}
+  {% endif %}
 
-<p>
-  <select class="form-input-blue js-submission-type">
-    <option value="">Choose an option</option>
-    <option value="new_project" {{ 'selected' if submission.type == 'new_project' }}>
-    Add a new study to a new project
-    </option>
-    <option value="new_study" {{ 'selected' if submission.type == 'new_study' }}>
-    Add a new study to a previous project
-    </option>
-    <option value="update_study" {{ 'selected' if submission.type == 'update_study' }}>
-    Add a new version of a study to a previous project
-    </option>
-  </select>
-</p>
+  <p>
+    <select class="form-input-blue js-submission-type">
+      <option value="">Choose an option</option>
+      <option value="new_project" {{ 'selected' if submission.type == 'new_project' }}>
+      Add a new study to a new project
+      </option>
+      <option value="new_study" {{ 'selected' if submission.type == 'new_study' }}>
+      Add a new study to a previous project
+      </option>
+      <option value="update_study" {{ 'selected' if submission.type == 'update_study' }}>
+      Add a new version of a study to a previous project
+      </option>
+    </select>
+  </p>
 
-{% if error %}
-<p class="error-message">{{ error }}</p>
-{% endif %}
+  {% if error %}
+    <p class="error-message">{{ error }}</p>
+  {% endif %}
 
-<div class="submission-forms">
-  <form
-      method="POST"
-      action="{{ url_for('upload_step1_page') }}"
-      class="simple-form hidden"
-      id="form-new_project">
-    <input type="hidden" name="submission_type" value="new_project" />
+  <div class="submission-forms">
+    <form
+        method="POST"
+        action="{{ url_for('upload_step1_page') }}"
+        class="simple-form hidden"
+        id="form-new_project">
+      <input type="hidden" name="submission_type" value="new_project" />
 
-    <div class="form-row">
-      <label class="full">
-        <span>Project name:</span>
+      <div class="form-row">
+        <label class="full">
+          <span>Project name:</span>
+          <input
+              type="text"
+              name="project_name"
+              required
+              value="{{ submission.project['name'] or '' }}"
+              class="form-input-full form-input-blue"
+              placeholder="1. Provide a name for your project" />
+      </div>
+
+      <div class="form-row">
+        <label class="full">
+          <span>Project description:</span>
+          <textarea
+              name="project_description"
+              placeholder="2. Provide a project description"
+              class="form-input-full form-input-blue"
+              required>{{ submission.project['description'] or '' }}</textarea>
+      </div>
+
+      <div class="form-row">
         <input
-            type="text"
-            name="project_name"
-            required
-            value="{{ submission.project['name'] or '' }}"
-            class="form-input-full form-input-blue"
-            placeholder="1. Provide a name for your project" />
-    </div>
+            type="submit"
+            value="{{ 'Update project' if submission.project_uuid else 'Create project' }}" />
+      </div>
+    </form>
 
-    <div class="form-row">
-      <label class="full">
-        <span>Project description:</span>
-        <textarea
-            name="project_description"
-            placeholder="2. Provide a project description"
-            class="form-input-full form-input-blue"
-            required>{{ submission.project['description'] or '' }}</textarea>
-    </div>
+    <form
+        method="POST"
+        action="{{ url_for('upload_step1_page') }}"
+        class="simple-form hidden"
+        id="form-new_study">
+      <input type="hidden" name="submission_type" value="new_study" />
 
-    <div class="form-row">
-      <input
-          type="submit"
-          value="{{ 'Update project' if submission.project_uuid else 'Create project' }}" />
-    </div>
-  </form>
+      <div class="form-row">
+        <label class="full">
+          <span>Private project ID:</span>
+          <input
+              type="text"
+              name="project_uuid"
+              value="{{ submission.project_uuid or '' }}"
+              class="form-input-full form-input-blue"
+              placeholder="1. Provide the private project ID" />
+        </label>
+      </div>
 
-  <form
-      method="POST"
-      action="{{ url_for('upload_step1_page') }}"
-      class="simple-form hidden"
-      id="form-new_study">
-    <input type="hidden" name="submission_type" value="new_study" />
+      <div class="form-row">
+        <input type="submit" value="Verify private ID" />
+      </div>
+    </form>
 
-    <div class="form-row">
-      <label class="full">
-        <span>Private project ID:</span>
-        <input
-            type="text"
-            name="project_uuid"
-            value="{{ submission.project_uuid or '' }}"
-            class="form-input-full form-input-blue"
-            placeholder="1. Provide the private project ID" />
-      </label>
-    </div>
+    <form
+        method="POST"
+        action="{{ url_for('upload_step1_page') }}"
+        class="simple-form hidden"
+        id="form-update_study">
+      <input type="hidden" name="submission_type" value="update_study" />
 
-    <div class="form-row">
-      <input type="submit" value="Verify private ID" />
-    </div>
-  </form>
+      <div class="form-row">
+        <label class="full">
+          <span>Private project ID:</span>
+          <input
+              type="text"
+              name="project_uuid"
+              value="{{ submission.project_uuid or '' }}"
+              class="form-input-full form-input-blue"
+              placeholder="1. Provide the private project ID" />
+        </label>
+      </div>
 
-  <form
-      method="POST"
-      action="{{ url_for('upload_step1_page') }}"
-      class="simple-form hidden"
-      id="form-update_study">
-    <input type="hidden" name="submission_type" value="update_study" />
+      <div class="form-row">
+        <label class="full">
+          <span>Private study ID:</span>
+          <input
+              type="text"
+              name="study-uuid"
+              value="{{ submission.study_uuid or '' }}"
+              class="form-input-full form-input-blue"
+              placeholder="1. Provide the private study ID" />
+        </label>
+      </div>
 
-    <div class="form-row">
-      <label class="full">
-        <span>Private project ID:</span>
-        <input
-            type="text"
-            name="project_uuid"
-            value="{{ submission.project_uuid or '' }}"
-            class="form-input-full form-input-blue"
-            placeholder="1. Provide the private project ID" />
-      </label>
-    </div>
-
-    <div class="form-row">
-      <label class="full">
-        <span>Private study ID:</span>
-        <input
-            type="text"
-            name="study-uuid"
-            value="{{ submission.study_uuid or '' }}"
-            class="form-input-full form-input-blue"
-            placeholder="1. Provide the private study ID" />
-      </label>
-    </div>
-
-    <div class="form-row">
-      <input type="submit" value="Verify private IDs" />
-    </div>
-  </form>
-</div>
+      <div class="form-row">
+        <input type="submit" value="Verify private IDs" />
+      </div>
+    </form>
+  </div>
 
 {% endmacro %}

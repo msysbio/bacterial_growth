@@ -11,11 +11,11 @@
 {% from 'pages/upload/step5/_status.html' import render_step5_status %}
 
 {% macro edit_link(current_step, target_step, page) %}
-{% if target_step != current_step %}
-<a href="{{ url_for(page) }}">
-  <img src="{{ url_for('static', filename='images/edit.svg') }}" />
-</a>
-{% endif %}
+  {% if target_step != current_step %}
+    <a href="{{ url_for(page) }}">
+      <img src="{{ url_for('static', filename='images/edit.svg') }}" />
+    </a>
+  {% endif %}
 {% endmacro %}
 
 {% extends '_layout.html' %}
@@ -23,88 +23,88 @@
 {% block title %}: Upload{% endblock %}
 
 {% block content %}
-<header>
-  <img height="100" src="{{ url_for('static', filename='images/upload_banner.png') }}" />
-</header>
+  <header>
+    <img height="100" src="{{ url_for('static', filename='images/upload_banner.png') }}" />
+  </header>
 
-<div class="container upload-page">
-  <article>
-    <p>
-      Thank you for choosing to share your microbial growth data with us. Your
-      commitment to sharing experimental data is essential for advancing our
-      understanding of microbiome dynamics. Your contribution plays a vital
-      role in driving research forward and enhancing our collective knowledge
-      in this field.
-    </p>
+  <div class="container upload-page">
+    <article>
+      <p>
+        Thank you for choosing to share your microbial growth data with us.
+        Your commitment to sharing experimental data is essential for advancing
+        our understanding of microbiome dynamics. Your contribution plays a
+        vital role in driving research forward and enhancing our collective
+        knowledge in this field.
+      </p>
 
-    <p>
-      To successfully submit your data, please ensure that you follow the
-      instructions provided in each of the following steps. Adhering to these
-      instructions helps us maintain the quality of our database and ensures
-      the accuracy and reliability of the information stored within it. Thank
-      you for your cooperation in maintaining data integrity and reliability.
-    </p>
+      <p>
+        To successfully submit your data, please ensure that you follow the
+        instructions provided in each of the following steps. Adhering to these
+        instructions helps us maintain the quality of our database and ensures
+        the accuracy and reliability of the information stored within it. Thank
+        you for your cooperation in maintaining data integrity and reliability.
+      </p>
 
-    <div class="upload-steps">
-      <div class="step-content step-1 {{ 'active' if submission.step == 1 }}">
-        <h2>
-          Step 1: Enter project and study information
-          {{ edit_link(submission.step, 1, 'upload_step1_page') }}
-        </h2>
+      <div class="upload-steps">
+        <div class="step-content step-1 {{ 'active' if submission.step == 1 }}">
+          <h2>
+            Step 1: Enter project and study information
+            {{ edit_link(submission.step, 1, 'upload_step1_page') }}
+          </h2>
 
-        {% if submission.step == 1 %}
-        {{ render_step1_form(submission, error) }}
-        {% else %}
-        {{ render_step1_status(submission) }}
-        {% endif %}
-      </div>
+          {% if submission.step == 1 %}
+            {{ render_step1_form(submission, error) }}
+          {% else %}
+            {{ render_step1_status(submission) }}
+          {% endif %}
+        </div>
 
-      {% set step2_classes = [
+        {% set step2_classes = [
         'active' if submission.step == 2,
         'disabled' if submission.step < 2,
-      ]|join(' ') %}
+             ]|join(' ') %}
 
-      <div class="step-content step-2 {{ step2_classes }}">
-        <h2>
-          Step 2: Pick microbial strains
-          {{ edit_link(submission.step, 2, 'upload_step2_page') }}
-        </h2>
+             <div class="step-content step-2 {{ step2_classes }}">
+               <h2>
+                 Step 2: Pick microbial strains
+                 {{ edit_link(submission.step, 2, 'upload_step2_page') }}
+               </h2>
 
-        {% if submission.step == 2 %}
-        {{ render_step2_form(submission) }}
-        {% else %}
-        {{ render_step2_status(submission) }}
-        {% endif %}
+               {% if submission.step == 2 %}
+                 {{ render_step2_form(submission) }}
+               {% else %}
+                 {{ render_step2_status(submission) }}
+               {% endif %}
+             </div>
+
+             {% set step3_classes = [
+             'active' if submission.step == 3,
+             'disabled' if submission.step < 3,
+                  ]|join(' ') %}
+
+                  <div class="step-content step-3 {{ step3_classes }}">
+                    <h2>
+                      Step 3: Download templates
+                      {{ edit_link(submission.step, 3, 'upload_step3_page') }}
+                    </h2>
+
+                    {% if submission.step == 3 %}
+                      {{ render_step3_form(submission) }}
+                    {% else %}
+                      {{ render_step3_status(submission) }}
+                    {% endif %}
+                  </div>
+
+                  <div class="step-content step-4 disabled">
+                    <h2>Step 4: Upload data</h2>
+                    {{ render_step4_status() }}
+                  </div>
+
+                  <div class="step-content step-5 disabled">
+                    <h2>Step 5: Publish data</h2>
+                    {{ render_step5_status() }}
+                  </div>
       </div>
-
-      {% set step3_classes = [
-        'active' if submission.step == 3,
-        'disabled' if submission.step < 3,
-      ]|join(' ') %}
-
-      <div class="step-content step-3 {{ step3_classes }}">
-        <h2>
-          Step 3: Download templates
-          {{ edit_link(submission.step, 3, 'upload_step3_page') }}
-        </h2>
-
-        {% if submission.step == 3 %}
-        {{ render_step3_form(submission) }}
-        {% else %}
-        {{ render_step3_status(submission) }}
-        {% endif %}
-      </div>
-
-      <div class="step-content step-4 disabled">
-        <h2>Step 4: Upload data</h2>
-        {{ render_step4_status() }}
-      </div>
-
-      <div class="step-content step-5 disabled">
-        <h2>Step 5: Publish data</h2>
-        {{ render_step5_status() }}
-      </div>
-    </div>
-  </article>
-</div>
+    </article>
+  </div>
 {% endblock %}

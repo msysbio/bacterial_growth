@@ -1,20 +1,20 @@
 {% for fig_html in fig_htmls %}
-<div class="fig-container">
-  {% if show_log_toggle: %}
-  {% set identifier = 'apply_log:{}'.format(loop.index0) %}
-  <div>
-    <input
-        type="checkbox"
-        name="{{ identifier }}"
-        id="{{ identifier }}"
-        style="margin-left: 0"
-        {{ 'checked' if request.args[identifier] }} />
-    <label for="{{ identifier}}">
-      Apply log transform
-    </label>
-  </div>
-  {% endif %}
+  <div class="fig-container">
+    {% if show_log_toggle: %}
+      {% set identifier = 'apply_log:{}'.format(loop.index0) %}
+      <div>
+        <input
+            type="checkbox"
+            name="{{ identifier }}"
+            id="{{ identifier }}"
+            style="margin-left: 0"
+            {{ 'checked' if request.args[identifier] }} />
+        <label for="{{ identifier}}">
+          Apply log transform
+        </label>
+      </div>
+    {% endif %}
 
-  {{ fig_html|safe }}
-</div>
+    {{ fig_html|safe }}
+  </div>
 {% endfor %}
