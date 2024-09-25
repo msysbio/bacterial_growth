@@ -6,7 +6,17 @@
         action="{{ url_for('upload_step3_page') }}"
         method="POST">
 
-      TODO
+      <div class="columns">
+        <div class="column" style="width: 50%;">
+          {% include 'pages/upload/step3/_info1.html' %}
+
+          TODO form
+        </div>
+
+        <div class="column" style="width: 50%;">
+          {% include 'pages/upload/step3/_info2.html' %}
+        </div>
+      </div>
 
     </form>
   </p>

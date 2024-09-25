@@ -49,4 +49,10 @@
   .submission-forms {
     margin-top: 20px;
   }
+
+  .columns {
+    display: flex;
+    flex-direction: row;
+    column-gap: 20px;
+  }
 }
