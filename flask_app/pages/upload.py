@@ -58,6 +58,7 @@ def upload_step3_page():
         return render_template(
             "pages/upload/index.html",
             submission=submission,
+            form=form
         )
 
 

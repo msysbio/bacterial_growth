@@ -2,6 +2,7 @@ $(document).ready(function() {
   let $page = $('.upload-page');
   let $step1 = $page.find('.step-content.step-1');
   let $step2 = $page.find('.step-content.step-2');
+  let $step3 = $page.find('.step-content.step-3');
 
   // Show form corresponding to currently selected submission type
   show_forms($step1.find('.js-submission-type').val());
@@ -69,6 +70,26 @@ $(document).ready(function() {
     $newStrain1.remove();
     $newStrain2.remove();
   });
+
+  $('.js-metabolites-select').select2({
+    multiple: true,
+    theme: 'custom',
+    width: '100%',
+    ajax: {
+      url: '/metabolites/completion',
+      dataType: 'json',
+      delay: 100,
+      cache: true,
+    },
+  });
+
+  let $step3form = $step3.find('form');
+
+  $('select[name=vessel_type]').on('change', function() {
+    update_vessel_count_inputs();
+  });
+
+  update_vessel_count_inputs();
 
   function show_forms(submissionType) {
     $forms = $step1.find('.submission-forms form');
@@ -141,5 +162,13 @@ $(document).ready(function() {
         cache: true,
       },
     });
+  }
+
+  function update_vessel_count_inputs() {
+    let $vesselTypeInput = $step3form.find('select[name=vessel_type]');
+    let vesselType = $vesselTypeInput.val();
+
+    $step3form.find('.vessel-count').log().addClass('hidden');
+    $step3form.find(`.vessel-${vesselType}`).log().removeClass('hidden');
   }
 });

@@ -8,7 +8,7 @@ class UploadStep3Form(FlaskForm):
         ('bottles',     "Bottles"),
         ('agar_plates', "Agar plates"),
         ('well_plates', "Well plates"),
-        ('mini_react',  "mini bioreactors"),
+        ('mini_react',  "Mini-bioreactors"),
     ], validators=[DataRequired()])
 
     bottle_count = IntegerField('bottle_count')
@@ -27,4 +27,4 @@ class UploadStep3Form(FlaskForm):
         ('rna',       "16S rRNA-seq"),
     ], validators=[DataRequired()])
 
-    technique_type = SelectMultipleField('metabolites')
+    metabolites = SelectMultipleField('metabolites')

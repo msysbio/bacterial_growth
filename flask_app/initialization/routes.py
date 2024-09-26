@@ -27,6 +27,7 @@ def init_routes(app):
     app.add_url_rule("/strains/completion", view_func=strain_pages.taxa_completion_json)
 
     app.add_url_rule("/metabolite/<string:cheb_id>", view_func=metabolite_pages.metabolite_show_page)
+    app.add_url_rule("/metabolites/completion",      view_func=metabolite_pages.metabolites_completion_json)
 
     app.add_url_rule(
         "/search",
