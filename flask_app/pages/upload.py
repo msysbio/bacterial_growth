@@ -47,7 +47,7 @@ def upload_step2_page():
 def upload_step3_page():
     with get_connection() as conn:
         submission = Submission(session.get('submission', {}), current_step=3, db_conn=conn)
-        form = UploadStep3Form(request.form)
+        form = UploadStep3Form(request.form, obj=submission)
 
         if request.method == 'POST':
             submission.update_study_design(form.data)

@@ -19,6 +19,18 @@ class Submission:
         self.strains     = data.get('strains', [])
         self.new_strains = data.get('new_strains', [])
 
+        # Step 3:
+        self.vessel_type  = data.get('vessel_type', None)
+
+        self.bottle_count = data.get('bottle_count', None)
+        self.plate_count  = data.get('plate_count', None)
+        self.column_count = data.get('column_count', None)
+        self.row_count    = data.get('row_count', None)
+
+        self.timepoint_count = data.get('timepoint_count', None)
+        self.technique_type  = data.get('technique_type', None)
+        self.metabolites     = data.get('metabolites', [])
+
     def update_project(self, data):
         self.type = data['submission_type']
 
@@ -50,7 +62,16 @@ class Submission:
         self.new_strains = data['new_strains']
 
     def update_study_design(self, data):
-        pass
+        self.vessel_type  = data.get('vessel_type', None)
+
+        self.bottle_count = data['bottle_count']
+        self.plate_count  = data['plate_count']
+        self.column_count = data['column_count']
+        self.row_count    = data['row_count']
+
+        self.timepoint_count = data['timepoint_count']
+        self.technique_type  = data['technique_type']
+        self.metabolites     = data['metabolites']
 
     def fetch_strains(self):
         if len(self.strains) == 0:
@@ -64,6 +85,23 @@ class Submission:
                 tax_names AS name
             FROM Taxa
             WHERE tax_id IN ({','.join(self.strains)})
+        """
+        result = self.db_conn.execute(sql.text(query)).all()
+
+        return [(entry.id, entry.name) for entry in result]
+
+    def fetch_metabolites(self):
+        if len(self.metabolites) == 0:
+            return []
+
+        # TODO (2024-09-22) Figure out a sensible way to bind ids
+
+        query = f"""
+            SELECT
+                cheb_id AS id,
+                metabo_name AS name
+            FROM Metabolites
+            WHERE cheb_id IN ({','.join([f"'{cheb_id}'" for cheb_id in self.metabolites])})
         """
         result = self.db_conn.execute(sql.text(query)).all()
 
@@ -91,12 +129,20 @@ class Submission:
 
     def _asdict(self):
         return {
-            'type':         self.type,
-            'project_uuid': self.project_uuid,
-            'study_uuid':   self.study_uuid,
-            'project':      self.project,
-            'strains':      self.strains,
-            'new_strains':  self.new_strains,
+            'type':            self.type,
+            'project_uuid':    self.project_uuid,
+            'study_uuid':      self.study_uuid,
+            'project':         self.project,
+            'strains':         self.strains,
+            'new_strains':     self.new_strains,
+            'vessel_type':     self.vessel_type,
+            'bottle_count':    self.bottle_count,
+            'plate_count':     self.plate_count,
+            'column_count':    self.column_count,
+            'row_count':       self.row_count,
+            'timepoint_count': self.timepoint_count,
+            'technique_type':  self.technique_type,
+            'metabolites':     self.metabolites,
         }
 
 

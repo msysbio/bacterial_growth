@@ -64,14 +64,16 @@ $(document).ready(function() {
   $step2.on('click', '.js-remove-new-strain', function(e) {
     e.preventDefault();
 
-    let $newStrain2 = $(e.currentTarget).parents('.form-row.js-new-strain-row-2').log();
-    let $newStrain1 = $newStrain2.prev('.form-row.js-new-strain-row-1').log();
+    let $newStrain2 = $(e.currentTarget).parents('.form-row.js-new-strain-row-2');
+    let $newStrain1 = $newStrain2.prev('.form-row.js-new-strain-row-1');
 
     $newStrain1.remove();
     $newStrain2.remove();
   });
 
-  $('.js-metabolites-select').select2({
+  let $metabolitesSelect = $('.js-metabolites-select');
+
+  $metabolitesSelect.select2({
     multiple: true,
     theme: 'custom',
     width: '100%',
@@ -82,6 +84,7 @@ $(document).ready(function() {
       cache: true,
     },
   });
+  $metabolitesSelect.trigger('change');
 
   let $step3form = $step3.find('form');
 
@@ -168,7 +171,7 @@ $(document).ready(function() {
     let $vesselTypeInput = $step3form.find('select[name=vessel_type]');
     let vesselType = $vesselTypeInput.val();
 
-    $step3form.find('.vessel-count').log().addClass('hidden');
-    $step3form.find(`.vessel-${vesselType}`).log().removeClass('hidden');
+    $step3form.find('.vessel-count').addClass('hidden');
+    $step3form.find(`.vessel-${vesselType}`).removeClass('hidden');
   }
 });

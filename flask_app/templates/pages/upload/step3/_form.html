@@ -58,7 +58,14 @@
         <div class="form-row">
           <label class="full">
             <span>If metabolites were measured, select which ones:</span>
-            {{ form.metabolites(class='form-input-blue form-input-full js-metabolites-select') }}
+            <select
+                multiple="multiple"
+                name="metabolites"
+                class="form-input-blue form-input-full js-metabolites-select">
+              {% for (cheb_id, name) in submission.fetch_metabolites() %}
+                <option value="{{ cheb_id }}" selected>{{ name }}</option>
+              {% endfor %}
+            </select>
           </label>
         </div>
 
