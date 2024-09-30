@@ -5,6 +5,7 @@ from flask import render_template, session, request, redirect, url_for, send_fil
 from flask_app.db import get_connection
 from flask_app.models.submission import Submission
 import flask_app.models.data_spreadsheet as data_spreadsheet
+import flask_app.models.study_spreadsheet as study_spreadsheet
 from flask_app.forms.upload_step2_form import UploadStep2Form
 from flask_app.forms.upload_step3_form import UploadStep3Form
 
@@ -95,6 +96,39 @@ def upload_step3_page():
         )
 
 
+def upload_study_template_xlsx():
+    with get_connection() as conn:
+        submission = Submission(session.get('submission', {}), step=3, db_conn=conn)
+
+        taxa_ids   = submission.strains
+        taxa_names = [name for (id, name) in submission.fetch_strains()]
+
+        new_strains = [
+            {
+                'case_number':     index,
+                'name':            strain['name'],
+                'description':     strain['description'],
+                'parent_taxon_id': strain['species'],
+            }
+            for (index, strain)
+            in enumerate(submission.fetch_new_strains())
+        ]
+
+        spreadsheet = study_spreadsheet.create_excel(
+            taxa_names,
+            taxa_ids,
+            new_strains,
+            submission.project_uuid,
+            submission.study_uuid,
+        )
+
+        return send_file(
+            io.BytesIO(spreadsheet),
+            as_attachment=True,
+            download_name=f"template_study.xlsx",
+        )
+
+
 def upload_step4_page():
     with get_connection() as conn:
         submission = Submission(session.get('submission', {}), step=4, db_conn=conn)
@@ -103,3 +137,4 @@ def upload_step4_page():
             "pages/upload/index.html",
             submission=submission,
         )
+

@@ -2,6 +2,7 @@ from flask_wtf import FlaskForm
 from wtforms import SelectField, SelectMultipleField, IntegerField
 from wtforms.validators import DataRequired
 
+# TODO (2024-09-30) Extract types of vessels etc into enums in the database for easy model lookup
 
 class UploadStep3Form(FlaskForm):
     vessel_type = SelectField('vessel_type', choices=[

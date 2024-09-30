@@ -36,8 +36,8 @@ class Submission:
         self.type = data['submission_type']
 
         if self.type == 'new_project':
-            self.project_uuid = uuid4()
-            self.study_uuid = uuid4()
+            self.project_uuid = str(uuid4())
+            self.study_uuid = str(uuid4())
 
             self.project = {
                 'name':        data['project_name'],
@@ -48,7 +48,7 @@ class Submission:
             if self.project:
                 self.project_uuid = data['project_uuid']
 
-            self.study_uuid = uuid4()
+            self.study_uuid = str(uuid4())
         elif self.type == 'update_study':
             self.project = _get_project_data(self.db_conn, data['project_uuid'])
             if self.project:
