@@ -29,24 +29,32 @@
 
   <div class="container upload-page">
     <article>
-      <p>
-        Thank you for choosing to share your microbial growth data with us.
-        Your commitment to sharing experimental data is essential for advancing
-        our understanding of microbiome dynamics. Your contribution plays a
-        vital role in driving research forward and enhancing our collective
-        knowledge in this field.
-      </p>
+      {% if submission.step == 0 %}
+        <p>
+          Thank you for choosing to share your microbial growth data with us.
+          Your commitment to sharing experimental data is essential for
+          advancing our understanding of microbiome dynamics. Your contribution
+          plays a vital role in driving research forward and enhancing our
+          collective knowledge in this field.
+        </p>
 
-      <p>
-        To successfully submit your data, please ensure that you follow the
-        instructions provided in each of the following steps. Adhering to these
-        instructions helps us maintain the quality of our database and ensures
-        the accuracy and reliability of the information stored within it. Thank
-        you for your cooperation in maintaining data integrity and reliability.
-      </p>
+        <p>
+          To successfully submit your data, please ensure that you follow the
+          instructions provided in each of the following steps. Adhering to
+          these instructions helps us maintain the quality of our database and
+          ensures the accuracy and reliability of the information stored within
+          it. Thank you for your cooperation in maintaining data integrity and
+          reliability.
+        </p>
+      {% endif %}
 
       <div class="upload-steps">
-        <div class="step-content step-1 {{ 'active' if submission.step == 1 }}">
+        {% set step1_classes = [
+          'active' if submission.step == 1,
+          'disabled' if submission.step < 1,
+        ]|join(' ') %}
+
+        <div class="step-content step-1 {{ step1_classes }}">
           <h2>
             Step 1: Enter project and study information
             {{ edit_link(submission.step, 1, 'upload_step1_page') }}

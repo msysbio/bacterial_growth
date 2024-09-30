@@ -6,9 +6,19 @@ from flask_app.forms.upload_step2_form import UploadStep2Form
 from flask_app.forms.upload_step3_form import UploadStep3Form
 
 
+def upload_status_page():
+    with get_connection() as conn:
+        submission = Submission(session.get('submission', {}), step=0, db_conn=conn)
+
+        return render_template(
+            "pages/upload/index.html",
+            submission=submission,
+        )
+
+
 def upload_step1_page():
     with get_connection() as conn:
-        submission = Submission(session.get('submission', {}), current_step=1, db_conn=conn)
+        submission = Submission(session.get('submission', {}), step=1, db_conn=conn)
         error = None
 
         if request.method == 'POST':
@@ -29,7 +39,7 @@ def upload_step1_page():
 
 def upload_step2_page():
     with get_connection() as conn:
-        submission = Submission(session.get('submission', {}), current_step=2, db_conn=conn)
+        submission = Submission(session.get('submission', {}), step=2, db_conn=conn)
         form = UploadStep2Form(request.form)
 
         if request.method == 'POST':
@@ -46,7 +56,7 @@ def upload_step2_page():
 
 def upload_step3_page():
     with get_connection() as conn:
-        submission = Submission(session.get('submission', {}), current_step=3, db_conn=conn)
+        submission = Submission(session.get('submission', {}), step=3, db_conn=conn)
         form = UploadStep3Form(request.form, obj=submission)
 
         if request.method == 'POST':
@@ -64,7 +74,7 @@ def upload_step3_page():
 
 def upload_step4_page():
     with get_connection() as conn:
-        submission = Submission(session.get('submission', {}), current_step=4, db_conn=conn)
+        submission = Submission(session.get('submission', {}), step=4, db_conn=conn)
 
         return render_template(
             "pages/upload/index.html",

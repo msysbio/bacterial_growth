@@ -4,8 +4,8 @@ import sqlalchemy as sql
 
 
 class Submission:
-    def __init__(self, data, current_step=None, db_conn=None):
-        self.step = current_step or 1
+    def __init__(self, data, step, db_conn=None):
+        self.step    = step
         self.db_conn = db_conn
 
         # Step 1:
