@@ -55,4 +55,10 @@
     flex-direction: row;
     column-gap: 20px;
   }
+
+  .new-strain-container {
+    border: 2px dashed var(--border-color);
+    border-radius: var(--border-radius);
+    padding: 10px;
+  }
 }
