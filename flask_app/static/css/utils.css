@@ -100,24 +100,24 @@ form.simple-form {
       width: 100%;
     }
 
-    input[type="submit"] {
-      cursor: pointer;
-      padding: 0.7rem;
-      border: 1px solid rgb(8, 131, 149);
-      border-radius: var(--border-radius);
-      background-color: rgb(8, 131, 149);
-      color: white;
-
-      &:hover {
-        background-color: rgb(7, 110, 126);
-      }
-    }
-
     label span,
     label div {
       font-size: 14px;
       font-weight: 400;
       line-height: 2;
+    }
+  }
+
+  input[type="submit"] {
+    cursor: pointer;
+    padding: 0.7rem;
+    border: 1px solid rgb(8, 131, 149);
+    border-radius: var(--border-radius);
+    background-color: rgb(8, 131, 149);
+    color: white;
+
+    &:hover {
+      background-color: rgb(7, 110, 126);
     }
   }
 }
@@ -145,7 +145,7 @@ a.green-button {
   }
 }
 
-a.white-button {
+.white-button {
   display: inline-block;
   padding: 0.7rem;
   border: 1px solid rgb(8, 131, 149);

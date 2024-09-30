@@ -61,4 +61,29 @@
     border-radius: var(--border-radius);
     padding: 10px;
   }
+
+  .file-upload-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    column-gap: 10px;
+    background-color: var(--light-blue);
+    border-radius: var(--border-radius);
+    padding: 20px;
+    margin-top: 10px;
+
+    .instructions {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .hint {
+      opacity: 0.6;
+      font-size: 14px;
+    }
+
+    .upload-button {
+      cursor: pointer;
+    }
+  }
 }

@@ -1,7 +1,7 @@
 {% from 'pages/upload/step1/_form.html' import render_step1_form %}
 {% from 'pages/upload/step2/_form.html' import render_step2_form %}
 {% from 'pages/upload/step3/_form.html' import render_step3_form %}
-{# from 'pages/upload/step4/_form.html' import render_step4_form #}
+{% from 'pages/upload/step4/_form.html' import render_step4_form %}
 {# from 'pages/upload/step5/_form.html' import render_step5_form #}
 
 {% from 'pages/upload/step1/_status.html' import render_step1_status %}
@@ -104,8 +104,16 @@
         </div>
 
         <div class="step-content step-4 disabled">
-          <h2>Step 4: Upload data</h2>
-          {{ render_step4_status() }}
+          <h2>
+            Step 4: Upload data
+            {{ edit_link(submission.step, 4, 'upload_step4_page') }}
+          </h2>
+
+          {% if submission.step == 4 %}
+            {{ render_step4_form(submission) }}
+          {% else %}
+            {{ render_step4_status(submission) }}
+          {% endif %}
         </div>
 
         <div class="step-content step-5 disabled">
