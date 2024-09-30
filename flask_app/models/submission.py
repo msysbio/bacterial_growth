@@ -24,6 +24,7 @@ class Submission:
 
         self.bottle_count = data.get('bottle_count', None)
         self.plate_count  = data.get('plate_count', None)
+        self.vessel_count = data.get('vessel_count', None)
         self.column_count = data.get('column_count', None)
         self.row_count    = data.get('row_count', None)
 
@@ -68,6 +69,11 @@ class Submission:
         self.plate_count  = data['plate_count']
         self.column_count = data['column_count']
         self.row_count    = data['row_count']
+
+        if self.vessel_type == 'bottles':
+            self.vessel_count = self.bottle_count
+        elif self.vessel_type == 'plates':
+            self.vessel_count = self.plate_count
 
         self.timepoint_count = data['timepoint_count']
         self.technique_type  = data['technique_type']

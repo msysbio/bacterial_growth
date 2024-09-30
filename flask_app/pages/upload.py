@@ -1,7 +1,10 @@
-from flask import render_template, session, request, redirect, url_for
+import io
+
+from flask import render_template, session, request, redirect, url_for, send_file
 
 from flask_app.db import get_connection
 from flask_app.models.submission import Submission
+import flask_app.models.data_spreadsheet as data_spreadsheet
 from flask_app.forms.upload_step2_form import UploadStep2Form
 from flask_app.forms.upload_step3_form import UploadStep3Form
 
@@ -62,6 +65,26 @@ def upload_step3_page():
         if request.method == 'POST':
             submission.update_study_design(form.data)
             session['submission'] = submission._asdict()
+
+            metabolite_names = [name for (id, name) in submission.fetch_metabolites()]
+            taxa_names       = [name for (id, name) in submission.fetch_strains()]
+
+            spreadsheet = data_spreadsheet.create_excel(
+                submission.technique_type,
+                metabolite_names,
+                submission.vessel_type,
+                submission.vessel_count,
+                submission.column_count,
+                submission.row_count,
+                submission.timepoint_count,
+                taxa_names,
+            )
+
+            return send_file(
+                io.BytesIO(spreadsheet),
+                as_attachment=True,
+                download_name=f"template_data.xlsx",
+            )
 
             return redirect(url_for('upload_step3_page'))
 
