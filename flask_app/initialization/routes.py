@@ -23,6 +23,11 @@ def init_routes(app):
     app.add_url_rule("/upload/4", view_func=upload_pages.upload_step4_page, methods=["GET", "POST"])
 
     app.add_url_rule("/upload/study_template.xlsx", view_func=upload_pages.upload_study_template_xlsx)
+    app.add_url_rule(
+        "/upload/spreadsheet_preview",
+        view_func=upload_pages.upload_spreadsheet_preview_fragment,
+        methods=["POST"],
+    )
 
     app.add_url_rule("/study/<string:studyId>",     view_func=study_pages.study_show_page)
     app.add_url_rule("/study/<string:studyId>.zip", view_func=study_pages.study_download_page)

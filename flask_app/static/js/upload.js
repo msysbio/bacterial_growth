@@ -6,14 +6,14 @@ $(document).ready(function() {
   let $step4 = $page.find('.step-content.step-4');
 
   // Show form corresponding to currently selected submission type
-  show_forms($step1.find('.js-submission-type').val());
+  show_step1_forms($step1.find('.js-submission-type').val());
 
   // Show form when submission type changes
   $step1.on('change', '.js-submission-type', function() {
     let $select        = $(this);
     let submissionType = $select.val();
 
-    show_forms(submissionType);
+    show_step1_forms(submissionType);
   });
 
   let $multipleStrainSelect = $step2.find('.js-multiple-strain-select');
@@ -111,13 +111,14 @@ $(document).ready(function() {
     $input[0].files = e.originalEvent.dataTransfer.files;
 
     $(this).removeClass('drop-hover');
-    $form.trigger('submit');
+    submit_excel_form($form);
   });
-  $step4.on('change', 'form', function(e) {
-    $form.trigger('submit');
+  $step4.on('change', 'input[type=file]', function(e) {
+    let $form = $(this).parents('form');
+    submit_excel_form($form);
   });
 
-  function show_forms(submissionType) {
+  function show_step1_forms(submissionType) {
     $forms = $step1.find('.submission-forms form');
     $forms.addClass('hidden');
 
@@ -196,5 +197,41 @@ $(document).ready(function() {
 
     $step3form.find('.vessel-count').addClass('hidden');
     $step3form.find(`.vessel-${vesselType}`).removeClass('hidden');
+  }
+
+  function submit_excel_form($form) {
+    let url        = $form.prop('action')
+    let $preview   = $form.find('.js-preview');
+    let $fileInput = $form.find('input[type=file]');
+    let formData   = new FormData();
+    let file       = $fileInput[0].files[0];
+
+    formData.append("file", file, file.name);
+
+    $.ajax({
+      type: 'POST',
+      url: url,
+      data: formData,
+      contentType: false,
+      processData: false,
+      success: function(response) {
+        $preview.html(response);
+
+        $preview.find('select').on('change', function() {
+          let $select       = $(this);
+          let selectedSheet = $select.val();
+
+          // TODO reusable util
+          $sheets = $preview.find('.js-sheet');
+          $sheets.addClass('hidden');
+
+          if (selectedSheet != '') {
+            $sheets.filter(`.js-sheet-${selectedSheet}`).removeClass('hidden');
+          }
+        });
+
+        $preview.find('select').trigger('change');
+      }
+    })
   }
 });

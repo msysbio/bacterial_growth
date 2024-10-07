@@ -1,11 +1,16 @@
 import io
+import os
 
 from flask import render_template, session, request, redirect, url_for, send_file
+import humanize
 
 from flask_app.db import get_connection
+
 from flask_app.models.submission import Submission
 import flask_app.models.data_spreadsheet as data_spreadsheet
 import flask_app.models.study_spreadsheet as study_spreadsheet
+import flask_app.models.spreadsheet_preview as spreasheet_preview
+
 from flask_app.forms.upload_step2_form import UploadStep2Form
 from flask_app.forms.upload_step3_form import UploadStep3Form
 
@@ -138,3 +143,17 @@ def upload_step4_page():
             submission=submission,
         )
 
+
+def upload_spreadsheet_preview_fragment():
+    file = request.files['file']
+    sheets = spreasheet_preview.generate_preview(file)
+
+    file_length = humanize.naturalsize(file.seek(0, os.SEEK_END))
+    file.seek(0, os.SEEK_SET)
+
+    return render_template(
+        "pages/upload/step4/spreadsheet_preview.html",
+        file=file,
+        file_length=file_length,
+        sheets=sheets
+    )

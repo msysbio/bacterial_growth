@@ -1,0 +1,21 @@
+{% from 'utils/_dataframe.html' import render_dataframe %}
+
+<div class="form-row">
+  <span class="icon">📄 </span>
+  {{ file.filename }}
+  {{ file_length }}
+</div>
+
+<div class="form-row">
+  <select class="form-input-blue form-input-full">
+    {% for name in sheets.keys(): %}
+      <option>{{ name }}</option>
+    {% endfor %}
+  </select>
+</div>
+
+{% for (name, sheet) in sheets.items() %}
+  <div class="form-row hidden dataframe-container js-sheet js-sheet-{{ name }}">
+    {{ render_dataframe(sheet) }}
+  </div>
+{% endfor %}

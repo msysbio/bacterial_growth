@@ -16,7 +16,7 @@
           class="simple-form"
           enctype="multipart/form-data"
           method="POST"
-          action="{{ url_for('upload_step4_page', type="data") }}">
+          action="{{ url_for('upload_spreadsheet_preview_fragment') }}">
         <div class="form-row full">
           <div class="file-upload-container full js-file-upload">
             <img
@@ -40,6 +40,9 @@
             type="submit"
             class="form-input-full"
             value="Save uploaded files" />
+
+        <div class="preview js-preview">
+        </div>
       </form>
     </div>
 
@@ -58,7 +61,7 @@
           class="simple-form"
           enctype="multipart/form-data"
           method="POST"
-          action="{{ url_for('upload_step4_page', type="study") }}">
+          action="{{ url_for('upload_spreadsheet_preview_fragment') }}">
         <div class="form-row full">
           <div class="file-upload-container full js-file-upload">
             <img
@@ -82,6 +85,9 @@
             type="submit"
             class="form-input-full"
             value="Save uploaded files" />
+
+        <div class="preview js-preview">
+        </div>
       </form>
     </div>
   </div>
