@@ -3,6 +3,7 @@ $(document).ready(function() {
   let $step1 = $page.find('.step-content.step-1');
   let $step2 = $page.find('.step-content.step-2');
   let $step3 = $page.find('.step-content.step-3');
+  let $step4 = $page.find('.step-content.step-4');
 
   // Show form corresponding to currently selected submission type
   show_forms($step1.find('.js-submission-type').val());
@@ -93,6 +94,28 @@ $(document).ready(function() {
   });
 
   update_vessel_count_inputs();
+
+  $step4.on('dragover', '.js-file-upload', function(e) {
+    e.preventDefault();
+    $(this).addClass('drop-hover');
+  });
+  $step4.on('dragleave', '.js-file-upload', function(e) {
+    e.preventDefault();
+    $(this).removeClass('drop-hover');
+  });
+  $step4.on('drop', '.js-file-upload', function(e) {
+    e.preventDefault();
+
+    let $form = $(this).parents('form');
+    let $input = $form.find('input[type=file]')
+    $input[0].files = e.originalEvent.dataTransfer.files;
+
+    $(this).removeClass('drop-hover');
+    $form.trigger('submit');
+  });
+  $step4.on('change', 'form', function(e) {
+    $form.trigger('submit');
+  });
 
   function show_forms(submissionType) {
     $forms = $step1.find('.submission-forms form');

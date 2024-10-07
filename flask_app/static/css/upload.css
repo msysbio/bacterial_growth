@@ -63,14 +63,20 @@
   }
 
   .file-upload-container {
+    box-sizing: border-box;
     display: flex;
     justify-content: center;
     align-items: center;
     column-gap: 10px;
     background-color: var(--light-blue);
     border-radius: var(--border-radius);
-    padding: 20px;
+    padding: 16px;
     margin-top: 10px;
+    border: 2px solid var(--light-blue);
+
+    &.drop-hover {
+      border: 2px dashed var(--border-color);
+    }
 
     .instructions {
       display: flex;
