@@ -6,6 +6,9 @@ def init_config(app):
     log_level = os.getenv('LOG_LEVEL', None)
     timing    = os.getenv('TIME')
 
+    # 200MiB max size
+    app.config['MAX_CONTENT_LENGTH'] = 200 * 1024 * 1024
+
     if app_env == 'development':
         app.config.update(
             DEBUG=True,

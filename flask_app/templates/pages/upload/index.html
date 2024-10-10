@@ -110,7 +110,7 @@
           </h2>
 
           {% if submission.step == 4 %}
-            {{ render_step4_form(submission) }}
+            {{ render_step4_form(submission, errors) }}
           {% else %}
             {{ render_step4_status(submission) }}
           {% endif %}

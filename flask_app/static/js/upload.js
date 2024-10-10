@@ -64,12 +64,7 @@ $(document).ready(function() {
 
   $step2.on('click', '.js-remove-new-strain', function(e) {
     e.preventDefault();
-
-    let $newStrain2 = $(e.currentTarget).parents('.form-row.js-new-strain-row-2');
-    let $newStrain1 = $newStrain2.prev('.form-row.js-new-strain-row-1');
-
-    $newStrain1.remove();
-    $newStrain2.remove();
+    $(e.currentTarget).parents('.js-new-strain-container').remove();
   });
 
   let $metabolitesSelect = $('.js-metabolites-select');
@@ -106,16 +101,16 @@ $(document).ready(function() {
   $step4.on('drop', '.js-file-upload', function(e) {
     e.preventDefault();
 
-    let $form = $(this).parents('form');
-    let $input = $form.find('input[type=file]')
+    let $container = $(this).parents('.js-upload-container');
+    let $input = $container.find('input[type=file]')
     $input[0].files = e.originalEvent.dataTransfer.files;
 
     $(this).removeClass('drop-hover');
-    submit_excel_form($form);
+    submit_excel_form($container);
   });
   $step4.on('change', 'input[type=file]', function(e) {
-    let $form = $(this).parents('form');
-    submit_excel_form($form);
+    let $container = $(this).parents('.js-upload-container');
+    submit_excel_form($container);
   });
 
   function show_step1_forms(submissionType) {
@@ -157,7 +152,7 @@ $(document).ready(function() {
   function add_new_strain_form($addStrainButton, newStrain) {
     // We need to prepend all names and ids with "new-strain-N" for uniqueness:
 
-    let newStrainIndex = $page.find('.form-row.js-new-strain-row-1').length;
+    let newStrainIndex = $page.find('.js-new-strain-container').length;
     let templateHtml = $page.find('template.new-strain').html();
     let $newForm = $(templateHtml);
 
@@ -199,10 +194,10 @@ $(document).ready(function() {
     $step3form.find(`.vessel-${vesselType}`).removeClass('hidden');
   }
 
-  function submit_excel_form($form) {
-    let url        = $form.prop('action')
-    let $preview   = $form.find('.js-preview');
-    let $fileInput = $form.find('input[type=file]');
+  function submit_excel_form($container) {
+    let url        = $container.prop('action')
+    let $preview   = $container.find('.js-preview');
+    let $fileInput = $container.find('input[type=file]');
     let formData   = new FormData();
     let file       = $fileInput[0].files[0];
 
@@ -210,8 +205,9 @@ $(document).ready(function() {
 
     $.ajax({
       type: 'POST',
-      url: url,
+      url: '/upload/spreadsheet_preview',
       data: formData,
+      cache: false,
       contentType: false,
       processData: false,
       success: function(response) {

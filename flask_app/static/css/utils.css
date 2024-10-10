@@ -29,6 +29,13 @@
   border-left: 4px solid #d02631;
 }
 
+.error-message-list {
+  background: pink;
+  border-left: 4px solid #d02631;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
 table.simple-table {
   border-collapse: collapse;
 

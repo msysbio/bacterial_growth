@@ -11,6 +11,8 @@ import flask_app.models.data_spreadsheet as data_spreadsheet
 import flask_app.models.study_spreadsheet as study_spreadsheet
 import flask_app.models.spreadsheet_preview as spreasheet_preview
 
+from flask_app.lib.upload_validation import validate_upload
+
 from flask_app.forms.upload_step2_form import UploadStep2Form
 from flask_app.forms.upload_step3_form import UploadStep3Form
 
@@ -137,10 +139,18 @@ def upload_study_template_xlsx():
 def upload_step4_page():
     with get_connection() as conn:
         submission = Submission(session.get('submission', {}), step=4, db_conn=conn)
+        errors = []
+
+        if request.method == 'POST':
+            study_template = request.files['study-template'].read()
+            data_template = request.files['data-template'].read()
+
+            errors = validate_upload(study_template, data_template)
 
         return render_template(
             "pages/upload/index.html",
             submission=submission,
+            errors=errors,
         )
 
 

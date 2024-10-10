@@ -1,22 +1,25 @@
-{% macro render_step4_form(submission) %}
+{% from 'utils/_form_errors.html' import render_form_errors %}
 
-  <div class="columns">
-    <div class="column" style="width: 50%;">
-      <h3>1. Upload Data Template</h3>
+{% macro render_step4_form(submission, errors) %}
 
-      <p>
-        Upload below the Excel Data file once completed with all the data
-        measured in your study according to the instructions provided in
-        <strong>Step 3</strong>. Remember that no modifications are allowed
-        after you submit the data. Please double check below that all the
-        cells are correct.
-      </p>
+  <form
+      class="simple-form"
+      enctype="multipart/form-data"
+      method="POST"
+      action="{{ url_for('upload_step4_page') }}">
 
-      <form
-          class="simple-form"
-          enctype="multipart/form-data"
-          method="POST"
-          action="{{ url_for('upload_spreadsheet_preview_fragment') }}">
+    <div class="columns">
+      <div class="column js-upload-container" style="width: 50%;">
+        <h3>1. Upload Data Template</h3>
+
+        <p>
+          Upload below the Excel Data file once completed with all the data
+          measured in your study according to the instructions provided in
+          <strong>Step 3</strong>. Remember that no modifications are allowed
+          after you submit the data. Please double check below that all the
+          cells are correct.
+        </p>
+
         <div class="form-row full">
           <div class="file-upload-container full js-file-upload">
             <img
@@ -31,37 +34,26 @@
 
             <label class="upload-button white-button">
               Browse files
-              <input type="file" name="data-template" class="hidden" />
+              <input type="file" name="data-template" class="hidden" accept=".xls,.xlsx" />
             </label>
           </div>
         </div>
 
-        <input
-            type="submit"
-            class="form-input-full"
-            value="Save uploaded files" />
-
         <div class="preview js-preview">
         </div>
-      </form>
-    </div>
+      </div>
 
-    <div class="column" style="width: 50%;">
-      <h3>2. Upload Study Template</h3>
+      <div class="column js-upload-container" style="width: 50%;">
+        <h3>2. Upload Study Template</h3>
 
-      <p>
-        Upload below the Excel Study file once completed with all the data
-        measured in your study according to the instructions provided in the
-        <strong>Step 3</strong>. Remember that no modifications are allowed
-        after you submit the data. Please double check below that all the
-        cells are correct.
-      </p>
+        <p>
+          Upload below the Excel Study file once completed with all the data
+          measured in your study according to the instructions provided in the
+          <strong>Step 3</strong>. Remember that no modifications are allowed
+          after you submit the data. Please double check below that all the
+          cells are correct.
+        </p>
 
-      <form
-          class="simple-form"
-          enctype="multipart/form-data"
-          method="POST"
-          action="{{ url_for('upload_spreadsheet_preview_fragment') }}">
         <div class="form-row full">
           <div class="file-upload-container full js-file-upload">
             <img
@@ -76,20 +68,22 @@
 
             <label class="upload-button white-button">
               Browse files
-              <input type="file" name="study-template" class="hidden" />
+              <input type="file" name="study-template" class="hidden" accept=".xls,.xlsx" />
             </label>
           </div>
         </div>
 
-        <input
-            type="submit"
-            class="form-input-full"
-            value="Save uploaded files" />
-
         <div class="preview js-preview">
         </div>
-      </form>
+      </div>
     </div>
-  </div>
+
+    {{ render_form_errors(errors) }}
+
+    <input
+        type="submit"
+        class="form-input-full"
+        value="Save uploaded files" />
+  </form>
 
 {% endmacro %}
