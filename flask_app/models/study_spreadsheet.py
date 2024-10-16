@@ -1,9 +1,3 @@
-import pandas as pd
-from openpyxl import Workbook
-from openpyxl.styles import Font
-from openpyxl.comments import Comment
-from openpyxl.utils import get_column_letter
-from openpyxl.styles import Alignment
 from tempfile import NamedTemporaryFile
 import openpyxl
 
@@ -14,7 +8,7 @@ def create_excel(
         all_strain_data,
         create_private_project_id,
         unique_study_id_val,
-    ):
+):
     """
     keywords:        NCBI Taxonomy Ids of taxa with exact match to a NCBI Taxonomy Id
     list_taxa_id:    names of the taxa with exact NCBI Taxonomy ids
@@ -54,9 +48,9 @@ def create_excel(
             sheet.cell(row=k+i+2, column=5, value=description)
 
     sheet_study = wb['STUDY']
-    if create_private_project_id != None:
+    if create_private_project_id is not None:
         sheet_study.cell(row=2, column=1, value=create_private_project_id)
-    if unique_study_id_val != None:
+    if unique_study_id_val is not None:
         sheet_study.cell(row=2, column=2, value=unique_study_id_val)
 
     temp_file = NamedTemporaryFile(delete=False, suffix='.xlsx')

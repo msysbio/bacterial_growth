@@ -91,7 +91,7 @@ def upload_step3_page():
             return send_file(
                 io.BytesIO(spreadsheet),
                 as_attachment=True,
-                download_name=f"template_data.xlsx",
+                download_name="template_data.xlsx",
             )
 
             return redirect(url_for('upload_step3_page'))
@@ -132,7 +132,7 @@ def upload_study_template_xlsx():
         return send_file(
             io.BytesIO(spreadsheet),
             as_attachment=True,
-            download_name=f"template_study.xlsx",
+            download_name="template_study.xlsx",
         )
 
 

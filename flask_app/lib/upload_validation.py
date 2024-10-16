@@ -76,30 +76,27 @@ def parse_ex_to_yaml(LOCAL_DIRECTORY_YAML, template_excel):
     """
 
     # Read the completed Excel file
-    df_excel_1 = pd.read_excel(template_excel, engine='openpyxl',sheet_name='STUDY')
-    df_excel_2 = pd.read_excel(template_excel, engine='openpyxl' ,sheet_name='EXPERIMENTS')
-    df_excel_3 = pd.read_excel(template_excel, engine='openpyxl',sheet_name='COMPARTMENTS')
-    df_excel_4 = pd.read_excel(template_excel, engine='openpyxl',sheet_name='COMMUNITY_MEMBERS')
-    df_excel_5 = pd.read_excel(template_excel, engine='openpyxl',sheet_name='COMMUNITIES')
-    df_excel_6 = pd.read_excel(template_excel, engine='openpyxl',sheet_name='PERTURBATIONS')
+    df_excel_1 = pd.read_excel(template_excel, engine='openpyxl', sheet_name='STUDY')
+    df_excel_2 = pd.read_excel(template_excel, engine='openpyxl', sheet_name='EXPERIMENTS')
+    df_excel_3 = pd.read_excel(template_excel, engine='openpyxl', sheet_name='COMPARTMENTS')
+    df_excel_4 = pd.read_excel(template_excel, engine='openpyxl', sheet_name='COMMUNITY_MEMBERS')
+    df_excel_5 = pd.read_excel(template_excel, engine='openpyxl', sheet_name='COMMUNITIES')
+    df_excel_6 = pd.read_excel(template_excel, engine='openpyxl', sheet_name='PERTURBATIONS')
 
     # Convert start_time and end_time to strings
     df_excel_6['Perturbation_StartTime'] = df_excel_6['Perturbation_StartTime'].astype(str)
     df_excel_6['Perturbation_EndTime'] = df_excel_6['Perturbation_EndTime'].astype(str)
-
 
     # Initialize dictionaries for each prefix
     data_dicts = {}
 
     data_dicts = {col: df_excel_1[col].tolist() for col in df_excel_1.columns}
 
-
     data_dicts2 = {}
     data_dicts2 = {col: df_excel_2[col].tolist() for col in df_excel_2.columns}
 
     data_dicts3 = {}
     data_dicts3 = {col: df_excel_3[col].tolist() for col in df_excel_3.columns}
-
 
     data_dicts4 = {}
     data_dicts4 = {col: df_excel_4[col].tolist() for col in df_excel_4.columns}
@@ -109,6 +106,7 @@ def parse_ex_to_yaml(LOCAL_DIRECTORY_YAML, template_excel):
 
     data_dicts6 = {}
     data_dicts6 = {col: df_excel_6[col].tolist() for col in df_excel_6.columns}
+
     # Convert DataFrame to YAML
     yaml_data = yaml.dump(data_dicts)
     yaml_data2 = yaml.dump(data_dicts2)
@@ -116,7 +114,6 @@ def parse_ex_to_yaml(LOCAL_DIRECTORY_YAML, template_excel):
     yaml_data4 = yaml.dump(data_dicts4)
     yaml_data5 = yaml.dump(data_dicts5)
     yaml_data6 = yaml.dump(data_dicts6)
-
 
     template_filename_yaml_STUDY = os.path.join(LOCAL_DIRECTORY_YAML, 'STUDY.yaml')
     template_filename_yaml_EXPERIMENTS = os.path.join(LOCAL_DIRECTORY_YAML, 'EXPERIMENTS.yaml')
@@ -132,7 +129,6 @@ def parse_ex_to_yaml(LOCAL_DIRECTORY_YAML, template_excel):
             os.remove(yamlfile)
     print("\n\n\n\n\n  tmp yamls")
     print(os.listdir(LOCAL_DIRECTORY_YAML))
-
 
     # Write YAML data to a file
     with open(template_filename_yaml_STUDY, "w") as yaml_file:
@@ -159,4 +155,3 @@ def parse_ex_to_yaml(LOCAL_DIRECTORY_YAML, template_excel):
 def load_yaml(file_path):
     with open(file_path, 'r') as file:
         return yaml.safe_load(file)
-

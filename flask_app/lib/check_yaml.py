@@ -1,9 +1,7 @@
 import os
 import yaml
-from datetime import datetime
 
 import pandas as pd
-import numpy as np
 
 # TODO temporary
 root_folder = os.path.abspath(os.path.dirname(__file__) + '/../')
@@ -15,6 +13,7 @@ COMPARTMENT_yaml = LOCAL_DIRECTORY + 'COMPARTMENTS.yaml'
 COMMUNITY_MEM_yaml = LOCAL_DIRECTORY + 'COMMUNITY_MEMBERS.yaml'
 COMMUNITIES_yaml = LOCAL_DIRECTORY + 'COMMUNITIES.yaml'
 PERTURBATION_yaml = LOCAL_DIRECTORY + 'PERTURBATIONS.yaml'
+
 
 # functon that loads a yaml file  into a df
 def load_yaml(file_path):
@@ -42,6 +41,7 @@ def test_study_yaml(data):
                 errors.append(f"Study: Column '{column}' must be of type string. No blank cells allowed.")
     return errors
 
+
 def test_experiments_yaml(data):
     """
     Function that test the experiments yaml dataframe, checking that all the mandatory columns are not .nan or in the right format
@@ -63,7 +63,9 @@ def test_experiments_yaml(data):
         else:
             if not (pd.api.types.is_string_dtype(df[column])):
                 errors.append(f"Experiments: Column '{column}' must be of type string. No blank cells allowed.")
+
     return errors
+
 
 def test_compartments_yaml(data):
     """
@@ -115,13 +117,14 @@ def test_comu_members_yaml(data):
                 errors.append(f"Community members: Column '{column}' must be of  must a numeric value. No blank cells allowed.")
         elif column == 'Description':
             # look what is the data type of description when is blank or string
-            #if not (pd.api.types.is_string_dtype(df[column]) or pd.api.types.is_float_dtype(df[column])):
+            # if not (pd.api.types.is_string_dtype(df[column]) or pd.api.types.is_float_dtype(df[column])):
             #    errors.append(f"Community: Column '{column}' must be of type string or blank.")
             pass
         else:
             if not (pd.api.types.is_string_dtype(df[column])):
                 errors.append(f"Community members: Column '{column}' must be of type string. No blank cells allowed.")
     return errors
+
 
 def test_communities_yaml(data):
     """
@@ -139,6 +142,7 @@ def test_communities_yaml(data):
             errors.append(f"Communities: Column '{column}' must be of type string. No blank cells allowed.")
 
     return errors
+
 
 def test_perturbation_yaml(data):
     """
@@ -179,6 +183,5 @@ def test_perturbation_yaml(data):
         logic_check = df['Perturbation_EndTime'] > df['Perturbation_StartTime']
         if not logic_check.all():
             errors.append("Perturbations: 'Perturbation_EndTime' must be bigger than 'Perturbation_StartTime'.")
-
 
     return errors

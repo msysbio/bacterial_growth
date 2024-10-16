@@ -20,6 +20,7 @@ def metabolite_show_page(cheb_id):
             numeric_id=numeric_id
         )
 
+
 # TODO (2024-09-26) Duplicates taxa completion a lot, try to make completion
 # model generic
 def metabolites_completion_json():
