@@ -3,7 +3,7 @@ import yaml
 
 import pandas as pd
 
-from flask_app.lib.check_yaml import test_study_yaml, test_experiments_yaml, test_compartments_yaml, test_comu_members_yaml, test_communities_yaml, test_perturbation_yaml
+from flask_app.legacy.check_yaml import test_study_yaml, test_experiments_yaml, test_compartments_yaml, test_comu_members_yaml, test_communities_yaml, test_perturbation_yaml
 
 # TODO Temporary:
 root_folder = os.path.abspath(os.path.dirname(__file__) + '/../../')

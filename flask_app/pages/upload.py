@@ -11,7 +11,8 @@ import flask_app.models.data_spreadsheet as data_spreadsheet
 import flask_app.models.study_spreadsheet as study_spreadsheet
 import flask_app.models.spreadsheet_preview as spreasheet_preview
 
-from flask_app.lib.upload_validation import validate_upload
+from flask_app.legacy.upload_validation import validate_upload
+from flask_app.legacy.populate_db import save_submission_to_database
 
 from flask_app.forms.upload_step2_form import UploadStep2Form
 from flask_app.forms.upload_step3_form import UploadStep3Form
@@ -146,6 +147,13 @@ def upload_step4_page():
             data_template = request.files['data-template'].read()
 
             errors = validate_upload(study_template, data_template)
+
+            if len(errors) == 0:
+                (study_id, errors, errors_logic, studyUniqueID, projectUniqueID, project_id) = \
+                    save_submission_to_database(conn, submission, data_template)
+
+                if len(errors) == 0:
+                    return redirect(url_for('upload_step5_page'))
 
         return render_template(
             "pages/upload/index.html",

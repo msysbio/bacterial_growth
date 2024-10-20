@@ -3,7 +3,7 @@ import re
 import plotly.express as px
 import numpy as np
 
-from flask_app.lib.hack import get_chart_data
+from flask_app.legacy.chart_data import get_chart_data
 from flask_app.models.experiment_df_wrapper import ExperimentDfWrapper
 
 PLOTLY_TEMPLATE = 'plotly_white'
