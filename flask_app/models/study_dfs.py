@@ -162,7 +162,10 @@ def get_experiments(studyId, conn):
         CompartmentsPerExperiment AS CP ON E.experimentUniqueId = CP.experimentUniqueId
     WHERE
         E.studyId = %(studyId)s
-        AND BR.controls = 1
+        -- Note: Need to consider how to refer to controls while *uploading*,
+        -- data spreadsheet breaks
+        --
+        -- AND BR.controls = 1
     GROUP BY
         E.experimentId,
         E.experimentUniqueId,

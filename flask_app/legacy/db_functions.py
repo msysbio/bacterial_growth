@@ -1,3 +1,4 @@
+import math
 import os
 import sys
 import tomllib
@@ -20,53 +21,16 @@ def getStudyID(conn):
     Study_ID = "SMGDB{:08d}".format(next_number)
     return Study_ID
 
-def getChebiId(metabolite):
+def getChebiId(conn, metabolite):
     phrase = f"SELECT cheb_id FROM Metabolites WHERE metabo_name = '{metabolite}';"
-    res = execute(phrase)
+    res = conn.execute(sql.text(phrase)).all()
 
     if len(res) == 0: return None
 
     return res[0][0]
 
-# TODO (2024-10-20) Need to get this to work with sqlalchemy
-def execute(phrase):
-    """
-    This function create a connection to the database and execute a command.
-
-    :param phrase: str SQL sentence to execute
-    :return: list of str received from the database
-    """
-    try:
-        config = tomllib.loads(Path('config/database.toml').read_text())
-        env_config = config[APP_ENV]
-
-        cnx = mysql.connector.connect(
-            **env_config,
-        )
-
-        cursor = cnx.cursor()
-        cursor.execute(phrase)
-        # return cursor
-        res = []
-        for row in cursor:
-            res.append(row)
-        # return res
-        # Fetch and handle warnings
-        warnings = cursor.fetchwarnings()
-        if warnings:
-            for warning in warnings:
-                print("\t\t ** Warning - ", warning)
-
-        cursor.close()
-        cnx.commit()
-        cnx.close()
-        return res
-
-    except mysql.connector.Error as err:
-        print("\nSomething went wrong: {}".format(err),'\n')
-        return err
-
-def addRecord(table, args):
+# TODO (2024-10-20) This just raises errors, they need to be caught properly
+def addRecord(conn, table, args):
     """
     Add new entry into the db
 
@@ -76,22 +40,25 @@ def addRecord(table, args):
     """
     # Insert into table
     fields, values = getInsertFieldsValues(args)
-    phrase = "INSERT IGNORE INTO " +table+" "+fields+" VALUES "+values
-    res = execute(phrase)
+    phrase = "INSERT INTO " +table+" "+fields+" VALUES "+values
+    res = conn.execute(sql.text(phrase))
 
     # Get the name of the primary key field
     phrase = "SHOW KEYS FROM "+table+" WHERE Key_name = 'PRIMARY'"
-    res = execute(phrase)
+    res = conn.execute(sql.text(phrase)).all()
     pk = res[0][4]
 
     # Get the value of the primary key (this will return the value both if it was inserted or ignored)
     where_clause = getWhereClause(args)
     phrase = "SELECT "+pk+" FROM "+table+" "+where_clause
-    res = execute(phrase)
+    res = conn.execute(sql.text(phrase)).all()
+
     if not res:
-        last_id = 'WARNING'
+        raise Exception("No last_id returned")
     else:
         last_id = res[0][0]
+
+    conn.commit()
 
     return last_id
 
@@ -111,8 +78,12 @@ def getInsertFieldsValues(args):
     fields = "("
     values = "("
     for key, val in args.items():
-        fields = fields + key + ','
-        values = values + "'" +str(val) + "',"
+        if type(val) is float and math.isnan(val):
+            fields = fields + key + ','
+            values = values + "NULL,"
+        else:
+            fields = fields + key + ','
+            values = values + "'" +str(val) + "',"
     fields = fields[:-1] + ')'
     values = values[:-1] + ')'
     return [fields, values]
@@ -129,7 +100,7 @@ def getWhereClause(args):
     else:
         clause = "WHERE ("
         for key, val in args.items():
-            if val == 'null':
+            if val == 'null' or (type(val) is float and math.isnan(val)):
                 clause = clause + key + " IS NULL AND "
             elif val == 'not null':
                 clause = clause + key + " IS NOT NULL AND "

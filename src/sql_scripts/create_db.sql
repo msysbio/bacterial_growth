@@ -15,6 +15,9 @@ CREATE TABLE IF NOT EXISTS Study (
     studyURL VARCHAR(100) DEFAULT NULL,
     studyUniqueID VARCHAR(100) DEFAULT NULL,
     PRIMARY KEY (studyId),
+
+    -- TODO: this should not be unique and it should definitely not be unique
+    -- only on the first 255 characters
     UNIQUE (studyDescription(255))
 );
 
@@ -47,7 +50,10 @@ CREATE TABLE IF NOT EXISTS Compartments (
     initialTemperature FLOAT(7,2) DEFAULT 0,
     carbonSource BOOLEAN DEFAULT FALSE,
     mediaNames VARCHAR(100) NOT NULL,
+
+    -- TODO: this should be nullable:
     mediaLink VARCHAR(100) NOT NULL,
+
     FOREIGN KEY (studyId) REFERENCES Study (studyId) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
@@ -146,7 +152,10 @@ CREATE TABLE BioReplicatesMetadata (
     bioreplicateId VARCHAR(100),
     biosampleLink TEXT,
     bioreplicateDescrition TEXT,
+
+    -- TODO: This can't be unique
     PRIMARY KEY (bioreplicateId),
+
     UNIQUE (studyId, bioreplicateUniqueId),
     FOREIGN KEY (bioreplicateUniqueId) REFERENCES BioReplicatesPerExperiment (bioreplicateUniqueId)  ON UPDATE CASCADE ON DELETE CASCADE,
     FOREIGN KEY (studyId) REFERENCES Study (studyId)  ON UPDATE CASCADE ON DELETE CASCADE
@@ -177,12 +186,18 @@ CREATE TABLE IF NOT EXISTS Perturbation (
 CREATE TABLE IF NOT EXISTS MetabolitePerExperiment (
     studyId VARCHAR(100),
     experimentUniqueId INT,
+
+    -- TODO Synthetic_Human_Gut_2 too long (encoding issue?)
     experimentId VARCHAR(100) NOT NULL,
+
     bioreplicateUniqueId INT,
     bioreplicateId VARCHAR(100),
     metabo_name VARCHAR(255) DEFAULT NULL,
     cheb_id VARCHAR(255),
-    PRIMARY KEY  (experimentId,bioreplicateId, cheb_id),
+
+    -- TODO: this can't be primary key, the experiment id is not unique
+    PRIMARY KEY (experimentId, bioreplicateId, cheb_id),
+
     FOREIGN KEY (cheb_id) REFERENCES Metabolites(cheb_id) ON UPDATE CASCADE ON DELETE CASCADE,
     FOREIGN KEY (experimentUniqueId) REFERENCES Experiments(experimentUniqueId) ON UPDATE CASCADE ON DELETE CASCADE,
     FOREIGN KEY (studyId) REFERENCES Study (studyId) ON UPDATE CASCADE ON DELETE CASCADE

@@ -20,7 +20,7 @@ class ExperimentChartForm:
     def __init__(self, df_growth, df_reads, experiment):
         self.experiment_id    = experiment['experimentId']
         self.description      = experiment['experimentDescription']
-        self.bioreplicate_ids = experiment['bioreplicateIds'].split(',')
+        self.bioreplicate_ids = (experiment['bioreplicateIds'] or '').split(',')
 
         self.growth_data = ExperimentDfWrapper(df_growth, self.experiment_id, self.bioreplicate_ids)
         self.reads_data = ExperimentDfWrapper(df_reads, self.experiment_id, self.bioreplicate_ids)

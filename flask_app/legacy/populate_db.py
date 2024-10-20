@@ -113,7 +113,7 @@ def save_submission_to_database(conn, submission, data_template):
 
             if len(study_filtered)>0:
                 print(study_filtered)
-                study_id = db.addRecord('Study', study_filtered)
+                study_id = db.addRecord(conn, 'Study', study_filtered)
 
             else:
                 print('You must introduce some study information')
@@ -131,7 +131,7 @@ def save_submission_to_database(conn, submission, data_template):
             project_filtered = {k: v for k, v in project.items() if v is not None}
 
             if len(project_filtered)>0:
-                    project_id = db.addRecord('Project', project_filtered)
+                    project_id = db.addRecord(conn, 'Project', project_filtered)
                     print('\nProject ID: ', project_id)
             else:
                 print('You must introduce some study information')
@@ -159,7 +159,7 @@ def save_submission_to_database(conn, submission, data_template):
                     }
                 members_filtered = {k: v for k, v in members.items() if v is not None}
                 if len(members_filtered)>0:
-                    members_id = db.addRecord('Strains', members_filtered)
+                    members_id = db.addRecord(conn, 'Strains', members_filtered)
                     mem_id_list.append((mem_id,members_id))
                     mem_name_id_list.append((info_mem['Member_Name'][i],mem_id))
                     print('\n MEMBER UNIQUE ID: ', members_id)
@@ -191,7 +191,7 @@ def save_submission_to_database(conn, submission, data_template):
                     }
                 compartments_filtered = {k: v for k, v in compartments.items() if v is not None}
                 if len(compartments_filtered)>0:
-                    compartments_id = db.addRecord('Compartments', compartments_filtered)
+                    compartments_id = db.addRecord(conn, 'Compartments', compartments_filtered)
                     compartments_id_list.append((info_compart['Compartment_ID'][i], compartments_id))
                     print('\n COMPARTMENTS UNIQUE ID: ', compartments_id)
                 else:
@@ -210,7 +210,7 @@ def save_submission_to_database(conn, submission, data_template):
                 }
                 biologicalreplicates_filtered = {k: v for k, v in biologicalreplicates.items() if v is not None}
                 if len(biologicalreplicates_filtered)>0:
-                    biologicalReplicate_id = db.addRecord('Experiments', biologicalreplicates_filtered)
+                    biologicalReplicate_id = db.addRecord(conn, 'Experiments', biologicalreplicates_filtered)
                     biorep_id_list.append((info['Experiment_ID'][i],biologicalReplicate_id))
                     print('\nEXPERIMENT ID: ', biologicalReplicate_id)
                 else:
@@ -233,7 +233,7 @@ def save_submission_to_database(conn, submission, data_template):
                     }
                     comunities_filtered = {k: v for k, v in comunities.items() if v is not None}
                     if len(comunities_filtered)>0:
-                        comunities_id = db.addRecord('Community', comunities_filtered)
+                        comunities_id = db.addRecord(conn, 'Community', comunities_filtered)
                         comu_id_list.append((info_comu['Community_ID'][i],comunities_id))
                         print('\nCOMUNITY UNIQUE ID: ', comunities_id)
                     else:
@@ -276,7 +276,7 @@ def save_submission_to_database(conn, submission, data_template):
                     }
                 perturbation_filtered = {k: v for k, v in perturbations.items() if v is not None}
                 if len(perturbation_filtered)>0:
-                    perturbation_id=db.addRecord('Perturbation', perturbation_filtered)
+                    perturbation_id=db.addRecord(conn, 'Perturbation', perturbation_filtered)
 
         if 'Experiment_ID' in info:
             for i in range(num_experiment):
@@ -294,7 +294,7 @@ def save_submission_to_database(conn, submission, data_template):
                     }
                     comp_per_biorep_filtered = {t: v for t, v in comp_per_biorep.items() if v is not None}
                     if len(comp_per_biorep_filtered)>0:
-                        db.addRecord('CompartmentsPerExperiment', comp_per_biorep_filtered)
+                        db.addRecord(conn, 'CompartmentsPerExperiment', comp_per_biorep_filtered)
                 tech_biorep = stripping_method(info['Measurement_Technique'][i])
                 unit_biorep = stripping_method(info['Measurement_Technique'][i])
                 if len(tech_biorep) != len(unit_biorep):
@@ -311,7 +311,7 @@ def save_submission_to_database(conn, submission, data_template):
                     }
                     tech_per_biorep_filtered = {k: v for k, v in tech_per_biorep.items() if v is not None}
                     if len(tech_per_biorep_filtered)>0:
-                        db.addRecord('TechniquesPerExperiment', tech_per_biorep_filtered)
+                        db.addRecord(conn, 'TechniquesPerExperiment', tech_per_biorep_filtered)
 
                 rep_biorep = stripping_method(info['Biological_Replicate_IDs'][i])
                 rep_controls = stripping_method(str(info['Control'][i]))
@@ -355,7 +355,7 @@ def save_submission_to_database(conn, submission, data_template):
                         }
                         rep_per_biorep_filtered = {k: v for k, v in rep_per_biorep.items() if v is not None}
                         if len(rep_per_biorep_filtered)>0:
-                            rep_id = db.addRecord('BioReplicatesPerExperiment', rep_per_biorep_filtered)
+                            rep_id = db.addRecord(conn, 'BioReplicatesPerExperiment', rep_per_biorep_filtered)
                             rep_id_list.append((rep_biorep[j],rep_id))
 
                 for j in range(len(rep_biorep)):
@@ -364,7 +364,7 @@ def save_submission_to_database(conn, submission, data_template):
                     list_counts = counts_per_replicate.get(rep_biorep[j])
                     if list_metabo:
                         for k in list_metabo:
-                            cheb_id = db.getChebiId(k)
+                            cheb_id = db.getChebiId(conn, k)
                             metabo_rep = {
                                 'studyId': study_id,
                                 'experimentUniqueId': search_id(info['Experiment_ID'][i],biorep_id_list),
@@ -376,7 +376,7 @@ def save_submission_to_database(conn, submission, data_template):
                             }
                             metabo_rep_filtered = {k: v for k, v in metabo_rep.items() if v is not None}
                             if len(metabo_rep_filtered)>0:
-                                db.addRecord('MetabolitePerExperiment', metabo_rep_filtered)
+                                db.addRecord(conn, 'MetabolitePerExperiment', metabo_rep_filtered)
                     if list_abundances:
                         for h in list_abundances:
                             member_id = search_id(h,mem_name_id_list)
@@ -391,7 +391,7 @@ def save_submission_to_database(conn, submission, data_template):
                             }
                             abundance_filtered = {k: v for k, v in abundance.items() if v is not None}
                             if len(abundance_filtered)>0:
-                                db.addRecord('Abundances', abundance_filtered)
+                                db.addRecord(conn, 'Abundances', abundance_filtered)
                     if list_counts:
                         for m in list_counts:
                             member_id = search_id(m,mem_name_id_list)
@@ -406,7 +406,7 @@ def save_submission_to_database(conn, submission, data_template):
                             }
                             FC_counts_filtered = {k: v for k, v in FC_counts.items() if v is not None}
                             if len(FC_counts_filtered)>0:
-                                db.addRecord('FC_Counts', FC_counts_filtered)
+                                db.addRecord(conn, 'FC_Counts', FC_counts_filtered)
 
         if 'Biological_Replicate_id' in replicate_metadata:
             for i in range(num_rep_metadata):
@@ -419,7 +419,7 @@ def save_submission_to_database(conn, submission, data_template):
                 }
                 biorep_metadata_filtered = {k: v for k, v in biorep_metadata.items() if v is not None}
                 if len(biorep_metadata_filtered)>0:
-                    db.addRecord('BioReplicatesMetadata', biorep_metadata_filtered)
+                    db.addRecord(conn, 'BioReplicatesMetadata', biorep_metadata_filtered)
 
         return study_id, errors, errors_logic, study['studyUniqueID'],study['projectUniqueID'], project_id
 
