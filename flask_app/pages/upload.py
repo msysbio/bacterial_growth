@@ -167,3 +167,13 @@ def upload_spreadsheet_preview_fragment():
         file_length=file_length,
         sheets=sheets
     )
+
+
+def upload_step5_page():
+    with get_connection() as conn:
+        submission = Submission(session.get('submission', {}), step=5, db_conn=conn)
+
+        return render_template(
+            "pages/upload/index.html",
+            submission=submission,
+        )

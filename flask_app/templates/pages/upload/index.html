@@ -2,7 +2,7 @@
 {% from 'pages/upload/step2/_form.html' import render_step2_form %}
 {% from 'pages/upload/step3/_form.html' import render_step3_form %}
 {% from 'pages/upload/step4/_form.html' import render_step4_form %}
-{# from 'pages/upload/step5/_form.html' import render_step5_form #}
+{% from 'pages/upload/step5/_form.html' import render_step5_form %}
 
 {% from 'pages/upload/step1/_status.html' import render_step1_status %}
 {% from 'pages/upload/step2/_status.html' import render_step2_status %}
@@ -103,7 +103,12 @@
           {% endif %}
         </div>
 
-        <div class="step-content step-4 disabled">
+        {% set step4_classes = [
+          'active' if submission.step == 4,
+          'disabled' if submission.step < 4,
+        ]|join(' ') %}
+
+        <div class="step-content step-4 {{ step4_classes }}">
           <h2>
             Step 4: Upload data
             {{ edit_link(submission.step, 4, 'upload_step4_page') }}
@@ -116,9 +121,22 @@
           {% endif %}
         </div>
 
-        <div class="step-content step-5 disabled">
-          <h2>Step 5: Publish data</h2>
-          {{ render_step5_status() }}
+        {% set step5_classes = [
+          'active' if submission.step == 5,
+          'disabled' if submission.step < 5,
+        ]|join(' ') %}
+
+        <div class="step-content step-5 {{ step5_classes }}">
+          <h2>
+            Step 5: Publish data
+            {{ edit_link(submission.step, 5, 'upload_step5_page') }}
+          </h2>
+
+          {% if submission.step == 5 %}
+            {{ render_step5_form(submission) }}
+          {% else %}
+            {{ render_step5_status(submission) }}
+          {% endif %}
         </div>
       </div>
     </article>
