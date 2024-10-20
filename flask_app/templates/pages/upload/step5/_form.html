@@ -13,7 +13,7 @@
     </p>
 
     <div class="form-row">
-      <input type="radio" name="visibility" value="yes" id="visibility-yes">
+      <input type="radio" name="visibility" value="yes" id="visibility-yes" checked>
       <label for="visibility-yes">Yes, make my data visible now!</label>
     </div>
 
@@ -23,19 +23,19 @@
     </div>
 
     <p>
-      After submitting your Data, a report with the results will be sent to
+      After submitting your data, a report with the results will be sent to
       your e-mail.
     </p>
 
     <label>
       Provide your e-mail address:
-      <input type="text" name="email" class="form-input-blue form-input-full" />
+      <input type="email" name="email" class="form-input-blue form-input-full" />
     </label>
 
     <input
         type="submit"
         class="form-input-full"
-        value="Save uploaded files" />
+        value="Finish submission" />
   </form>
 
 {% endmacro %}
