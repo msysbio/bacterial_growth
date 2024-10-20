@@ -1,9 +1,15 @@
 {% macro render_step3_status(submission) %}
 
   <ul class="upload-status">
-    <li class="incomplete">
-      <span class="icon"></span> Study design incomplete
-    </li>
+    {% if submission.vessel_type %}
+      <li class="complete">
+        <span class="icon"></span> Study design filled in
+      </li>
+    {% else %}
+      <li class="incomplete">
+        <span class="icon"></span> Study design incomplete
+      </li>
+    {% endif %}
   </ul>
 
 {% endmacro %}

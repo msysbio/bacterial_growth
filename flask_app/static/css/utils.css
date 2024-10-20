@@ -6,6 +6,14 @@
   display: none !important;
 }
 
+.full {
+  width: 100%;
+}
+
+.text-center {
+  text-align: center;
+}
+
 .flex-grow {
   flex-grow: 1;
 }
@@ -19,6 +27,13 @@
   background: pink;
   padding: 10px;
   border-left: 4px solid #d02631;
+}
+
+.error-message-list {
+  background: pink;
+  border-left: 4px solid #d02631;
+  padding-top: 10px;
+  padding-bottom: 10px;
 }
 
 table.simple-table {
@@ -36,7 +51,8 @@ table.simple-table {
 }
 
 .dataframe-container {
-  overflow-x: auto;
+  overflow: auto;
+  max-height: 500px;
 }
 
 table.dataframe-table {
@@ -51,6 +67,10 @@ table.dataframe-table {
     padding: 6px 13px;
     border: 1px solid var(--border-color);
     vertical-align: top;
+    max-width: 300px;
+    white-space: nowrap;
+    overflow-x: hidden;
+    text-overflow: ellipsis;
   }
 
   /* Border-collapse + rounded borders doesn't seem to work well. Might end up
@@ -92,24 +112,24 @@ form.simple-form {
       width: 100%;
     }
 
-    input[type="submit"] {
-      cursor: pointer;
-      padding: 0.7rem;
-      border: 1px solid rgb(8, 131, 149);
-      border-radius: var(--border-radius);
-      background-color: rgb(8, 131, 149);
-      color: white;
-
-      &:hover {
-        background-color: rgb(7, 110, 126);
-      }
-    }
-
     label span,
     label div {
       font-size: 14px;
       font-weight: 400;
       line-height: 2;
+    }
+  }
+
+  input[type="submit"] {
+    cursor: pointer;
+    padding: 0.7rem;
+    border: 1px solid rgb(8, 131, 149);
+    border-radius: var(--border-radius);
+    background-color: rgb(8, 131, 149);
+    color: white;
+
+    &:hover {
+      background-color: rgb(7, 110, 126);
     }
   }
 }
@@ -137,7 +157,7 @@ a.green-button {
   }
 }
 
-a.white-button {
+.white-button {
   display: inline-block;
   padding: 0.7rem;
   border: 1px solid rgb(8, 131, 149);

@@ -7,6 +7,8 @@ plotly
 pymysql
 pytest
 sqlalchemy
+openpyxl
+humanize
 
 # Streamlit app:
 matplotlib

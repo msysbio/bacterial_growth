@@ -3,7 +3,7 @@ import re
 import plotly.express as px
 import numpy as np
 
-from flask_app.lib.hack import get_chart_data
+from flask_app.legacy.chart_data import get_chart_data
 from flask_app.models.experiment_df_wrapper import ExperimentDfWrapper
 
 PLOTLY_TEMPLATE = 'plotly_white'
@@ -20,7 +20,7 @@ class ExperimentChartForm:
     def __init__(self, df_growth, df_reads, experiment):
         self.experiment_id    = experiment['experimentId']
         self.description      = experiment['experimentDescription']
-        self.bioreplicate_ids = experiment['bioreplicateIds'].split(',')
+        self.bioreplicate_ids = (experiment['bioreplicateIds'] or '').split(',')
 
         self.growth_data = ExperimentDfWrapper(df_growth, self.experiment_id, self.bioreplicate_ids)
         self.reads_data = ExperimentDfWrapper(df_reads, self.experiment_id, self.bioreplicate_ids)

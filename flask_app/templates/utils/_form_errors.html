@@ -1,0 +1,11 @@
+{% macro render_form_errors(errors) %}
+
+  {% if errors|length > 0: %}
+    <ul class="error-message-list">
+      {% for message in errors: %}
+        <li>{{ message }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+
+{% endmacro %}

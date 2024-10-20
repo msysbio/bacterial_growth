@@ -4,7 +4,7 @@ from flask_app.db import get_connection
 from flask_app.forms.experiment_chart_form import ExperimentChartForm
 from flask_app.models.study_dfs import get_experiments
 from flask_app.models.experiment import get_experiment
-from flask_app.lib.hack import get_chart_data
+from flask_app.legacy.chart_data import get_chart_data
 
 
 def dashboard_index_page():

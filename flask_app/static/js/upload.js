@@ -2,16 +2,18 @@ $(document).ready(function() {
   let $page = $('.upload-page');
   let $step1 = $page.find('.step-content.step-1');
   let $step2 = $page.find('.step-content.step-2');
+  let $step3 = $page.find('.step-content.step-3');
+  let $step4 = $page.find('.step-content.step-4');
 
   // Show form corresponding to currently selected submission type
-  show_forms($step1.find('.js-submission-type').val());
+  show_step1_forms($step1.find('.js-submission-type').val());
 
   // Show form when submission type changes
   $step1.on('change', '.js-submission-type', function() {
     let $select        = $(this);
     let submissionType = $select.val();
 
-    show_forms(submissionType);
+    show_step1_forms(submissionType);
   });
 
   let $multipleStrainSelect = $step2.find('.js-multiple-strain-select');
@@ -62,15 +64,56 @@ $(document).ready(function() {
 
   $step2.on('click', '.js-remove-new-strain', function(e) {
     e.preventDefault();
-
-    let $newStrain2 = $(e.currentTarget).parents('.form-row.js-new-strain-row-2').log();
-    let $newStrain1 = $newStrain2.prev('.form-row.js-new-strain-row-1').log();
-
-    $newStrain1.remove();
-    $newStrain2.remove();
+    $(e.currentTarget).parents('.js-new-strain-container').remove();
   });
 
-  function show_forms(submissionType) {
+  let $metabolitesSelect = $('.js-metabolites-select');
+
+  $metabolitesSelect.select2({
+    multiple: true,
+    theme: 'custom',
+    width: '100%',
+    ajax: {
+      url: '/metabolites/completion',
+      dataType: 'json',
+      delay: 100,
+      cache: true,
+    },
+  });
+  $metabolitesSelect.trigger('change');
+
+  let $step3form = $step3.find('form');
+
+  $('select[name=vessel_type]').on('change', function() {
+    update_vessel_count_inputs();
+  });
+
+  update_vessel_count_inputs();
+
+  $step4.on('dragover', '.js-file-upload', function(e) {
+    e.preventDefault();
+    $(this).addClass('drop-hover');
+  });
+  $step4.on('dragleave', '.js-file-upload', function(e) {
+    e.preventDefault();
+    $(this).removeClass('drop-hover');
+  });
+  $step4.on('drop', '.js-file-upload', function(e) {
+    e.preventDefault();
+
+    let $container = $(this).parents('.js-upload-container');
+    let $input = $container.find('input[type=file]')
+    $input[0].files = e.originalEvent.dataTransfer.files;
+
+    $(this).removeClass('drop-hover');
+    submit_excel_form($container);
+  });
+  $step4.on('change', 'input[type=file]', function(e) {
+    let $container = $(this).parents('.js-upload-container');
+    submit_excel_form($container);
+  });
+
+  function show_step1_forms(submissionType) {
     $forms = $step1.find('.submission-forms form');
     $forms.addClass('hidden');
 
@@ -109,7 +152,7 @@ $(document).ready(function() {
   function add_new_strain_form($addStrainButton, newStrain) {
     // We need to prepend all names and ids with "new-strain-N" for uniqueness:
 
-    let newStrainIndex = $page.find('.form-row.js-new-strain-row-1').length;
+    let newStrainIndex = $page.find('.js-new-strain-container').length;
     let templateHtml = $page.find('template.new-strain').html();
     let $newForm = $(templateHtml);
 
@@ -141,5 +184,50 @@ $(document).ready(function() {
         cache: true,
       },
     });
+  }
+
+  function update_vessel_count_inputs() {
+    let $vesselTypeInput = $step3form.find('select[name=vessel_type]');
+    let vesselType = $vesselTypeInput.val();
+
+    $step3form.find('.vessel-count').addClass('hidden');
+    $step3form.find(`.vessel-${vesselType}`).removeClass('hidden');
+  }
+
+  function submit_excel_form($container) {
+    let url        = $container.prop('action')
+    let $preview   = $container.find('.js-preview');
+    let $fileInput = $container.find('input[type=file]');
+    let formData   = new FormData();
+    let file       = $fileInput[0].files[0];
+
+    formData.append("file", file, file.name);
+
+    $.ajax({
+      type: 'POST',
+      url: '/upload/spreadsheet_preview',
+      data: formData,
+      cache: false,
+      contentType: false,
+      processData: false,
+      success: function(response) {
+        $preview.html(response);
+
+        $preview.find('select').on('change', function() {
+          let $select       = $(this);
+          let selectedSheet = $select.val();
+
+          // TODO reusable util
+          $sheets = $preview.find('.js-sheet');
+          $sheets.addClass('hidden');
+
+          if (selectedSheet != '') {
+            $sheets.filter(`.js-sheet-${selectedSheet}`).removeClass('hidden');
+          }
+        });
+
+        $preview.find('select').trigger('change');
+      }
+    })
   }
 });

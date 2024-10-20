@@ -28,4 +28,4 @@ if __name__ == "__main__":
     env = os.getenv('APP_ENV', 'development')
     app = create_app(env)
 
-    app.run(host="0.0.0.0", port=8080)
+    app.run(host="0.0.0.0", port=8081)

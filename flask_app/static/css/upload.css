@@ -49,4 +49,53 @@
   .submission-forms {
     margin-top: 20px;
   }
+
+  .columns {
+    display: flex;
+    flex-direction: row;
+    column-gap: 20px;
+  }
+
+  .new-strain-container {
+    border: 2px dashed var(--border-color);
+    border-radius: var(--border-radius);
+    padding: 10px;
+  }
+
+  .file-upload-container {
+    box-sizing: border-box;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    column-gap: 10px;
+    background-color: var(--light-blue);
+    border-radius: var(--border-radius);
+    padding: 16px;
+    margin-top: 10px;
+    border: 2px solid var(--light-blue);
+
+    &.drop-hover {
+      border: 2px dashed var(--border-color);
+    }
+
+    .instructions {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .hint {
+      opacity: 0.6;
+      font-size: 14px;
+    }
+
+    .upload-button {
+      cursor: pointer;
+    }
+  }
+
+  .preview {
+    display: flex;
+    flex-direction: column;
+    row-gap: 10px;
+  }
 }
