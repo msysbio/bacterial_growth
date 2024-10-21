@@ -222,6 +222,7 @@ def get_biological_replicates(studyId, conn):
         B.OD,
         B.Plate_counts,
         B.pH,
+        B.experimentId,
         BM.biosampleLink,
         BM.bioreplicateDescrition
     FROM

@@ -1,0 +1,32 @@
+.export-page {
+  .column {
+    width: 50%;
+  }
+
+  .section-delimiter {
+    label {
+      display: block;
+      line-height: 32px;
+    }
+
+    input[name="custom_delimiter"] {
+      width: 40px;
+      height: 32px;
+    }
+  }
+
+  .section-experiment {
+    label {
+      display: block;
+      line-height: 2;
+    }
+  }
+
+  .preview {
+    overflow-x: auto;
+
+    pre {
+      font-family: monospace;
+    }
+  }
+}

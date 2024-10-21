@@ -10,6 +10,9 @@ class ExperimentDfWrapper:
     def keys(self):
         return self.df.keys()
 
+    def drop_columns(self, *args):
+        self.df = self.df[self.df.columns.drop(*args)]
+
     def has_keys_matching(self, string):
         return any(k for k in self.keys() if k.find(string) >= 0)
 

@@ -1,0 +1,83 @@
+{% extends '_layout.html' %}
+
+{% block title %}: Export study {{ studyId }}{% endblock %}
+
+{% block content %}
+  <div class="container export-page" data-study-id="{{ studyId }}">
+    <h1>{{ study['studyName'] }}</h1>
+
+    <p>
+      {{ study['studyDescription'] }}
+    </p>
+
+    <div class="flex-row">
+      <div class="column">
+        <h2>Export options</h2>
+
+        <form
+            class="simple-form"
+            action="{{ url_for('study_download_zip', studyId=studyId) }}"
+            method="GET">
+          <div class="section-delimiter">
+            <h4>CSV Delimiter</h4>
+
+            <label>
+              <input type="radio" name="delimiter" value="comma" checked />
+              Comma
+            </label>
+
+            <label>
+              <input type="radio" name="delimiter" value="tab" />
+              Tab
+            </label>
+
+            <label>
+              <input type="radio" name="delimiter" value="custom" />
+
+              Custom
+
+              <input
+                  type="text"
+                  name="custom_delimiter"
+                  value="|"
+                  maxlength="1"
+                  class="form-input-blue" />
+            </label>
+          </div>
+
+          {% for experimentId in study['experiments']['experimentId']: %}
+            <div class="section-experiment">
+              <h4>Experiment: {{ experimentId }}</h4>
+
+              {% set bioreps = study['biological_replicates']  %}
+
+              {% for biorep_id in bioreps[bioreps['experimentId'] == experimentId]['bioreplicateId']: %}
+                <label>
+                  <input type="checkbox" name="bioreplicates" value="{{ biorep_id }}" checked />
+                  {{ biorep_id }}
+                </label>
+              {% endfor %}
+
+              <label>
+                <input type="checkbox" name="bioreplicates" value="Average {{ experimentId }}" />
+                Average {{ experimentId }}
+              </label>
+            </div>
+          {% endfor %}
+
+          <div class="form-row">
+            <input type="submit" class="green-button" value="Download ZIP file" />
+          </div>
+        </form>
+      </div>
+
+      <div class="column">
+        <h2>Preview (first 5 lines)</h2>
+
+        <div class="preview js-preview">
+
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

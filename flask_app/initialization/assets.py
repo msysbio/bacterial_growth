@@ -12,6 +12,7 @@ def init_assets(app):
         'js/search.js',
         'js/dashboard.js',
         'js/upload.js',
+        'js/export.js',
         filters='rjsmin',
         output='build/app.js'
     ))
@@ -31,6 +32,7 @@ def init_assets(app):
         'css/search.css',
         'css/dashboard.css',
         'css/upload.css',
+        'css/export.css',
         filters='cssmin',
         output='build/app.css'
     ))
