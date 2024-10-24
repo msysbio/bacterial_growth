@@ -11,7 +11,6 @@ filepath = os.path.realpath(__file__)
 current_dir = os.path.dirname(filepath)
 sys.path.append(current_dir)
 
-# This directory MUST BE the one where the core is in the server
 APP_ENV = os.getenv('APP_ENV', 'development')
 
 def getStudyID(conn):
