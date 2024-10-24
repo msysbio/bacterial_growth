@@ -1,30 +1,25 @@
 Defined:
 - 1
 - 1
-- 1
-- 1
-- 1
+- 0
+- 0
 Description:
 - .nan
 - .nan
-- .nan
-- .nan
-- .nan
+- attached
+- attached
 Member_ID:
 - member_1
 - member_2
 - member_3
 - member_4
-- member_5
 Member_Name:
-- Roseburia intestinalis
-- Blautia hydrogenotrophica DSM 10507
-- Collinsella aerofaciens
+- Bacteroides thetaiotaomicron VPI-5482
+- Roseburia intestinalis L1-82
 - Bacteroides thetaiotaomicron
-- Prevotella copri DSM 18205
+- Roseburia intestinalis
 NCBI_ID:
-- 166486
-- 476272
-- 74426
-- 818
-- 537011
+- 226186
+- 536231
+- 226186
+- 536231
