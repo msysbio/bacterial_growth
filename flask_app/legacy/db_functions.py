@@ -1,17 +1,15 @@
 import math
 import os
 import sys
-import tomllib
-from pathlib import Path
 
 import sqlalchemy as sql
-import mysql.connector
 
 filepath = os.path.realpath(__file__)
 current_dir = os.path.dirname(filepath)
 sys.path.append(current_dir)
 
 APP_ENV = os.getenv('APP_ENV', 'development')
+
 
 def getStudyID(conn):
     query = "SELECT IFNULL(COUNT(*), 0) FROM Study;"
@@ -20,6 +18,7 @@ def getStudyID(conn):
     Study_ID = "SMGDB{:08d}".format(next_number)
     return Study_ID
 
+
 def getChebiId(conn, metabolite):
     phrase = f"SELECT cheb_id FROM Metabolites WHERE metabo_name = '{metabolite}';"
     res = conn.execute(sql.text(phrase)).all()
@@ -27,6 +26,7 @@ def getChebiId(conn, metabolite):
     if len(res) == 0: return None
 
     return res[0][0]
+
 
 # TODO (2024-10-20) This just raises errors, they need to be caught properly
 def addRecord(conn, table, args):

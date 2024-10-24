@@ -7,10 +7,10 @@ import humanize
 from flask_app.db import get_connection
 
 from flask_app.models.submission import Submission
-import flask_app.models.data_spreadsheet as data_spreadsheet
-import flask_app.models.study_spreadsheet as study_spreadsheet
 import flask_app.models.spreadsheet_preview as spreasheet_preview
 
+import flask_app.legacy.study_spreadsheet as study_spreadsheet
+import flask_app.legacy.data_spreadsheet as data_spreadsheet
 from flask_app.legacy.upload_validation import validate_upload
 from flask_app.legacy.populate_db import save_submission_to_database
 

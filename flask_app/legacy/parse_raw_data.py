@@ -1,6 +1,6 @@
 import pandas as pd
 
-from flask_app.legacy.constants import GrowthTechniques, Vessels
+from flask_app.legacy.constants import GrowthTechniques
 
 
 def get_techniques_metabolites(list_growth, list_metabolites, list_microbial_strains, raw_data_template):
@@ -18,7 +18,7 @@ def get_techniques_metabolites(list_growth, list_metabolites, list_microbial_str
     error_messages = []
     growth_techniques = GrowthTechniques()
     try:
-        #read the headers and check that the headers match the options choosen by the user in the interface
+        # read the headers and check that the headers match the options choosen by the user in the interface
 
         # reads the data template sheet 1: Growth_Data_and_Metabolites
         df_excel_growth = pd.read_excel(raw_data_template, sheet_name='Growth_Data_and_Metabolites')

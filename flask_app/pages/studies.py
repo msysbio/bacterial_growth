@@ -1,8 +1,6 @@
-import os
 import zipfile
 from io import BytesIO
 
-import pandas as pd
 from flask import render_template, send_file, request
 
 import flask_app.models.study_dfs as study_dfs
@@ -84,7 +82,8 @@ def extract_csv_separator(args):
         sep = '\t'
     elif delimiter == 'custom':
         sep = args.get('custom_delimiter', '|')
-        if sep == '': sep = ' '
+        if sep == '':
+            sep = ' '
     else:
         raise Exception(f"Unknown delimiter requested: {delimiter}")
 

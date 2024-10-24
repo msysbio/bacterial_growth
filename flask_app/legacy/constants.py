@@ -28,4 +28,3 @@ class Vessels:
         self.agar_plates = "Agar plates"
         self.well_plates = "Well plates"
         self.mini_react  = "mini bioreactors"
-

@@ -7,7 +7,7 @@ import itertools
 import flask_app.legacy.db_functions as db
 from flask_app.legacy.yml_functions import read_yml
 from flask_app.legacy.parse_raw_data import get_techniques_metabolites, get_measures_growth, get_measures_reads, get_measures_counts, get_replicate_metadata
-from flask_app.legacy.constants import GrowthTechniques, Vessels, LOCAL_DIRECTORY_YAML
+from flask_app.legacy.constants import LOCAL_DIRECTORY_YAML
 
 
 def save_submission_to_database(conn, submission, data_template):
