@@ -36,7 +36,7 @@ def study_export_page(studyId):
         return render_template("pages/studies/export.html", study=study, studyId=studyId)
 
 
-def study_export_preview(studyId):
+def study_export_preview_fragment(studyId):
     sep = extract_csv_separator(request.args)
 
     with get_connection() as conn:
