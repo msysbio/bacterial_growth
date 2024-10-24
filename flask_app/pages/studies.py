@@ -37,39 +37,17 @@ def study_export_page(studyId):
 
         return render_template("pages/studies/export.html", study=study, studyId=studyId)
 
+
 def study_export_preview(studyId):
-    delimiter = request.args.get('delimiter', 'comma')
-
-    if delimiter == 'comma':
-        sep = ','
-    elif delimiter == 'tab':
-        sep = '\t'
-    elif delimiter == 'custom':
-        sep = request.form.get('custom_delimiter', '|')
-    else:
-        raise Exception(f"Unknown delimiter requested: {delimiter}")
-
-    df_growth, df_reads = get_chart_data(studyId)
+    sep = extract_csv_separator(request.args)
 
     with get_connection() as conn:
-        experiments = study_dfs.get_experiments(studyId, conn)
-        bioreps     = study_dfs.get_biological_replicates(studyId, conn)
-
         csv_previews = []
 
-        for experimentId in experiments['experimentId']:
-            bioreplicate_ids = bioreps[bioreps['experimentId'] == experimentId]['bioreplicateId']
-            selected_bioreplicate_ids = request.args.getlist('bioreplicates')
-
-            target_bioreplicate_ids = set(selected_bioreplicate_ids).intersection(set((*bioreplicate_ids, f"Average {experimentId}")))
-
-            experiment = ExperimentDfWrapper(df_growth, experimentId, bioreplicate_ids)
-            experiment.select_bioreplicates(target_bioreplicate_ids)
-            experiment.drop_columns('Position')
-
+        for experiment in get_experiment_data_for_export(studyId, conn):
             csv = experiment.df[:5].to_csv(index=False, sep=sep)
             csv_previews.append(f"""
-                <h3>{experimentId}.csv</h3>
+                <h3>{experiment.experiment_id}.csv ({len(experiment.df)} rows)</h3>
                 <pre>{csv}</pre>
             """)
 
@@ -77,7 +55,18 @@ def study_export_preview(studyId):
 
 
 def study_download_zip(studyId):
-    zip_file = createzip([studyId])
+    sep = extract_csv_separator(request.args)
+
+    with get_connection() as conn:
+        csv_data = []
+
+        for experiment in get_experiment_data_for_export(studyId, conn):
+            csv_bytes = experiment.df.to_csv(index=False, sep=sep)
+            csv_name = f"{experiment.experiment_id}.csv"
+
+            csv_data.append((csv_name, csv_bytes))
+
+    zip_file = createzip(csv_data)
 
     return send_file(
         zip_file,
@@ -86,34 +75,51 @@ def study_download_zip(studyId):
     )
 
 
-# TODO (2024-08-26) Hack, reads static files from the repo. Data needs to be
-# stored in the database and rendered
-def createzip(study_ids_list):
+def extract_csv_separator(args):
+    delimiter = args.get('delimiter', 'comma')
+
+    if delimiter == 'comma':
+        sep = ','
+    elif delimiter == 'tab':
+        sep = '\t'
+    elif delimiter == 'custom':
+        sep = args.get('custom_delimiter', '|')
+        if sep == '': sep = ' '
+    else:
+        raise Exception(f"Unknown delimiter requested: {delimiter}")
+
+    return sep
+
+
+def get_experiment_data_for_export(studyId, conn):
+    df_growth, _ = get_chart_data(studyId)
+
+    experiments = study_dfs.get_experiments(studyId, conn)
+    bioreps     = study_dfs.get_biological_replicates(studyId, conn)
+
+    filtered_experiments = []
+
+    for experimentId in experiments['experimentId']:
+        bioreplicate_ids = bioreps[bioreps['experimentId'] == experimentId]['bioreplicateId']
+        selected_bioreplicate_ids = request.args.getlist('bioreplicates')
+
+        target_bioreplicate_ids = set(selected_bioreplicate_ids).intersection(set((*bioreplicate_ids, f"Average {experimentId}")))
+
+        experiment = ExperimentDfWrapper(df_growth, experimentId, bioreplicate_ids)
+        experiment.select_bioreplicates(target_bioreplicate_ids)
+        experiment.drop_columns('Position')
+
+        filtered_experiments.append(experiment)
+
+    return filtered_experiments
+
+
+def createzip(csv_data: list[tuple[str, bytes]]):
     buf = BytesIO()
 
-    filepath = os.path.realpath(__file__)
-    current_dir = os.path.dirname(filepath)
-    root_dir = os.path.dirname(current_dir)
-    relative_path_to_src = os.path.join(root_dir, '../src')
-
     with zipfile.ZipFile(buf, 'w', zipfile.ZIP_DEFLATED) as csv_zip:
-        for study_id in study_ids_list:
-            folder_path = relative_path_to_src + f"/Data/Growth/{study_id}"
-            # st.info(folder_path)
-            growth_file = folder_path + "/Growth_Metabolites.csv"
-            reads_file = folder_path + "/Sequencing_Reads.csv"
-            try:
-                df_growth = pd.read_csv(growth_file)
-            # Continue with processing the dataframe...
-            except FileNotFoundError:
-                # TODO (2024-08-26) Logging
-                print(f"CSV file '{growth_file}' not found. Skipping...")
-            df_growth = pd.read_csv(growth_file)
-            df_reads = pd.read_csv(reads_file)
-            if not df_growth.empty:
-                csv_zip.writestr(f"{study_id}_Growth_Metabolites.csv", df_growth.to_csv())
-            if not df_reads.empty:
-                csv_zip.writestr(f"{study_id}_Sequencing_Reads.csv", df_reads.to_csv())
+        for (csv_name, csv_bytes) in csv_data:
+            csv_zip.writestr(csv_name, csv_bytes)
 
     buf.seek(0)
     return buf

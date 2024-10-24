@@ -6,11 +6,14 @@ $(document).ready(function() {
     let $form    = $page.find('form');
     let $preview = $page.find('.js-preview');
 
-    $form.on('change', function() {
-      updatePreview($form);
-    });
+    $form.on('change', function() { updatePreview($form); });
+    $form.on('keyup', 'input[name=custom_delimiter]', function() { updatePreview($form); });
 
     updatePreview($form);
+
+    $form.on('focus', 'input[name=custom_delimiter]', function() {
+      $form.find('input[name=delimiter][value=custom]').prop('checked', true);
+    });
 
     function updatePreview($form) {
       $.ajax({
