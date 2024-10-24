@@ -1,12 +1,13 @@
 Project_UniqueID:
-- aea34f73-f5e0-48e2-98ae-11e216b8fdbe
+- 8a4883f4-64b2-43dd-9f3e-1445cfcb078c
 Study_Description:
-- we used an in vitro batch system containing mucin beads to emulate the dynamic host
-  environment and to study its impact on the interactions between two abundant and
-  prevalent human gut bacteria.
+- "We collected six biological replicates for a community initially consisting of\
+  \ five common gut bacterial species that fill different metabolic niches. After\
+  \ an initial 12 hours in batch mode, we switched to chemostat mode and observed\
+  \ the community to stabilize after 2\u2013 3 days."
 Study_Name:
-- Starvation responses impact interaction  of human gut bacteria BT-RI
+- Synthetic human gut bacterial community using an automated fermentation system
 Study_PublicationURL:
-- https://doi.org/10.1038/s41396-023-01501-1
+- https://doi.org/10.1080/19490976.2022.2155019
 Study_UniqueID:
 - .nan
