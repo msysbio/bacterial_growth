@@ -15,8 +15,9 @@
         action="{{ url_for('study_download_zip', studyId=studyId) }}"
         method="GET">
       <div class="flex-row">
-        <div class="column">
+        <div class="column column-left">
           <h2>Export options</h2>
+
           <div class="section-delimiter">
             <h4>CSV Delimiter</h4>
 
@@ -44,6 +45,17 @@
             </label>
           </div>
 
+          <div class="section-all-none">
+            <h3>Biological replicates</h3>
+
+            <br>
+
+            <div class="form-row">
+              <button type="button" class="js-select-all green-button">Select all</button>
+              <button type="button" class="js-select-none green-button">Select none</button>
+            </div>
+          </div>
+
           {% for experimentId in study['experiments']['experimentId']: %}
             <div class="section-experiment">
               <h4>Experiment: {{ experimentId }}</h4>
@@ -65,7 +77,7 @@
           {% endfor %}
         </div>
 
-        <div class="column">
+        <div class="column column-right">
           <h2>Preview (first 5 rows)</h2>
 
           <div class="preview js-preview">

@@ -43,6 +43,9 @@ def study_export_preview_fragment(studyId):
         csv_previews = []
 
         for experiment in get_experiment_data_for_export(studyId, conn):
+            if len(experiment.df) == 0:
+                continue
+
             csv = experiment.df[:5].to_csv(index=False, sep=sep)
             csv_previews.append(f"""
                 <h3>{experiment.experiment_id}.csv ({len(experiment.df)} rows)</h3>
@@ -59,6 +62,9 @@ def study_download_zip(studyId):
         csv_data = []
 
         for experiment in get_experiment_data_for_export(studyId, conn):
+            if len(experiment.df) == 0:
+                continue
+
             csv_bytes = experiment.df.to_csv(index=False, sep=sep)
             csv_name = f"{experiment.experiment_id}.csv"
 

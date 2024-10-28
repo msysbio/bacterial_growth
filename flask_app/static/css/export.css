@@ -1,7 +1,6 @@
 .export-page {
-  .column {
-    width: 50%;
-  }
+  .column-left { width: 40%; }
+  .column-right { width: 60%; }
 
   .section-delimiter {
     label {

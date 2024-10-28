@@ -15,6 +15,16 @@ $(document).ready(function() {
       $form.find('input[name=delimiter][value=custom]').prop('checked', true);
     });
 
+    $form.on('click', '.js-select-all', function() {
+      $form.find('.section-experiment input[type=checkbox]').prop('checked', true);
+      updatePreview($form);
+    });
+
+    $form.on('click', '.js-select-none', function() {
+      $form.find('.section-experiment input[type=checkbox]').prop('checked', false);
+      updatePreview($form);
+    });
+
     function updatePreview($form) {
       $.ajax({
         url: `/study/${studyId}/export/preview`,
