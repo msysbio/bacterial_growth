@@ -118,6 +118,9 @@ def get_experiment_data_for_export(studyId, conn):
         def add_column_measurements(column):
             if column == 'Time':
                 return f"{column} (hours)"
+            elif column == 'Biological_Replicate_id':
+                # Tidy up the name for readability:
+                return "Biological Replicate ID"
             elif column == 'FC':
                 return f"{column} (Cells/mL)"
             elif column in metabolite_columns:
