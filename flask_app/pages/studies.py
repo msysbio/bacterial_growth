@@ -99,6 +99,7 @@ def get_experiment_data_for_export(studyId, conn):
     filtered_experiments = []
 
     for experimentId in experiments['experimentId']:
+        # Filter data by the requested bioreplicates:
         bioreplicate_ids = bioreps[bioreps['experimentId'] == experimentId]['bioreplicateId']
         selected_bioreplicate_ids = request.args.getlist('bioreplicates')
 
@@ -107,6 +108,24 @@ def get_experiment_data_for_export(studyId, conn):
         experiment = ExperimentDfWrapper(df_growth, experimentId, bioreplicate_ids)
         experiment.select_bioreplicates(target_bioreplicate_ids)
         experiment.drop_columns('Position')
+
+        # Reorder columns:
+        measurement_columns = experiment.get_measurement_keys()
+        metabolite_columns = experiment.get_metabolite_keys()
+        experiment.reorder_columns(['Time', 'Biological_Replicate_id', *measurement_columns, *metabolite_columns])
+
+        # Add measurements to columns:
+        def add_column_measurements(column):
+            if column == 'Time':
+                return f"{column} (hours)"
+            elif column == 'FC':
+                return f"{column} (Cells/mL)"
+            elif column in metabolite_columns:
+                return f"{column} (mM)"
+            else:
+                return column
+
+        experiment.rename_columns(add_column_measurements)
 
         filtered_experiments.append(experiment)
 
