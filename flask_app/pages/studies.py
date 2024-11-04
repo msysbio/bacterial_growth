@@ -118,7 +118,7 @@ def get_experiment_data_for_export(studyId, conn):
         # Reorder columns:
         measurement_columns = experiment.get_measurement_keys()
         metabolite_columns = experiment.get_metabolite_keys()
-        experiment.reorder_columns(['Time', 'Biological_Replicate_id', *measurement_columns, *metabolite_columns])
+        experiment.reorder_columns(['Time', 'Biological_Replicate_id', *measurement_columns, *sorted(metabolite_columns)])
 
         # Add measurements to columns:
         def add_column_measurements(column):
