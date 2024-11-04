@@ -2,7 +2,7 @@
 
 {% extends '_layout.html' %}
 
-{% block title %}: Study {{ id }}{% endblock %}
+{% block title %}: Study {{ study['studyId'] }}{% endblock %}
 
 {% block content %}
   <div class="container">
@@ -17,6 +17,18 @@
           <br>
         {% endif %}
       </p>
+
+      <p>
+        <a href="{{ url_for('dashboard_index_page', studyId=study['studyId']) }}" class="white-button">
+          📊 Visualize
+        </a>
+
+        <a href="{{ url_for('study_export_page', studyId=study['studyId']) }}" class="white-button">
+          ⬇ Export data
+        </a>
+      </p>
+
+      <br>
 
       <div>
         <table class="simple-table">

@@ -13,7 +13,7 @@
 }
 
 body *{
-  font-family: 'Public Sans', sans-serif !important;
+  font-family: 'Public Sans', sans-serif;
   color: var(--black);
 
   &:focus {

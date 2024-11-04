@@ -14,6 +14,16 @@
   text-align: center;
 }
 
+.flex-row {
+  display: flex;
+  flex-direction: row;
+}
+
+.flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
 .flex-grow {
   flex-grow: 1;
 }
@@ -141,7 +151,7 @@ form.simple-form {
   padding: 0.7rem;
 }
 
-a.green-button {
+.green-button {
   display: inline-block;
   padding: 0.7rem;
   border: 1px solid rgb(8, 131, 149);

@@ -118,11 +118,7 @@ class ExperimentChartForm:
         selected_bioreplicate_ids, _ = self.extract_args(args)
         self.growth_data.select_bioreplicates(selected_bioreplicate_ids)
 
-        non_metabolite_keys = set([
-            'Position', 'Biological_Replicate_id', 'Time',
-            'OD', 'Plate Counts', 'pH', 'FC',
-        ])
-        metabolite_keys = set(self.growth_data.keys()).difference(non_metabolite_keys)
+        metabolite_keys = self.growth_data.get_metabolite_keys()
 
         figs = []
         for bioreplicate_id, bioreplicate_df in self.growth_data.bioreplicate_dfs():

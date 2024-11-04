@@ -1,18 +1,6 @@
-import os
 import yaml
 
 import pandas as pd
-
-# TODO temporary
-root_folder = os.path.abspath(os.path.dirname(__file__) + '/../')
-LOCAL_DIRECTORY = os.path.join(root_folder, "")
-
-STUDY_yaml = LOCAL_DIRECTORY + 'STUDY.yaml'
-EXPERMENT_yaml = LOCAL_DIRECTORY + 'EXPERIMENTS.yaml'
-COMPARTMENT_yaml = LOCAL_DIRECTORY + 'COMPARTMENTS.yaml'
-COMMUNITY_MEM_yaml = LOCAL_DIRECTORY + 'COMMUNITY_MEMBERS.yaml'
-COMMUNITIES_yaml = LOCAL_DIRECTORY + 'COMMUNITIES.yaml'
-PERTURBATION_yaml = LOCAL_DIRECTORY + 'PERTURBATIONS.yaml'
 
 
 # functon that loads a yaml file  into a df

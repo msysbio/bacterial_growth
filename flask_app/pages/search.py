@@ -25,7 +25,7 @@ def search_index_page():
 
             if len(studyIds) == 0:
                 message = "Couldn't find a study with these parameters."
-                return render_template("pages/search/index.html", form=form, error=message)
+                return render_template("pages/search/index.html", form=form, error=message, template_clause=template_clause)
 
             for studyId in studyIds:
                 result = study_dfs.get_general_info(studyId, conn)

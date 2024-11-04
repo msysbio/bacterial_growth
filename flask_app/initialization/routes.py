@@ -30,8 +30,10 @@ def init_routes(app):
         methods=["POST"],
     )
 
-    app.add_url_rule("/study/<string:studyId>",     view_func=study_pages.study_show_page)
-    app.add_url_rule("/study/<string:studyId>.zip", view_func=study_pages.study_download_page)
+    app.add_url_rule("/study/<string:studyId>",                view_func=study_pages.study_show_page)
+    app.add_url_rule("/study/<string:studyId>.zip",            view_func=study_pages.study_download_zip)
+    app.add_url_rule("/study/<string:studyId>/export",         view_func=study_pages.study_export_page)
+    app.add_url_rule("/study/<string:studyId>/export/preview", view_func=study_pages.study_export_preview_fragment)
 
     app.add_url_rule("/strain/<int:id>",    view_func=strain_pages.strain_show_page)
     app.add_url_rule("/strains/completion", view_func=strain_pages.taxa_completion_json)

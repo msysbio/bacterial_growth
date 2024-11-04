@@ -1,22 +1,7 @@
 import pandas as pd
 
-class GrowthTechniques:
-    def __init__(self):
-        self.od = "Optical Density"
-        self.plates = "Plate Counts"
-        self.plates_ps = "Plate Counts (per species)"
-        self.fc = "Flow Cytometry"
-        self.fc_ps = "Flow Cytometry (per species)"
-        self.rna = "16S rRNA-seq"
+from flask_app.legacy.constants import GrowthTechniques
 
-
-class Vessels:
-    def __init__(self):
-        # 'Bottles', 'Agar-plates', 'Well-plates', 'mini-bioreactors'
-        self.bottles = "Bottles"
-        self.agar_plates = "Agar plates"
-        self.well_plates = "Well plates"
-        self.mini_react = "mini bioreactors"
 
 def get_techniques_metabolites(list_growth, list_metabolites, list_microbial_strains, raw_data_template):
 
@@ -33,7 +18,7 @@ def get_techniques_metabolites(list_growth, list_metabolites, list_microbial_str
     error_messages = []
     growth_techniques = GrowthTechniques()
     try:
-        #read the headers and check that the headers match the options choosen by the user in the interface
+        # read the headers and check that the headers match the options choosen by the user in the interface
 
         # reads the data template sheet 1: Growth_Data_and_Metabolites
         df_excel_growth = pd.read_excel(raw_data_template, sheet_name='Growth_Data_and_Metabolites')

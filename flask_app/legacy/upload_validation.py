@@ -4,14 +4,7 @@ import yaml
 import pandas as pd
 
 from flask_app.legacy.check_yaml import test_study_yaml, test_experiments_yaml, test_compartments_yaml, test_comu_members_yaml, test_communities_yaml, test_perturbation_yaml
-
-# TODO Temporary:
-root_folder = os.path.abspath(os.path.dirname(__file__) + '/../../')
-
-LOCAL_DIRECTORY           = os.path.join(root_folder, "")
-LOCAL_DIRECTORY_APP       = os.path.join(LOCAL_DIRECTORY, "app")
-LOCAL_DIRECTORY_TEMPLATES = os.path.join(LOCAL_DIRECTORY_APP, "templates")
-LOCAL_DIRECTORY_YAML      = os.path.join(LOCAL_DIRECTORY_TEMPLATES, "yaml_templates")
+from flask_app.legacy.constants import LOCAL_DIRECTORY_TEMPLATES, LOCAL_DIRECTORY_YAML
 
 
 def validate_upload(study_template, data_template):
@@ -67,7 +60,7 @@ def parse_ex_to_yaml(LOCAL_DIRECTORY_YAML, template_excel):
     per sheet in the excel
 
     inputs:
-        - LOCAL_DIRECTORY: path were the yaml files are going to be saved
+        - LOCAL_DIRECTORY_YAML: path were the yaml files are going to be saved
         - template_excel: matadata excel file uploaded by the user
 
     Returns:
