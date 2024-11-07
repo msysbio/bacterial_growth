@@ -41,8 +41,9 @@ def study_export_preview_fragment(studyId):
 
     with get_connection() as conn:
         csv_previews = []
+        selected_bioreplicate_ids = request.args.getlist('bioreplicates')
 
-        for experiment in get_experiment_data_for_export(studyId, conn):
+        for experiment in get_experiment_data_for_export(studyId, conn, selected_bioreplicate_ids):
             if len(experiment.df) == 0:
                 continue
 
@@ -60,8 +61,10 @@ def study_download_zip(studyId):
 
     with get_connection() as conn:
         csv_data = []
+        selected_bioreplicate_ids = request.args.getlist('bioreplicates')
+        experiments = get_experiment_data_for_export(studyId, conn, selected_bioreplicate_ids)
 
-        for experiment in get_experiment_data_for_export(studyId, conn):
+        for experiment in experiments:
             if len(experiment.df) == 0:
                 continue
 
@@ -70,7 +73,10 @@ def study_download_zip(studyId):
 
             csv_data.append((csv_name, csv_bytes))
 
-    zip_file = createzip(csv_data)
+        study = study_dfs.get_general_info(studyId, conn)
+        readme_text = render_template('pages/studies/export_readme.md', study=study, experiments=experiments)
+
+    zip_file = createzip(csv_data, readme_text)
 
     return send_file(
         zip_file,
@@ -96,7 +102,7 @@ def extract_csv_separator(args):
     return sep
 
 
-def get_experiment_data_for_export(studyId, conn):
+def get_experiment_data_for_export(studyId, conn, selected_bioreplicate_ids):
     df_growth, _ = get_chart_data(studyId)
 
     experiments = study_dfs.get_experiments(studyId, conn)
@@ -104,21 +110,25 @@ def get_experiment_data_for_export(studyId, conn):
 
     filtered_experiments = []
 
-    for experimentId in experiments['experimentId']:
+    for experimentId, description in zip(experiments['experimentId'], experiments['experimentDescription']):
         # Filter data by the requested bioreplicates:
         bioreplicate_ids = bioreps[bioreps['experimentId'] == experimentId]['bioreplicateId']
-        selected_bioreplicate_ids = request.args.getlist('bioreplicates')
 
-        target_bioreplicate_ids = set(selected_bioreplicate_ids).intersection(set((*bioreplicate_ids, f"Average {experimentId}")))
+        available_bioreplicate_ids = set((*bioreplicate_ids, f"Average {experimentId}"))
+        target_bioreplicate_ids = set(selected_bioreplicate_ids).intersection(available_bioreplicate_ids)
 
-        experiment = ExperimentDfWrapper(df_growth, experimentId, bioreplicate_ids)
+        experiment = ExperimentDfWrapper(df_growth, experimentId, bioreplicate_ids, description)
         experiment.select_bioreplicates(target_bioreplicate_ids)
         experiment.drop_columns('Position')
 
         # Reorder columns:
         measurement_columns = experiment.get_measurement_keys()
         metabolite_columns = experiment.get_metabolite_keys()
-        experiment.reorder_columns(['Time', 'Biological_Replicate_id', *measurement_columns, *sorted(metabolite_columns)])
+        experiment.reorder_columns([
+            'Time', 'Biological_Replicate_id',
+            *measurement_columns,
+            *sorted(metabolite_columns)
+        ])
 
         # Add measurements to columns:
         def add_column_measurements(column):
@@ -141,12 +151,14 @@ def get_experiment_data_for_export(studyId, conn):
     return filtered_experiments
 
 
-def createzip(csv_data: list[tuple[str, bytes]]):
+def createzip(csv_data: list[tuple[str, bytes]], readme_text: str):
     buf = BytesIO()
 
     with zipfile.ZipFile(buf, 'w', zipfile.ZIP_DEFLATED) as csv_zip:
         for (csv_name, csv_bytes) in csv_data:
             csv_zip.writestr(csv_name, csv_bytes)
+
+        csv_zip.writestr('README.md', readme_text)
 
     buf.seek(0)
     return buf

@@ -2,10 +2,11 @@ import pandas as pd
 
 
 class ExperimentDfWrapper:
-    def __init__(self, df, experiment_id, bioreplicate_ids):
+    def __init__(self, df, experiment_id, bioreplicate_ids, experiment_description=None):
         self.df = df
         self.experiment_id = experiment_id
         self.experiment_bioreplicate_ids = bioreplicate_ids
+        self.experiment_description = experiment_description
 
     def keys(self):
         return self.df.keys()
