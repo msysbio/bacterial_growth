@@ -53,7 +53,7 @@ def study_export_preview_fragment(studyId):
                 <pre>{csv}</pre>
             """)
 
-        return '\n<br>\n'.join(csv_previews)
+        return '\n'.join(csv_previews)
 
 
 def study_download_zip(studyId):

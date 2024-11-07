@@ -1,6 +1,18 @@
 .export-page {
+  .columns {
+    column-gap: 20px;
+  }
+
   .column-left { width: 40%; }
   .column-right { width: 60%; }
+
+  h2 {
+    margin-bottom: 20px;
+  }
+
+  h4 {
+    margin-bottom: 10px;
+  }
 
   .section-delimiter {
     label {
@@ -15,14 +27,30 @@
   }
 
   .section-experiment {
+    margin-top: 20px;
+
     label {
       display: block;
       line-height: 2;
     }
   }
 
+  .box {
+    border: 2px solid var(--border-color);
+    border-radius: var(--border-radius);
+    padding: 10px;
+
+    h4 {
+      margin-top: 0;
+    }
+  }
+
   .preview {
     overflow-x: auto;
+
+    h3:first-child {
+      margin-top: 0;
+    }
 
     pre {
       font-family: monospace;
