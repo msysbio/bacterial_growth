@@ -1,0 +1,22 @@
+#! /bin/sh
+
+set -e
+
+if [ $# -lt 1 ]; then
+  echo "USAGE: bin/migrations-new <description>"
+  exit 1
+fi
+
+description="$*"
+description=$(echo $description | tr '[:upper:]' '[:lower:]')
+description=${description/ /_}
+
+timestamp=$(date +'%Y_%m_%d_%H%M%S')
+
+cat > "flask_app/migrations/${timestamp}_${description}.py" <<EOF
+def up(conn):
+    pass
+
+def down(conn):
+    pass
+EOF
