@@ -14,9 +14,27 @@ description=${description/ /_}
 timestamp=$(date +'%Y_%m_%d_%H%M%S')
 
 cat > "flask_app/migrations/${timestamp}_${description}.py" <<EOF
+import sqlalchemy as sql
+
 def up(conn):
-    pass
+    query = """
+
+    """
+    params = {}
+
+    conn.execute(sql.text(query), params)
+
 
 def down(conn):
-    pass
+    query = """
+
+    """
+    params = {}
+
+    conn.execute(sql.text(query), params)
+
+
+if __name__ == "__main__":
+    from flask_app.lib.migrations import run
+    run(__file__)
 EOF
