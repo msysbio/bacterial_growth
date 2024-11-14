@@ -1,5 +1,6 @@
 import sys
 import subprocess
+import re
 from pathlib import Path
 
 import sqlalchemy as sql
@@ -59,11 +60,32 @@ def run(file, up, down):
 
     with open(schema_path, 'w') as f:
         print(f"> Dumping schema in {schema_path}...")
-        subprocess.run([
+
+        schema_output = subprocess.run([
             '/usr/bin/mysqldump',
             '--no-data',
+            '--skip-quote-names',
             f'-h{db_config["host"]}',
             f'-u{db_config["username"]}',
             f'-p{db_config["password"]}',
-            db_config['database']
-        ], stdout=f, stderr=subprocess.DEVNULL)
+            db_config['database'],
+        ], capture_output=True).stdout.decode('utf-8')
+
+        # Remove auto increment snapshots
+        schema_output = re.sub(r' AUTO_INCREMENT=[0-9]*\b', '', schema_output)
+
+        migration_version_data = subprocess.run([
+            '/usr/bin/mysqldump',
+            '--no-create-info',
+            '--skip-quote-names',
+            '--compact',
+            f'-h{db_config["host"]}',
+            f'-u{db_config["username"]}',
+            f'-p{db_config["password"]}',
+            db_config['database'],
+            'MigrationVersions',
+        ], capture_output=True).stdout.decode('utf-8')
+
+        schema_output = re.sub(r'(-- Dump completed)', f"{migration_version_data}\n\\1", schema_output)
+
+        Path(schema_path).write_text(schema_output)
