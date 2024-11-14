@@ -54,13 +54,16 @@ def run(file, up, down):
             raise ValueError(f"Unknown migration direction: {direction}")
 
     # Dump database snapshot into flask_app/schema.sql
-    with open('flask_app/schema.sql', 'w') as schema_file:
-        config = get_config()
+    schema_path = 'flask_app/schema.sql'
+    db_config = get_config()
+
+    with open(schema_path, 'w') as f:
+        print(f"> Dumping schema in {schema_path}...")
         subprocess.run([
             '/usr/bin/mysqldump',
             '--no-data',
-            f'-h{config["host"]}',
-            f'-u{config["username"]}',
-            f'-p{config["password"]}',
-            config['database']
-        ], stdout=schema_file)
+            f'-h{db_config["host"]}',
+            f'-u{db_config["username"]}',
+            f'-p{db_config["password"]}',
+            db_config['database']
+        ], stdout=f, stderr=subprocess.DEVNULL)
