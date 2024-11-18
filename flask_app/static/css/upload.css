@@ -3,14 +3,16 @@
     padding-bottom: 20px;
   }
 
-  .upload-steps h2 {
+  .upload-steps .section-heading {
     font-size: 22px;
     border-bottom: 2px solid rgba(7, 25, 82, 0.1);
-    padding-bottom: 10px;
+    display: block;
+    text-decoration: none;
 
-    a {
-      float: right;
-    }
+    img { float: right; }
+  }
+  .upload-steps h2 {
+    padding-bottom: 10px;
   }
 
   .upload-steps .step-content.active h2 {
