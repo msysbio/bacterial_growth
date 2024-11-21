@@ -1,15 +1,5 @@
 import os
 
-# This directory MUST BE the one where the core is in the server
-root_folder = os.path.abspath(os.path.dirname(__file__) + '/../../')
-
-# This directory MUST BE the one where the core is in the server
-PROJECT_DIRECTORY         = os.path.join(root_folder, "")
-LOCAL_DIRECTORY           = os.path.join(root_folder, "")
-LOCAL_DIRECTORY_APP       = os.path.join(LOCAL_DIRECTORY, "app")
-LOCAL_DIRECTORY_TEMPLATES = os.path.join(LOCAL_DIRECTORY_APP, "templates")
-LOCAL_DIRECTORY_YAML      = os.path.join(LOCAL_DIRECTORY_TEMPLATES, "yaml_templates")
-
 
 class GrowthTechniques:
     def __init__(self):

@@ -7,10 +7,9 @@ import itertools
 import flask_app.legacy.db_functions as db
 from flask_app.legacy.yml_functions import read_yml
 from flask_app.legacy.parse_raw_data import get_techniques_metabolites, get_measures_growth, get_measures_reads, get_measures_counts, get_replicate_metadata
-from flask_app.legacy.constants import LOCAL_DIRECTORY_YAML
 
 
-def save_submission_to_database(conn, submission, data_template):
+def save_submission_to_database(conn, yml_dir, submission, data_template):
     """
     Function that populates all the data from the yaml files if not errors, in case of errors the function stops and returns the error
 
@@ -33,12 +32,12 @@ def save_submission_to_database(conn, submission, data_template):
     list_microbial_strains = [name for (id, name) in submission.fetch_strains()]
     list_microbial_strains += [strain['name'] for strain in submission.fetch_new_strains()]
 
-    info_file_study       = os.path.join(LOCAL_DIRECTORY_YAML, 'STUDY.yaml')
-    info_file_experiments = os.path.join(LOCAL_DIRECTORY_YAML, 'EXPERIMENTS.yaml')
-    info_compart_file     = os.path.join(LOCAL_DIRECTORY_YAML, 'COMPARTMENTS.yaml')
-    info_mem_file         = os.path.join(LOCAL_DIRECTORY_YAML, 'COMMUNITY_MEMBERS.yaml')
-    info_comu_file        = os.path.join(LOCAL_DIRECTORY_YAML, 'COMMUNITIES.yaml')
-    info_pert_file        = os.path.join(LOCAL_DIRECTORY_YAML, 'PERTURBATIONS.yaml')
+    info_file_study       = os.path.join(yml_dir, 'STUDY.yaml')
+    info_file_experiments = os.path.join(yml_dir, 'EXPERIMENTS.yaml')
+    info_compart_file     = os.path.join(yml_dir, 'COMPARTMENTS.yaml')
+    info_mem_file         = os.path.join(yml_dir, 'COMMUNITY_MEMBERS.yaml')
+    info_comu_file        = os.path.join(yml_dir, 'COMMUNITIES.yaml')
+    info_pert_file        = os.path.join(yml_dir, 'PERTURBATIONS.yaml')
 
     # checks that all the options selected by the user in the interface match the uploaded raw data template
     errors = get_techniques_metabolites(list_growth, list_metabolites,list_microbial_strains, data_template)

@@ -1,5 +1,6 @@
 import io
 import os
+import tempfile
 
 from flask import render_template, session, request, redirect, url_for, send_file
 import humanize
@@ -143,17 +144,18 @@ def upload_step4_page():
         errors = []
 
         if request.method == 'POST':
-            study_template = request.files['study-template'].read()
-            data_template = request.files['data-template'].read()
+            with tempfile.TemporaryDirectory() as yml_dir:
+                study_template = request.files['study-template'].read()
+                data_template = request.files['data-template'].read()
 
-            errors = validate_upload(study_template, data_template)
-
-            if len(errors) == 0:
-                (study_id, errors, errors_logic, studyUniqueID, projectUniqueID, project_id) = \
-                    save_submission_to_database(conn, submission, data_template)
+                errors = validate_upload(yml_dir, study_template, data_template)
 
                 if len(errors) == 0:
-                    return redirect(url_for('upload_step5_page'))
+                    (study_id, errors, errors_logic, studyUniqueID, projectUniqueID, project_id) = \
+                        save_submission_to_database(conn, yml_dir, submission, data_template)
+
+                    if len(errors) == 0:
+                        return redirect(url_for('upload_step5_page'))
 
         return render_template(
             "pages/upload/index.html",
