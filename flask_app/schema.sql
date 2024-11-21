@@ -24,13 +24,13 @@ DROP TABLE IF EXISTS Abundances;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE Abundances (
   studyId varchar(100) COLLATE utf8mb4_bin DEFAULT NULL,
-  experimentUniqueId int DEFAULT NULL,
+  experimentUniqueId int NOT NULL,
   experimentId varchar(100) COLLATE utf8mb4_bin NOT NULL,
-  bioreplicateUniqueId int DEFAULT NULL,
+  bioreplicateUniqueId int NOT NULL,
   bioreplicateId varchar(100) COLLATE utf8mb4_bin NOT NULL,
   strainId int DEFAULT NULL,
   memberId varchar(255) COLLATE utf8mb4_bin NOT NULL,
-  PRIMARY KEY (experimentId,bioreplicateId,memberId),
+  PRIMARY KEY (experimentUniqueId,bioreplicateUniqueId,memberId),
   KEY fk_1 (experimentUniqueId),
   KEY fk_2 (strainId),
   KEY fk_3 (studyId),
@@ -134,7 +134,7 @@ CREATE TABLE Compartments (
   initialTemperature float(7,2) DEFAULT '0.00',
   carbonSource tinyint(1) DEFAULT '0',
   mediaNames varchar(100) COLLATE utf8mb4_bin NOT NULL,
-  mediaLink varchar(100) COLLATE utf8mb4_bin NOT NULL,
+  mediaLink varchar(100) COLLATE utf8mb4_bin DEFAULT NULL,
   PRIMARY KEY (compartmentUniqueId),
   KEY fk_1 (studyId),
   CONSTRAINT Compartments_fk_1 FOREIGN KEY (studyId) REFERENCES Study (studyId) ON DELETE CASCADE ON UPDATE CASCADE
@@ -221,13 +221,13 @@ DROP TABLE IF EXISTS MetabolitePerExperiment;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE MetabolitePerExperiment (
   studyId varchar(100) COLLATE utf8mb4_bin DEFAULT NULL,
-  experimentUniqueId int DEFAULT NULL,
+  experimentUniqueId int NOT NULL,
   experimentId varchar(100) COLLATE utf8mb4_bin NOT NULL,
-  bioreplicateUniqueId int DEFAULT NULL,
+  bioreplicateUniqueId int NOT NULL,
   bioreplicateId varchar(100) COLLATE utf8mb4_bin NOT NULL,
   metabo_name varchar(255) COLLATE utf8mb4_bin DEFAULT NULL,
   cheb_id varchar(255) COLLATE utf8mb4_bin NOT NULL,
-  PRIMARY KEY (experimentId,bioreplicateId,cheb_id),
+  PRIMARY KEY (experimentUniqueId,bioreplicateUniqueId,cheb_id),
   KEY fk_1 (cheb_id),
   KEY fk_2 (experimentUniqueId),
   KEY fk_3 (studyId),
@@ -395,6 +395,6 @@ CREATE TABLE TechniquesPerExperiment (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
-INSERT INTO MigrationVersions VALUES (8,'2024_11_11_160324_initial_schema','2024-11-14 11:12:21'),(10,'2024_11_11_164726_remove_unique_study_description_index','2024-11-21 11:09:27');
+INSERT INTO MigrationVersions VALUES (8,'2024_11_11_160324_initial_schema','2024-11-14 11:12:21'),(10,'2024_11_11_164726_remove_unique_study_description_index','2024-11-21 11:09:27'),(12,'2024_11_21_115349_allow_null_medialink','2024-11-21 11:55:59'),(16,'2024_11_21_120444_fix_unique_primary_keys','2024-11-21 12:07:26');
 
--- Dump completed on 2024-11-21 11:09:27
+-- Dump completed on 2024-11-21 12:07:26
