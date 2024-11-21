@@ -1,0 +1,34 @@
+#! /usr/bin/env python3
+
+import os
+import sys
+from pathlib import Path
+from importlib import import_module
+
+import sqlalchemy as sql
+
+from flask_app.db import get_connection
+from flask_app.lib.migrations import run
+
+def main():
+    migration_dir = os.path.abspath(f"{os.path.dirname(__file__)}/../flask_app/migrations")
+    migration_files = Path(migration_dir).glob('*.py')
+    migration_names = {path.stem for path in migration_files}
+
+    with get_connection() as conn:
+        query = "SELECT name FROM MigrationVersions WHERE migratedAt IS NOT NULL"
+        finished_migrations = {name for (name,) in conn.execute(sql.text(query)).all()}
+
+        pending_migrations = migration_names - finished_migrations
+
+        if len(pending_migrations) == 0:
+            print("Database up-to-date, nothing to do")
+            return
+
+        for name in sorted(pending_migrations):
+            migration_module = import_module(f"flask_app.migrations.{name}")
+            run(migration_module.__file__, migration_module.up, migration_module.down)
+
+
+if __name__ == "__main__":
+    main()

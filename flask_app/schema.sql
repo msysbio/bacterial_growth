@@ -395,6 +395,6 @@ CREATE TABLE TechniquesPerExperiment (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
-INSERT INTO MigrationVersions VALUES (8,'2024_11_11_160324_initial_schema','2024-11-14 11:12:21'),(9,'2024_11_11_164726_remove_unique_study_description_index','2024-11-14 11:12:33');
+INSERT INTO MigrationVersions VALUES (8,'2024_11_11_160324_initial_schema','2024-11-14 11:12:21'),(10,'2024_11_11_164726_remove_unique_study_description_index','2024-11-21 11:09:27');
 
--- Dump completed on 2024-11-14 12:23:49
+-- Dump completed on 2024-11-21 11:09:27
