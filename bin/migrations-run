@@ -17,9 +17,8 @@ def main():
 
     with get_connection() as conn:
         query = "SELECT name FROM MigrationVersions WHERE migratedAt IS NOT NULL"
-        finished_migrations = {name for (name,) in conn.execute(sql.text(query)).all()}
-
-        pending_migrations = migration_names - finished_migrations
+        applied_migrations = {name for (name,) in conn.execute(sql.text(query)).all()}
+        pending_migrations = migration_names - applied_migrations
 
         if len(pending_migrations) == 0:
             print("Database up-to-date, nothing to do")
