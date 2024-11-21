@@ -33,4 +33,8 @@ def get_connection():
     return DB.connect()
 
 
+def get_transaction():
+    return DB.begin()
+
+
 DB = _create_engine()

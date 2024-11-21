@@ -10,11 +10,17 @@
 {% from 'pages/upload/step4/_status.html' import render_step4_status %}
 {% from 'pages/upload/step5/_status.html' import render_step5_status %}
 
-{% macro edit_link(current_step, target_step, page) %}
+{% macro section_link(current_step, target_step, page) %}
   {% if target_step != current_step %}
-    <a href="{{ url_for(page) }}">
+    <a class="section-heading" href="{{ url_for(page) }}">
+      {{ caller() }}
+
       <img src="{{ url_for('static', filename='images/edit.svg') }}" />
     </a>
+  {% else %}
+    <h2 class="section-heading">
+      {{ caller() }}
+    </h2>
   {% endif %}
 {% endmacro %}
 
@@ -55,10 +61,9 @@
         ]|join(' ') %}
 
         <div class="step-content step-1 {{ step1_classes }}">
-          <h2>
+          {% call section_link(submission.step, 1, 'upload_step1_page') %}
             Step 1: Enter project and study information
-            {{ edit_link(submission.step, 1, 'upload_step1_page') }}
-          </h2>
+          {% endcall %}
 
           {% if submission.step == 1 %}
             {{ render_step1_form(submission, error) }}
@@ -73,10 +78,9 @@
         ]|join(' ') %}
 
         <div class="step-content step-2 {{ step2_classes }}">
-          <h2>
+          {% call section_link(submission.step, 2, 'upload_step2_page') %}
             Step 2: Pick microbial strains
-            {{ edit_link(submission.step, 2, 'upload_step2_page') }}
-          </h2>
+          {% endcall %}
 
           {% if submission.step == 2 %}
             {{ render_step2_form(submission) }}
@@ -91,10 +95,9 @@
         ]|join(' ') %}
 
         <div class="step-content step-3 {{ step3_classes }}">
-          <h2>
+          {% call section_link(submission.step, 3, 'upload_step3_page') %}
             Step 3: Download templates
-            {{ edit_link(submission.step, 3, 'upload_step3_page') }}
-          </h2>
+          {% endcall %}
 
           {% if submission.step == 3 %}
             {{ render_step3_form(submission, form) }}
@@ -109,10 +112,9 @@
         ]|join(' ') %}
 
         <div class="step-content step-4 {{ step4_classes }}">
-          <h2>
+          {% call section_link(submission.step, 4, 'upload_step4_page') %}
             Step 4: Upload data
-            {{ edit_link(submission.step, 4, 'upload_step4_page') }}
-          </h2>
+          {% endcall %}
 
           {% if submission.step == 4 %}
             {{ render_step4_form(submission, errors) }}
@@ -127,10 +129,9 @@
         ]|join(' ') %}
 
         <div class="step-content step-5 {{ step5_classes }}">
-          <h2>
+          {% call section_link(submission.step, 5, 'upload_step5_page') %}
             Step 5: Publish data
-            {{ edit_link(submission.step, 5, 'upload_step5_page') }}
-          </h2>
+          {% endcall %}
 
           {% if submission.step == 5 %}
             {{ render_step5_form(submission) }}

@@ -4,7 +4,7 @@ import os
 from flask import render_template, session, request, redirect, url_for, send_file
 import humanize
 
-from flask_app.db import get_connection
+from flask_app.db import get_connection, get_transaction
 
 from flask_app.models.submission import Submission
 import flask_app.models.spreadsheet_preview as spreasheet_preview
@@ -138,7 +138,7 @@ def upload_study_template_xlsx():
 
 
 def upload_step4_page():
-    with get_connection() as conn:
+    with get_transaction() as conn:
         submission = Submission(session.get('submission', {}), step=4, db_conn=conn)
         errors = []
 

@@ -57,8 +57,6 @@ def addRecord(conn, table, args):
     else:
         last_id = res[0][0]
 
-    conn.commit()
-
     return last_id
 
 # # DATABASE SUPPLEMENTARY FUNCTIONS
