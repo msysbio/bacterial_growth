@@ -1,5 +1,3 @@
--- TODO: Change all INT primary keys to BIGINT
-
 CREATE TABLE IF NOT EXISTS Project (
     projectId VARCHAR(100),
     projectName VARCHAR(100) DEFAULT NULL,
@@ -59,7 +57,7 @@ CREATE TABLE IF NOT EXISTS Compartments (
     FOREIGN KEY (studyId) REFERENCES Study (studyId) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
-CREATE TABLE Strains (
+CREATE TABLE IF NOT EXISTS Strains (
     studyId VARCHAR(100),
     memberId VARCHAR(50),
     defined BOOLEAN DEFAULT FALSE,
@@ -93,18 +91,7 @@ CREATE TABLE IF NOT EXISTS Taxa (
     PRIMARY KEY (tax_id)
 );
 
-/*
-CREATE TABLE IF NOT EXISTS MetaboliteSynonym (
-    syn_id INT AUTO_INCREMENT PRIMARY KEY,
-    synonym_value VARCHAR(255) DEFAULT NULL,
-    cheb_id VARCHAR(255),
-    FOREIGN KEY (cheb_id) REFERENCES Metabolites(cheb_id)
-);
-
- */
-
-
-CREATE TABLE CompartmentsPerExperiment (
+CREATE TABLE IF NOT EXISTS CompartmentsPerExperiment (
     studyId VARCHAR(100),
     experimentUniqueId INT,
     experimentId VARCHAR(100) NOT NULL,
@@ -120,7 +107,7 @@ CREATE TABLE CompartmentsPerExperiment (
 );
 
 
-CREATE TABLE TechniquesPerExperiment (
+CREATE TABLE IF NOT EXISTS TechniquesPerExperiment (
     studyId VARCHAR(100),
     experimentUniqueId INT,
     experimentId VARCHAR(100) NOT NULL,
@@ -131,7 +118,7 @@ CREATE TABLE TechniquesPerExperiment (
     FOREIGN KEY (studyId) REFERENCES Study (studyId) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
-CREATE TABLE BioReplicatesPerExperiment (
+CREATE TABLE IF NOT EXISTS BioReplicatesPerExperiment (
     studyId VARCHAR(100) NOT NULL,
     bioreplicateUniqueId INT AUTO_INCREMENT PRIMARY KEY,
     bioreplicateId VARCHAR(100),
@@ -148,7 +135,7 @@ CREATE TABLE BioReplicatesPerExperiment (
     FOREIGN KEY (studyId) REFERENCES Study (studyId)  ON UPDATE CASCADE ON DELETE CASCADE
 );
 
-CREATE TABLE BioReplicatesMetadata (
+CREATE TABLE IF NOT EXISTS BioReplicatesMetadata (
     studyId VARCHAR(100) NOT NULL,
     bioreplicateUniqueId INT,
     bioreplicateId VARCHAR(100),
