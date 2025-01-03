@@ -1,0 +1,90 @@
+{% macro render_step3_form(submission, form) %}
+  <div class="columns">
+    <div class="column" style="width: 50%;">
+      {% include 'pages/upload/step3/_info1.html' %}
+
+      <form
+          class="simple-form"
+          action="{{ url_for('upload_step3_page') }}"
+          method="POST">
+
+        <div class="form-row">
+          <label>
+            <span>Type of vessel used</span>
+            {{ form.vessel_type(class='form-input-blue') }}
+          </label>
+
+          <div class="vessel-count vessel-bottles">
+            <label>
+              <span>Number of bottles</span>
+              {{ form.bottle_count(class='form-input-blue') }}
+            </label>
+          </div>
+
+          <div class="vessel-count vessel-agar_plates hidden">
+            <label>
+              <span>Number of plates</span>
+              {{ form.plate_count(class='form-input-blue') }}
+            </label>
+          </div>
+
+          <div class="vessel-count vessel-well_plates vessel-mini_react hidden">
+            <label>
+              <span>Number of columns</span>
+              {{ form.column_count(class='form-input-blue') }}
+            </label>
+
+            <label>
+              <span>Number of rows</span>
+              {{ form.row_count(class='form-input-blue') }}
+            </label>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <label>
+            <span>Number of measurement time-points</span>
+            {{ form.timepoint_count(class='form-input-blue form-input-full') }}
+          </label>
+        </div>
+
+        <div class="form-row">
+          <label>
+            <span>Techniques used to measure growth</span>
+            {{ form.technique_type(class='form-input-blue form-input-full') }}
+          </label>
+        </div>
+
+        <div class="form-row">
+          <label class="full">
+            <span>If metabolites were measured, select which ones:</span>
+            <select
+                multiple="multiple"
+                name="metabolites"
+                class="form-input-blue form-input-full js-metabolites-select">
+              {% for (cheb_id, name) in submission.fetch_metabolites() %}
+                <option value="{{ cheb_id }}" selected>{{ name }}</option>
+              {% endfor %}
+            </select>
+          </label>
+        </div>
+
+        <div class="form-row">
+          <input
+              type="submit"
+              class="form-input-full"
+              value="Click here to Download the Data Template" />
+        </div>
+      </form>
+    </div>
+
+    <div class="column" style="width: 50%;">
+      {% include 'pages/upload/step3/_info2.html' %}
+
+      <a href="{{ url_for('upload_study_template_xlsx') }}" class="green-button full text-center">
+        Click here to download the study template
+      </a>
+    </div>
+  </div>
+
+{% endmacro %}

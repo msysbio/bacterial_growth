@@ -22,9 +22,17 @@ src/__pycache__/*
 poetry.lock
 pyproject.toml
 
-
 app/templates/yaml_templates/
 
 
 # Ignore _build from readthedocs when run locally
 docs/_build/
+# Configuration contains passwords, copy config/database.toml.example:
+config/database.toml
+
+# Compiled assets:
+flask_app/static/build/*
+flask_app/static/.webassets-cache/*
+
+# Micromamba environment
+.micromamba/*

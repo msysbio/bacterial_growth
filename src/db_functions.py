@@ -1,13 +1,15 @@
 import os
+import tomllib
+from pathlib import Path
 import mysql.connector
 import warnings
-import streamlit as st
 import sys
 filepath = os.path.realpath(__file__)
 current_dir = os.path.dirname(filepath)
 sys.path.append(current_dir)
 from constants import *
 
+APP_ENV = os.getenv('APP_ENV', 'development')
 
 def execute(phrase):
     """
@@ -17,24 +19,16 @@ def execute(phrase):
     :return: list of str received from the database
     """
     try:
-        # cnx = mysql.connector.connect(
-        #     user="freedb_testDev",
-        #     password="gktRWCV7NEf8*Kv",
-        #     host="sql.freedb.tech",
-        #     port="3306",
-        #     database="freedb_BacterialGrowth",
-        #     auth_plugin='mysql_native_password'
-        #     )
+        config = tomllib.loads(Path('config/database.toml').read_text())
+        env_config = config[APP_ENV]
+
         cnx = mysql.connector.connect(
-              username=st.secrets.connections.BacterialGrowth.username, 
-              password=st.secrets.connections.BacterialGrowth.password,
-              host=st.secrets.connections.BacterialGrowth.host,
-              port=st.secrets.connections.BacterialGrowth.port,
-              database=st.secrets.connections.BacterialGrowth.database,
-              ssl_ca = CA_PATH,
-              ssl_verify_cert = True,
-              ssl_verify_identity = True
-            )
+            **env_config,
+            ssl_ca = CA_PATH,
+            ssl_verify_cert = True,
+            ssl_verify_identity = True,
+            use_pure = False,
+        )
 
         cursor = cnx.cursor()
         cursor.execute(phrase)
@@ -121,10 +115,11 @@ def getAllRecords(table, args):
     return res
 
 def getChebiId(metabolite):
-
-    phrase = f"SELECT cheb_id FROM Metabolites WHERE metabo_name = '{metabolite}' ;"
+    phrase = f"SELECT cheb_id FROM Metabolites WHERE metabo_name = '{metabolite}';"
     res = execute(phrase)
-    print(res)
+
+    if len(res) == 0: return None
+
     return res[0][0]
 
 def getFiles(fields, args):
@@ -163,6 +158,9 @@ def getInsertFieldsValues(args):
     :param args: dictionary with the data to return (key = db field name. value = insert value)
     :return str with part of query
     '''
+    if len(args) == 0:
+        return ['', '']
+
     fields = "("
     values = "("
     for key, val in args.items():

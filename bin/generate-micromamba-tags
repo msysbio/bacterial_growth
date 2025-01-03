@@ -1,0 +1,7 @@
+#! /bin/sh
+
+ctags \
+  --languages=Python \
+  --kinds-Python=-Y \
+  -o micromamba.tags \
+  -R .micromamba/envs/bacterial_growth/lib/*/site-packages

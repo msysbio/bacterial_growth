@@ -1,0 +1,17 @@
+Flask
+Flask-Assets
+Flask-WTF
+cssmin
+pandas
+plotly
+pymysql
+pytest
+sqlalchemy
+openpyxl
+humanize
+
+# Streamlit app:
+matplotlib
+mysql-connector-python
+prettytable
+pyyaml

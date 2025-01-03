@@ -1,0 +1,126 @@
+{% from 'utils/_dataframe.html' import render_dataframe %}
+
+{% extends '_layout.html' %}
+
+{% block title %}: Study {{ study['studyId'] }}{% endblock %}
+
+{% block content %}
+  <div class="container">
+    <article>
+      <h2>{{ study['studyName'] }}</h2>
+
+      <p>{{ study['studyDescription'] }}</p>
+
+      <p>
+        {% if study['studyURL']: %}
+          <strong>URL</strong>: <a href="{{ study['studyURL'] }}">{{ study['studyURL'] }}</a>
+          <br>
+        {% endif %}
+      </p>
+
+      <p>
+        <a href="{{ url_for('dashboard_index_page', studyId=study['studyId']) }}" class="white-button">
+          📊 Visualize
+        </a>
+
+        <a href="{{ url_for('study_export_page', studyId=study['studyId']) }}" class="white-button">
+          ⬇ Export data
+        </a>
+      </p>
+
+      <br>
+
+      <div>
+        <table class="simple-table">
+          <tr>
+            <th>Techniques</th>
+            <th>Species</th>
+            <th>Metabolites</th>
+          </tr>
+
+          <tr>
+            <td>
+              <ul>
+                {% for name in study['techniques']: %}
+                  <li>{{ name }}</li>
+                {% endfor %}
+              </ul>
+            </td>
+
+            <td>
+              <ul>
+                {% for (name, id) in study['members']: %}
+                  <li>
+                    <a href="{{ url_for('strain_show_page', id=id) }}">{{ name }}</a>
+                  </li>
+                {% endfor %}
+              </ul>
+            </td>
+
+            <td>
+              <ul>
+                {% for (name, cheb_id) in study['metabolites']: %}
+                  <li>
+                    <a href="{{ url_for('metabolite_show_page', cheb_id=cheb_id) }}">{{ name }}</a>
+                  </li>
+                {% endfor %}
+              </ul>
+            </td>
+          </tr>
+        </table>
+      </div>
+
+      <p>
+        <h3>Experiments</h3>
+        <div class="dataframe-container">
+          {{ render_dataframe(study['experiments']) }}
+        </div>
+      </p>
+
+      <p>
+        <h3>Compartments</h3>
+        <div class="dataframe-container">
+          {{ render_dataframe(study['compartments']) }}
+        </div>
+      </p>
+
+      <div>
+        <h3>Communities information</h3>
+        <div class="dataframe-container">
+          {{ render_dataframe(study['communities']) }}
+        </div>
+
+        <h3>Community members information</h3>
+        <div class="dataframe-container">
+          {{ render_dataframe(study['microbial_strains']) }}
+        </div>
+      </div>
+
+      <div>
+        <h3>Biological replicates metadata</h3>
+        <div class="dataframe-container">
+          {{ render_dataframe(study['biological_replicates']) }}
+        </div>
+
+        {% if study['abundances'].size > 0: %}
+          <h3>Abundance data per Biological Replicates and microbial species</h3>
+          <div class="dataframe-container">
+            {{ render_dataframe(study['abundances']) }}
+          </div>
+        {% endif %}
+
+        {% if study['fc_counts'].size > 0: %}
+          <h3>Flow Cytometry Counts data per Biological Replicates and microbial species</h3>
+          <div class="dataframe-container">
+            {{ render_dataframe(study['fc_counts']) }}
+          </div>
+        {% endif %}
+
+        <h3>Metabolites measured per Biological Replicates</h3>
+        <div class="dataframe-container">
+          {{ render_dataframe(study['metabolites_per_replicate']) }}
+        </div>
+      </div>
+    </article>
+  </div>
+{% endblock %}

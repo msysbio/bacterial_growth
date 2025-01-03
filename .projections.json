@@ -1,0 +1,20 @@
+{
+  "flask_app/templates/*.html": {
+    "type": "template"
+  },
+  "flask_app/forms/*.py": {
+    "type": "form"
+  },
+  "flask_app/models/*.py": {
+    "type": "model"
+  },
+  "flask_app/pages/*.py": {
+    "type": "page"
+  },
+  "flask_app/static/css/*.css": {
+    "type": "stylesheet"
+  },
+  "flask_app/static/js/*.js": {
+    "type": "javascript"
+  }
+}
