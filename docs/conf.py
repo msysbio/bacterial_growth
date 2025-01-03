@@ -146,7 +146,8 @@ latex_elements = {
     # "maketitle": "\\sphinxmaketitle",
 }
 
-latex_logo = "../logo/crest-oceanrender-logomark512.png"
+# latex_logo = "../logo/crest-oceanrender-logomark512.png"
+latex_logo = "../figs/logo-free-white.png"
 
 # -- Templating --------------------------------------------------------------
 
