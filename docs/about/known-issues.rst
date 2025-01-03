@@ -11,8 +11,8 @@ Please see the following links:
     - :link:`Discussions on GitHub <{GitHubLink}/discussions>`
 
 
-
-:link:`asdas <https://www.ncbi.nlm.nih.gov/taxonomy/?term=39946>`
+.. Example for hyperlink:
+.. :link:`asdas <https://www.ncbi.nlm.nih.gov/taxonomy/?term=39946>`
 
 
 

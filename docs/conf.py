@@ -106,11 +106,12 @@ html_theme = 'furo'
 html_title = "μGrowthDB"
 html_short_title = "μGrowthDB"
 # html_logo = '../logo/crest-oceanrender-logo.svg'
-html_favicon = '../figs/logo.png'
+html_logo = '_static/logo-somon.svg'
+html_favicon = '../logo/logo-somon.svg'
 
 html_theme_options = {
-    "light_logo": '../figs/logo.png',  # "crest-oceanrender-logo.svg",
-    "dark_logo": '../figs/logo.png',  # "crest-oceanrender-logo-dark.svg",
+    "light_logo": 'logo-somon.svg',  # "crest-oceanrender-logo.svg",
+    "dark_logo": 'logo-dark.svg',  # "crest-oceanrender-logo-dark.svg",
     "sidebar_hide_name": True,
     # "announcement": "<em>Important</em> announcement!",
 }
@@ -137,6 +138,8 @@ html_js_files = [
     'https://p.trellocdn.com/embed.min.js',
     'custom.js',
 ]
+
+html_output_encoding = "utf-8"
 
 # -- Options for PDF output --------------------------------------------------
 
