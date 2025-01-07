@@ -30,9 +30,16 @@ docs/_build/
 # Configuration contains passwords, copy config/database.toml.example:
 config/database.toml
 
+# Streamlit case
+.streamlit/
+
 # Compiled assets:
 flask_app/static/build/*
 flask_app/static/.webassets-cache/*
 
 # Micromamba environment
 .micromamba/*
+
+# Ignore vim configurations
+_project.vim
+.flake8
