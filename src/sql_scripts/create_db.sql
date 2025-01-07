@@ -82,9 +82,9 @@ CREATE TABLE IF NOT EXISTS Community (
 );
 
 CREATE TABLE IF NOT EXISTS Metabolites (
-    cheb_id VARCHAR(255),
+    chebi_id VARCHAR(255),
     metabo_name VARCHAR(255) DEFAULT NULL,
-    PRIMARY KEY (cheb_id)
+    PRIMARY KEY (chebi_id)
 );
 
 CREATE TABLE IF NOT EXISTS Taxa (
@@ -93,15 +93,13 @@ CREATE TABLE IF NOT EXISTS Taxa (
     PRIMARY KEY (tax_id)
 );
 
-/*
+
 CREATE TABLE IF NOT EXISTS MetaboliteSynonym (
     syn_id INT AUTO_INCREMENT PRIMARY KEY,
     synonym_value VARCHAR(255) DEFAULT NULL,
-    cheb_id VARCHAR(255),
-    FOREIGN KEY (cheb_id) REFERENCES Metabolites(cheb_id)
+    chebi_id VARCHAR(255),
+    FOREIGN KEY (chebi_id) REFERENCES Metabolites(chebi_id)
 );
-
- */
 
 
 CREATE TABLE CompartmentsPerExperiment (
@@ -195,12 +193,12 @@ CREATE TABLE IF NOT EXISTS MetabolitePerExperiment (
     bioreplicateUniqueId INT,
     bioreplicateId VARCHAR(100),
     metabo_name VARCHAR(255) DEFAULT NULL,
-    cheb_id VARCHAR(255),
+    chebi_id VARCHAR(255),
 
     -- TODO: this can't be primary key, the experiment id is not unique
-    PRIMARY KEY (experimentId, bioreplicateId, cheb_id),
+    PRIMARY KEY (experimentId, bioreplicateId, chebi_id),
 
-    FOREIGN KEY (cheb_id) REFERENCES Metabolites(cheb_id) ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY (chebi_id) REFERENCES Metabolites(chebi_id) ON UPDATE CASCADE ON DELETE CASCADE,
     FOREIGN KEY (experimentUniqueId) REFERENCES Experiments(experimentUniqueId) ON UPDATE CASCADE ON DELETE CASCADE,
     FOREIGN KEY (studyId) REFERENCES Study (studyId) ON UPDATE CASCADE ON DELETE CASCADE
 );
