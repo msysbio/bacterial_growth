@@ -7,16 +7,16 @@ import sqlalchemy as sql
 from flask_app.db import get_connection
 
 
-def metabolite_show_page(cheb_id):
+def metabolite_show_page(chebi_id):
     with get_connection() as conn:
-        query = "SELECT * FROM Metabolites WHERE cheb_id = :cheb_id LIMIT 1"
-        metabolite = conn.execute(sql.text(query), {'cheb_id': cheb_id}).one()._asdict()
-        numeric_id = re.sub(r'^CHEBI:', '', cheb_id)
+        query = "SELECT * FROM Metabolites WHERE chebi_id = :chebi_id LIMIT 1"
+        metabolite = conn.execute(sql.text(query), {'chebi_id': chebi_id}).one()._asdict()
+        numeric_id = re.sub(r'^CHEBI:', '', chebi_id)
 
         return render_template(
             "pages/metabolites/show.html",
             metabolite=metabolite,
-            cheb_id=cheb_id,
+            chebi_id=chebi_id,
             numeric_id=numeric_id
         )
 
@@ -33,7 +33,7 @@ def metabolites_completion_json():
     with get_connection() as conn:
         query = """
             SELECT
-                cheb_id AS id,
+                chebi_id AS id,
                 metabo_name AS text
             FROM Metabolites
             WHERE LOWER(metabo_name) LIKE :term
