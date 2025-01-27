@@ -186,6 +186,10 @@ $(document).ready(function() {
       $step3form.find('.vessel-count').addClass('hidden');
       $step3form.find(`.vessel-${vesselType}`).removeClass('hidden');
     }
+
+    $('select#technique_types').select2({
+      theme: 'custom',
+    });
   });
 
   $('.upload-page .step-content.step-4').each(function() {

@@ -80,7 +80,7 @@ def upload_step3_page():
             taxa_names       = [name for (id, name) in submission.fetch_strains()]
 
             spreadsheet = data_spreadsheet.create_excel(
-                submission.technique_type,
+                submission.technique_types,
                 metabolite_names,
                 submission.vessel_type,
                 submission.vessel_count,

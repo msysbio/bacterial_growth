@@ -26,7 +26,7 @@ def save_submission_to_database(conn, yml_dir, submission, data_template):
         - study['projectUniqueID']: Project Unique ID only if all was susscessful
     """
     # TODO (2024-10-20) Taken directly from streamlit app, so we just rename the fields for now:
-    list_growth = [submission.technique_type]
+    list_growth = submission.technique_types
     list_metabolites = [name for (cheb_id, name) in submission.fetch_metabolites()]
 
     list_microbial_strains = [name for (id, name) in submission.fetch_strains()]

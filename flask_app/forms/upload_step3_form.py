@@ -20,7 +20,7 @@ class UploadStep3Form(FlaskForm):
 
     timepoint_count = IntegerField('timepoint_count', validators=[DataRequired()])
 
-    technique_type = SelectField('technique_type', choices=[
+    technique_types = SelectMultipleField('technique_types', choices=[
         ('od',        "Optical Density"),
         ('plates',    "Plate Counts"),
         ('plates_ps', "Plate Counts (per species)"),
