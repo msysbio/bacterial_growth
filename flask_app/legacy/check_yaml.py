@@ -117,6 +117,9 @@ def test_comu_members_yaml(data):
 def test_communities_yaml(data):
     """
     Function that test the communities yaml dataframe, checking that all the mandatory columns are not .nan or in the right format
+
+    Currently, this function is disabled, because it needs to be possible for a "control" experiment to have no communities.
+
     inputs:
         - data: dataframe corresponding to the excel sheet
 
@@ -125,13 +128,13 @@ def test_communities_yaml(data):
     """
     return []
 
-    df = pd.DataFrame(data)
-    errors = []
-    for column in df.columns:
-        if not pd.api.types.is_string_dtype(df[column]):
-            errors.append(f"Communities: Column '{column}' must be of type string. No blank cells allowed.")
-
-    return errors
+    # df = pd.DataFrame(data)
+    # errors = []
+    # for column in df.columns:
+    #     if not pd.api.types.is_string_dtype(df[column]):
+    #         errors.append(f"Communities: Column '{column}' must be of type string. No blank cells allowed.")
+    #
+    # return errors
 
 
 def test_perturbation_yaml(data):

@@ -42,8 +42,6 @@ class ExperimentChartForm:
         selected_bioreplicate_ids, _ = self.extract_args(args)
         self.growth_data.select_bioreplicates(selected_bioreplicate_ids)
 
-        print(selected_bioreplicate_ids)
-
         fig = px.line(
             self.growth_data.df,
             x='Time',

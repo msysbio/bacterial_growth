@@ -39,6 +39,4 @@ def save_chart_data(studyId, xls_1):
     os.makedirs(path, exist_ok=True)
     # this function stores the raw data in 2 .csv files in a study folder
 
-    print(path)
-
     save_data_to_csv(growth_file, reads_file, xls_1)
