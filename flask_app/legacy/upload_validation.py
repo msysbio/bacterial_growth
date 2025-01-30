@@ -3,7 +3,15 @@ import yaml
 
 import pandas as pd
 
-from flask_app.legacy.check_yaml import test_study_yaml, test_experiments_yaml, test_compartments_yaml, test_comu_members_yaml, test_communities_yaml, test_perturbation_yaml
+from flask_app.legacy.check_yaml import (
+    test_study_yaml,
+    test_experiments_yaml,
+    test_compartments_yaml,
+    test_comu_members_yaml,
+    test_communities_yaml,
+    test_perturbation_yaml,
+    test_cross_sheet_issues
+)
 
 
 def validate_upload(yml_dir, study_template, data_template):
@@ -46,6 +54,11 @@ def validate_upload(yml_dir, study_template, data_template):
 
     data_pertu = load_yaml(info_pert_file)
     errors.extend(test_perturbation_yaml(data_pertu))
+
+    errors.extend(test_cross_sheet_issues(
+        experiments=data_experiment_yaml,
+        communities=data_comu,
+    ))
 
     return errors
 

@@ -49,11 +49,11 @@ DROP TABLE IF EXISTS BioReplicatesMetadata;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE BioReplicatesMetadata (
   studyId varchar(100) COLLATE utf8mb4_bin NOT NULL,
-  bioreplicateUniqueId int DEFAULT NULL,
+  bioreplicateUniqueId int NOT NULL,
   bioreplicateId varchar(100) COLLATE utf8mb4_bin NOT NULL,
   biosampleLink text COLLATE utf8mb4_bin,
   bioreplicateDescrition text COLLATE utf8mb4_bin,
-  PRIMARY KEY (bioreplicateId),
+  PRIMARY KEY (studyId,bioreplicateUniqueId),
   UNIQUE KEY studyId (studyId,bioreplicateUniqueId),
   KEY fk_1 (bioreplicateUniqueId),
   CONSTRAINT BioReplicatesMetadata_fk_1 FOREIGN KEY (bioreplicateUniqueId) REFERENCES BioReplicatesPerExperiment (bioreplicateUniqueId) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -395,6 +395,6 @@ CREATE TABLE TechniquesPerExperiment (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
-INSERT INTO MigrationVersions VALUES (8,'2024_11_11_160324_initial_schema','2024-11-14 11:12:21'),(10,'2024_11_11_164726_remove_unique_study_description_index','2024-11-21 11:09:27'),(12,'2024_11_21_115349_allow_null_medialink','2024-11-21 11:55:59'),(16,'2024_11_21_120444_fix_unique_primary_keys','2024-11-21 12:07:26');
+INSERT INTO MigrationVersions VALUES (1,'2024_11_11_160324_initial_schema','2025-01-30 15:40:54'),(2,'2024_11_11_164726_remove_unique_study_description_index','2025-01-30 15:40:54'),(3,'2024_11_21_115349_allow_null_medialink','2025-01-30 15:40:55'),(4,'2024_11_21_120444_fix_unique_primary_keys','2025-01-30 15:40:55'),(5,'2025_01_30_152951_fix_bioreplicates_metadata_unique_id','2025-01-30 15:40:55');
 
--- Dump completed on 2024-11-21 12:07:26
+-- Dump completed on 2025-01-30 15:40:55

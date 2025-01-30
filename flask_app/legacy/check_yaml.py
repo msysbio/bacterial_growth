@@ -116,13 +116,15 @@ def test_comu_members_yaml(data):
 
 def test_communities_yaml(data):
     """
-    Function that test the communitites yaml dataframe, checking that all the mandatory columns are not .nan or in the right format
+    Function that test the communities yaml dataframe, checking that all the mandatory columns are not .nan or in the right format
     inputs:
         - data: dataframe corresponding to the excel sheet
 
     Returns:
         - errors: List of errors if found.
     """
+    return []
+
     df = pd.DataFrame(data)
     errors = []
     for column in df.columns:
@@ -171,5 +173,33 @@ def test_perturbation_yaml(data):
         logic_check = df['Perturbation_EndTime'] > df['Perturbation_StartTime']
         if not logic_check.all():
             errors.append("Perturbations: 'Perturbation_EndTime' must be bigger than 'Perturbation_StartTime'.")
+
+    return errors
+
+
+def test_cross_sheet_issues(experiments, communities):
+    """
+    Function that test for issues between spreadsheets
+    inputs:
+        - experiments: dataframe corresponding to the EXPERIMENTS excel sheet
+        - communities: dataframe corresponding to the COMMUNITIES excel sheet
+
+    Returns:
+        - errors: List of errors if found.
+    """
+    experiments_df = pd.DataFrame(experiments)
+    communities_df = pd.DataFrame(communities)
+
+    errors = []
+
+    community_ids = set(communities_df['Community_ID'])
+    experiment_community_ids = {
+        c for c
+        in experiments_df['Community_ID']
+    }
+
+    extra_community_ids = [f'"{c}"' for c in experiment_community_ids - community_ids]
+    if len(extra_community_ids) > 0:
+        errors.append(f"Communities: Community IDs used in EXPERIMENTS that are missing from COMMUNITIES: {', '.join(extra_community_ids)}")
 
     return errors

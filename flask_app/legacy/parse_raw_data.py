@@ -192,6 +192,7 @@ def save_data_to_csv(output_csv_path_growth,output_csv_path_reads,raw_data_templ
     # Drop rows where all values are NaN
     df_excel_growth = df_excel_growth.dropna(axis=0, how='all')
     if not df_excel_growth.empty:
+        print("df_excel_growth is empty")
         df_excel_growth.to_csv(output_csv_path_growth, index=False)
 
     df_excel_reads = pd.read_excel(raw_data_template, sheet_name='growth_per_species')
@@ -201,4 +202,5 @@ def save_data_to_csv(output_csv_path_growth,output_csv_path_reads,raw_data_templ
     # Drop rows where all values are NaN
     df_excel_reads = df_excel_reads.dropna(subset=subset_columns, how='all')
     if not df_excel_reads.empty:
+        print("df_excel_reads is empty")
         df_excel_reads.to_csv(output_csv_path_reads, index=False)
