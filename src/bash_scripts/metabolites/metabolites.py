@@ -1,19 +1,21 @@
 #%%% Load libraries
-import re
+import re, sys, os
 import pandas as pd
 import argparse
 # The ChEBI() class, an Interface for CheBI, is part of the bioservices library
 from bioservices import *
-import sys
-import os
 # Get the path two levels up
 two_levels_up = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../"))
 sys.path.insert(0, two_levels_up)
 from utils import isFile
+from tqdm import tqdm
+import time
 
 # %% Args
-parser = argparse.ArgumentParser(description= "Script to build metabolites.csv and metabolites_synonyms.csv files from the MCO ontology and any other custom file.",
-                                 formatter_class=argparse.RawTextHelpFormatter)
+parser = argparse.ArgumentParser(
+    description= "Script to build metabolites.csv and metabolites_synonyms.csv files from the MCO ontology and any other custom file.",
+    formatter_class=argparse.RawTextHelpFormatter
+)
 
 # Add a flag argument
 parser.add_argument("--mco", action="store_true", help="Use the Raes lab dataset, too.")
@@ -29,24 +31,33 @@ if not any([args.mco, args.raes, args.other]):
 
 #%%% Methods
 
-# We will use the ChEBI class (https://bioservices.readthedocs.io/en/latest/_modules/bioservices/chebi.html) of the
-# bioservices library to interact with the ChEBI database.
-def get_syn(chebi_id):
-    """Get the synonyms of a ChEBI ID"""
-    chebi = ChEBI()
+def get_syn(chebi_id, chebi, retries=3, delay=5):
+    """Get the synonyms of a ChEBI ID with retries in case of a timeout"""
     if pd.isna(chebi_id):
         return None
-    search_results = chebi.getCompleteEntity(chebi_id)
-    if search_results and hasattr(search_results, 'Synonyms'):
-        syn_list = search_results.Synonyms
-        syn = [str(item['data'].lower()) for item in syn_list]
-        return syn
-    else:
-        return None
 
+    attempt = 0
+    while attempt < retries:
+        try:
+            search_results = chebi.getCompleteEntity(chebi_id)
+            if search_results and hasattr(search_results, 'Synonyms'):
+                syn_list = search_results.Synonyms
+                syn = [str(item['data'].lower()) for item in syn_list]
+                return syn
+            else:
+                return None
+        except TimeoutError:
+            attempt += 1
+            print(f"Timeout occurred. Retrying get_syn() {attempt}/{retries}...")
+            time.sleep(delay)  # Wait before retrying
+        except Exception as e:
+            print(f"An error occurred: {e}")
+            return None
 
-def get_AsciiName(chebi_id):
-    chebi = ChEBI()
+    print(f"Failed to retrieve synonyms for {chebi_id} after {retries} attempts.")
+    return None
+
+def get_AsciiName(chebi_id, chebi):
     """Get the AsciiName of a ChEBI ID"""
     if pd.isna(chebi_id):
        return None
@@ -57,9 +68,8 @@ def get_AsciiName(chebi_id):
          return None
 
 
-def get_IUPACC(chebi_id):
+def get_IUPACC(chebi_id, chebi):
     """Get the IUPAC name of a ChEBI ID"""
-    chebi = ChEBI()
     if pd.isna(chebi_id):
        return None
     search_results = chebi.getCompleteEntity(chebi_id)
@@ -89,15 +99,40 @@ def add_to_syn(row):
     return syn_set
 
 
-def get_chebi_id(metabolite_name):
+def get_chebi_id(metabolite_name, chebi):
     """Get the ChEBI ID of a metabolite"""
-    chebi = ChEBI()
     search_results = chebi.getLiteEntity(metabolite_name, maximumResults=1)
     if search_results:
      return search_results[0].chebiId
     else:
         return None
 
+
+def build_chebi_df(df):
+
+    print("Building ChEBI dataframe.")
+
+    chebi = ChEBI()
+    tqdm.pandas()
+
+    if "ChEBI_ID" not in df.columns:
+        print("Get ChEBI IDs.")
+        df['ChEBI_ID'] = df['metabolites'].progress_apply(lambda x: get_chebi_id(x, chebi))
+        df.to_csv("df_chebi.csv", index=False)
+
+    print("Get synonyms.")
+    df['Synonyms'] = df['ChEBI_ID'].progress_apply(lambda x: get_syn(x, chebi))
+    df.to_csv("df_syn.csv", index=False)
+
+    print("Get AsciiName.")
+    df['AsciiName'] = df['ChEBI_ID'].progress_apply(lambda x: get_AsciiName(x, chebi))
+    df.to_csv("df_ascii.csv", index=False)
+
+    print("Get IUPAC names.")
+    df['Iupac Names'] = df['ChEBI_ID'].progress_apply(lambda x: get_IUPACC(x, chebi))
+    df.to_csv("df_iupac.csv", index=False)
+
+    return df
 
 #%%% Raes list   --  not to be used
 df_raes = df_mco = df_other = None
@@ -111,16 +146,14 @@ if args.raes:
     split_matches = [word.strip().lower() for match in matches_metabo for word in re.split(r',\s+', match)]
     df = pd.DataFrame({'metabolites': split_matches})
     df_raes = pd.DataFrame({'metabolites':df['metabolites'].unique()})
-
-    df_raes['ChEBI_ID'] = df_raes['metabolites'].apply(get_chebi_id)
-    df_raes['Synonyms'] = df_raes['ChEBI_ID'].apply(get_syn)
-    df_raes['AsciiName'] = df_raes['ChEBI_ID'].apply(get_AsciiName)
-    df_raes['Iupac Names'] = df_raes['ChEBI_ID'].apply(get_IUPACC)
+    df_raes = build_chebi_df(df_raes)
     print("Raes lab dataset processed.")
 
 # %%% MCO Ontology
 if args.mco:
+
     print("Processing MCO ontology.")
+
     # [NOTE] This chunk of code will take up to 10 minutes to run
     with open("mco.owl", "r") as owlfile:
         owl_text = owlfile.read()
@@ -133,12 +166,9 @@ if args.mco:
     uniq_chebi = set(chebi_matches)
     unique_chebi_list = list(uniq_chebi)
     prefix_chebid = ["CHEBI:" + term for term in unique_chebi_list]
-
     df_mco = pd.DataFrame({'ChEBI_ID': prefix_chebid})
-    df_mco['Synonyms'] = df_mco['ChEBI_ID'].apply(get_syn)
-    df_mco['AsciiName'] = df_mco['ChEBI_ID'].apply(get_AsciiName)
-    df_mco['Iupac Names'] = df_mco['ChEBI_ID'].apply(get_IUPACC)
-    df_mco['metabolites'] = df_mco['AsciiName']
+    df_mco = build_chebi_df(df_mco)
+    df["metabolites"] =  df["AsciiName"]
     print("MCO ontology processed.")
 
 # Load custom file
@@ -148,10 +178,7 @@ if args.other:
     if df_other.shape[1] > 1:
         raise ValueError("The file should have only one column")
     df_other.columns = ["metabolites"]
-    df_other['ChEBI_ID'] = df_other['metabolites'].apply(get_chebi_id)
-    df_other['Synonyms'] = df_other['ChEBI_ID'].apply(get_syn)
-    df_other['AsciiName'] = df_other['ChEBI_ID'].apply(get_AsciiName)
-    df_other['Iupac Names'] = df_other['ChEBI_ID'].apply(get_IUPACC)
+    df_other = build_chebi_df(df_other)
     print("Custom file processed.")
 
 # %% Merge dfs built from the MCO and/or the Raes and/or the custom files

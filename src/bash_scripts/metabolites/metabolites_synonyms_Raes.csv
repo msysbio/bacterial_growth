@@ -1,0 +1,874 @@
+ChEBI_ID,Synonyms
+CHEBI:22599,ara
+CHEBI:18222,dl-xylose
+CHEBI:18222,xyl
+CHEBI:28796,"(2,6-beta-d-fructosyl)n+1"
+CHEBI:28796,"2,6-beta-d-fructan"
+CHEBI:28796,polyfructose
+CHEBI:28796,fructans
+CHEBI:28796,levan
+CHEBI:28796,beta-d-fructan
+CHEBI:28796,levan n
+CHEBI:28796,"(2,6-beta-d-fructosyl)n"
+CHEBI:28757,fruchtzucker
+CHEBI:28757,fruktose
+CHEBI:28757,arabino-hexulose
+CHEBI:28757,fru
+CHEBI:17309,pectinas
+CHEBI:17309,pektin
+CHEBI:17309,pektine
+CHEBI:17309,"poly(1,4-alpha-d-galacturonide)"
+CHEBI:17309,poly[(1->4)-alpha-d-galpa]
+CHEBI:17309,pectine
+CHEBI:17309,pectina
+CHEBI:17309,pectins
+CHEBI:17309,pectines
+CHEBI:17309,pectic substance
+CHEBI:17790,spirit of wood
+CHEBI:17790,wood alcohol
+CHEBI:17790,wood naphtha
+CHEBI:17790,methyl alcohol
+CHEBI:17790,ch3oh
+CHEBI:17790,carbinol
+CHEBI:17790,meoh
+CHEBI:17790,wood spirit
+CHEBI:17790,methylalkohol
+CHEBI:12952,aldehydo-d-galacturonate
+CHEBI:12952,d-galacturonate
+CHEBI:12952,galacturonate
+CHEBI:58027,glyceraldehyde 3-phosphate dianion
+CHEBI:90318,pyruvate carboxylase inhibitor
+CHEBI:90318,pyruvic carboxylase inhibitor
+CHEBI:90318,ec 6.4.1.1 (pyruvate carboxylase) inhibitors
+CHEBI:90318,pyruvate carboxylase (ec 6.4.1.1) inhibitor
+CHEBI:90318,pyruvate:carbon-dioxide ligase (adp-forming) inhibitors
+CHEBI:90318,pyruvic carboxylase inhibitors
+CHEBI:90318,pyruvate:carbon-dioxide ligase (adp-forming) inhibitor
+CHEBI:90318,pyruvate carboxylase inhibitors
+CHEBI:90318,ec 6.4.1.1 inhibitors
+CHEBI:90318,pyruvate carboxylase (ec 6.4.1.1) inhibitors
+CHEBI:90318,ec 6.4.1.1 inhibitor
+CHEBI:90318,pyruvate
+CHEBI:28017,amylum
+CHEBI:28017,amidon
+CHEBI:28017,staerke
+CHEBI:28087,animal starch
+CHEBI:28087,"wurcs=2.0/1,4,3/[a2122h-1a_1-5]/1-1-1-1/a4-b1_b4-c1_b6-d1"
+CHEBI:28087,liver starch
+CHEBI:17234,glc
+CHEBI:17234,glukose
+CHEBI:17234,dl-glucose
+CHEBI:58601,alpha-d-glucose 1-phosphate
+CHEBI:58601,glucose 1-phosphate
+CHEBI:36219,"wurcs=2.0/2,2,1/[a2122h-1a_1-5][a2112h-1b_1-5]/1-2/a4-b1"
+CHEBI:36219,1-beta-d-galactopyranosyl-4-alpha-d-glucopyranose
+CHEBI:36219,anhydrous lactose
+CHEBI:36219,milk sugar
+CHEBI:36219,4-o-beta-d-galactopyranosyl-alpha-d-glucopyranose
+CHEBI:36219,alpha-lactose
+CHEBI:36219,beta-d-galp-(1->4)-alpha-d-glcp
+CHEBI:28260,gal
+CHEBI:28260,galaktose
+CHEBI:18167,4-o-alpha-d-glucopyranosyl-alpha-d-glucopyranose
+CHEBI:18167,alpha-malt sugar
+CHEBI:18167,glca1-4glca
+CHEBI:18167,glcalpha1-4glca
+CHEBI:18167,glcalpha1-4glcalpha
+CHEBI:18167,alpha-d-glcp-(1->4)-alpha-d-glcp
+CHEBI:18167,alpha-maltose
+CHEBI:57584,6-o-phosphonato-d-glucose
+CHEBI:57584,aldehydo-d-glucose 6-phosphate dianion
+CHEBI:57584,aldehydo-d-glucose 6-phosphate
+CHEBI:57584,glucose 6-phosphate
+CHEBI:28053,6-o-alpha-d-galactopyranosyl-d-glucopyranose
+CHEBI:28053,"gal-alpha(1,6)glc"
+CHEBI:28053,alpha-d-gal-(1->6)-d-glc
+CHEBI:28053,alpha-d-galp-(1->6)-d-glcp
+CHEBI:28053,d-mellibiose
+CHEBI:28053,6-o-(alpha-d-galactopyranosyl)-d-glucopyranose
+CHEBI:28053,d-melibiose
+CHEBI:28053,"wurcs=2.0/2,2,1/[a2122h-1x_1-5][a2112h-1a_1-5]/1-2/a6-b1"
+CHEBI:28053,alpha-d-galactosyl-(1->6)-d-glucose
+CHEBI:28053,(gal)1 (glc)1
+CHEBI:67231,sucrose alpha-glucosidase inhibitors
+CHEBI:67231,sucrose alpha-glucohydrolase inhibitor
+CHEBI:67231,sucrase-isomaltase inhibitor
+CHEBI:67231,sucrose alpha-glucohydrolase inhibitors
+CHEBI:67231,ec 3.2.1.48 (sucrose alpha-glucosidase) inhibitors
+CHEBI:67231,sucrase-isomaltase inhibitors
+CHEBI:67231,sucrase inhibitor
+CHEBI:67231,intestinal sucrase inhibitors
+CHEBI:67231,ec 3.2.1.48 inhibitor
+CHEBI:67231,sucrose alpha-glucosidase inhibitor
+CHEBI:67231,sucrose alpha-glucosidase (ec 3.2.1.48) inhibitor
+CHEBI:67231,sucrase (invertase) inhibitors
+CHEBI:67231,sucrase inhibitors
+CHEBI:67231,sucrase (invertase) inhibitor
+CHEBI:67231,sucrose alpha-glucosidase (ec 3.2.1.48) inhibitors
+CHEBI:67231,intestinal sucrase inhibitor
+CHEBI:67231,ec 3.2.1.48 inhibitors
+CHEBI:67231,sucrose-alpha-d-glucohydrolase inhibitors
+CHEBI:67231,sucrose-alpha-d-glucohydrolase inhibitor
+CHEBI:67231,sucrose
+CHEBI:57579,6-o-phosphonato-d-fructose
+CHEBI:57579,d-fructose 6-phosphate dianion
+CHEBI:57579,keto-d-fructose 6-phosphate
+CHEBI:57579,fructose 6-phosphate
+CHEBI:16551,d-(+)-trehalose
+CHEBI:16551,"alpha,alpha'-trehalose"
+CHEBI:16551,ergot sugar
+CHEBI:16551,(glc)2
+CHEBI:16551,alpha-trehalose
+CHEBI:16551,mycose
+CHEBI:16551,"alpha,alpha-trehalose"
+CHEBI:16551,alpha-d-glucopyranosyl-alpha-d-glucopyranoside
+CHEBI:16551,alpha-d-trehalose
+CHEBI:16551,alpha-d-glcp-(1<->1)-alpha-d-glcp
+CHEBI:37690,all
+CHEBI:58226,l-ribulose 5-phosphate
+CHEBI:58226,5-o-phosphonato-l-ribulose
+CHEBI:58226,5-o-phosphonato-l-erythro-pent-2-ulose
+CHEBI:58226,l-ribulose 5-phosphate dianion
+CHEBI:58226,ribulose 5-phosphate
+CHEBI:18105,1-o-phosphono-d-fructose
+CHEBI:18105,d-fructose 1-phosphate
+CHEBI:18105,fructose 1-phosphate
+CHEBI:16905,"1,6-di-o-phosphono-d-fructose"
+CHEBI:16905,"d-fructose 1,6-bisphosphate"
+CHEBI:16905,"fructose-1,6-diphosphate"
+CHEBI:16905,"d-fructose-1,6-diphosphate"
+CHEBI:16905,harden-young ester
+CHEBI:16905,"fructose 1,6-bisphosphate"
+CHEBI:18287,l-galactomethylose
+CHEBI:18287,l-(-)-fucose
+CHEBI:18287,(-)-l-fucose
+CHEBI:18287,l-fuc
+CHEBI:18287,(-)-fucose
+CHEBI:18287,fucose
+CHEBI:17167,d-lactaldehyde
+CHEBI:17167,d-2-hydroxypropionaldehyde
+CHEBI:17167,(r)-lactaldehyde
+CHEBI:17167,lactaldehyde
+CHEBI:60332,"wurcs=2.0/3,3,2/[a2122h-1x_1-5_2*ncc/3=o][a2112h-1b_1-5][a2122a-1b_1-5_3*oso/3=o/3=o]/1-2-3/a4-b1_b3-c1"
+CHEBI:60332,alpha-d-mannose 6-phosphate dianion
+CHEBI:60332,alpha-d-mannose 6-phosphate
+CHEBI:60332,mannose 6-phosphate
+CHEBI:16055,"(2r,3r,4s,5s)-2,3,4,5-tetrahydroxyhexanal"
+CHEBI:16055,l-rha
+CHEBI:16055,l-rhamnose
+CHEBI:16055,rhamnose
+CHEBI:17797,5-o-phosphono-d-ribose
+CHEBI:17797,d-ribose 5-phosphate
+CHEBI:17797,ribose 5-phosphate
+CHEBI:17797,ribose
+CHEBI:58273,5-o-phosphonato-d-ribose
+CHEBI:58273,d-ribose 5-phosphate dianion
+CHEBI:58273,aldehydo-d-ribose 5-phosphate
+CHEBI:58273,ribose 5-phosphate
+CHEBI:57792,1-deoxy-5-o-phosphonato-d-xylulose
+CHEBI:57792,1-deoxy-d-xylulose 5-phosphate dianion
+CHEBI:57792,1-deoxy-d-xylulose 5-phosphate
+CHEBI:57792,xylulose 5-phosphate
+CHEBI:16526,carbonic anhydride
+CHEBI:16526,[co2]
+CHEBI:16526,carbon dioxide
+CHEBI:16526,e 290
+CHEBI:16526,e290
+CHEBI:16526,r-744
+CHEBI:16526,e-290
+CHEBI:63674,gaba--oxoglutarate aminotransferase inhibitor
+CHEBI:63674,gabt inhibitors
+CHEBI:63674,4-aminobutyrate--2-ketoglutarate aminotransferase inhibitors
+CHEBI:63674,gaba--alpha-oxoglutarate aminotransferase inhibitors
+CHEBI:63674,glutamate--succinic semialdehyde transaminase inhibitors
+CHEBI:63674,gamma-aminobutyric acid pyruvate transaminase inhibitors
+CHEBI:63674,gamma-aminobutyric transaminase inhibitor
+CHEBI:63674,4-aminobutyric acid 2-ketoglutaric acid aminotransferase inhibitors
+CHEBI:63674,gaba transferase inhibitors
+CHEBI:63674,gamma-aminobutyric transaminase inhibitors
+CHEBI:63674,4-aminobutyrate transaminase inhibitor
+CHEBI:63674,gamma-aminobutyric acid aminotransferase inhibitor
+CHEBI:63674,gaba transaminase inhibitors
+CHEBI:63674,gaba--alpha-ketoglutaric acid transaminase inhibitor
+CHEBI:63674,4-aminobutyrate--2-oxoglutarate aminotransferase inhibitor
+CHEBI:63674,gaba--alpha-ketoglutarate aminotransferase inhibitors
+CHEBI:63674,4-aminobutyrate--2-oxoglutarate aminotransferase inhibitors
+CHEBI:63674,ec 2.6.1.19 (4-aminobutyrate--2-oxoglutarate transaminase) inhibitors
+CHEBI:63674,gaba--2-oxoglutarate aminotransferase inhibitors
+CHEBI:63674,aminobutyrate transaminase inhibitor
+CHEBI:63674,gamma-aminobutyrate--alpha-ketoglutarate transaminase inhibitors
+CHEBI:63674,gaba--oxoglutarate transaminase inhibitor
+CHEBI:63674,beta-alanine--oxoglutarate aminotransferase inhibitors
+CHEBI:63674,4-aminobutyrate--2-oxoglutarate transaminase inhibitor
+CHEBI:63674,4-aminobutyrate--2-oxoglutarate transaminase (ec 2.6.1.19) inhibitors
+CHEBI:63674,gaba--oxoglutarate transaminase inhibitors
+CHEBI:63674,gamma-amino-n-butyrate transaminase inhibitors
+CHEBI:63674,gaba--alpha-oxoglutarate aminotransferase inhibitor
+CHEBI:63674,4-aminobutyrate--2-oxoglutarate transaminase (ec 2.6.1.19) inhibitor
+CHEBI:63674,gamma-aminobutyric acid--alpha-ketoglutaric acid aminotransferase inhibitors
+CHEBI:63674,4-aminobutyrate aminotransferase inhibitor
+CHEBI:63674,gamma-aminobutyric acid--alpha-ketoglutaric acid aminotransferase inhibitor
+CHEBI:63674,4-aminobutyric acid aminotransferase inhibitor
+CHEBI:63674,gamma-aminobutyric acid aminotransferase inhibitors
+CHEBI:63674,gamma-aminobutyric acid pyruvate transaminase inhibitor
+CHEBI:63674,4-aminobutyric acid 2-ketoglutaric acid aminotransferase inhibitor
+CHEBI:63674,4-aminobutyrate transaminase inhibitors
+CHEBI:63674,gaba--oxoglutarate aminotransferase inhibitors
+CHEBI:63674,4-aminobutanoate:2-oxoglutarate aminotransferase inhibitors
+CHEBI:63674,gamma-aminobutyric acid--alpha-ketoglutarate transaminase inhibitor
+CHEBI:63674,gamma-amino-n-butyrate transaminase inhibitor
+CHEBI:63674,beta-alanine--oxoglutarate aminotransferase inhibitor
+CHEBI:63674,gaba--alpha-ketoglutarate transaminase inhibitors
+CHEBI:63674,ec 2.6.1.19 inhibitors
+CHEBI:63674,glutamate--succinic semialdehyde transaminase inhibitor
+CHEBI:63674,beta-alanine aminotransferase inhibitor
+CHEBI:63674,gaba aminotransferase inhibitors
+CHEBI:63674,gaba--alpha-ketoglutaric acid transaminase inhibitors
+CHEBI:63674,gaba--alpha-ketoglutarate transaminase inhibitor
+CHEBI:63674,gamma-aminobutyrate aminotransaminase inhibitor
+CHEBI:63674,gamma-aminobutyrate--alpha-ketoglutarate aminotransferase inhibitors
+CHEBI:63674,gaba--2-oxoglutarate transaminase inhibitors
+CHEBI:63674,gamma-aminobutyrate--alpha-ketoglutarate transaminase inhibitor
+CHEBI:63674,gabt inhibitor
+CHEBI:63674,gamma-aminobutyric acid--alpha-ketoglutarate transaminase inhibitors
+CHEBI:63674,gamma-aminobutyrate transaminase inhibitor
+CHEBI:63674,gamma-aminobutyric acid transaminase inhibitor
+CHEBI:63674,gaba transferase inhibitor
+CHEBI:63674,gaba--2-oxoglutarate transaminase inhibitor
+CHEBI:63674,beta-alanine--oxoglutarate transaminase inhibitor
+CHEBI:63674,ec 2.6.1.19 inhibitor
+CHEBI:63674,aminobutyrate transaminase inhibitors
+CHEBI:63674,beta-alanine aminotransferase inhibitors
+CHEBI:63674,4-aminobutyrate-2-oxoglutarate transaminase inhibitor
+CHEBI:63674,4-aminobutyrate-2-oxoglutarate transaminase inhibitors
+CHEBI:63674,4-aminobutanoate:2-oxoglutarate aminotransferase inhibitor
+CHEBI:63674,aminobutyrate aminotransferase inhibitors
+CHEBI:63674,gaba--2-oxoglutarate aminotransferase inhibitor
+CHEBI:63674,gamma-aminobutyric acid--2-oxoglutarate transaminase inhibitor
+CHEBI:63674,gamma-aminobutyrate--alpha-ketoglutarate aminotransferase inhibitor
+CHEBI:63674,gamma-aminobutyrate aminotransaminase inhibitors
+CHEBI:63674,gamma-aminobutyrate transaminase inhibitors
+CHEBI:63674,4-aminobutyric acid aminotransferase inhibitors
+CHEBI:63674,gamma-aminobutyrate:alpha-oxoglutarate aminotransferase inhibitors
+CHEBI:63674,gamma-aminobutyrate:alpha-oxoglutarate aminotransferase inhibitor
+CHEBI:63674,4-aminobutyrate--2-oxoglutarate transaminase inhibitors
+CHEBI:63674,gamma-aminobutyric acid transaminase inhibitors
+CHEBI:63674,gaba transaminase inhibitor
+CHEBI:63674,gamma-aminobutyric acid--2-oxoglutarate transaminase inhibitors
+CHEBI:63674,4-aminobutyrate aminotransferase inhibitors
+CHEBI:63674,aminobutyrate aminotransferase inhibitor
+CHEBI:63674,beta-alanine--oxoglutarate transaminase inhibitors
+CHEBI:63674,4-aminobutyrate--2-ketoglutarate aminotransferase inhibitor
+CHEBI:63674,gaba aminotransferase inhibitor
+CHEBI:63674,2-oxoglutarate
+CHEBI:28044,f
+CHEBI:28044,alpha-amino-beta-phenylpropionic acid
+CHEBI:28044,dl-phenylalanine
+CHEBI:28044,fenilalanina
+CHEBI:28044,phe
+CHEBI:28044,phenylalanin
+CHEBI:18401,phenylacetate anion
+CHEBI:18401,phenylacetic acid anion
+CHEBI:18401,2-phenylethanoate
+CHEBI:18401,2-phenylacetate
+CHEBI:18401,phenylacetate(1-)
+CHEBI:64243,glutamate sodium
+CHEBI:64243,sodium glutamate
+CHEBI:64243,glutammato monosodico
+CHEBI:64243,sodium hydrogen glutamate
+CHEBI:64243,sodium l-glutamate
+CHEBI:64243,monosodium glutamate
+CHEBI:64243,natrium l-hydrogenglutamat
+CHEBI:64243,monosodioglutammato
+CHEBI:64243,l(+) sodium glutamate
+CHEBI:64243,"glutamic acid, monosodium salt"
+CHEBI:64243,msg
+CHEBI:64243,natriumglutaminat
+CHEBI:64243,sodium (2s)-2-ammoniopentanedioate
+CHEBI:64243,glutamate monosodium salt
+CHEBI:64243,glutamate
+CHEBI:27897,alpha-amino-beta-3-indolepropionic acid
+CHEBI:27897,triptofano
+CHEBI:27897,trp
+CHEBI:27897,w
+CHEBI:27897,tryptophane
+CHEBI:27897,beta-3-indolylalanine
+CHEBI:27897,alpha-amino-beta-(3-indolyl)-propionic acid
+CHEBI:27897,2-amino-3-(1h-indol-3-yl)propanoic acid
+CHEBI:27897,htrp
+CHEBI:16134,ammonia
+CHEBI:16134,[nh3]
+CHEBI:16134,r-717
+CHEBI:16134,ammoniac
+CHEBI:16134,amoniaco
+CHEBI:16134,spirit of hartshorn
+CHEBI:16134,ammoniak
+CHEBI:28479,(r)-3-(p-hydroxyphenyl)alanine
+CHEBI:28479,d-tyrosine
+CHEBI:28479,d-tyrosin
+CHEBI:28479,(r)-2-amino-3-(p-hydroxyphenyl)propionic acid
+CHEBI:28479,dty
+CHEBI:28479,(2r)-2-amino-3-(4-hydroxyphenyl)propanoic acid
+CHEBI:28479,d-tyr
+CHEBI:28479,tyrosine
+CHEBI:48999,4-hydroxybenzeneacetate
+CHEBI:48999,2-(4-hydroxyphenyl)ethanoate
+CHEBI:48999,(p-hydroxyphenyl)acetate
+CHEBI:1879,p-hydroxyphenethyl alcohol
+CHEBI:1879,tyrosol
+CHEBI:1879,4-hydroxybenzeneethanol
+CHEBI:16977,(2s)-2-aminopropanoic acid
+CHEBI:16977,l-alanine
+CHEBI:16977,l-alanin
+CHEBI:16977,(s)-2-aminopropanoic acid
+CHEBI:16977,a
+CHEBI:16977,(s)-alanine
+CHEBI:16977,ala
+CHEBI:16977,l-alpha-alanine
+CHEBI:16977,l-2-aminopropionic acid
+CHEBI:15882,hydroxybenzene
+CHEBI:15882,carbolic acid
+CHEBI:15882,phenic acid
+CHEBI:15882,phoh
+CHEBI:15882,karbolsaeure
+CHEBI:15882,acide carbolique
+CHEBI:15882,phenylic acid
+CHEBI:15882,benzenol
+CHEBI:15882,acide phenique
+CHEBI:15882,carbolsaeure
+CHEBI:15882,phenylic alcohol
+CHEBI:15882,oxybenzene
+CHEBI:32814,n-carbamoyl-l-aspartate
+CHEBI:32814,l-ureidosuccinate
+CHEBI:32814,n-carbamoyl-l-aspartate dianion
+CHEBI:32814,aspartate
+CHEBI:17479,2-hydroxyethylenedicarboxylate
+CHEBI:17479,enol-oxaloacetate
+CHEBI:17479,hydroxyfumarate
+CHEBI:17479,oxaloacetate
+CHEBI:231760,nadh-fumarate reductase inhibitor
+CHEBI:231760,ec 1.3.1.6 inhibitors
+CHEBI:231760,ec 1.3.1.6 (fumarate reductase (nadh)) inhibitors
+CHEBI:231760,fumarate reductase (nadh) inhibitor
+CHEBI:231760,nadh-dependent fumarate reductase inhibitors
+CHEBI:231760,fumarate reductase (nadh) inhibitors
+CHEBI:231760,nadh-fumarate reductase inhibitors
+CHEBI:231760,nadh-dependent fumarate reductase inhibitor
+CHEBI:231760,ec 1.3.1.6 inhibitor
+CHEBI:231760,fumarate
+CHEBI:70722,acetyl-coa carboxylase (ec 6.4.1.2) inhibitors
+CHEBI:70722,acetyl-coa:carbon-dioxide ligase (adp-forming) inhibitor
+CHEBI:70722,ec 6.4.1.2 inhibitors
+CHEBI:70722,acetyl coenzyme a carboxylase inhibitors
+CHEBI:70722,acetyl-coa:carbon-dioxide ligase (adp-forming) inhibitors
+CHEBI:70722,acetyl-coa carboxylase inhibitor
+CHEBI:70722,accase inhibitors
+CHEBI:70722,accase inhibitor
+CHEBI:70722,acc inhibitor
+CHEBI:70722,acetyl-coa carboxylase (ec 6.4.1.2) inhibitor
+CHEBI:70722,ec 6.4.1.2 (acetyl-coa carboxylase) inhibitors
+CHEBI:70722,acetyl coenzyme a carboxylase inhibitor
+CHEBI:70722,ec 6.4.1.2 inhibitor
+CHEBI:70722,acc inhibitors
+CHEBI:70722,acetyl-coa carboxylase inhibitors
+CHEBI:70722,acetyl-coa
+CHEBI:36926,but-2-enoyl-coa
+CHEBI:36926,2-butenoyl-coa
+CHEBI:36926,trans-but-2-enoyl-coa
+CHEBI:36926,s-but-2-enoylcoenzyme a
+CHEBI:50569,"acetic acid, 2-methylpropyl ester"
+CHEBI:50569,2-methyl-1-propyl acetate
+CHEBI:50569,i-butyl acetate
+CHEBI:50569,essigsaeureisobutylester
+CHEBI:50569,2-methylpropyl ethanoate
+CHEBI:50569,beta-methylpropyl ethanoate
+CHEBI:50569,isobutyl ethanoate
+CHEBI:50569,"acetic acid, isobutyl ester"
+CHEBI:50569,isobutylacetat
+CHEBI:50569,acetate d'isobutyle
+CHEBI:50569,isobutylazetat
+CHEBI:50569,acetate
+CHEBI:42955,methyl gamma-aminobutyrate
+CHEBI:42955,methyl 4-aminobutyrate
+CHEBI:42955,4-aminobutyric acid methyl ester
+CHEBI:42955,4-aminobutanoate
+CHEBI:15428,gly
+CHEBI:15428,glycin
+CHEBI:15428,aminoethanoic acid
+CHEBI:15428,glycocoll
+CHEBI:15428,h2n-ch2-cooh
+CHEBI:15428,aminoessigsaeure
+CHEBI:15428,glyzin
+CHEBI:15428,hgly
+CHEBI:15428,glykokoll
+CHEBI:15428,aminoacetic acid
+CHEBI:15428,leimzucker
+CHEBI:15428,g
+CHEBI:67016,tetrahydrofolate anions
+CHEBI:67016,tetrahydrofolate anion
+CHEBI:67016,tetrahydrofolates
+CHEBI:61443,"5,10-methylenetetrahydrofolate polyglutamate"
+CHEBI:61443,"5,10-methylenetetrahydrofolate"
+CHEBI:17191,2-amino-3-methylvaleric acid
+CHEBI:17191,"(2s,3s)-2-amino-3-methylpentanoic acid"
+CHEBI:17191,i
+CHEBI:17191,l-isoleucine
+CHEBI:17191,alpha-amino-beta-methylvaleric acid
+CHEBI:17191,ile
+CHEBI:82815,3-(methylsulfanyl)propanoyl-coa
+CHEBI:82815,propanoyl-coa
+CHEBI:25017,hleu
+CHEBI:25017,leu
+CHEBI:25017,dl-leucine
+CHEBI:25017,2-amino-4-methylpentanoic acid
+CHEBI:25017,leucin
+CHEBI:25017,(+-)-leucine
+CHEBI:25017,(rs)-leucine
+CHEBI:25017,leuzin
+CHEBI:25017,l
+CHEBI:13705,acetoacetate ion(1-)
+CHEBI:13705,"butanoic acid, 3-oxo-, ion(1-)"
+CHEBI:16811,met
+CHEBI:16811,alpha-amino-gamma-methylmercaptobutyric acid
+CHEBI:16811,2-amino-4-(methylthio)butanoic acid
+CHEBI:16811,m
+CHEBI:16811,metionina
+CHEBI:16811,hmet
+CHEBI:16811,2-amino-4-(methylsulfanyl)butanoic acid
+CHEBI:16811,methionin
+CHEBI:16811,2-amino-4-(methylthio)butyric acid
+CHEBI:16811,dl-methionine
+CHEBI:16811,racemethionine
+CHEBI:17230,hcy
+CHEBI:17230,2-amino-4-mercaptobutyric acid
+CHEBI:16007,methylmercaptan
+CHEBI:16763,2-ketobutanoate
+CHEBI:16763,2-oxobutyrate
+CHEBI:16763,alpha-oxobutyrate
+CHEBI:16763,2-ketobutyrate
+CHEBI:16763,alpha-ketobutyrate
+CHEBI:26271,dl-proline
+CHEBI:26271,prolina
+CHEBI:26271,pyrrolidine-2-carboxylic acid
+CHEBI:26271,hpro
+CHEBI:26271,prolin
+CHEBI:27266,hval
+CHEBI:27266,valin
+CHEBI:27266,valina
+CHEBI:27266,2-amino-3-methylbutanoic acid
+CHEBI:27266,dl-valine
+CHEBI:18188,l-3-amino-isobutyrate
+CHEBI:18188,l-3-amino-isobutanoate
+CHEBI:18188,beta-amino isobutyrate
+CHEBI:18188,(s)-beta-aminoisobutyrate
+CHEBI:18188,(s)-3-amino-isobutyrate
+CHEBI:18188,l-3-aminoisobutyrate
+CHEBI:18188,(s)-3-amino-2-methylpropanoate
+CHEBI:18188,(s)-3-amino-isobutanoate
+CHEBI:18188,3-amino-isobutanoate
+CHEBI:22653,hasp
+CHEBI:22653,asparagina
+CHEBI:22653,n
+CHEBI:22653,"2,4-diamino-4-oxobutanoic acid"
+CHEBI:22653,asn
+CHEBI:22653,2-amino-3-carbamoylpropanoic acid
+CHEBI:22653,asparagin
+CHEBI:22653,dl-asparagine
+CHEBI:17822,3-hydroxyalanine
+CHEBI:17822,serin
+CHEBI:17822,2-amino-3-hydroxypropanoic acid
+CHEBI:17822,2-amino-3-hydroxypropionic acid
+CHEBI:15356,2-amino-3-mercaptopropanoic acid
+CHEBI:15356,2-amino-3-sulfanylpropanoic acid
+CHEBI:15356,zystein
+CHEBI:15356,cisteina
+CHEBI:15356,cystein
+CHEBI:15356,2-amino-3-mercaptopropionic acid
+CHEBI:15356,hcys
+CHEBI:15356,c
+CHEBI:15356,cys
+CHEBI:16136,hydrogen sulphide
+CHEBI:16136,dihydrogen monosulfide
+CHEBI:16136,hydrosulfuric acid
+CHEBI:16136,[sh2]
+CHEBI:16136,sulfure d'hydrogene
+CHEBI:16136,dihydrogen sulfide
+CHEBI:16136,hydrogen monosulfide
+CHEBI:16136,hydrogen-sulfide
+CHEBI:16136,hydrogen sulfide
+CHEBI:16136,sulfide
+CHEBI:16136,acide sulfhydrique
+CHEBI:16136,hydrogene sulfure
+CHEBI:16136,schwefelwasserstoff
+CHEBI:18407,hcn
+CHEBI:18407,hydrocyanic acid
+CHEBI:18407,cyanwasserstoff
+CHEBI:18407,[chn]
+CHEBI:18407,formonitrile
+CHEBI:18407,blausaeure
+CHEBI:231858,nh4scn
+CHEBI:231858,thiocyanic acid ammonium salt (1:1)
+CHEBI:231858,"thiocyanic acid, ammonium salt (1:1)"
+CHEBI:231858,thiocyanic acid ammonium salt
+CHEBI:231858,ammonium rhodanide
+CHEBI:231858,thiocyanate
+CHEBI:28300,"2,5-diamino-5-oxopentanoic acid"
+CHEBI:28300,2-aminoglutaramic acid
+CHEBI:28300,glutamic acid gamma-amide
+CHEBI:28300,glutaminsaeure-5-amid
+CHEBI:28300,hgln
+CHEBI:28300,2-amino-4-carbamoylbutanoic acid
+CHEBI:28300,glutamin
+CHEBI:26986,threonin
+CHEBI:15740,formylate
+CHEBI:15740,methanoate
+CHEBI:15740,"formic acid, ion(1-)"
+CHEBI:15740,aminate
+CHEBI:15740,hco2 anion
+CHEBI:15740,formiate
+CHEBI:15740,hydrogen carboxylate
+CHEBI:29016,2-amino-5-guanidinovaleric acid
+CHEBI:29016,2-amino-5-guanidinopentanoic acid
+CHEBI:29016,2-amino-5-(carbamimidamido)pentanoic acid
+CHEBI:29016,harg
+CHEBI:29016,arginin
+CHEBI:17148,"1,4-butanediamine"
+CHEBI:17148,"1,4-tetramethylenediamine"
+CHEBI:17148,tetramethylendiamin
+CHEBI:17148,"1,4-diaminobutane"
+CHEBI:17148,h2n(ch2)4nh2
+CHEBI:17148,putreszin
+CHEBI:17148,butylenediamine
+CHEBI:17148,"butane-1,4-diamine"
+CHEBI:17148,"1,4-butylenediamine"
+CHEBI:17148,putrescin
+CHEBI:17148,putrescina
+CHEBI:17148,tetramethylenediamine
+CHEBI:16199,ur
+CHEBI:16199,1728
+CHEBI:16199,e927b
+CHEBI:16199,uree
+CHEBI:16199,h2nc(o)nh2
+CHEBI:16199,karbamid
+CHEBI:16199,carbamide
+CHEBI:16199,harnstoff
+CHEBI:16199,carbonyldiamide
+CHEBI:57292,s-(hydrogen succinyl)coa(5-)
+CHEBI:57292,succinyl-coenzyme a(5-)
+CHEBI:57292,s-(3-carboxy-propionyl)-coa(5-)
+CHEBI:57292,succinyl-coa pentaanion
+CHEBI:83072,complex ii inhibitors
+CHEBI:83072,succinate dehydrogenase complex inhibitors
+CHEBI:83072,succinate dehydrogenase (ubiquinone) inhibitors
+CHEBI:83072,sdh inhibitor
+CHEBI:83072,succinate dehydrogenase inhibitors
+CHEBI:83072,ec 1.3.5.1 [succinate dehydrogenase (quinone)] inhibitors
+CHEBI:83072,succinate:ubiquinone oxidoreductase inhibitors
+CHEBI:83072,sdh inhibitors
+CHEBI:83072,succinate dehydrogenase inhibitor
+CHEBI:83072,succinate dehydrogenase (ubiquinone) inhibitor
+CHEBI:83072,ec 1.3.5.1 inhibitors
+CHEBI:83072,succinate:ubiquinone oxidoreductase inhibitor
+CHEBI:83072,succinic dehydrogenase inhibitor
+CHEBI:83072,succinic dehydrogenase inhibitors
+CHEBI:83072,succinate:quinone oxidoreductase inhibitors
+CHEBI:83072,ec 1.3.5.1 inhibitor
+CHEBI:83072,succinate dehydrogenase complex inhibitor
+CHEBI:83072,succinate:quinone oxidoreductase inhibitor
+CHEBI:83072,complex ii inhibitor
+CHEBI:83072,succinate
+CHEBI:27570,histidin
+CHEBI:27570,histidina
+CHEBI:27570,alpha-amino-1h-imidazole-4-propionic acid
+CHEBI:27570,dl-histidine
+CHEBI:16397,ameisensaeureamid
+CHEBI:16397,methanamide
+CHEBI:16397,formamid
+CHEBI:16397,formimidic acid
+CHEBI:16397,methanamid
+CHEBI:16397,carbamaldehyde
+CHEBI:18019,"(s)-2,6-diaminohexanoic acid"
+CHEBI:18019,lysina
+CHEBI:18019,lysinum
+CHEBI:18019,(s)-lysine
+CHEBI:18019,k
+CHEBI:18019,"l-2,6-diaminocaproic acid"
+CHEBI:18019,"(s)-alpha,epsilon-diaminocaproic acid"
+CHEBI:18019,l-lysine
+CHEBI:18019,l-lysin
+CHEBI:18019,lys
+CHEBI:18019,6-ammonio-l-norleucine
+CHEBI:18019,lysine acid
+CHEBI:87429,n-butyric n-butyl ester
+CHEBI:87429,n-butyl butanoate
+CHEBI:87429,n-butyl butyrate
+CHEBI:87429,butyl butanoate
+CHEBI:87429,butanoate
+CHEBI:57286,acetoacetyl-coenzyme a(4-)
+CHEBI:57286,acetoacetyl-coa tetraanion
+CHEBI:58384,"pentane-1,5-diaminium"
+CHEBI:35366,fettsaeuren
+CHEBI:35366,acides gras
+CHEBI:35366,fettsaeure
+CHEBI:35366,acido graso
+CHEBI:35366,acidos grasos
+CHEBI:35366,fatty acids
+CHEBI:35366,acide gras
+CHEBI:17270,beta-glycerophosphoric acid
+CHEBI:17270,glycerol 2-phosphate
+CHEBI:17270,2-hydroxy-1-(hydroxymethyl)ethyl dihydrogen phosphate
+CHEBI:17270,beta-glycerophosphate
+CHEBI:17270,"1,2,3-propanetriol, 2-(dihydrogen phosphate)"
+CHEBI:17270,"1,3-hydroxy-2-propyl dihydrogen phosphate"
+CHEBI:17270,2-glycerophosphate
+CHEBI:17270,glycerol
+CHEBI:27670,"1,2-bis-(3,4-dimethoxyphenyl)propane-1,3-diol"
+CHEBI:27670,"propane-1,3-diol"
+CHEBI:18021,pep
+CHEBI:18021,2-(phosphonooxy)acrylate
+CHEBI:18021,o-phosphono-enol-pyruvate
+CHEBI:18021,phosphoenolpyruvate(1-)
+CHEBI:18021,2-(phosphonooxy)-2-propenoate
+CHEBI:18021,2-hydroxy-2-propenoate phosphate (ester)
+CHEBI:18021,2-hydroxy-2-propenoate (dihydrogen phosphate) (ester)
+CHEBI:65001,steapsin inhibitor
+CHEBI:65001,salt-resistant post-heparin lipase inhibitor
+CHEBI:65001,post-heparin plasma protamine-resistant lipase inhibitors
+CHEBI:65001,triacylglycerol ester hydrolase inhibitors
+CHEBI:65001,triacylglycerol lipase (ec 3.1.1.3) inhibitors
+CHEBI:65001,pancreatic lipase inhibitor
+CHEBI:65001,heparin releasable hepatic lipase inhibitors
+CHEBI:65001,triacylglycerol ester hydrolase inhibitor
+CHEBI:65001,tributyrinase inhibitors
+CHEBI:65001,tweenesterase inhibitors
+CHEBI:65001,triacylglycerol lipase inhibitor
+CHEBI:65001,glycerol ester hydrolase inhibitor
+CHEBI:65001,ec 3.1.1.3 inhibitor
+CHEBI:65001,triolein hydrolase inhibitor
+CHEBI:65001,capalase l inhibitors
+CHEBI:65001,pancreatic triacylglycerol lipase inhibitor
+CHEBI:65001,triglyceridase inhibitors
+CHEBI:65001,tween hydrolase inhibitors
+CHEBI:65001,lipazin inhibitors
+CHEBI:65001,lipase inhibitors
+CHEBI:65001,triacetinase inhibitors
+CHEBI:65001,cacordase inhibitor
+CHEBI:65001,ec 3.1.1.3 inhibitors
+CHEBI:65001,liver lipase inhibitor
+CHEBI:65001,liver lipase inhibitors
+CHEBI:65001,ppl inhibitors
+CHEBI:65001,triglyceride hydrolase inhibitors
+CHEBI:65001,tween-hydrolyzing esterase inhibitors
+CHEBI:65001,tweenesterase inhibitor
+CHEBI:65001,cacordase inhibitors
+CHEBI:65001,glycerol-ester hydrolase inhibitors
+CHEBI:65001,heparin releasable hepatic lipase inhibitor
+CHEBI:65001,ppl inhibitor
+CHEBI:65001,glycerol-ester hydrolase inhibitor
+CHEBI:65001,tributyrin esterase inhibitors
+CHEBI:65001,capalase l inhibitor
+CHEBI:65001,hepatic monoacylglycerol acyltransferase inhibitors
+CHEBI:65001,pancreatic triacylglycerol lipase inhibitors
+CHEBI:65001,glycerol ester hydrolase inhibitors
+CHEBI:65001,hepatic lipase inhibitor
+CHEBI:65001,triglyceride lipase inhibitors
+CHEBI:65001,pancreatic lipase inhibitors
+CHEBI:65001,triacetinase inhibitor
+CHEBI:65001,tributyrase inhibitors
+CHEBI:65001,butyrinase inhibitors
+CHEBI:65001,triolein hydrolase inhibitors
+CHEBI:65001,tweenase inhibitors
+CHEBI:65001,lipazin inhibitor
+CHEBI:65001,geh inhibitor
+CHEBI:65001,salt-resistant post-heparin lipase inhibitors
+CHEBI:65001,triglyceride hydrolase inhibitor
+CHEBI:65001,triacylglycerol lipase inhibitors
+CHEBI:65001,butyrinase inhibitor
+CHEBI:65001,post-heparin plasma protamine-resistant lipase inhibitor
+CHEBI:65001,steapsin inhibitors
+CHEBI:65001,tributyrase inhibitor
+CHEBI:65001,lipase inhibitor
+CHEBI:65001,hepatic monoacylglycerol acyltransferase inhibitor
+CHEBI:65001,tributyrinase inhibitor
+CHEBI:65001,triacylglycerol lipase (ec 3.1.1.3) inhibitor
+CHEBI:65001,hepatic lipase inhibitors
+CHEBI:65001,triglyceridase inhibitor
+CHEBI:65001,tweenase inhibitor
+CHEBI:65001,tween hydrolase inhibitor
+CHEBI:65001,triglyceride lipase inhibitor
+CHEBI:65001,tween-hydrolysing esterase inhibitor
+CHEBI:65001,ec 3.1.1.3 (triacylglycerol lipase) inhibitors
+CHEBI:65001,tributyrin esterase inhibitor
+CHEBI:65001,geh inhibitors
+CHEBI:65001,triacylglycerol
+CHEBI:75052,3-dehydro-d-glucose 6-phosphate
+CHEBI:75052,3-keto-d-glucose-6-phosphate(2-)
+CHEBI:75052,glucose-6-phosphate
+CHEBI:5017,ferredoxin
+CHEBI:5017,oxidized ferredoxin
+CHEBI:57945,nadh dianion
+CHEBI:49637,hidrogeno
+CHEBI:49637,hydrogen
+CHEBI:49637,1h
+CHEBI:49637,hydrogene
+CHEBI:49637,wasserstoff
+CHEBI:49637,h
+CHEBI:49637,h+
+CHEBI:77108,15-oh-pgdh inhibitor
+CHEBI:77108,"(5z,13e,15s)-11alpha,15-dihydroxy-9-oxoprost-5,13-dienoate:nad(+) 15-oxidoreductase inhibitors"
+CHEBI:77108,"(5z,13e,15s)-11alpha,15-dihydroxy-9-oxoprost-5,13-dienoate:nad(+) 15-oxidoreductase inhibitor"
+CHEBI:77108,15-hydroxyprostaglandin dehydrogenase (nad(+)) (ec 1.1.1.141) inhibitors
+CHEBI:77108,15-oh-pgdh inhibitors
+CHEBI:77108,15-hydroxyprostanoic dehydrogenase inhibitors
+CHEBI:77108,nad-specific 15-hydroxyprostaglandin dehydrogenase inhibitors
+CHEBI:77108,15-hydroxyprostaglandin dehydrogenase (nad(+)) inhibitor
+CHEBI:77108,15-hydroxyprostanoic dehydrogenase inhibitor
+CHEBI:77108,nad(+)-dependent 15-hydroxyprostaglandin dehydrogenase (type i) inhibitors
+CHEBI:77108,"11alpha,15-dihydroxy-9-oxoprost-13-enoate:nad(+) 15-oxidoreductase inhibitor"
+CHEBI:77108,pgdh inhibitor
+CHEBI:77108,prostaglandin dehydrogenase inhibitor
+CHEBI:77108,"(5z,13e)-(15s)-11alpha,15-dihydroxy-9-oxoprost-13-enoate:nad(+) 15-oxidoreductase inhibitors"
+CHEBI:77108,prostaglandin dehydrogenase inhibitors
+CHEBI:77108,"(5z,13e)-(15s)-11alpha,15-dihydroxy-9-oxoprost-13-enoate:nad(+) 15-oxidoreductase inhibitor"
+CHEBI:77108,15-hydroxyprostaglandin dehydrogenase inhibitors
+CHEBI:77108,nad(+)-dependent 15-hydroxyprostaglandin dehydrogenase (type i) inhibitor
+CHEBI:77108,nad-specific 15-hydroxyprostaglandin dehydrogenase inhibitor
+CHEBI:77108,ec 1.1.1.141 [15-hydroxyprostaglandin dehydrogenase (nad(+))] inhibitors
+CHEBI:77108,ec 1.1.1.141 inhibitor
+CHEBI:77108,pgdh inhibitors
+CHEBI:77108,15-hydroxyprostaglandin dehydrogenase inhibitor
+CHEBI:77108,15-hydroxyprostaglandin dehydrogenase (nad(+)) inhibitors
+CHEBI:77108,ec 1.1.1.141 inhibitors
+CHEBI:77108,15-hydroxyprostaglandin dehydrogenase (nad(+)) (ec 1.1.1.141) inhibitor
+CHEBI:77108,"11alpha,15-dihydroxy-9-oxoprost-13-enoate:nad(+) 15-oxidoreductase inhibitors"
+CHEBI:77108,nad+
+CHEBI:50390,quinone reductase inhibitors
+CHEBI:50390,dt diaphorase inhibitor
+CHEBI:50390,nad(p)h-quinone oxidoreductase inhibitors
+CHEBI:50390,reduced nad(p)h dehydrogenase inhibitors
+CHEBI:50390,nadh-menadione reductase inhibitor
+CHEBI:50390,vitamin k reductase inhibitors
+CHEBI:50390,nad(p)h-quinone oxidoreductase inhibitor
+CHEBI:50390,naphthoquinone reductase inhibitors
+CHEBI:50390,nqo1 inhibitor
+CHEBI:50390,diaphorase inhibitors
+CHEBI:50390,nad(p)h:(quinone-acceptor)oxidoreductase inhibitor
+CHEBI:50390,menadione reductase inhibitors
+CHEBI:50390,ec 1.6.5.2 (nad(p)h dehydrogenase (quinone)) inhibitor
+CHEBI:50390,vitamin-k reductase inhibitors
+CHEBI:50390,"dehydrogenase, reduced nicotinamide adenine dinucleotide (phosphate, quinone) inhibitors"
+CHEBI:50390,"dehydrogenase, reduced nicotinamide adenine dinucleotide (phosphate, quinone) inhibitor"
+CHEBI:50390,nadh-menadione reductase inhibitors
+CHEBI:50390,nad(p)h dehydrogenase (quinone) (ec 1.6.5.2) inhibitor
+CHEBI:50390,nqo1 inhibitors
+CHEBI:50390,menadione reductase inhibitor
+CHEBI:50390,qr1 inhibitors
+CHEBI:50390,reduced nad(p)h dehydrogenase inhibitor
+CHEBI:50390,menadione oxidoreductase inhibitor
+CHEBI:50390,nad(p)h:quinone oxidoreductase inhibitors
+CHEBI:50390,vitamin k reductase inhibitor
+CHEBI:50390,nad(p)h2 dehydrogenase (quinone) inhibitor
+CHEBI:50390,ec 1.6.5.2 [nad(p)h dehydrogenase (quinone)] inhibitors
+CHEBI:50390,ec 1.6.5.2 inhibitors
+CHEBI:50390,nad(p)h dehydrogenase inhibitor
+CHEBI:50390,nad(p)h:(quinone-acceptor)oxidoreductase inhibitors
+CHEBI:50390,phylloquinone reductase inhibitor
+CHEBI:50390,nad(p)h-quinone dehydrogenase inhibitor
+CHEBI:50390,nad(p)h:quinone oxidoreductase inhibitor
+CHEBI:50390,p-benzoquinone reductase inhibitors
+CHEBI:50390,phylloquinone reductase inhibitors
+CHEBI:50390,nad(p)h dehydrogenase (quinone) inhibitor
+CHEBI:50390,quinone reductase inhibitor
+CHEBI:50390,reduced nicotinamide-adenine dinucleotide (phosphate) dehydrogenase inhibitor
+CHEBI:50390,flavoprotein nad(p)h-quinone reductase inhibitors
+CHEBI:50390,nad(p)h dehydrogenase (quinone) inhibitors
+CHEBI:50390,nad(p)h menadione reductase inhibitors
+CHEBI:50390,ec 1.6.5.2 inhibitor
+CHEBI:50390,naphthoquinone reductase inhibitor
+CHEBI:50390,diaphorase inhibitor
+CHEBI:50390,nad(p)h: menadione oxidoreductase inhibitor
+CHEBI:50390,viologen accepting pyridine nucleotide oxidoreductase inhibitor
+CHEBI:50390,vitamin-k reductase inhibitor
+CHEBI:50390,ec 1.6.5.2 (nad(p)h dehydrogenase (quinone)) inhibitors
+CHEBI:50390,nad(p)h dehydrogenase inhibitors
+CHEBI:50390,nad(p)h menadione reductase inhibitor
+CHEBI:50390,nad(p)h-quinone dehydrogenase inhibitors
+CHEBI:50390,flavoprotein nad(p)h-quinone reductase inhibitor
+CHEBI:50390,nad(p)h2 dehydrogenase (quinone) inhibitors
+CHEBI:50390,nad(p)h dehydrogenase (quinone) (ec 1.6.5.2) inhibitors
+CHEBI:50390,reduced nicotinamide-adenine dinucleotide (phosphate) dehydrogenase inhibitors
+CHEBI:50390,viologen accepting pyridine nucleotide oxidoreductase inhibitors
+CHEBI:50390,qr1 inhibitor
+CHEBI:50390,menadione oxidoreductase inhibitors
+CHEBI:50390,p-benzoquinone reductase inhibitor
+CHEBI:50390,nad(p)h: menadione oxidoreductase inhibitors
+CHEBI:50390,nad(p)h
+CHEBI:57405,prostaglandin h2
+CHEBI:57405,prostaglandin h2 anion
+CHEBI:57405,h2
+CHEBI:29002,"(s)-propane-1,2-diol"
+CHEBI:29002,"(s)-1,2-propanediol"
+CHEBI:29002,(s)-propylene glycol
+CHEBI:29002,"propane-1,2-diol"
+CHEBI:78322,(l)-ethyl lactate
+CHEBI:78322,(l)-(-)-ethyl lactate
+CHEBI:78322,lactate
+CHEBI:58286,methyl-coenzyme m(1-)
+CHEBI:58286,2-(methylsulfanyl)ethane-1-sulfonate
+CHEBI:58286,methyl-com anion
+CHEBI:58286,methyl-coenzyme m
+CHEBI:58286,methyl-coenzyme m anion
+CHEBI:58286,methyl-com
+CHEBI:132106,natriumpropionat
+CHEBI:132106,sodium propionate anhydrous
+CHEBI:132106,"propanoic acid, sodium salt"
+CHEBI:132106,propionic acid sodium salt
+CHEBI:132106,e281
+CHEBI:132106,propionate
+CHEBI:16236,ethyl alcohol
+CHEBI:16236,hydroxyethane
+CHEBI:16236,alcool ethylique
+CHEBI:16236,methylcarbinol
+CHEBI:16236,1-hydroxyethane
+CHEBI:16236,aethanol
+CHEBI:16236,[ch2me(oh)]
+CHEBI:16236,dehydrated ethanol
+CHEBI:16236,alcohol
+CHEBI:16236,etoh
+CHEBI:16236,spiritus vini
+CHEBI:16236,alcohol etilico
+CHEBI:16236,alkohol
+CHEBI:16236,aethylalkohol
+CHEBI:16236,c2h5oh
+CHEBI:16236,[oeth]
+CHEBI:16236,etanol
+CHEBI:87419,isopentyl propanoate
+CHEBI:87419,3-methylbutyl propionate
+CHEBI:87419,isopentyl propionate
+CHEBI:87419,propanoate
+CHEBI:16183,metano
+CHEBI:16183,methyl hydride
+CHEBI:16183,methan
+CHEBI:16183,ch4
+CHEBI:16183,marsh gas
+CHEBI:231514,nitric acid cesium salt
+CHEBI:231514,cesium nitrate
+CHEBI:231514,csno3
+CHEBI:231514,"nitric acid, cesium salt"
+CHEBI:231514,nitrate
+CHEBI:53437,nickel(ii) sulfate hexahydrate
+CHEBI:53437,nickel(ii) sulphate hexahydrate
+CHEBI:53437,nickel sulphate hexahydrate
+CHEBI:53437,nickel sulfate hexahydrate
+CHEBI:53437,nickelous sulphate hexahydrate
+CHEBI:53437,nickel monosulfate hexahydrate
+CHEBI:53437,nickelous sulfate hexahydrate
+CHEBI:53437,nickel(2+) sulfate hexahydrate
+CHEBI:53437,sulfate
+CHEBI:139580,o(3)-[n-acetyl-beta-d-glucosaminyl-(1->3)-[n-acetyl-beta-d-glucosaminyl-(1->6)]-n-acetyl-alpha-d-galactosaminyl]-l-threonine residue
+CHEBI:139580,o(3)-[beta-d-glcnac-(1->3)-[beta-d-glcnac-(1->6)]-alpha-d-galnac]-l-thr residue
+CHEBI:139580,mucin
+CHEBI:29101,na(+)
+CHEBI:29101,na+
+CHEBI:29101,sodium ion
+CHEBI:29101,na
