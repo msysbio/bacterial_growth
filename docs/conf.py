@@ -53,6 +53,8 @@ extensions = [
     # These extensions require RTDs to work so they will not work locally.
     "hoverxref.extension",
     "sphinx_search.extension",
+    "autoapi.extension"
+
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -263,3 +265,11 @@ rst_prolog = rst_prolog + """
 # For debugging if you want to always have a tag on or off
 # tags.add("tag")
 # tags.remove("tag")
+
+
+# -- Options for autoapi -------------------------------------------------------
+autoapi_type = "python"
+autoapi_dirs = ["../scripts"]
+autoapi_keep_files = True
+autoapi_root = "api"
+autoapi_member_order = "groupwise"
