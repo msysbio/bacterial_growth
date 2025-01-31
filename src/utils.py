@@ -13,19 +13,24 @@ def isDir(string):
         return string
     else:
         raise NotADirectoryError(string)
-    
-def isFile(string):
+
+def isFile(path):
     '''
     This function checks if the given string is a directory path
 
-    :param string
+    :param path
     :return string (if ok)
     '''
-    if os.path.isfile(string):
-        return string
-    else:
-        a = 0
-        # Put warning or something here
+    # if os.path.isfile(string):
+    #     return string
+    # else:
+    #     raise FileNotFoundError(string)
+    import argparse
+    if not os.path.isfile(path):
+        raise argparse.ArgumentTypeError(f"{path} is not a valid file.")
+    return path
+
+
 
 def getZipName(dir_path):
     '''
@@ -77,14 +82,14 @@ def transformStringIntoList(string, ch):
         end = pos
         elem = string[start:end]
         list.append(elem)
-        
+
         start = end + 1
         if string[start] == ' ':
             start = end + 2
-    
+
     elem = string[start:]
     list.append(elem)
-    
+
     return list
 
 def getMatchingList (regex, lst):
@@ -118,11 +123,11 @@ def getIntersectionColumns(df, columns):
 
     :param df
     :param columns to keep
-    :return res new df 
+    :return res new df
     '''
     res = df[df.columns.intersection(columns)]
     return res
-    
+
 def getMeanStd(files, regex=''):
     '''
     This function gets a set of files and the columns (regex or all columns) in which mean and std are going to be calculated
@@ -133,16 +138,16 @@ def getMeanStd(files, regex=''):
     :return msd: df with column 0 (time) and alternating columns with mean and std for all the headers
     '''
     df = pd.read_csv(files[0][0], sep=" ")
-    
+
     if regex != '':
         headers = getMatchingList(regex, df)
     else:
         headers = df.columns
-    
+
     msd = pd.DataFrame(columns=range(1))
     msd.set_axis(['time'], axis='columns', inplace=True)
     msd['time'] = df['time']
-    
+
     for header in headers:
         if header != 'time':
             df_header = pd.DataFrame(columns=range(len(files)+1)) #Each column will be the value from each file
@@ -160,5 +165,5 @@ def getMeanStd(files, regex=''):
             msd_header[header+'_std'] = df_header.iloc[:,1:].std(axis=1, numeric_only=True)
 
             msd = pd.merge(msd, msd_header, on='time')
-    
+
     return msd

@@ -3,7 +3,7 @@ import uuid
 # Will be auto-incremented to create sequential database ids:
 STUDY_ID = 0
 PROJECT_UID = 0
-CHEB_ID = 0
+CHEBI_ID = 0
 
 
 def create_study(conn, **params):
@@ -33,20 +33,20 @@ def create_study(conn, **params):
 
 
 def create_metabolite(conn, **params):
-    global CHEB_ID
+    global CHEBI_ID
 
-    CHEB_ID += 1
-    cheb_id = f"Cheb_{CHEB_ID}"
+    CHEBI_ID += 1
+    chebi_id = f"Chebi_{CHEBI_ID}"
 
     default_params = {
-        'cheb_id':     cheb_id,
+        'chebi_id':     chebi_id,
         'metabo_name': "Test metabolite",
     }
 
     params = {**default_params, **params}
 
     conn.execute("""
-        INSERT INTO Metabolites VALUES (%(cheb_id)s, %(metabo_name)s)
+        INSERT INTO Metabolites VALUES (%(chebi_id)s, %(metabo_name)s)
     """, params)
 
-    return cheb_id
+    return chebi_id

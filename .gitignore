@@ -40,6 +40,8 @@ flask_app/static/.webassets-cache/*
 # Micromamba environment
 .micromamba/*
 
-# Ignore vim configurations
+# Ignore vim and vscode configurations
 _project.vim
 .flake8
+.vscode
+

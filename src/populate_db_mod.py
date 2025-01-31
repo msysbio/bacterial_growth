@@ -406,7 +406,7 @@ def populate_db(list_growth, list_metabolites, list_microbial_strains,raw_data_t
                     list_counts = counts_per_replicate.get(rep_biorep[j])
                     if list_metabo:
                         for k in list_metabo:
-                            cheb_id = db.getChebiId(k)
+                            chebi_id = db.getChebiId(k)
                             metabo_rep = {
                                 'studyId': study_id,
                                 'experimentUniqueId': search_id(info['Experiment_ID'][i],biorep_id_list),
@@ -414,7 +414,7 @@ def populate_db(list_growth, list_metabolites, list_microbial_strains,raw_data_t
                                 'bioreplicateId': rep_biorep[j],
                                 'bioreplicateUniqueId': search_id(rep_biorep[j],rep_id_list) ,
                                 'metabo_name' : k,
-                                'cheb_id': cheb_id
+                                'chebi_id': chebi_id
                             }
                             metabo_rep_filtered = {k: v for k, v in metabo_rep.items() if v is not None}
                             if len(metabo_rep_filtered)>0:
