@@ -15,7 +15,7 @@ def create_excel(
     all_strain_data: list of dictionaries with taxa without an exact NCBI Taxonomy Id
     """
 
-    wb = openpyxl.load_workbook('templates/metadata_template.xlsx')
+    wb = openpyxl.load_workbook('flask_app/templates/excel/metadata_template.xlsx')
     sheet = wb['COMMUNITY_MEMBERS']
 
     k = 0  # Initialize k here
