@@ -52,7 +52,7 @@ Code from the original streamlit app that is in active use is in the `legacy` fo
 
 ### Database logic: `migrations`
 
-Every database change is encapsulated in a migration file, which has an `up` function and a `down` function. The first one applies the migration, the other rolls it back. Ideally, all migrations should be runnable in order. The [`bin/migrations-new`](bin/migrations-new) script bootstraps a new migration in that folder, while [`bin/migrations-run`](bin/migrations-run) runs all of them that haven't already run.
+Every database change is encapsulated in a migration file, which has an `up` function and a `down` function. The first one applies the migration, the other rolls it back. Ideally, all migrations should be runnable in order. The [`bin/migrations-new`](../bin/migrations-new) script bootstraps a new migration in that folder, while [`bin/migrations-run`](../bin/migrations-run) runs all of them that haven't already run.
 
 ### Testing: `tests`
 
