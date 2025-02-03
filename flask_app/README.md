@@ -57,3 +57,9 @@ Every database change is encapsulated in a migration file, which has an `up` fun
 ### Testing: `tests`
 
 In the long term, all logic should be tested by unit tests in this folder. Right now, it only contains a proof-of-concept for database tests.
+
+## External references
+
+- CSS reset: <https://piccalil.li/blog/a-more-modern-css-reset/>
+- SVG Spinners: <https://github.com/n3r4zzurr0/svg-spinners>
+- Web icons: <https://github.com/tabler/tabler-icons>
