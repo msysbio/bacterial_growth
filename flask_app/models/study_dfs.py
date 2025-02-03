@@ -104,10 +104,15 @@ def dynamical_query(all_advance_query):
 def get_general_info(studyId, conn):
     params = {'studyId': studyId}
 
+    # TODO (2025-02-03) There are multiple studies connected to multiple projects. The project unique id is not actually unique
+
     query = """
-        SELECT studyId, studyName, studyDescription, studyURL
+        SELECT studyId, studyName, studyDescription, studyURL, projectId
         FROM Study
+        INNER JOIN Project
+          ON Study.projectUniqueID = Project.projectUniqueID
         WHERE studyId = :studyId
+        LIMIT 1
     """
     result = conn.execute(sql.text(query), params).one()._asdict()
 
