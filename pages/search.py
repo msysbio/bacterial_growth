@@ -6,9 +6,9 @@ other criteria.
 from flask import render_template
 import sqlalchemy as sql
 
-from flask_app.db import get_connection
-from flask_app.forms.search_form import SearchForm, SearchFormClause
-import flask_app.models.study_dfs as study_dfs
+from db import get_connection
+from forms.search_form import SearchForm, SearchFormClause
+import models.study_dfs as study_dfs
 
 
 def search_index_page():

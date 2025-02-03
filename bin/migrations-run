@@ -7,11 +7,11 @@ from importlib import import_module
 
 import sqlalchemy as sql
 
-from flask_app.db import get_connection
-from flask_app.lib.migrations import run
+from db import get_connection
+from lib.migrations import run
 
 def main():
-    migration_dir = os.path.abspath(f"{os.path.dirname(__file__)}/../flask_app/migrations")
+    migration_dir = os.path.abspath(f"{os.path.dirname(__file__)}/../migrations")
     migration_files = Path(migration_dir).glob('*.py')
     migration_names = {path.stem for path in migration_files}
 
@@ -37,7 +37,7 @@ def main():
             return
 
         for name in sorted(pending_migrations):
-            migration_module = import_module(f"flask_app.migrations.{name}")
+            migration_module = import_module(f"migrations.{name}")
             run(migration_module.__file__, migration_module.up, migration_module.down)
 
 

@@ -3,7 +3,7 @@ import yaml
 
 import pandas as pd
 
-from flask_app.legacy.check_yaml import (
+from legacy.check_yaml import (
     test_study_yaml,
     test_experiments_yaml,
     test_compartments_yaml,

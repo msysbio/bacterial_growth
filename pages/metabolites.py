@@ -1,23 +1,29 @@
+import re
 import json
 
 from flask import render_template, request
 import sqlalchemy as sql
 
-from flask_app.db import get_connection
+from db import get_connection
 
 
-def strain_show_page(id):
+def metabolite_show_page(cheb_id):
     with get_connection() as conn:
-        query = "SELECT * FROM Strains WHERE strainId = :id LIMIT 1"
-        strain = conn.execute(sql.text(query), {'id': id}).one()._asdict()
+        query = "SELECT * FROM Metabolites WHERE cheb_id = :cheb_id LIMIT 1"
+        metabolite = conn.execute(sql.text(query), {'cheb_id': cheb_id}).one()._asdict()
+        numeric_id = re.sub(r'^CHEBI:', '', cheb_id)
 
-        query = "SELECT studyId, studyName FROM Study WHERE studyId = :studyId LIMIT 1"
-        study = conn.execute(sql.text(query), {'studyId': strain['studyId']}).one()._asdict()
+        return render_template(
+            "pages/metabolites/show.html",
+            metabolite=metabolite,
+            cheb_id=cheb_id,
+            numeric_id=numeric_id
+        )
 
-        return render_template("pages/strains/show.html", strain=strain, study=study)
 
-
-def taxa_completion_json():
+# TODO (2024-09-26) Duplicates taxa completion a lot, try to make completion
+# model generic
+def metabolites_completion_json():
     term     = request.args.get('term', '').lower()
     page     = int(request.args.get('page', '1'))
     per_page = 10
@@ -27,11 +33,11 @@ def taxa_completion_json():
     with get_connection() as conn:
         query = """
             SELECT
-                tax_id AS id,
-                tax_names AS text
-            FROM Taxa
-            WHERE LOWER(tax_names) LIKE :term
-            ORDER BY tax_names ASC
+                cheb_id AS id,
+                metabo_name AS text
+            FROM Metabolites
+            WHERE LOWER(metabo_name) LIKE :term
+            ORDER BY metabo_name ASC
             LIMIT :per_page
             OFFSET :offset
         """
@@ -44,8 +50,8 @@ def taxa_completion_json():
 
         count_query = """
             SELECT COUNT(*)
-            FROM Taxa
-            WHERE LOWER(tax_names) LIKE LOWER(:term)
+            FROM Metabolites
+            WHERE LOWER(metabo_name) LIKE LOWER(:term)
         """
         total_count = conn.execute(sql.text(count_query), {'term': f'%{term}%'}).scalar()
         has_more = (page * per_page < total_count)

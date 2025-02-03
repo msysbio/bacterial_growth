@@ -5,7 +5,7 @@
 Given a working python environment, dependencies can be installed using:
 
 ```
-pip install -r flask_app/requirements.txt
+pip install -r requirements.txt
 ```
 
 In the main config directory, the file [`config/database.toml.example`](../config/database.toml.example) contains a template for the database configuration. Copy this file to ` config/database.toml` and update it with the correct credentials to access a running mysql database. On linux, you may have to add a `unix_socket = ` field as well.

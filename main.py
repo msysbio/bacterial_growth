@@ -2,11 +2,11 @@ import os
 
 from flask import Flask
 
-from flask_app.initialization.config import init_config
-from flask_app.initialization.assets import init_assets
-from flask_app.initialization.routes import init_routes
-from flask_app.initialization.plotly import init_plotly
-from flask_app.initialization.timing import init_timing
+from initialization.config import init_config
+from initialization.assets import init_assets
+from initialization.routes import init_routes
+from initialization.plotly import init_plotly
+from initialization.timing import init_timing
 
 
 def create_app(env):

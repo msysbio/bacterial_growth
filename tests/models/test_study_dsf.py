@@ -1,9 +1,9 @@
-import flask_app.tests.init  # noqa: F401
+import tests.init  # noqa: F401
 
 import unittest
 import re
 
-import flask_app.models.study_dfs as study_dfs
+import models.study_dfs as study_dfs
 
 
 class TestStudyDsf(unittest.TestCase):

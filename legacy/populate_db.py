@@ -5,9 +5,15 @@ import uuid
 
 import pandas as pd
 
-import flask_app.legacy.db_functions as db
-from flask_app.legacy.yml_functions import read_yml
-from flask_app.legacy.parse_raw_data import get_techniques_metabolites, get_measures_growth, get_measures_reads, get_measures_counts, get_replicate_metadata
+import legacy.db_functions as db
+from legacy.yml_functions import read_yml
+from legacy.parse_raw_data import (
+    get_techniques_metabolites,
+    get_measures_growth,
+    get_measures_reads,
+    get_measures_counts,
+    get_replicate_metadata,
+)
 
 
 def save_submission_to_database(conn, yml_dir, submission, data_template):

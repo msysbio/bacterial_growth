@@ -1,7 +1,7 @@
 import os
 import pandas as pd
 
-from flask_app.legacy.parse_raw_data import save_data_to_csv
+from legacy.parse_raw_data import save_data_to_csv
 
 
 # TODO: Needs to read data from the database and be moved somewhere

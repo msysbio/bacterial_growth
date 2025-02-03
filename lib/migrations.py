@@ -5,7 +5,7 @@ from pathlib import Path
 
 import sqlalchemy as sql
 
-from flask_app.db import get_connection, get_config
+from db import get_connection, get_config
 
 def run(file, up, down):
     migration_name = Path(file).stem
@@ -42,8 +42,8 @@ def run(file, up, down):
         else:
             raise ValueError(f"Unknown migration direction: {direction}")
 
-    # Dump database snapshot into flask_app/schema.sql
-    schema_path = 'flask_app/schema.sql'
+    # Dump database snapshot into schema.sql
+    schema_path = 'schema.sql'
     db_config = get_config()
 
     with open(schema_path, 'w') as f:

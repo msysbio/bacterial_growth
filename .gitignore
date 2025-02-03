@@ -8,13 +8,14 @@ tmp_data/*
 config/database.toml
 
 # Compiled assets:
-flask_app/static/build/*
-flask_app/static/.webassets-cache/*
+static/build/*
+static/.webassets-cache/*
 
 # Micromamba environment
 .micromamba/*
 
 # Streamlit ignores:
+# ==================
 
 # Database files
 streamlit/src/*.sql

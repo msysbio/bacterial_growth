@@ -1,6 +1,6 @@
 import pandas as pd
 
-from flask_app.legacy.constants import GrowthTechniques
+from legacy.constants import GrowthTechniques
 
 
 def get_techniques_metabolites(list_growth, list_metabolites, list_microbial_strains, raw_data_template):

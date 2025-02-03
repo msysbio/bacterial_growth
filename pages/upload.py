@@ -5,19 +5,19 @@ import tempfile
 from flask import render_template, session, request, redirect, url_for, send_file
 import humanize
 
-from flask_app.db import get_connection, get_transaction
+from db import get_connection, get_transaction
 
-from flask_app.models.submission import Submission
-import flask_app.models.spreadsheet_preview as spreasheet_preview
+from models.submission import Submission
+import models.spreadsheet_preview as spreasheet_preview
 
-import flask_app.legacy.study_spreadsheet as study_spreadsheet
-import flask_app.legacy.data_spreadsheet as data_spreadsheet
-from flask_app.legacy.upload_validation import validate_upload
-from flask_app.legacy.populate_db import save_submission_to_database
-from flask_app.legacy.chart_data import save_chart_data
+import legacy.study_spreadsheet as study_spreadsheet
+import legacy.data_spreadsheet as data_spreadsheet
+from legacy.upload_validation import validate_upload
+from legacy.populate_db import save_submission_to_database
+from legacy.chart_data import save_chart_data
 
-from flask_app.forms.upload_step2_form import UploadStep2Form
-from flask_app.forms.upload_step3_form import UploadStep3Form
+from forms.upload_step2_form import UploadStep2Form
+from forms.upload_step3_form import UploadStep3Form
 
 
 def upload_status_page():

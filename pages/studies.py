@@ -3,11 +3,11 @@ from io import BytesIO
 
 from flask import render_template, send_file, request
 
-import flask_app.models.study_dfs as study_dfs
-from flask_app.models.experiment_df_wrapper import ExperimentDfWrapper
+import models.study_dfs as study_dfs
+from models.experiment_df_wrapper import ExperimentDfWrapper
 
-from flask_app.legacy.chart_data import get_chart_data
-from flask_app.db import get_connection
+from legacy.chart_data import get_chart_data
+from db import get_connection
 
 
 def study_show_page(studyId):

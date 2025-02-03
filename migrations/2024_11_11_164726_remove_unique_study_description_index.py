@@ -17,5 +17,5 @@ def down(conn):
 
 
 if __name__ == "__main__":
-    from flask_app.lib.migrations import run
+    from lib.migrations import run
     run(__file__, up, down)

@@ -1,10 +1,10 @@
-import flask_app.pages.dashboard as dashboard_pages
-import flask_app.pages.metabolites as metabolite_pages
-import flask_app.pages.search as search_pages
-import flask_app.pages.static as static_pages
-import flask_app.pages.strains as strain_pages
-import flask_app.pages.studies as study_pages
-import flask_app.pages.upload as upload_pages
+import pages.dashboard as dashboard_pages
+import pages.metabolites as metabolite_pages
+import pages.search as search_pages
+import pages.static as static_pages
+import pages.strains as strain_pages
+import pages.studies as study_pages
+import pages.upload as upload_pages
 
 
 def init_routes(app):

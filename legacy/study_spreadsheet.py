@@ -3,11 +3,11 @@ import openpyxl
 
 
 def create_excel(
-        keywords,
-        list_taxa_id,
-        all_strain_data,
-        create_private_project_id,
-        unique_study_id_val,
+    keywords,
+    list_taxa_id,
+    all_strain_data,
+    create_private_project_id,
+    unique_study_id_val,
 ):
     """
     keywords:        NCBI Taxonomy Ids of taxa with exact match to a NCBI Taxonomy Id
@@ -15,7 +15,7 @@ def create_excel(
     all_strain_data: list of dictionaries with taxa without an exact NCBI Taxonomy Id
     """
 
-    wb = openpyxl.load_workbook('flask_app/templates/excel/metadata_template.xlsx')
+    wb = openpyxl.load_workbook('templates/excel/metadata_template.xlsx')
     sheet = wb['COMMUNITY_MEMBERS']
 
     k = 0  # Initialize k here

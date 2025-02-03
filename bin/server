@@ -1,12 +1,12 @@
 #! /bin/sh
 
-python flask_app/main.py
+python main.py
 
 # If there's a syntax error, the flask server will crash, let's rerun it on
 # change:
 
-inotifywait -m -e modify flask_app/** |
+inotifywait -m -e modify ./** |
   while read file_path file_event file_name; do
     echo "DEBUG: $file_path $file_event $file_name"
-    python flask_app/main.py
+    python main.py
   done
