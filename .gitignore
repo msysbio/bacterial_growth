@@ -27,6 +27,10 @@ app/templates/yaml_templates/
 
 # Ignore _build from readthedocs when run locally
 docs/_build/
+
+# Ignore AutoAPI specific output (if necessary)
+docs/api/
+
 # Configuration contains passwords, copy config/database.toml.example:
 config/database.toml
 

@@ -62,23 +62,9 @@
    faqs/faqs
 
 
+.. toctree::
+   :maxdepth: 3
+   :caption: Developer Guide
 
-.. NOTE:
-.. Tried to have only the title show in the ToC, but it looks like Sphinx is ignoring toctree options.
+   CONTRIBUTING
 
-.. .. only:: latex
-..
-..    .. toctree::
-..
-..       meta/history
-
-.. TODO:
-..   user/support
-
-.. only:: html
-
-   .. toctree::
-      :maxdepth: 1
-      :caption: Developer Guide
-
-      dev/contributing
