@@ -184,7 +184,7 @@ def save_data_to_csv(output_csv_path_growth,output_csv_path_reads,raw_data_templ
         - raw_data_template: raw data template file
 
     Returns:
-        - two csv files stored in the path : src/Data/Growth/StudyId/.., the data does not contain empty columns or empty rows.
+        - two csv files stored in the path : tmp_data/<StudyId>/.., the data does not contain empty columns or empty rows.
     """
     df_excel_growth = pd.read_excel(raw_data_template, sheet_name='Growth_Data_and_Metabolites')
     # Drop columns with NaN values

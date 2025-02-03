@@ -10,9 +10,9 @@ def get_chart_data(studyId):
     filepath = os.path.realpath(__file__)
     current_dir = os.path.dirname(filepath)
     root_dir = os.path.dirname(current_dir)
-    relative_path_to_src = os.path.join(root_dir, '../src')
+    relative_path_to_src = os.path.join(root_dir, 'tmp_data')
 
-    path = relative_path_to_src + f"/Data/Growth/{studyId}"
+    path = relative_path_to_src + f"/{studyId}"
     growth_file = path + "/Growth_Metabolites.csv"
     reads_file = path + "/Sequencing_Reads.csv"
 
@@ -30,9 +30,9 @@ def save_chart_data(studyId, xls_1):
     filepath = os.path.realpath(__file__)
     current_dir = os.path.dirname(filepath)
     root_dir = os.path.dirname(current_dir)
-    relative_path_to_src = os.path.join(root_dir, '../src')
+    relative_path_to_src = os.path.join(root_dir, 'tmp_data')
 
-    path = relative_path_to_src + f"/Data/Growth/{studyId}"
+    path = relative_path_to_src + f"/{studyId}"
     growth_file = path + "/Growth_Metabolites.csv"
     reads_file = path + "/Sequencing_Reads.csv"
 
