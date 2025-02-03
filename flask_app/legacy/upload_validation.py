@@ -3,11 +3,18 @@ import yaml
 
 import pandas as pd
 
-from flask_app.legacy.check_yaml import test_study_yaml, test_experiments_yaml, test_compartments_yaml, test_comu_members_yaml, test_communities_yaml, test_perturbation_yaml
-from flask_app.legacy.constants import LOCAL_DIRECTORY_TEMPLATES, LOCAL_DIRECTORY_YAML
+from flask_app.legacy.check_yaml import (
+    test_study_yaml,
+    test_experiments_yaml,
+    test_compartments_yaml,
+    test_comu_members_yaml,
+    test_communities_yaml,
+    test_perturbation_yaml,
+    test_cross_sheet_issues
+)
 
 
-def validate_upload(study_template, data_template):
+def validate_upload(yml_dir, study_template, data_template):
     errors = []
 
     if len(study_template) == 0:
@@ -18,19 +25,16 @@ def validate_upload(study_template, data_template):
     if len(errors) > 0:
         return errors
 
-    os.makedirs(LOCAL_DIRECTORY_TEMPLATES, exist_ok=True)
-    os.makedirs(LOCAL_DIRECTORY_YAML, exist_ok=True)
-
     # Get all the yaml files
-    parse_ex_to_yaml(LOCAL_DIRECTORY_YAML, study_template)
+    parse_ex_to_yaml(yml_dir, study_template)
 
     # Define the yaml files path
-    info_file_study = os.path.join(LOCAL_DIRECTORY_YAML, 'STUDY.yaml')
-    info_file_experiments = os.path.join(LOCAL_DIRECTORY_YAML, 'EXPERIMENTS.yaml')
-    info_compart_file = os.path.join(LOCAL_DIRECTORY_YAML, 'COMPARTMENTS.yaml')
-    info_mem_file = os.path.join(LOCAL_DIRECTORY_YAML, 'COMMUNITY_MEMBERS.yaml')
-    info_comu_file = os.path.join(LOCAL_DIRECTORY_YAML, 'COMMUNITIES.yaml')
-    info_pert_file = os.path.join(LOCAL_DIRECTORY_YAML, 'PERTURBATIONS.yaml')
+    info_file_study       = os.path.join(yml_dir, 'STUDY.yaml')
+    info_file_experiments = os.path.join(yml_dir, 'EXPERIMENTS.yaml')
+    info_compart_file     = os.path.join(yml_dir, 'COMPARTMENTS.yaml')
+    info_mem_file         = os.path.join(yml_dir, 'COMMUNITY_MEMBERS.yaml')
+    info_comu_file        = os.path.join(yml_dir, 'COMMUNITIES.yaml')
+    info_pert_file        = os.path.join(yml_dir, 'PERTURBATIONS.yaml')
 
     # Do the test to the yaml files according to the sheet
     data_study_yaml = load_yaml(info_file_study)
@@ -51,16 +55,21 @@ def validate_upload(study_template, data_template):
     data_pertu = load_yaml(info_pert_file)
     errors.extend(test_perturbation_yaml(data_pertu))
 
+    errors.extend(test_cross_sheet_issues(
+        experiments=data_experiment_yaml,
+        communities=data_comu,
+    ))
+
     return errors
 
 
-def parse_ex_to_yaml(LOCAL_DIRECTORY_YAML, template_excel):
+def parse_ex_to_yaml(yml_dir, template_excel):
     """
     Function that parse the metadata template that the user uploads in step 4 and creates a yaml file
     per sheet in the excel
 
     inputs:
-        - LOCAL_DIRECTORY_YAML: path were the yaml files are going to be saved
+        - yml_dir: path were the yaml files are going to be saved
         - template_excel: matadata excel file uploaded by the user
 
     Returns:
@@ -108,12 +117,12 @@ def parse_ex_to_yaml(LOCAL_DIRECTORY_YAML, template_excel):
     yaml_data5 = yaml.dump(data_dicts5)
     yaml_data6 = yaml.dump(data_dicts6)
 
-    template_filename_yaml_STUDY = os.path.join(LOCAL_DIRECTORY_YAML, 'STUDY.yaml')
-    template_filename_yaml_EXPERIMENTS = os.path.join(LOCAL_DIRECTORY_YAML, 'EXPERIMENTS.yaml')
-    template_filename_yaml_COMPARTMENTS = os.path.join(LOCAL_DIRECTORY_YAML, 'COMPARTMENTS.yaml')
-    template_filename_yaml_COMMUNITY_MEMBERS = os.path.join(LOCAL_DIRECTORY_YAML, 'COMMUNITY_MEMBERS.yaml')
-    template_filename_yaml_COMMUNITIES = os.path.join(LOCAL_DIRECTORY_YAML, 'COMMUNITIES.yaml')
-    template_filename_yaml_PERTURBATIONS = os.path.join(LOCAL_DIRECTORY_YAML, 'PERTURBATIONS.yaml')
+    template_filename_yaml_STUDY             = os.path.join(yml_dir, 'STUDY.yaml')
+    template_filename_yaml_EXPERIMENTS       = os.path.join(yml_dir, 'EXPERIMENTS.yaml')
+    template_filename_yaml_COMPARTMENTS      = os.path.join(yml_dir, 'COMPARTMENTS.yaml')
+    template_filename_yaml_COMMUNITY_MEMBERS = os.path.join(yml_dir, 'COMMUNITY_MEMBERS.yaml')
+    template_filename_yaml_COMMUNITIES       = os.path.join(yml_dir, 'COMMUNITIES.yaml')
+    template_filename_yaml_PERTURBATIONS     = os.path.join(yml_dir, 'PERTURBATIONS.yaml')
 
     all_yamls = [template_filename_yaml_STUDY, template_filename_yaml_EXPERIMENTS, template_filename_yaml_COMPARTMENTS,
                  template_filename_yaml_COMMUNITY_MEMBERS, template_filename_yaml_COMMUNITIES, template_filename_yaml_PERTURBATIONS]
@@ -121,7 +130,7 @@ def parse_ex_to_yaml(LOCAL_DIRECTORY_YAML, template_excel):
         if os.path.isfile(yamlfile):
             os.remove(yamlfile)
     print("\n\n\n\n\n  tmp yamls")
-    print(os.listdir(LOCAL_DIRECTORY_YAML))
+    print(os.listdir(yml_dir))
 
     # Write YAML data to a file
     with open(template_filename_yaml_STUDY, "w") as yaml_file:

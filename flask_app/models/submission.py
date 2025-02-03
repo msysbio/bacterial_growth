@@ -29,7 +29,7 @@ class Submission:
         self.row_count    = data.get('row_count', None)
 
         self.timepoint_count = data.get('timepoint_count', None)
-        self.technique_type  = data.get('technique_type', None)
+        self.technique_types = data.get('technique_types', [])
         self.metabolites     = data.get('metabolites', [])
 
     def update_project(self, data):
@@ -76,7 +76,7 @@ class Submission:
             self.vessel_count = self.plate_count
 
         self.timepoint_count = data['timepoint_count']
-        self.technique_type  = data['technique_type']
+        self.technique_types = data['technique_types']
         self.metabolites     = data['metabolites']
 
     def fetch_strains(self):
@@ -147,7 +147,7 @@ class Submission:
             'column_count':    self.column_count,
             'row_count':       self.row_count,
             'timepoint_count': self.timepoint_count,
-            'technique_type':  self.technique_type,
+            'technique_types': self.technique_types,
             'metabolites':     self.metabolites,
         }
 

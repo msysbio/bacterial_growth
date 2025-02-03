@@ -48,7 +48,20 @@ $(document).ready(function() {
         delay: 100,
         cache: true,
       },
+      templateResult: function(state) {
+        let query = $.trim($searchField.val());
+        let text = wrapSubstring(
+          state.text,
+          query,
+          '<span class="select2-highlight">',
+          '</span>',
+        );
+
+        return $('<div>' + text + '</div>');
+      }
     });
+
+    let $searchField = $multipleStrainSelect.next('.select2-container').find('.select2-search__field');
 
     $multipleStrainSelect.on('change', function() {
       let $form       = $multipleStrainSelect.parents('form');
@@ -173,6 +186,10 @@ $(document).ready(function() {
       $step3form.find('.vessel-count').addClass('hidden');
       $step3form.find(`.vessel-${vesselType}`).removeClass('hidden');
     }
+
+    $('select#technique_types').select2({
+      theme: 'custom',
+    });
   });
 
   $('.upload-page .step-content.step-4').each(function() {

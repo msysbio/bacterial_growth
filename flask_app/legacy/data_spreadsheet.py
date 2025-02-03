@@ -80,7 +80,7 @@ def create_excel(
         headers1_constant.update(header1_plate_counts)
 
     if 'fc' in measure_options:
-        header1_FC.update(header1_FC)
+        headers1_constant.update(header1_FC)
 
     # Add metabolites measured as column names
     for i in meta_options:
@@ -109,7 +109,6 @@ def create_excel(
     # Fill the position column with generated positions
     for idx, position in enumerate(positions, start=2):
         ws.cell(row=idx, column=1, value=position)
-
 
     headers2_constant = {
             'Position' : 'Predetermine position based on the type of vessel specified before.',

@@ -1,5 +1,6 @@
 import io
 import os
+import tempfile
 
 from flask import render_template, session, request, redirect, url_for, send_file
 import humanize
@@ -13,6 +14,7 @@ import flask_app.legacy.study_spreadsheet as study_spreadsheet
 import flask_app.legacy.data_spreadsheet as data_spreadsheet
 from flask_app.legacy.upload_validation import validate_upload
 from flask_app.legacy.populate_db import save_submission_to_database
+from flask_app.legacy.chart_data import save_chart_data
 
 from flask_app.forms.upload_step2_form import UploadStep2Form
 from flask_app.forms.upload_step3_form import UploadStep3Form
@@ -79,7 +81,7 @@ def upload_step3_page():
             taxa_names       = [name for (id, name) in submission.fetch_strains()]
 
             spreadsheet = data_spreadsheet.create_excel(
-                submission.technique_type,
+                submission.technique_types,
                 metabolite_names,
                 submission.vessel_type,
                 submission.vessel_count,
@@ -143,17 +145,29 @@ def upload_step4_page():
         errors = []
 
         if request.method == 'POST':
-            study_template = request.files['study-template'].read()
-            data_template = request.files['data-template'].read()
+            with tempfile.TemporaryDirectory() as yml_dir:
+                study_template = request.files['study-template'].read()
+                data_template = request.files['data-template'].read()
 
-            errors = validate_upload(study_template, data_template)
+                # TODO (2025-01-30) Check for project name and study name uniqueness
 
-            if len(errors) == 0:
-                (study_id, errors, errors_logic, studyUniqueID, projectUniqueID, project_id) = \
-                    save_submission_to_database(conn, submission, data_template)
+                errors = validate_upload(yml_dir, study_template, data_template)
 
                 if len(errors) == 0:
-                    return redirect(url_for('upload_step5_page'))
+                    (study_id, errors, errors_logic, studyUniqueID, projectUniqueID, project_id) = \
+                        save_submission_to_database(conn, yml_dir, submission, data_template)
+
+                    if len(errors) == 0:
+                        # TODO (2025-01-30) Message that data was successfully
+                        # stored, reset submission. (Later, store submission as
+                        # draft?)
+                        #
+                        # st.success(f"""Thank you! your study has been successfully uploaded into our database,
+                        #         **Private Study ID**: {studyUniqueID} and **Study ID**: {study_id},
+                        #         **Private Project Id**: {projectUniqueID} and **Project ID**: {project_id}""")
+
+                        save_chart_data(study_id, data_template)
+                        return redirect(url_for('upload_step5_page'))
 
         return render_template(
             "pages/upload/index.html",

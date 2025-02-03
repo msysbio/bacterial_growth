@@ -1,16 +1,16 @@
+import itertools
+import math
 import os
 import uuid
-import pandas as pd
 
-import itertools
+import pandas as pd
 
 import flask_app.legacy.db_functions as db
 from flask_app.legacy.yml_functions import read_yml
 from flask_app.legacy.parse_raw_data import get_techniques_metabolites, get_measures_growth, get_measures_reads, get_measures_counts, get_replicate_metadata
-from flask_app.legacy.constants import LOCAL_DIRECTORY_YAML
 
 
-def save_submission_to_database(conn, submission, data_template):
+def save_submission_to_database(conn, yml_dir, submission, data_template):
     """
     Function that populates all the data from the yaml files if not errors, in case of errors the function stops and returns the error
 
@@ -27,18 +27,18 @@ def save_submission_to_database(conn, submission, data_template):
         - study['projectUniqueID']: Project Unique ID only if all was susscessful
     """
     # TODO (2024-10-20) Taken directly from streamlit app, so we just rename the fields for now:
-    list_growth = [submission.technique_type]
+    list_growth = submission.technique_types
     list_metabolites = [name for (cheb_id, name) in submission.fetch_metabolites()]
 
     list_microbial_strains = [name for (id, name) in submission.fetch_strains()]
     list_microbial_strains += [strain['name'] for strain in submission.fetch_new_strains()]
 
-    info_file_study       = os.path.join(LOCAL_DIRECTORY_YAML, 'STUDY.yaml')
-    info_file_experiments = os.path.join(LOCAL_DIRECTORY_YAML, 'EXPERIMENTS.yaml')
-    info_compart_file     = os.path.join(LOCAL_DIRECTORY_YAML, 'COMPARTMENTS.yaml')
-    info_mem_file         = os.path.join(LOCAL_DIRECTORY_YAML, 'COMMUNITY_MEMBERS.yaml')
-    info_comu_file        = os.path.join(LOCAL_DIRECTORY_YAML, 'COMMUNITIES.yaml')
-    info_pert_file        = os.path.join(LOCAL_DIRECTORY_YAML, 'PERTURBATIONS.yaml')
+    info_file_study       = os.path.join(yml_dir, 'STUDY.yaml')
+    info_file_experiments = os.path.join(yml_dir, 'EXPERIMENTS.yaml')
+    info_compart_file     = os.path.join(yml_dir, 'COMPARTMENTS.yaml')
+    info_mem_file         = os.path.join(yml_dir, 'COMMUNITY_MEMBERS.yaml')
+    info_comu_file        = os.path.join(yml_dir, 'COMMUNITIES.yaml')
+    info_pert_file        = os.path.join(yml_dir, 'PERTURBATIONS.yaml')
 
     # checks that all the options selected by the user in the interface match the uploaded raw data template
     errors = get_techniques_metabolites(list_growth, list_metabolites,list_microbial_strains, data_template)
@@ -56,7 +56,7 @@ def save_submission_to_database(conn, submission, data_template):
 
         #reads all the yaml file
         info_study = read_yml(info_file_study)
-        info = read_yml(info_file_experiments)
+        info_experiments = read_yml(info_file_experiments)
         info_compart = read_yml(info_compart_file)
         info_pertu = read_yml(info_pert_file)
         info_mem = read_yml(info_mem_file)
@@ -64,7 +64,7 @@ def save_submission_to_database(conn, submission, data_template):
 
         #defining dictionaries per every yaml file
         study_name_list = info_study['Study_Name']
-        experiment_name_list = info['Experiment_ID']
+        experiment_name_list = info_experiments['Experiment_ID']
         #defining the number of rows with information in every yaml
         num_experiment = len(experiment_name_list)
         num_compart = len(info_compart['Compartment_ID'])
@@ -176,19 +176,19 @@ def save_submission_to_database(conn, submission, data_template):
                     exit()
 
         # populating experiments table
-        if 'Experiment_ID' in info:
+        if 'Experiment_ID' in info_experiments:
             for i in range(num_experiment):
                 biologicalreplicates = {
-                    'experimentId': info['Experiment_ID'][i],
+                    'experimentId': info_experiments['Experiment_ID'][i],
                     'studyId': study_id,
-                    'experimentDescription': info['Experiment_Description'][i],
-                    'cultivationMode': info['Cultivation_Mode'][i],
-                    'controlDescription': info['Control_Description'][i]
+                    'experimentDescription': info_experiments['Experiment_Description'][i],
+                    'cultivationMode': info_experiments['Cultivation_Mode'][i],
+                    'controlDescription': info_experiments['Control_Description'][i]
                 }
                 biologicalreplicates_filtered = {k: v for k, v in biologicalreplicates.items() if v is not None}
                 if len(biologicalreplicates_filtered)>0:
                     biologicalReplicate_id = db.addRecord(conn, 'Experiments', biologicalreplicates_filtered)
-                    biorep_id_list.append((info['Experiment_ID'][i],biologicalReplicate_id))
+                    biorep_id_list.append((info_experiments['Experiment_ID'][i],biologicalReplicate_id))
                     print('\nEXPERIMENT ID: ', biologicalReplicate_id)
                 else:
                     print('You must introduce some study information')
@@ -198,6 +198,7 @@ def save_submission_to_database(conn, submission, data_template):
         if 'Community_ID' in info_comu:
             for i in range(num_comu):
                 member = stripping_method(info_comu['Member_ID'][i])
+
                 for j in member:
                     strain_id = search_id(j,mem_id_list)
                     if strain_id == None:
@@ -255,25 +256,34 @@ def save_submission_to_database(conn, submission, data_template):
                 if len(perturbation_filtered)>0:
                     perturbation_id=db.addRecord(conn, 'Perturbation', perturbation_filtered)
 
-        if 'Experiment_ID' in info:
+        if 'Experiment_ID' in info_experiments:
             for i in range(num_experiment):
-                comp_biorep = stripping_method(info['Compartment_ID'][i])
-                comu_biorep = stripping_method(info['Community_ID'][i])
+                comp_biorep = stripping_method(info_experiments['Compartment_ID'][i])
+                comu_biorep = stripping_method(info_experiments['Community_ID'][i])
+
+                # TODO: rename comunity -> community
+                # TODO Impossible to add a blank community, since there is one entry in "Community" for each member
+
                 for j,k in zip(comp_biorep, itertools.cycle(comu_biorep)):
+                    community_unique_id = search_id(k, comu_id_list, allow_missing=True)
+                    if community_unique_id is None:
+                        # This community was blank, we will currently not insert any data for it
+                        continue
+
                     comp_per_biorep={
                         'studyId': study_id,
-                        'experimentUniqueId': search_id(info['Experiment_ID'][i],biorep_id_list),
-                        'experimentId': info['Experiment_ID'][i],
+                        'experimentUniqueId': search_id(info_experiments['Experiment_ID'][i],biorep_id_list),
+                        'experimentId': info_experiments['Experiment_ID'][i],
                         'compartmentUniqueId': search_id(j, compartments_id_list),
                         'compartmentId': j,
-                        'comunityUniqueId': search_id(k,comu_id_list),
+                        'comunityUniqueId': community_unique_id,
                         'comunityId': k
                     }
                     comp_per_biorep_filtered = {t: v for t, v in comp_per_biorep.items() if v is not None}
                     if len(comp_per_biorep_filtered)>0:
                         db.addRecord(conn, 'CompartmentsPerExperiment', comp_per_biorep_filtered)
-                tech_biorep = stripping_method(info['Measurement_Technique'][i])
-                unit_biorep = stripping_method(info['Measurement_Technique'][i])
+                tech_biorep = stripping_method(info_experiments['Measurement_Technique'][i])
+                unit_biorep = stripping_method(info_experiments['Measurement_Technique'][i])
                 if len(tech_biorep) != len(unit_biorep):
                     error_ms = 'Measurement_Technique and Measurement_Technique must have the same number of entries per celd.'
                     error_ms.append(error_ms)
@@ -281,8 +291,8 @@ def save_submission_to_database(conn, submission, data_template):
                 for j, k in zip(tech_biorep, unit_biorep):
                     tech_per_biorep={
                         'studyId': study_id,
-                        'experimentUniqueId': search_id(info['Experiment_ID'][i],biorep_id_list),
-                        'experimentId': info['Experiment_ID'][i],
+                        'experimentUniqueId': search_id(info_experiments['Experiment_ID'][i],biorep_id_list),
+                        'experimentId': info_experiments['Experiment_ID'][i],
                         'technique': j,
                         'techniqueUnit': k
                     }
@@ -290,8 +300,8 @@ def save_submission_to_database(conn, submission, data_template):
                     if len(tech_per_biorep_filtered)>0:
                         db.addRecord(conn, 'TechniquesPerExperiment', tech_per_biorep_filtered)
 
-                rep_biorep = stripping_method(info['Biological_Replicate_IDs'][i])
-                rep_controls = stripping_method(str(info['Control'][i]))
+                rep_biorep = stripping_method(info_experiments['Biological_Replicate_IDs'][i])
+                rep_controls = stripping_method(str(info_experiments['Control'][i]))
                 for j in range(len(rep_biorep)):
                     list_measures = measures.get(rep_biorep[j])
 
@@ -320,8 +330,8 @@ def save_submission_to_database(conn, submission, data_template):
                             ph = 1
                         rep_per_biorep = {
                             'studyId' : study_id,
-                            'experimentUniqueId': search_id(info['Experiment_ID'][i],biorep_id_list),
-                            'experimentId': info['Experiment_ID'][i],
+                            'experimentUniqueId': search_id(info_experiments['Experiment_ID'][i],biorep_id_list),
+                            'experimentId': info_experiments['Experiment_ID'][i],
                             'bioreplicateId': rep_biorep[j],
                             'controls': control,
                             'OD': od,
@@ -344,8 +354,8 @@ def save_submission_to_database(conn, submission, data_template):
                             cheb_id = db.getChebiId(conn, k)
                             metabo_rep = {
                                 'studyId': study_id,
-                                'experimentUniqueId': search_id(info['Experiment_ID'][i],biorep_id_list),
-                                'experimentId': info['Experiment_ID'][i],
+                                'experimentUniqueId': search_id(info_experiments['Experiment_ID'][i],biorep_id_list),
+                                'experimentId': info_experiments['Experiment_ID'][i],
                                 'bioreplicateId': rep_biorep[j],
                                 'bioreplicateUniqueId': search_id(rep_biorep[j],rep_id_list) ,
                                 'metabo_name' : k,
@@ -359,8 +369,8 @@ def save_submission_to_database(conn, submission, data_template):
                             member_id = search_id(h,mem_name_id_list)
                             abundance ={
                                 'studyId': study_id,
-                                'experimentUniqueId': search_id(info['Experiment_ID'][i],biorep_id_list),
-                                'experimentId': info['Experiment_ID'][i],
+                                'experimentUniqueId': search_id(info_experiments['Experiment_ID'][i],biorep_id_list),
+                                'experimentId': info_experiments['Experiment_ID'][i],
                                 'bioreplicateId': rep_biorep[j],
                                 'bioreplicateUniqueId' : search_id(rep_biorep[j],rep_id_list) ,
                                 'strainId': search_id(member_id,mem_id_list),
@@ -374,8 +384,8 @@ def save_submission_to_database(conn, submission, data_template):
                             member_id = search_id(m,mem_name_id_list)
                             FC_counts = {
                                 'studyId': study_id,
-                                'experimentUniqueId': search_id(info['Experiment_ID'][i],biorep_id_list),
-                                'experimentId': info['Experiment_ID'][i],
+                                'experimentUniqueId': search_id(info_experiments['Experiment_ID'][i],biorep_id_list),
+                                'experimentId': info_experiments['Experiment_ID'][i],
                                 'bioreplicateId': rep_biorep[j],
                                 'bioreplicateUniqueId' : search_id(rep_biorep[j],rep_id_list) ,
                                 'strainId': search_id(member_id,mem_id_list),
@@ -406,16 +416,22 @@ def save_submission_to_database(conn, submission, data_template):
 
 #function that stripst columns where more than one value is allowed
 def stripping_method(cell):
-    if ',' in cell:
+    if isinstance(cell, float) and math.isnan(cell):
+        return []
+    elif ',' in cell:
         samples = [sample.strip() for sample in cell.split(',')]
         return samples
     else:
         return [cell.strip()]
 
 # function that search the id given a value
-def search_id(search_value, data_list):
+def search_id(search_value, data_list, allow_missing=False):
     # Using a for loop to iterate over the list of tuples
     for key, value in data_list:
         if key == search_value:
             return value  # Return the value if the key is found
-    return None
+
+    if allow_missing:
+        return None
+    else:
+        raise ValueError(f"Value {repr(search_value)} not found in the keys of: {str(data_list)}")
