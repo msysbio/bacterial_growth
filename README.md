@@ -8,7 +8,7 @@ Given a working python environment, dependencies can be installed using:
 pip install -r requirements.txt
 ```
 
-In the main config directory, the file [`config/database.toml.example`](../config/database.toml.example) contains a template for the database configuration. Copy this file to ` config/database.toml` and update it with the correct credentials to access a running mysql database. On linux, you may have to add a `unix_socket = ` field as well.
+In the database config directory, the file [`db/config.toml.example`](db/config.toml.example) contains a template for the database configuration. Copy this file to `db/config.toml` and update it with the correct credentials to access a running mysql database. On linux, you may have to add a `unix_socket = ` field as well.
 
 The database structure can be created by running migrations:
 
@@ -38,9 +38,9 @@ The application starts from `main.py`, which imports and runs code from the "ini
 
 The application loosely follows the model-view-controller (MVC) architecture with these three folders holding the three layers. Inside `models`, we keep domain logic dedicated to a specific unit of data. This could be a wrapper for a database table, like "experiment" or "user", or a logical concept like "submission" that is loaded from data in the session. The functions and classes inside the relevant model are all meant to encapsulate potentially complex logic that reads and writes this data.
 
-The `templates` folder contains [Jinja2](https://jinja.palletsprojects.com/en/stable/) templates for every page or HTML fragment. The javascript, CSS, and images that are rendered in the main layout are located in the `static` directory. This follows the default structure of flask apps. An outlier is the Excel metadata template, stored under [`templates/excel`](./templates/excel/).
+The `templates` folder contains [Jinja2](https://jinja.palletsprojects.com/en/stable/) templates for every page or HTML fragment. The javascript, CSS, and images that are rendered in the main layout are located in the `static` directory. This follows the default structure of flask apps. An outlier is the Excel metadata template, stored under [`templates/excel`](templates/excel/).
 
-The `pages` folder has all the handler functions that instantiate model objects, call utility functions, and inject the output into a template. These are hooked up to URL routes in [`initialization/routes.py`](./initialization/routes.py).
+The `pages` folder has all the handler functions that instantiate model objects, call utility functions, and inject the output into a template. These are hooked up to URL routes in [`initialization/routes.py`](initialization/routes.py).
 
 ### Other code: `lib`, `forms`, `legacy`
 
@@ -50,9 +50,13 @@ Form objects are contained in `forms`. Their purpose is to encapsulate some view
 
 Code from the original streamlit app that is in active use is in the `legacy` folder. Ideally, it should be restructured and organized in its right place.
 
-### Database logic: `migrations`
+### Database: `db`
 
-Every database change is encapsulated in a migration file, which has an `up` function and a `down` function. The first one applies the migration, the other rolls it back. Ideally, all migrations should be runnable in order. The [`bin/migrations-new`](../bin/migrations-new) script bootstraps a new migration in that folder, while [`bin/migrations-run`](../bin/migrations-run) runs all of them that haven't already run.
+This folder contains the database configuration in [`db/config.toml.example`](db/config.toml.example) and an `__init__.py` file with the main functions to access a database connection.
+
+Every database change is encapsulated in a migration file under [`db/migrations`](db/migrations), which has an `up` function and a `down` function. The first one applies the migration, the other rolls it back. Ideally, all migrations should be runnable in order. The [`bin/migrations-new`](bin/migrations-new) script bootstraps a new migration in that folder, while [`bin/migrations-run`](bin/migrations-run) runs all of them that haven't already run.
+
+A snapshot of the database schema can be accessed in [`db/schema.sql`](db/schema.sql). This is regenerated on every migration and should be committed into git. It can be used to learn the current state of the database, or to bootstrap the structure for testing purposes.
 
 ### Testing: `tests`
 

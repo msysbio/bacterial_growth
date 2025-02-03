@@ -26,7 +26,7 @@ def _create_engine():
 
 def get_config():
     env = os.getenv('APP_ENV', 'development')
-    return tomllib.loads(Path('config/database.toml').read_text())[env]
+    return tomllib.loads(Path('db/config.toml').read_text())[env]
 
 
 def get_connection():

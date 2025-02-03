@@ -5,7 +5,7 @@ __pycache__
 tmp_data/*
 
 # Configuration contains passwords, copy config/database.toml.example:
-config/database.toml
+db/config.toml
 
 # Compiled assets:
 static/build/*

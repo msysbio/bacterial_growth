@@ -13,7 +13,7 @@ description=${description/ /_}
 
 timestamp=$(date +'%Y_%m_%d_%H%M%S')
 
-cat > "migrations/${timestamp}_${description}.py" <<EOF
+cat > "db/migrations/${timestamp}_${description}.py" <<EOF
 import sqlalchemy as sql
 
 def up(conn):
@@ -39,4 +39,4 @@ if __name__ == "__main__":
     run(__file__, up, down)
 EOF
 
-echo "> Created: migrations/${timestamp}_${description}.py"
+echo "> Created: db/migrations/${timestamp}_${description}.py"
