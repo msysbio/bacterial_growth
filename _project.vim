@@ -12,4 +12,4 @@ call vim_bacterial_growth#Init()
 nnoremap ,t :tabnew _project.vim<cr>
 
 command! Eroutes :e initialization/routes.py
-command! Eschema :e schema.sql
+command! Eschema :e db/schema.sql
