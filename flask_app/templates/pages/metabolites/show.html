@@ -1,6 +1,6 @@
 {% extends '_layout.html' %}
 
-{% block title %}: Metabolite with ChEBId:{{ cheb_id }}{% endblock %}
+{% block title %}: Metabolite with ChEBId:{{ chebi_id }}{% endblock %}
 
 {% block content %}
   <div class="container">
@@ -11,7 +11,7 @@
       <img src="{{ image_url }}" alt="ChEBI default image" />
 
       <p>
-        TODO information on metabolite with id {{ cheb_id }}
+        TODO information on metabolite with id {{ chebi_id }}
 
         <ul>
           <li>How common is it? Percentage of studies that include it?</li>
@@ -21,8 +21,8 @@
       </p>
 
       <p>
-        {% set chebi_url = "https://www.ebi.ac.uk/chebi/searchId.do?chebiId={}".format(cheb_id) %}
-        More information at ChEBI: <a href="{{ chebi_url }}">{{ cheb_id }}</a>
+        {% set chebi_url = "https://www.ebi.ac.uk/chebi/searchId.do?chebiId={}".format(chebi_id) %}
+        More information at ChEBI: <a href="{{ chebi_url }}">{{ chebi_id }}</a>
       </p>
     </article>
   </div>

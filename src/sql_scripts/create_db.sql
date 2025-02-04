@@ -1,4 +1,6 @@
--- TODO: Change all INT primary keys to BIGINT
+DROP DATABASE BacterialGrowth;
+CREATE DATABASE BacterialGrowth;
+USE BacterialGrowth;
 
 CREATE TABLE IF NOT EXISTS Project (
     projectId VARCHAR(100),
@@ -17,7 +19,6 @@ CREATE TABLE IF NOT EXISTS Study (
     studyURL VARCHAR(100) DEFAULT NULL,
     studyUniqueID VARCHAR(100) DEFAULT NULL,
     PRIMARY KEY (studyId),
-
     -- TODO: this should not be unique and it should definitely not be unique
     -- only on the first 255 characters
     UNIQUE (studyDescription(255))
@@ -25,7 +26,7 @@ CREATE TABLE IF NOT EXISTS Study (
 
 CREATE TABLE IF NOT EXISTS Experiments (
     studyId VARCHAR(100),
-    experimentUniqueId INT AUTO_INCREMENT,
+    experimentUniqueId BIGINT AUTO_INCREMENT,
     experimentId VARCHAR(20),
     experimentDescription TEXT,
     cultivationMode  VARCHAR(50),
@@ -35,7 +36,7 @@ CREATE TABLE IF NOT EXISTS Experiments (
 );
 
 CREATE TABLE IF NOT EXISTS Compartments (
-    compartmentUniqueId INT AUTO_INCREMENT PRIMARY KEY,
+    compartmentUniqueId BIGINT AUTO_INCREMENT PRIMARY KEY,
     studyId VARCHAR(100),
     compartmentId VARCHAR(50) NOT NULL,
     volume FLOAT(7,2) DEFAULT 0,
@@ -52,9 +53,8 @@ CREATE TABLE IF NOT EXISTS Compartments (
     initialTemperature FLOAT(7,2) DEFAULT 0,
     carbonSource BOOLEAN DEFAULT FALSE,
     mediaNames VARCHAR(100) NOT NULL,
-
-    -- TODO: this should be nullable:
-    mediaLink VARCHAR(100) NOT NULL,
+    -- TODO: this should be nullable
+    mediaLink VARCHAR(100),
 
     FOREIGN KEY (studyId) REFERENCES Study (studyId) ON UPDATE CASCADE ON DELETE CASCADE
 );
@@ -64,7 +64,7 @@ CREATE TABLE Strains (
     memberId VARCHAR(50),
     defined BOOLEAN DEFAULT FALSE,
     memberName TEXT,
-    strainId INT AUTO_INCREMENT PRIMARY KEY,
+    strainId BIGINT AUTO_INCREMENT PRIMARY KEY,
     NCBId INT,
     descriptionMember TEXT,
     FOREIGN KEY (studyId) REFERENCES Study (studyId) ON UPDATE CASCADE ON DELETE CASCADE
@@ -72,20 +72,22 @@ CREATE TABLE Strains (
 
 CREATE TABLE IF NOT EXISTS Community (
     studyId VARCHAR(100),
-    comunityUniqueId INT AUTO_INCREMENT PRIMARY KEY,
+    comunityUniqueId BIGINT AUTO_INCREMENT PRIMARY KEY,
     comunityId VARCHAR(50) NOT NULL,
-    strainId INT,
+    strainId BIGINT,
     UNIQUE(comunityId,strainId),
     FOREIGN KEY (strainId) REFERENCES Strains (strainId)  ON UPDATE CASCADE ON DELETE CASCADE,
     FOREIGN KEY (studyId) REFERENCES Study (studyId) ON UPDATE CASCADE ON DELETE CASCADE
-
 );
 
 CREATE TABLE IF NOT EXISTS Metabolites (
-    cheb_id VARCHAR(255),
+    chebi_id VARCHAR(255) NOT NULL,
     metabo_name VARCHAR(255) DEFAULT NULL,
-    PRIMARY KEY (cheb_id)
+    PRIMARY KEY (chebi_id)
 );
+-- This is needed to enable drop/add constraints/foreign keys
+CREATE UNIQUE INDEX idx_chebi_id ON Metabolites(chebi_id);
+
 
 CREATE TABLE IF NOT EXISTS Taxa (
     tax_id VARCHAR(255),
@@ -93,24 +95,20 @@ CREATE TABLE IF NOT EXISTS Taxa (
     PRIMARY KEY (tax_id)
 );
 
-/*
 CREATE TABLE IF NOT EXISTS MetaboliteSynonym (
-    syn_id INT AUTO_INCREMENT PRIMARY KEY,
+    syn_id BIGINT AUTO_INCREMENT PRIMARY KEY,
     synonym_value VARCHAR(255) DEFAULT NULL,
-    cheb_id VARCHAR(255),
-    FOREIGN KEY (cheb_id) REFERENCES Metabolites(cheb_id)
+    chebi_id VARCHAR(255) NOT NULL,
+    FOREIGN KEY (chebi_id) REFERENCES Metabolites(chebi_id) ON DELETE CASCADE ON UPDATE CASCADE
 );
-
- */
-
 
 CREATE TABLE CompartmentsPerExperiment (
     studyId VARCHAR(100),
-    experimentUniqueId INT,
+    experimentUniqueId BIGINT,
     experimentId VARCHAR(100) NOT NULL,
-    compartmentUniqueId INT,
+    compartmentUniqueId BIGINT,
     compartmentId VARCHAR(100) NOT NULL,
-    comunityUniqueId INT,
+    comunityUniqueId BIGINT,
     comunityId VARCHAR(100) NOT NULL,
     PRIMARY KEY (experimentUniqueId, compartmentUniqueId,comunityUniqueId),
     FOREIGN KEY (experimentUniqueId) REFERENCES Experiments(experimentUniqueId) ON UPDATE CASCADE ON DELETE CASCADE,
@@ -122,7 +120,7 @@ CREATE TABLE CompartmentsPerExperiment (
 
 CREATE TABLE TechniquesPerExperiment (
     studyId VARCHAR(100),
-    experimentUniqueId INT,
+    experimentUniqueId BIGINT,
     experimentId VARCHAR(100) NOT NULL,
     technique VARCHAR(100),
     techniqueUnit VARCHAR(100),
@@ -133,9 +131,9 @@ CREATE TABLE TechniquesPerExperiment (
 
 CREATE TABLE BioReplicatesPerExperiment (
     studyId VARCHAR(100) NOT NULL,
-    bioreplicateUniqueId INT AUTO_INCREMENT PRIMARY KEY,
+    bioreplicateUniqueId BIGINT AUTO_INCREMENT PRIMARY KEY,
     bioreplicateId VARCHAR(100),
-    experimentUniqueId INT,
+    experimentUniqueId BIGINT,
     experimentId VARCHAR(100) NOT NULL,
     controls BOOLEAN DEFAULT FALSE,
     OD BOOLEAN DEFAULT FALSE,
@@ -150,13 +148,13 @@ CREATE TABLE BioReplicatesPerExperiment (
 
 CREATE TABLE BioReplicatesMetadata (
     studyId VARCHAR(100) NOT NULL,
-    bioreplicateUniqueId INT,
+    bioreplicateUniqueId BIGINT,
     bioreplicateId VARCHAR(100),
     biosampleLink TEXT,
     bioreplicateDescrition TEXT,
 
-    -- TODO: This can't be unique
-    PRIMARY KEY (bioreplicateId),
+    -- TODO: bioreplicateId can't be unique
+    PRIMARY KEY (bioreplicateUniqueId),
 
     UNIQUE (studyId, bioreplicateUniqueId),
     FOREIGN KEY (bioreplicateUniqueId) REFERENCES BioReplicatesPerExperiment (bioreplicateUniqueId)  ON UPDATE CASCADE ON DELETE CASCADE,
@@ -166,9 +164,9 @@ CREATE TABLE BioReplicatesMetadata (
 
 CREATE TABLE IF NOT EXISTS Perturbation (
     studyId VARCHAR(100),
-    perturbationUniqueid INT AUTO_INCREMENT,
+    perturbationUniqueid BIGINT AUTO_INCREMENT,
     perturbationId VARCHAR(100) NOT NULL,
-    experimentUniqueId INT,
+    experimentUniqueId BIGINT,
     experimentId VARCHAR(100) NOT NULL,
     OLDCompartmentId VARCHAR(100),
     OLDComunityId VARCHAR(100),
@@ -187,33 +185,29 @@ CREATE TABLE IF NOT EXISTS Perturbation (
 
 CREATE TABLE IF NOT EXISTS MetabolitePerExperiment (
     studyId VARCHAR(100),
-    experimentUniqueId INT,
-
-    -- TODO Synthetic_Human_Gut_2 too long (encoding issue?)
+    experimentUniqueId BIGINT,
     experimentId VARCHAR(100) NOT NULL,
-
-    bioreplicateUniqueId INT,
+    bioreplicateUniqueId BIGINT,
     bioreplicateId VARCHAR(100),
     metabo_name VARCHAR(255) DEFAULT NULL,
-    cheb_id VARCHAR(255),
-
-    -- TODO: this can't be primary key, the experiment id is not unique
-    PRIMARY KEY (experimentId, bioreplicateId, cheb_id),
-
-    FOREIGN KEY (cheb_id) REFERENCES Metabolites(cheb_id) ON UPDATE CASCADE ON DELETE CASCADE,
+    chebi_id VARCHAR(255) NOT NULL,
+    -- NOTE: experimentId can't be primary key, the experiment id is not unique
+    PRIMARY KEY (experimentUniqueId, bioreplicateId, chebi_id),
+    FOREIGN KEY (chebi_id) REFERENCES Metabolites(chebi_id) ON UPDATE CASCADE ON DELETE CASCADE,
     FOREIGN KEY (experimentUniqueId) REFERENCES Experiments(experimentUniqueId) ON UPDATE CASCADE ON DELETE CASCADE,
     FOREIGN KEY (studyId) REFERENCES Study (studyId) ON UPDATE CASCADE ON DELETE CASCADE
 );
+-- CREATE UNIQUE INDEX idx_met_exp_id ON MetabolitePerExperiment(experimentUniqueId, bioreplicateId, chebi_id);
 
 CREATE TABLE IF NOT EXISTS Abundances (
     studyId VARCHAR(100),
-    experimentUniqueId INT,
+    experimentUniqueId BIGINT,
     experimentId VARCHAR(100) NOT NULL,
-    bioreplicateUniqueId INT,
+    bioreplicateUniqueId BIGINT,
     bioreplicateId VARCHAR(100),
-    strainId INT,
+    strainId BIGINT,
     memberId VARCHAR(255),
-    PRIMARY KEY  (experimentId,bioreplicateId, memberId),
+    PRIMARY KEY  (experimentId, bioreplicateId, memberId),
     FOREIGN KEY (experimentUniqueId) REFERENCES Experiments(experimentUniqueId) ON UPDATE CASCADE ON DELETE CASCADE,
     FOREIGN KEY (strainId) REFERENCES Strains (strainId) ON UPDATE CASCADE ON DELETE CASCADE,
     FOREIGN KEY (studyId) REFERENCES Study (studyId) ON UPDATE CASCADE ON DELETE CASCADE
@@ -221,13 +215,13 @@ CREATE TABLE IF NOT EXISTS Abundances (
 
 CREATE TABLE IF NOT EXISTS FC_Counts (
     studyId VARCHAR(100),
-    experimentUniqueId INT,
+    experimentUniqueId BIGINT,
     experimentId VARCHAR(100) NOT NULL,
-    bioreplicateUniqueId INT,
+    bioreplicateUniqueId BIGINT,
     bioreplicateId VARCHAR(100),
-    strainId INT,
+    strainId BIGINT,
     memberId VARCHAR(255),
-    PRIMARY KEY  (experimentId,bioreplicateId, memberId),
+    PRIMARY KEY  (experimentId, bioreplicateId, memberId),
     FOREIGN KEY (experimentUniqueId) REFERENCES Experiments(experimentUniqueId) ON UPDATE CASCADE ON DELETE CASCADE,
     FOREIGN KEY (strainId) REFERENCES Strains (strainId) ON UPDATE CASCADE ON DELETE CASCADE,
     FOREIGN KEY (studyId) REFERENCES Study (studyId) ON UPDATE CASCADE ON DELETE CASCADE

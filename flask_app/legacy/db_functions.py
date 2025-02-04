@@ -20,7 +20,7 @@ def getStudyID(conn):
 
 
 def getChebiId(conn, metabolite):
-    phrase = f"SELECT cheb_id FROM Metabolites WHERE metabo_name = '{metabolite}';"
+    phrase = f"SELECT chebi_id FROM Metabolites WHERE metabo_name = '{metabolite}';"
     res = conn.execute(sql.text(phrase)).all()
 
     if len(res) == 0: return None

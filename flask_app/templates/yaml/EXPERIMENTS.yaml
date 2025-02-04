@@ -1,0 +1,77 @@
+Biological_Replicate_IDs:
+- BT_MUCIN_1, BT_MUCIN_2, BT_MUCIN_3
+- BT_WC_1, BT_WC_2, BT_WC_3
+- RI_MUCIN_1, RI_MUCIN_2, RI_MUCIN_3
+- RI_WC_1, RI_WC_2, RI_WC_3
+- BTRI_MUCIN_1, BTRI_MUCIN_2, BTRI_MUCIN_3
+- BTRI_WC_1, BTRI_WC_2, BTRI_WC_3
+Biological_Replicates_Number:
+- 3
+- 3
+- 3
+- 3
+- 3
+- 3
+Community_ID:
+- BT, BT_attached
+- BT
+- RI, RI_attached
+- RI
+- BT_RI, BT_RI_attached
+- BT_RI
+Compartment_ID:
+- WC, MUCIN
+- WC
+- WC, MUCIN
+- WC
+- WC, MUCIN
+- WC
+Control:
+- BT_MUCIN_3
+- BT_WC_3
+- RI_MUCIN_3
+- RI_WC_3
+- BTRI_MUCIN_3
+- BTRI_WC_3
+Control_Description:
+- .nan
+- .nan
+- .nan
+- .nan
+- .nan
+- .nan
+Cultivation_Mode:
+- batch
+- batch
+- batch
+- batch
+- batch
+- batch
+Experiment_Description:
+- BT with WC plus mucin beads for 120 h
+- BT with WC for 120h
+- RI in WC plus mucin beads for 120 h
+- RI in WC for 120 hours
+- co-culture of BT and RI with WC plus mucin beads for 120 h
+- co-culture of BT and RI in WC for 120 h
+Experiment_ID:
+- BT_MUCIN
+- BT_WC
+- RI_MUCIN
+- RI_WC
+- BTRI_MUCIN
+- BTRI_WC
+Measurement_Technique:
+- OD, FC, 16S-seq
+- OD, FC, 16S-seq
+- OD, FC, 16S-seq
+- OD, FC, 16S-seq
+- OD, FC, 16S-seq
+- OD, FC, 16S-seq
+Measurement_Unit:
+- OD, Cells/mL, reads
+- OD, Cells/mL, reads
+- OD, Cells/mL, reads
+- OD, Cells/mL, reads
+- OD, Cells/mL, reads
+- OD, Cells/mL, reads

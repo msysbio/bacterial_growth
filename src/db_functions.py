@@ -1,9 +1,9 @@
 import os
-import tomllib
+import tomllib  #  Parses TOML files
 from pathlib import Path
 import mysql.connector
-import warnings
 import sys
+
 filepath = os.path.realpath(__file__)
 current_dir = os.path.dirname(filepath)
 sys.path.append(current_dir)
@@ -13,7 +13,7 @@ APP_ENV = os.getenv('APP_ENV', 'development')
 
 def execute(phrase):
     """
-    This function create a connection to the database and execute a command.
+    Creates a connection to the database and execute a command.
 
     :param phrase: str SQL sentence to execute
     :return: list of str received from the database
@@ -48,16 +48,14 @@ def execute(phrase):
         cnx.close()
         return res
 
-
     except mysql.connector.Error as err:
         print("\nSomething went wrong: {}".format(err),'\n')
         return err
 
 
-
 def addRecord(table, args):
     """
-    Add new entry into the db
+    Adds new entry into the db
 
     :param table: table of the DB
     :param args: dictionary with the data to insert (key = db field name. value = insert value)
@@ -84,9 +82,10 @@ def addRecord(table, args):
 
     return last_id
 
+
 def countRecords(table, args):
     '''
-    Count the records in one table for specific args
+    Counts the records in one table for specific args
 
     :param table
     :param args: dictionary with the data to find and count (key = db field name. value = insert value)
@@ -99,9 +98,10 @@ def countRecords(table, args):
     res = execute(phrase)
     return res[0][0]
 
+
 def getAllRecords(table, args):
     '''
-    Return all the records in one table for specific args
+    Returns all the records in one table for specific args
 
     :param table
     :param args: dictionary with the data to return (key = db field name. value = insert value)
@@ -114,23 +114,32 @@ def getAllRecords(table, args):
     res = execute(phrase)
     return res
 
+
 def getChebiId(metabolite):
-    phrase = f"SELECT cheb_id FROM Metabolites WHERE metabo_name = '{metabolite}';"
+    """
+    Returns the chebi_id of a metabolite.
+
+    :param metabolite: str name of the metabolite
+    :return: str chebi_id
+    """
+    phrase = f"SELECT chebi_id FROM Metabolites WHERE metabo_name = '{metabolite}';"
     res = execute(phrase)
+    return None if len(res) == 0 else res[0][0]
 
-    if len(res) == 0: return None
-
-    return res[0][0]
 
 def getFiles(fields, args):
+    """
+    [NOTE] This function is not used in the current version of the code.
+    Data now are stored in tables, not as files.
+    """
     where_clause = getWhereClause(args)
     fields_clause = getSelectFields(fields)
-
     phrase = "SELECT "+fields_clause+" FROM TechnicalReplicate "+where_clause
     res = execute(phrase)
     return res
 
 def getRecords(table, fields, args):
+
     where_clause = getWhereClause(args)
     fields_clause = getSelectFields(fields)
 
@@ -138,13 +147,16 @@ def getRecords(table, fields, args):
     res = execute(phrase)
     return res
 
-def getMetaboliteID(metabolite):
-    phrase = f"SELECT Metabolites.cheb_id, Metabolites.metabo_name FROM Metabolites WHERE Metabolites.metabo_name = '{metabolite}';"
+def getMetaboliteID(metabolite: str):
+    """
+    Returns the ChEBI id and the name of a metabolite given a synonym of the typical metabolite name.
+    """
+    phrase = f"SELECT Metabolites.chebi_id, Metabolites.metabo_name FROM Metabolites WHERE Metabolites.metabo_name = '{metabolite}';"
     res = execute(phrase)
     if not res:
-        phrase = "SELECT Metabolites.cheb_id, Metabolites.metabo_name FROM Metabolites JOIN MetaboliteSynonym ON Metabolites.cheb_id = MetaboliteSynonym.cheb_id "
+        phrase = "SELECT Metabolites.chebi_id, Metabolites.metabo_name FROM Metabolites JOIN MetaboliteSynonym ON Metabolites.chebi_id = MetaboliteSynonym.chebi_id "
         where = f"WHERE MetaboliteSynonym.synonym_value = '{metabolite}';"
-        query= phrase +where
+        query= phrase + where
         res = execute(query)
     return res
 
@@ -282,7 +294,7 @@ def getGeneralInfo(studyID, conn):
     query = f"SELECT DISTINCT technique FROM TechniquesPerExperiment WHERE studyId = '{studyID}';"
     techniques = conn.query(query, ttl=600)
     df_general['techniques'] = ', '.join(techniques['technique'])
-    query = f"SELECT DISTINCT CONCAT(metabo_name, ' (', cheb_id, ')') AS transformed_output FROM MetabolitePerExperiment WHERE studyId = '{studyID}';"
+    query = f"SELECT DISTINCT CONCAT(metabo_name, ' (', chebi_id, ')') AS transformed_output FROM MetabolitePerExperiment WHERE studyId = '{studyID}';"
     metabolites = conn.query(query, ttl=600)
     df_general['metabolites'] = ', '.join(metabolites['transformed_output'])
 
@@ -522,10 +534,10 @@ def dynamical_query(all_advance_query):
                 WHERE metabo_name LIKE '%{metabo}%'
                 """
             elif query_dict['option'] == 'chEBI ID':
-                cheb_id = query_dict['value']
+                chebi_id = query_dict['value']
                 where_clause = f"""
                 FROM MetabolitePerExperiment
-                WHERE cheb_id = '{cheb_id}'
+                WHERE chebi_id = '{chebi_id}'
                 """
             elif query_dict['option'] == 'pH':
                 start, end = query_dict['value']
