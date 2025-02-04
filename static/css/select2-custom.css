@@ -7,6 +7,9 @@
 .select2-highlight {
   background-color: #FAFAD2;
 }
+.select2-container--custom .select2-results__option--highlighted[aria-selected] div {
+  color: white;
+}
 
 .select2-container--custom .select2-selection--single {
   background-color: var(--light-blue);
