@@ -53,9 +53,12 @@ extensions = [
     "notfound.extension",
 
     # These extensions require RTDs to work so they will not work locally.
-    "hoverxref.extension",
-    "sphinx_search.extension",
-    "autoapi.extension"
+    #
+    # TODO figure out a way to make them work
+    #
+    # "hoverxref.extension",
+    # "sphinx_search.extension",
+    # "autoapi.extension"
 
 ]
 
@@ -191,81 +194,6 @@ default_role = "get"
 #   .. set:: Link `LinkBase`\ /something/\ `LinkPart`\ /example.html
 # Versus:
 #   .. set:: Link {LinkBase}/something/{LinkPart}/example.html
-
-# The following will be included before every page:
-rst_prolog = f"""
-.. tags::
-.. set:: AssetVersion {version}
-
-"""
-rst_prolog = rst_prolog + """
-.. set:: RPMinVersion 10.10
-.. set:: UPMDocLinkBase \https://docs.unity3d.com/Packages
-.. set:: RPDocLinkBase \https://docs.unity3d.com/Packages/com.unity.render-pipelines.
-.. set:: UnityMinVersion 2020.3
-.. set:: UnityDocsLinkBase https://docs.unity3d.com/{UnityMinVersion}/Documentation
-.. set:: UnityDocLink https://docs.unity3d.com/{UnityMinVersion}/Documentation/Manual
-.. set:: UnityDocScriptLink {UnityDocsLinkBase}/ScriptReference
-.. set:: UnityIssueLink https://issuetracker.unity3d.com/product/unity/issues/guid
-.. set:: AssetStoreLinkBase \https://assetstore.unity.com/packages/tools/particles-effects
-.. set:: DocLinkBase https://mgrowthdb.readthedocs.io/en/{AssetVersion}
-.. set:: GitHubLink \https://github.com/msysbio/bacterial_growth
-.. set:: WikiLink \{GitHubLink}/wiki
-
-.. set:: SGDocLink {UPMDocLinkBase}/com.unity.shadergraph@{RPMinVersion}/manual
-
-.. set:: [BIRP] :guilabel:`BIRP`
-.. set:: BIRPNameLong Built-in
-.. set:: BIRPNameShort BIRP
-.. set:: BIRPNameSlug birp
-.. set:: BIRP :abbr:`{BIRPNameShort} ({BIRPNameLong} Render Pipeline)`
-.. set:: BIRPMinVersion `RPMinVersion`
-.. set:: BIRPDocLink {UnityDocLink}/
-.. set:: BIRPAssetDocLink {DocLinkBase}?rp={BIRPNameSlug}
-
-.. set:: [URP] :guilabel:`URP`
-.. set:: URPNameLong Universal
-.. set:: URPNameShort URP
-.. set:: URPNameSlug urp
-.. set:: URP :abbr:`{URPNameShort} ({URPNameLong} Render Pipeline)`
-.. set:: URPMinVersion `RPMinVersion`
-.. set:: URPDocLink {RPDocLinkBase}universal@{URPMinVersion}/manual
-.. set:: URPAssetLink {AssetStoreLinkBase}/crest-ocean-system-urp-141674
-.. set:: URPAssetDocLink {DocLinkBase}/?rp={URPNameSlug}
-
-.. set:: [HDRP] :guilabel:`HDRP`
-.. set:: HDRPNameLong High Definition
-.. set:: HDRPNameShort HDRP
-.. set:: HDRPNameSlug hdrp
-.. set:: HDRP :abbr:`{HDRPNameShort} ({HDRPNameLong} Render Pipeline)`
-.. set:: HDRPMinVersion `RPMinVersion`
-.. set:: HDRPDocLink {RPDocLinkBase}high-definition@{HDRPMinVersion}/manual
-.. set:: HDRPAssetLink {AssetStoreLinkBase}/crest-ocean-system-hdrp-164158
-.. set:: HDRPAssetDocLink {DocLinkBase}/?rp={HDRPNameSlug}
-
-.. set:: Crest *Crest*
-
-.. set:: TAA :abbr:`TAA (Temporal Anti-Aliasing)`
-.. set:: SMAA :abbr:`SMAA (Subpixel Morphological Anti-Aliasing)`
-.. set:: SPI :abbr:`SPI (Single-Pass Instanced)`
-.. set:: MP :abbr:`MP (Multi-Pass)`
-.. set:: FFT :abbr:`FFT (Fast Fourier Transform)`
-.. set:: GC :abbr:`GC (Garbage Collector)`
-.. set:: SSR :abbr:`SSR (Screen-Space Reflections)`
-.. set:: SSAO :abbr:`SSAO (Screen-Space Ambient Occlusion)`
-.. set:: SAO :abbr:`SSAO (Scalable Ambient Occlusion)`
-.. set:: STPP :abbr:`STPP (Spatial-Temporal Post-Processing)`
-
-.. set:: DWP2 :abbr:`DWP2 (Dynamic Water Physics 2)`
-
-.. set:: Time.time :link:`Time.time <{UnityDocScriptLink}/Time-time.html>`
-.. set:: Time.timeScale :link:`Time.timeScale <{UnityDocScriptLink}/Time-timeScale.html>`
-.. set:: Timeline :link:`Timeline <{UPMDocLinkBase}/com.unity.timeline@1.5/manual/tl_about.html>`
-.. set:: Playable_Director :link:`Playable Director <{UPMDocLinkBase}/com.unity.timeline@1.5/manual/play_director.html>`
-.. set:: Master_Stack :link:`Master Stack <{SGDocLink}/Master-Stack.html>`
-.. set:: HDRP_Lit_Shader :link:`Lit Shader <{HDRPDocLink}/Lit-Shader.html>`
-.. set:: URP_Lit_Shader :link:`Lit Shader <{URPDocLink}/lit-shader.html>`
-"""
 
 # -- Debugging ---------------------------------------------------------------
 

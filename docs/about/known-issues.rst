@@ -1,14 +1,14 @@
 Known Issues
 ============
 
-We keep track of issues on GitHub for bugs and/or features to be added. 
+We keep track of issues on GitHub for bugs and/or features to be added.
 We also discuss on new/better ways to integrate data on GitHub discussions.
 Please see the following links:
 
 .. bullet_list::
 
-    - :link:`Issues on GitHub <{GitHubLink}/issues>`
-    - :link:`Discussions on GitHub <{GitHubLink}/discussions>`
+    - :link:`Issues on GitHub <https://github.com/msysbio/bacterial_growth/issues>`
+    - :link:`Discussions on GitHub <https://github.com/msysbio/bacterial_growth/discussions>`
 
 
 .. Example for hyperlink:
