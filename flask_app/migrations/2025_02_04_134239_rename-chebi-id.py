@@ -1,23 +1,13 @@
 import sqlalchemy as sql
 
 def up(conn):
-    query = """
-        ALTER TABLE Metabolites
-        CHANGE cheb_id chebi_id varchar(512)
-    """
-    params = {}
-
-    conn.execute(sql.text(query), params)
+    conn.execute(sql.text("ALTER TABLE Metabolites CHANGE cheb_id chebi_id varchar(512)"))
+    conn.execute(sql.text("ALTER TABLE MetabolitePerExperiment CHANGE cheb_id chebi_id varchar(255)"))
 
 
 def down(conn):
-    query = """
-        ALTER TABLE Metabolites
-        CHANGE chebi_id cheb_id varchar(512)
-    """
-    params = {}
-
-    conn.execute(sql.text(query), params)
+    conn.execute(sql.text("ALTER TABLE Metabolites CHANGE chebi_id cheb_id varchar(512)"))
+    conn.execute(sql.text("ALTER TABLE MetabolitePerExperiment CHANGE chebi_id cheb_id varchar(255)"))
 
 
 if __name__ == "__main__":
