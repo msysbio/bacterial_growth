@@ -1,0 +1,44 @@
+{% macro render_new_strain_form(data, prefix) %}
+
+  <div class="new-strain-container js-new-strain-container">
+    <div class="form-row">
+      <label style="width: 50%;">
+        <span>Name of the microbial strain:</span>
+        <input
+            name="{{ prefix }}name"
+            type="text"
+            class="form-input-full form-input-blue"
+            value="{{ data['name'] if data }}"
+            required />
+      </label>
+
+      <label style="width: 50%;">
+        <span>Species:</span>
+        <select
+            name="{{ prefix }}species"
+            class="form-input-full form-input-blue js-single-strain-select"
+            required>
+          {% if data %}
+            <option value="{{ data['species'] }}">{{ data['species_name'] }}</option>
+          {% endif %}
+        </select>
+      </label>
+    </div>
+
+    <div class="form-row">
+      <label class="full">
+        <div>Description</div>
+        <textarea
+            name="{{ prefix }}description"
+            class="form-input-full form-input-blue"
+            required
+            rows=2>{{ data['description'] if data }}</textarea>
+      </label>
+
+      <div class="no-label">
+        <a href="#" class="green-button js-remove-new-strain">Remove</a>
+      </div>
+    </div>
+  </div>
+
+{% endmacro %}

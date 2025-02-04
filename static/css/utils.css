@@ -1,0 +1,216 @@
+.clear {
+  clear: both;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.full {
+  width: 100%;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.flex-row {
+  display: flex;
+  flex-direction: row;
+}
+
+.flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.flex-grow {
+  flex-grow: 1;
+}
+
+.flex-right {
+  margin-left: auto;
+}
+
+.error-message {
+  display: block;
+  background: pink;
+  padding: 10px;
+  border-left: 4px solid #d02631;
+}
+
+.error-message-list {
+  background: pink;
+  border-left: 4px solid #d02631;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+table.simple-table {
+  border-collapse: collapse;
+
+  th, td {
+    padding: 6px 13px;
+    border: 1px solid var(--border-color);
+    vertical-align: top;
+  }
+
+  ul {
+    padding-left: 10px;
+  }
+}
+
+.dataframe-container {
+  overflow: auto;
+  max-height: 500px;
+}
+
+table.dataframe-table {
+  border-spacing: 0;
+  font-size: 13px;
+
+  th {
+    background-color: var(--sidebar-color);
+  }
+
+  th, td {
+    padding: 6px 13px;
+    border: 1px solid var(--border-color);
+    vertical-align: top;
+    max-width: 300px;
+    white-space: nowrap;
+    overflow-x: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* Border-collapse + rounded borders doesn't seem to work well. Might end up
+   * doing something different */
+  tr:first-child th:first-child {
+    border-top-left-radius: 4px;
+  }
+  tr:first-child th:last-child {
+    border-top-right-radius: 4px;
+  }
+  tr:last-child td:first-child {
+    border-bottom-left-radius: 4px;
+  }
+  tr:last-child td:last-child {
+    border-bottom-right-radius: 4px;
+  }
+}
+
+form.simple-form {
+  display: flex;
+  flex-direction: column;
+  row-gap: 10px;
+
+  .no-label {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+  }
+
+  .form-row {
+    display: flex;
+    column-gap: 10px;
+
+    label.full {
+      flex-grow: 1;
+    }
+
+    .form-input-full {
+      width: 100%;
+    }
+
+    label span,
+    label div {
+      font-size: 14px;
+      font-weight: 400;
+      line-height: 2;
+    }
+  }
+
+  input[type="submit"] {
+    cursor: pointer;
+    padding: 0.7rem;
+    border: 1px solid rgb(8, 131, 149);
+    border-radius: var(--border-radius);
+    background-color: rgb(8, 131, 149);
+    color: white;
+
+    &:hover {
+      background-color: rgb(7, 110, 126);
+    }
+  }
+}
+
+.form-input-blue {
+  background-color: var(--light-blue);
+  border: 1px solid transparent;
+  border-radius: var(--border-radius);
+  padding: 0.7rem;
+}
+
+.green-button {
+  display: inline-block;
+  padding: 0.7rem;
+  border: 1px solid rgb(8, 131, 149);
+  border-radius: var(--border-radius);
+  background-color: rgb(8, 131, 149);
+  color: white;
+  text-decoration: none;
+  line-height: 1.1;
+
+  &:hover {
+    background-color: rgb(7, 110, 126);
+    color: white;
+  }
+}
+
+.white-button {
+  display: inline-block;
+  padding: 0.7rem;
+  border: 1px solid rgb(8, 131, 149);
+  border-radius: var(--border-radius);
+  background-color: white;
+  text-decoration: none;
+  line-height: 1.1;
+  color: black;
+
+  &:hover {
+    background-color: #eee;
+    color: inherit;
+  }
+
+  &:visited {
+    color: inherit;
+  }
+}
+
+.tabs {
+  .tab-headers {
+    display: flex;
+    column-gap: 20px;
+    border-bottom: 2px solid rgba(7, 25, 82, 0.1);
+    font-size: 24px;
+
+    span {
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    span.active {
+      color: rgb(7, 110, 126);
+      border-bottom: 2px solid rgb(7, 110, 126);
+      margin-bottom: -2px;
+    }
+  }
+
+  .tab-body {
+    display: none;
+  }
+
+  .tab-body.active {
+    display: block;
+  }
+}

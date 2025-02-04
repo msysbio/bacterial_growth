@@ -1,26 +1,8 @@
-# Database files
-src/*.sql
-.streamlit/secrets.toml
+# Ignore __pycache__ globally:
+__pycache__
 
-src/names.dmp
-src/taxonomy_names.csv
-src/filtered_names.json
-.venv/
-__pycache__/
-
-# Server files
-#Data/
-IntermediateFiles/
-
-# ========================================================================
-
-src/__pycache__/
-src/__pycache__/*
-
-# Ignore our secrets
-# secrets.toml
-poetry.lock
-pyproject.toml
+# Ignore data files from uploads:
+tmp_data/*
 
 # Ignore _build from readthedocs when run locally
 docs/_build/
@@ -29,11 +11,23 @@ docs/_build/
 docs/api/
 
 # Configuration contains passwords, copy config/database.toml.example:
-config/database.toml
+db/config.toml
 
 # Compiled assets:
-flask_app/static/build/*
-flask_app/static/.webassets-cache/*
+static/build/*
+static/.webassets-cache/*
 
 # Micromamba environment
 .micromamba/*
+
+# Streamlit ignores:
+# ==================
+
+# Database files
+streamlit/src/*.sql
+streamlit/.streamlit/secrets.toml
+
+streamlit/src/names.dmp
+streamlit/src/taxonomy_names.csv
+streamlit/src/filtered_names.json
+streamlit/.venv/

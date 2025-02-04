@@ -1,0 +1,63 @@
+{% extends '_layout.html' %}
+
+{% block title %}: About{% endblock %}
+
+{% block content %}
+  <header>
+    <img height="100" src="{{ url_for('static', filename='images/about_banner.png') }}" />
+  </header>
+
+  <div class="container about-page">
+    <article>
+      <h2>Lab of Microbial Systems Biology</h2>
+
+      <br>
+
+      <div style="text-align: justify;">
+        We study the structure and dynamics of microbial communities with
+        systems biology methods. Our main interest is to explore microbial
+        community structure and dynamics in silico and in vitro. We
+        therefore work at the boundary of microbial ecology, systems
+        biology and bioinformatics.
+      </div>
+
+      <div class="address">
+        <div class="text">
+          <h3>Address</h3>
+
+          <p>
+            Laboratory of Molecular Bacteriology<br>
+            Department of Microbiology, Immunology and Transplantation (Rega Institute)<br>
+            KU Leuven<br>
+            <br>
+            Rega institute, 7th floor (Room 7.B142)<br>
+            Bus: 1028<br>
+            Campus Gasthuisberg<br>
+            <br>
+            Herestraat 49<br>
+            3000 Leuven<br>
+            Belgium
+          </p>
+        </div>
+
+        <div class="map">
+          <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40278.006351395336!2d4.634398779101553!3d50.87976210000002!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47c160df3fa2d3f3%3A0x8e85c1ed71c08d2d!2sREGA%20INSTITUTE%20KU%20LEUVEN!5e0!3m2!1sen!2sus!4v1712232819219!5m2!1sen!2sus" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+        </div>
+      </div>
+
+      <h3>More</h3>
+
+      <p>
+        <a href="https://github.com/msysbio">Go to our website</a>
+      </p>
+
+      <p>
+        <a href="https://github.com/msysbio" target="_blank" rel="noopener noreferrer">
+          <img src="https://img.shields.io/github/stars/msysbio.svg?style=social&label=Star&maxAge=2592000">
+        </a>
+      </p>
+    </article>
+  </div>
+
+  <div class="clear"></div>
+{% endblock %}
