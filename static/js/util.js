@@ -3,31 +3,38 @@ $.fn.log = function() {
   return this;
 }
 
-function wrapSubstring(text, query, prefix, suffix) {
-  if (query.length <= 0) {
+function wrapSubstrings(text, words, prefix, suffix) {
+  if (words.length <= 0 || words[0].length <= 0) {
     return text;
   }
 
   let result         = "";
   let lowercaseText  = text.toLowerCase();
-  let lowercaseQuery = query.toLowerCase();
+  let lowercaseWords = words.map((s) => s.toLowerCase());
 
-  let previousIndex = 0
-  let currentIndex  = lowercaseText.indexOf(lowercaseQuery);
+  let currentWordIndex = 0;
+  let query            = lowercaseWords[currentWordIndex];
 
-  if (currentIndex.length < 0) {
+  let previousTextIndex = 0
+  let currentTextIndex  = lowercaseText.indexOf(query);
+
+  if (currentTextIndex < 0) {
     return text;
   }
 
-  while (currentIndex >= 0) {
-    result += text.substring(previousIndex, currentIndex);
-    result += prefix + text.substring(currentIndex, currentIndex + query.length) + suffix;
+  while (currentTextIndex >= 0 && currentWordIndex < lowercaseWords.length) {
+    result += text.substring(previousTextIndex, currentTextIndex);
+    result += prefix + text.substring(currentTextIndex, currentTextIndex + query.length) + suffix;
 
-    previousIndex = currentIndex + query.length;
-    currentIndex  = lowercaseText.indexOf(lowercaseQuery, previousIndex + 1);
+    previousTextIndex = currentTextIndex + query.length;
+
+    currentWordIndex += 1;
+    query = lowercaseWords[currentWordIndex];
+
+    currentTextIndex  = lowercaseText.indexOf(query, previousTextIndex + 1);
   }
 
-  result += text.substring(previousIndex);
+  result += text.substring(previousTextIndex);
 
   return result;
 }

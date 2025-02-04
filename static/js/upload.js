@@ -50,9 +50,9 @@ $(document).ready(function() {
       },
       templateResult: function(state) {
         let query = $.trim($searchField.val());
-        let text = wrapSubstring(
+        let text = wrapSubstrings(
           state.text,
-          query,
+          query.split(/\s+/),
           '<span class="select2-highlight">',
           '</span>',
         );

@@ -3,7 +3,12 @@ import sqlalchemy as sql
 class Taxon():
     @staticmethod
     def search_by_name(db_conn, term, page=1, per_page=10):
-        term = term.lower()
+        term = term.lower().strip()
+        if len(term) <= 0:
+            return [], 0
+
+        term_pattern = '%' + '%'.join(term.split()) + '%'
+        first_word = term.split()[0]
 
         query = """
             SELECT
@@ -12,14 +17,14 @@ class Taxon():
             FROM Taxa
             WHERE LOWER(tax_names) LIKE :term_pattern
             ORDER BY
-                LOCATE(:term, LOWER(tax_names)) ASC,
+                LOCATE(:first_word, LOWER(tax_names)) ASC,
                 tax_names ASC
             LIMIT :per_page
             OFFSET :offset
         """
         results = db_conn.execute(sql.text(query), {
-            'term': term,
-            'term_pattern': f'%{term}%',
+            'first_word': term,
+            'term_pattern': term_pattern,
             'per_page': per_page,
             'offset': (page - 1) * per_page,
         }).all()
