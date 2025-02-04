@@ -7,6 +7,9 @@ import sqlalchemy as sql
 
 from db import get_connection, get_config
 
+# TODO (2025-02-04) Reset test db with the schema.sql file. Problem: studyId is
+# DEFAULT NULL in some cases.
+
 def run(file, up, down):
     migration_name = Path(file).stem
     direction = sys.argv[1] if len(sys.argv) > 1 else "up"
@@ -43,7 +46,7 @@ def run(file, up, down):
             raise ValueError(f"Unknown migration direction: {direction}")
 
     # Dump database snapshot into schema.sql
-    schema_path = 'schema.sql'
+    schema_path = 'db/schema.sql'
     db_config = get_config()
 
     with open(schema_path, 'w') as f:

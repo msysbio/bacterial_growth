@@ -19,7 +19,7 @@ def strain_show_page(id):
 
 
 def taxa_completion_json():
-    term     = request.args.get('term', '').lower()
+    term     = request.args.get('term', '')
     page     = int(request.args.get('page', '1'))
     per_page = 10
 
