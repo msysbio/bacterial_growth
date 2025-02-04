@@ -23,8 +23,6 @@ def taxa_completion_json():
     page     = int(request.args.get('page', '1'))
     per_page = 10
 
-    # TODO (2024-09-21) Extract to model and test
-
     with get_connection() as conn:
         results, has_more = Taxon.search_by_name(conn, term, page, per_page)
 
