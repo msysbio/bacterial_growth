@@ -70,10 +70,10 @@ def dynamical_query(all_advance_query):
                 WHERE metabo_name LIKE '%{metabo}%'
                 """
             elif query_dict['option'] == 'chEBI ID':
-                cheb_id = query_dict['value']
+                chebi_id = query_dict['value']
                 where_clause = f"""
                 FROM MetabolitePerExperiment
-                WHERE cheb_id = '{cheb_id}'
+                WHERE chebi_id = '{chebi_id}'
                 """
             elif query_dict['option'] == 'pH':
                 start, end = query_dict['value']
@@ -133,7 +133,7 @@ def get_general_info(studyId, conn):
     result['techniques'] = list(conn.execute(sql.text(query), params).scalars())
 
     query = """
-        SELECT DISTINCT metabo_name, cheb_id
+        SELECT DISTINCT metabo_name, chebi_id
         FROM MetabolitePerExperiment
         WHERE studyId = :studyId
         ORDER BY metabo_name ASC

@@ -226,12 +226,12 @@ CREATE TABLE MetabolitePerExperiment (
   bioreplicateUniqueId int NOT NULL,
   bioreplicateId varchar(100) COLLATE utf8mb4_bin NOT NULL,
   metabo_name varchar(255) COLLATE utf8mb4_bin DEFAULT NULL,
-  cheb_id varchar(255) COLLATE utf8mb4_bin NOT NULL,
-  PRIMARY KEY (experimentUniqueId,bioreplicateUniqueId,cheb_id),
-  KEY fk_1 (cheb_id),
+  chebi_id varchar(255) COLLATE utf8mb4_bin NOT NULL,
+  PRIMARY KEY (experimentUniqueId,bioreplicateUniqueId,chebi_id),
+  KEY fk_1 (chebi_id),
   KEY fk_2 (experimentUniqueId),
   KEY fk_3 (studyId),
-  CONSTRAINT MetabolitePerExperiment_fk_1 FOREIGN KEY (cheb_id) REFERENCES Metabolites (cheb_id) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT MetabolitePerExperiment_fk_1 FOREIGN KEY (chebi_id) REFERENCES Metabolites (chebi_id) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT MetabolitePerExperiment_fk_2 FOREIGN KEY (experimentUniqueId) REFERENCES Experiments (experimentUniqueId) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT MetabolitePerExperiment_fk_3 FOREIGN KEY (studyId) REFERENCES Study (studyId) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
@@ -245,9 +245,9 @@ DROP TABLE IF EXISTS Metabolites;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE Metabolites (
-  cheb_id varchar(512) COLLATE utf8mb4_bin NOT NULL,
+  chebi_id varchar(512) COLLATE utf8mb4_bin NOT NULL,
   metabo_name varchar(512) COLLATE utf8mb4_bin DEFAULT NULL,
-  PRIMARY KEY (cheb_id)
+  PRIMARY KEY (chebi_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -395,6 +395,6 @@ CREATE TABLE TechniquesPerExperiment (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
-INSERT INTO MigrationVersions VALUES (1,'2024_11_11_160324_initial_schema','2025-01-30 15:40:54'),(2,'2024_11_11_164726_remove_unique_study_description_index','2025-01-30 15:40:54'),(3,'2024_11_21_115349_allow_null_medialink','2025-01-30 15:40:55'),(4,'2024_11_21_120444_fix_unique_primary_keys','2025-01-30 15:40:55'),(5,'2025_01_30_152951_fix_bioreplicates_metadata_unique_id','2025-01-30 15:40:55');
+INSERT INTO MigrationVersions VALUES (1,'2024_11_11_160324_initial_schema','2025-01-30 15:40:54'),(2,'2024_11_11_164726_remove_unique_study_description_index','2025-01-30 15:40:54'),(3,'2024_11_21_115349_allow_null_medialink','2025-01-30 15:40:55'),(4,'2024_11_21_120444_fix_unique_primary_keys','2025-01-30 15:40:55'),(5,'2025_01_30_152951_fix_bioreplicates_metadata_unique_id','2025-01-30 15:40:55'),(9,'2025_02_04_134239_rename-chebi-id','2025-02-04 13:47:52');
 
--- Dump completed on 2025-01-30 15:40:55
+-- Dump completed on 2025-02-04 13:47:52

@@ -104,10 +104,10 @@ class Submission:
 
         query = f"""
             SELECT
-                cheb_id AS id,
+                chebi_id AS id,
                 metabo_name AS name
             FROM Metabolites
-            WHERE cheb_id IN ({','.join([f"'{cheb_id}'" for cheb_id in self.metabolites])})
+            WHERE chebi_id IN ({','.join([f"'{chebi_id}'" for chebi_id in self.metabolites])})
         """
         result = self.db_conn.execute(sql.text(query)).all()
 

@@ -4,6 +4,12 @@ __pycache__
 # Ignore data files from uploads:
 tmp_data/*
 
+# Ignore _build from readthedocs when run locally
+docs/_build/
+
+# Ignore AutoAPI specific output (if necessary)
+docs/api/
+
 # Configuration contains passwords, copy config/database.toml.example:
 db/config.toml
 

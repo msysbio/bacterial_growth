@@ -59,9 +59,9 @@
 
             <td>
               <ul>
-                {% for (name, cheb_id) in study['metabolites']: %}
+                {% for (name, chebi_id) in study['metabolites']: %}
                   <li>
-                    <a href="{{ url_for('metabolite_show_page', cheb_id=cheb_id) }}">{{ name }}</a>
+                    <a href="{{ url_for('metabolite_show_page', chebi_id=chebi_id) }}">{{ name }}</a>
                   </li>
                 {% endfor %}
               </ul>

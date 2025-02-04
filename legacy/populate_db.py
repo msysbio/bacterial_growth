@@ -34,7 +34,7 @@ def save_submission_to_database(conn, yml_dir, submission, data_template):
     """
     # TODO (2024-10-20) Taken directly from streamlit app, so we just rename the fields for now:
     list_growth = submission.technique_types
-    list_metabolites = [name for (cheb_id, name) in submission.fetch_metabolites()]
+    list_metabolites = [name for (chebi_id, name) in submission.fetch_metabolites()]
 
     list_microbial_strains = [name for (id, name) in submission.fetch_strains()]
     list_microbial_strains += [strain['name'] for strain in submission.fetch_new_strains()]
@@ -357,7 +357,7 @@ def save_submission_to_database(conn, yml_dir, submission, data_template):
                     list_counts = counts_per_replicate.get(rep_biorep[j])
                     if list_metabo:
                         for k in list_metabo:
-                            cheb_id = db.getChebiId(conn, k)
+                            chebi_id = db.getChebiId(conn, k)
                             metabo_rep = {
                                 'studyId': study_id,
                                 'experimentUniqueId': search_id(info_experiments['Experiment_ID'][i],biorep_id_list),
@@ -365,7 +365,7 @@ def save_submission_to_database(conn, yml_dir, submission, data_template):
                                 'bioreplicateId': rep_biorep[j],
                                 'bioreplicateUniqueId': search_id(rep_biorep[j],rep_id_list) ,
                                 'metabo_name' : k,
-                                'cheb_id': cheb_id
+                                'chebi_id': chebi_id
                             }
                             metabo_rep_filtered = {k: v for k, v in metabo_rep.items() if v is not None}
                             if len(metabo_rep_filtered)>0:
