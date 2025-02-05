@@ -100,6 +100,10 @@ class ExperimentChartForm:
                 )
                 error_y = std_df['STD']
 
+                if len(error_y) == 0:
+                    # STD values were blank, don't draw error bars
+                    error_y = None
+
             figs.append(px.line(
                 melted_df,
                 x='Time',

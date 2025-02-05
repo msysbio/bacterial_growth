@@ -20,7 +20,11 @@ def test_study_yaml(data):
     """
     df = pd.DataFrame(data)
     errors = []
-    for column in df.columns:
+
+    required_columns = set(df.columns)
+    required_columns.discard('Study_PublicationURL')
+
+    for column in required_columns:
         if column == 'Study_UniqueID':
             if not (pd.api.types.is_float_dtype(df[column]) or pd.api.types.is_string_dtype(df[column])):
                 errors.append(f"Study: Column '{column}' must be of type string or blank.")
@@ -45,7 +49,7 @@ def test_experiments_yaml(data):
         if column == 'Biological_Replicates_Number':
             if not (pd.api.types.is_numeric_dtype(df[column])):
                 errors.append(f"Experiments: Column '{column}' must be of  must a numeric value. No blank cells allowed.")
-        elif column == 'Control_Description':
+        elif column in ('Control_ID', 'Control_Description'):
             if not (pd.api.types.is_float_dtype(df[column]) or pd.api.types.is_string_dtype(df[column])):
                 errors.append(f"Experiments: Column '{column}' must be of type string or blank.")
         else:

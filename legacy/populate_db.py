@@ -307,7 +307,7 @@ def save_submission_to_database(conn, yml_dir, submission, data_template):
                         db.addRecord(conn, 'TechniquesPerExperiment', tech_per_biorep_filtered)
 
                 rep_biorep = stripping_method(info_experiments['Biological_Replicate_IDs'][i])
-                rep_controls = stripping_method(str(info_experiments['Control'][i]))
+                rep_controls = stripping_method(str(info_experiments['Control_ID'][i]))
                 for j in range(len(rep_biorep)):
                     list_measures = measures.get(rep_biorep[j])
 
