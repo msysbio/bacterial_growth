@@ -6,7 +6,8 @@
     "type": "form"
   },
   "models/*.py": {
-    "type": "model"
+    "type": "model",
+    "alternate": "tests/models/test_{}.py"
   },
   "pages/*.py": {
     "type": "page"
@@ -16,5 +17,9 @@
   },
   "static/js/*.js": {
     "type": "javascript"
+  },
+  "tests/**/test_*.py": {
+    "type": "test",
+    "alternate": "{}.py"
   }
 }
