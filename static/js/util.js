@@ -38,3 +38,25 @@ function wrapSubstrings(text, words, prefix, suffix) {
 
   return result;
 }
+
+function select2Highlighter($container) {
+  let $searchField;
+
+  // The search field is only available once the dropdown is rendered, so we
+  // set it in the immediate next event loop:
+  setTimeout(function() {
+    $searchField = $container.next('.select2-container').find('.select2-search__field');
+  }, 1);
+
+  return function(state) {
+    let query = $.trim($searchField.val());
+    let text = wrapSubstrings(
+      state.text,
+      query.split(/\s+/),
+      '<span class="select2-highlight">',
+      '</span>',
+    );
+
+    return $('<div>' + text + '</div>');
+  };
+}

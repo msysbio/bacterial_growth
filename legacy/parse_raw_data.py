@@ -2,7 +2,6 @@ import pandas as pd
 
 from legacy.constants import GrowthTechniques
 
-
 def get_techniques_metabolites(list_growth, list_metabolites, list_microbial_strains, raw_data_template):
 
     """
@@ -50,8 +49,6 @@ def get_techniques_metabolites(list_growth, list_metabolites, list_microbial_str
                     microbial_count_std = f'{i}_counts_std'
                     assert microbial_count in columns_abundances, f'ERROR: column {microbial_count} information is missing in template_raw_data'
                     assert microbial_count_std in columns_abundances, f'ERROR: column {microbial_count_std} is missing in template_raw_data'
-
-
 
         columns_growth = df_excel_growth.columns
 

@@ -71,10 +71,10 @@ class TestTaxon(DatabaseTest):
         )
 
     def test_pagination(self):
-        self.create_taxon(tax_names="Test 1")
-        self.create_taxon(tax_names="Test 2")
-        self.create_taxon(tax_names="Test 3")
-        self.create_taxon(tax_names="Test 4")
+        self.create_taxon(tax_names="Test 1 foo")
+        self.create_taxon(tax_names="Test 2 foo")
+        self.create_taxon(tax_names="Test 3 bar")
+        self.create_taxon(tax_names="Test 4 bar")
 
         # Two per page, two pages:
         results, has_more = Taxon.search_by_name(self.db_conn, 'Test', page=1, per_page=2)
@@ -98,6 +98,11 @@ class TestTaxon(DatabaseTest):
         results, has_more = Taxon.search_by_name(self.db_conn, 'Test', page=10, per_page=3)
         self.assertEqual(len(results), 0)
         self.assertFalse(has_more)
+
+        # Pagination correctly takes into account two-word searches:
+        results, has_more = Taxon.search_by_name(self.db_conn, 'Test foo', page=1, per_page=1)
+        self.assertEqual(len(results), 1)
+        self.assertTrue(has_more)
 
 if __name__ == '__main__':
     unittest.main()

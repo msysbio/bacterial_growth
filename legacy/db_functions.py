@@ -40,7 +40,7 @@ def addRecord(conn, table, args):
     # Insert into table
     fields, values = getInsertFieldsValues(args)
     phrase = "INSERT INTO " +table+" "+fields+" VALUES "+values
-    res = conn.execute(sql.text(phrase))
+    res = conn.execute(sql.text(phrase), args)
 
     # Get the name of the primary key field
     phrase = "SHOW KEYS FROM "+table+" WHERE Key_name = 'PRIMARY'"
@@ -50,7 +50,7 @@ def addRecord(conn, table, args):
     # Get the value of the primary key (this will return the value both if it was inserted or ignored)
     where_clause = getWhereClause(args)
     phrase = "SELECT "+pk+" FROM "+table+" "+where_clause
-    res = conn.execute(sql.text(phrase)).all()
+    res = conn.execute(sql.text(phrase), args).all()
 
     if not res:
         raise Exception("No last_id returned")
@@ -81,7 +81,7 @@ def getInsertFieldsValues(args):
             values = values + "NULL,"
         else:
             fields = fields + key + ','
-            values = values + "'" +str(val) + "',"
+            values = values + ":" + key + ','
     fields = fields[:-1] + ')'
     values = values[:-1] + ')'
     return [fields, values]
@@ -103,7 +103,7 @@ def getWhereClause(args):
             elif val == 'not null':
                 clause = clause + key + " IS NOT NULL AND "
             else:
-                clause = clause + key + "= '" + str(val) + "' AND "
+                clause = clause + key + "= :" + key + " AND "
 
         clause = clause[:-5] + ')'
 

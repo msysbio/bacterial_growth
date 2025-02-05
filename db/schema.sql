@@ -309,7 +309,8 @@ CREATE TABLE Project (
   projectDescription text COLLATE utf8mb4_bin,
   projectUniqueID varchar(100) COLLATE utf8mb4_bin DEFAULT NULL,
   PRIMARY KEY (projectId),
-  UNIQUE KEY projectName (projectName)
+  UNIQUE KEY projectName (projectName),
+  UNIQUE KEY projectUniqueID (projectUniqueID)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -348,7 +349,8 @@ CREATE TABLE Study (
   studyDescription text COLLATE utf8mb4_bin,
   studyURL varchar(100) COLLATE utf8mb4_bin DEFAULT NULL,
   studyUniqueID varchar(100) COLLATE utf8mb4_bin DEFAULT NULL,
-  PRIMARY KEY (studyId)
+  PRIMARY KEY (studyId),
+  UNIQUE KEY studyUniqueID (studyUniqueID)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -395,6 +397,6 @@ CREATE TABLE TechniquesPerExperiment (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
-INSERT INTO MigrationVersions VALUES (1,'2024_11_11_160324_initial_schema','2025-01-30 15:40:54'),(2,'2024_11_11_164726_remove_unique_study_description_index','2025-01-30 15:40:54'),(3,'2024_11_21_115349_allow_null_medialink','2025-01-30 15:40:55'),(4,'2024_11_21_120444_fix_unique_primary_keys','2025-01-30 15:40:55'),(5,'2025_01_30_152951_fix_bioreplicates_metadata_unique_id','2025-01-30 15:40:55'),(9,'2025_02_04_134239_rename-chebi-id','2025-02-04 13:47:52');
+INSERT INTO MigrationVersions VALUES (1,'2024_11_11_160324_initial_schema','2025-02-05 11:02:45'),(2,'2024_11_11_164726_remove_unique_study_description_index','2025-02-05 11:02:46'),(3,'2024_11_21_115349_allow_null_medialink','2025-02-05 11:02:46'),(4,'2024_11_21_120444_fix_unique_primary_keys','2025-02-05 11:02:46'),(5,'2025_01_30_152951_fix_bioreplicates_metadata_unique_id','2025-02-05 11:02:46'),(6,'2025_02_04_134239_rename-chebi-id','2025-02-05 11:02:46'),(8,'2025_02_05_134203_make-project-and-study-uuids-unique','2025-02-05 13:46:32');
 
--- Dump completed on 2025-02-04 13:47:52
+-- Dump completed on 2025-02-05 13:46:32

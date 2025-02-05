@@ -48,20 +48,8 @@ $(document).ready(function() {
         delay: 100,
         cache: true,
       },
-      templateResult: function(state) {
-        let query = $.trim($searchField.val());
-        let text = wrapSubstrings(
-          state.text,
-          query.split(/\s+/),
-          '<span class="select2-highlight">',
-          '</span>',
-        );
-
-        return $('<div>' + text + '</div>');
-      }
+      templateResult: select2Highlighter($multipleStrainSelect),
     });
-
-    let $searchField = $multipleStrainSelect.next('.select2-container').find('.select2-search__field');
 
     $multipleStrainSelect.on('change', function() {
       let $form       = $multipleStrainSelect.parents('form');
@@ -89,20 +77,6 @@ $(document).ready(function() {
     });
 
     $multipleStrainSelect.trigger('change');
-    let $metabolitesSelect = $('.js-metabolites-select');
-
-    $metabolitesSelect.select2({
-      multiple: true,
-      theme: 'custom',
-      width: '100%',
-      ajax: {
-        url: '/metabolites/completion',
-        dataType: 'json',
-        delay: 100,
-        cache: true,
-      },
-    });
-    $metabolitesSelect.trigger('change');
 
     function add_new_strain_form($addStrainButton, newStrain) {
       // We need to prepend all names and ids with "new-strain-N" for uniqueness:
@@ -190,6 +164,22 @@ $(document).ready(function() {
     $('select#technique_types').select2({
       theme: 'custom',
     });
+
+    let $metabolitesSelect = $('.js-metabolites-select');
+
+    $metabolitesSelect.select2({
+      multiple: true,
+      theme: 'custom',
+      width: '100%',
+      ajax: {
+        url: '/metabolites/completion',
+        dataType: 'json',
+        delay: 100,
+        cache: true,
+      },
+      templateResult: select2Highlighter($metabolitesSelect),
+    });
+    $metabolitesSelect.trigger('change');
   });
 
   $('.upload-page .step-content.step-4').each(function() {

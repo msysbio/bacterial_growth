@@ -5,6 +5,7 @@ from flask import render_template, request
 import sqlalchemy as sql
 
 from db import get_connection
+from models.metabolite import Metabolite
 
 
 def metabolite_show_page(chebi_id):
@@ -21,40 +22,13 @@ def metabolite_show_page(chebi_id):
         )
 
 
-# TODO (2024-09-26) Duplicates taxa completion a lot, try to make completion
-# model generic
 def metabolites_completion_json():
-    term     = request.args.get('term', '').lower()
+    term     = request.args.get('term', '')
     page     = int(request.args.get('page', '1'))
     per_page = 10
 
-    # TODO (2024-09-21) Extract to model and test
-
     with get_connection() as conn:
-        query = """
-            SELECT
-                chebi_id AS id,
-                metabo_name AS text
-            FROM Metabolites
-            WHERE LOWER(metabo_name) LIKE :term
-            ORDER BY metabo_name ASC
-            LIMIT :per_page
-            OFFSET :offset
-        """
-        results = conn.execute(sql.text(query), {
-            'term': f'%{term}%',
-            'per_page': per_page,
-            'offset': (page - 1) * per_page,
-        }).all()
-        results = [row._asdict() for row in results]
-
-        count_query = """
-            SELECT COUNT(*)
-            FROM Metabolites
-            WHERE LOWER(metabo_name) LIKE LOWER(:term)
-        """
-        total_count = conn.execute(sql.text(count_query), {'term': f'%{term}%'}).scalar()
-        has_more = (page * per_page < total_count)
+        results, has_more = Metabolite.search_by_name(conn, term, page, per_page)
 
         return json.dumps({
             'results': results,

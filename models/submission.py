@@ -15,6 +15,12 @@ class Submission:
 
         self.project = data.get('project', {'name': None, 'description': None})
 
+        # Check for an existing project/study:
+        self.project_id = self._find_project_id()
+        self.study_id   = self._find_study_id()
+
+        self._sync_project_type()
+
         # Step 2:
         self.strains     = data.get('strains', [])
         self.new_strains = data.get('new_strains', [])
@@ -150,6 +156,26 @@ class Submission:
             'technique_types': self.technique_types,
             'metabolites':     self.metabolites,
         }
+
+    def _find_project_id(self):
+        if self.project_uuid is None:
+            return None
+        query = f"SELECT projectId FROM Project WHERE projectUniqueID = :uuid"
+        return self.db_conn.execute(sql.text(query), {'uuid': self.project_uuid}).scalar()
+
+    def _find_study_id(self):
+        if self.study_uuid is None:
+            return None
+        query = f"SELECT studyId FROM Study WHERE studyUniqueId = :uuid"
+        return self.db_conn.execute(sql.text(query), {'uuid': self.study_uuid}).scalar()
+
+    def _sync_project_type(self):
+        if self.project_id and self.study_id:
+            self.type = 'update_study'
+        elif self.project_id:
+            self.type = 'new_study'
+        else:
+            self.type = 'new_project'
 
 
 def _get_project_data(db_conn, uuid):
