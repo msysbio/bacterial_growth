@@ -7,6 +7,7 @@ def read_yml(file):
     A function to read yml file
 
     :param file: yml
+
     :return info (if ok)
     """
     try:

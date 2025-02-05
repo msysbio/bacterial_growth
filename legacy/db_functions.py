@@ -67,6 +67,7 @@ def getInsertFieldsValues(args):
     Create the fields and values strings to be inserted in the db
 
     :param args: dictionary with the data to return (key = db field name. value = insert value)
+
     :return str with part of query
     '''
     if len(args) == 0:
