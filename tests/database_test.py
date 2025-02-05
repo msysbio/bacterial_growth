@@ -24,20 +24,27 @@ class DatabaseTest(unittest.TestCase):
         return [row._asdict() for row in results]
 
     def create_taxon(self, **params):
-        self.taxa_id = getattr(self, 'taxa_id', 0)
-        self.taxa_id += 1
-
-        default_params = {
+        self.taxa_id = getattr(self, 'taxa_id', 0) + 1
+        params = {
             'tax_id': self.taxa_id,
             'tax_names': f"Taxon {self.taxa_id}",
+            **params,
         }
 
-        params = {**default_params, **params}
+        query = sql.text("INSERT INTO Taxa VALUES (:tax_id, :tax_names)")
+        self.db_conn.execute(query, params)
 
-        query = sql.text("""
-            INSERT INTO Taxa
-            VALUES (:tax_id, :tax_names)
-        """)
+        return params
+
+    def create_metabolite(self, **params):
+        self.metabolite_id = getattr(self, 'metabolite_id', 0) + 1
+        params = {
+            'chebi_id': f"CHEBI:{self.metabolite_id}",
+            'metabo_name': f"Metabolite {self.metabolite_id}",
+            **params,
+        }
+
+        query = sql.text("INSERT INTO Metabolites VALUES (:chebi_id, :metabo_name)")
         self.db_conn.execute(query, params)
 
         return params

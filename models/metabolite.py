@@ -1,6 +1,9 @@
 import sqlalchemy as sql
 
-class Taxon():
+# TODO (2024-09-26) Duplicates taxa completion a lot, try to make completion
+# logic generic, to an extent.
+#
+class Metabolite():
     @staticmethod
     def search_by_name(db_conn, term, page=1, per_page=10):
         term = term.lower().strip()
@@ -12,13 +15,13 @@ class Taxon():
 
         query = """
             SELECT
-                tax_id AS id,
-                tax_names AS text
-            FROM Taxa
-            WHERE LOWER(tax_names) LIKE :term_pattern
+                chebi_id AS id,
+                metabo_name AS text
+            FROM Metabolites
+            WHERE LOWER(metabo_name) LIKE :term_pattern
             ORDER BY
-                LOCATE(:first_word, LOWER(tax_names)) ASC,
-                tax_names ASC
+                LOCATE(:first_word, LOWER(metabo_name)) ASC,
+                metabo_name ASC
             LIMIT :per_page
             OFFSET :offset
         """
@@ -32,8 +35,8 @@ class Taxon():
 
         count_query = """
             SELECT COUNT(*)
-            FROM Taxa
-            WHERE LOWER(tax_names) LIKE :term_pattern
+            FROM Metabolites
+            WHERE LOWER(metabo_name) LIKE :term_pattern
         """
         total_count = db_conn.execute(sql.text(count_query), {'term_pattern': term_pattern}).scalar()
         has_more = (page * per_page < total_count)
