@@ -71,9 +71,9 @@ def upload_step2_page():
 def upload_step3_page():
     with get_connection() as conn:
         submission = Submission(session.get('submission', {}), step=3, db_conn=conn)
-        form = UploadStep3Form(request.form, obj=submission)
 
         if request.method == 'POST':
+            form = UploadStep3Form(request.form)
             submission.update_study_design(form.data)
             session['submission'] = submission._asdict()
 
@@ -96,14 +96,14 @@ def upload_step3_page():
                 as_attachment=True,
                 download_name="template_data.xlsx",
             )
+        else:
+            form = UploadStep3Form(obj=submission)
 
-            return redirect(url_for('upload_step3_page'))
-
-        return render_template(
-            "pages/upload/index.html",
-            submission=submission,
-            form=form
-        )
+            return render_template(
+                "pages/upload/index.html",
+                submission=submission,
+                form=form
+            )
 
 
 def upload_study_template_xlsx():
