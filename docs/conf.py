@@ -46,17 +46,23 @@ extensions = [
 # -- Options for autoapi -------------------------------------------------------
 # NOTE: It is necessary to have __init__.py files in the folders you are about to include
 # for better hierarchy in the sidebar.
-autoapi_dirs = ['../']  # Points to bacterial_growth root
-autoapi_ignore = ['*/tests/*', '*/bin/*', '*/tmp_data/*',
-                  '*/streamlit/*',
-                  '*/templates/*',
-                  '*/static/*',
-                  '*/db/*',  # Ignore entire db folder, if we'd like to keep something from it: '*/db/example_folder/*',
-                  '_project.vim',
-                  'README.md',
-                  '*/docs/*',
-                  'CONTRIBUTING.md',
-                  'setup.py']  # Ignore unnecessary files
+
+# NOTE: the following pair of autoapi_dirs and autoapi_ignore lists, works fine locally but fails on the RTD server
+# autoapi_dirs = ['../']  # Points to bacterial_growth root
+# autoapi_ignore = ['*/tests/*', '*/bin/*', '*/tmp_data/*',
+#                   '*/data/*',
+#                   '*/streamlit/*',
+#                   '*/templates/*',
+#                   '*/static/*',
+#                   '*/db/*',  # Ignore entire db folder, if we'd like to keep something from it: '*/db/example_folder/*',
+#                   '_project.vim',
+#                   'README.md',
+#                   '*/docs/*',
+#                   'CONTRIBUTING.md',
+#                   'setup.py']  # Ignore unnecessary files
+
+autoapi_dirs = ['../lib', '../initialization', '../models', '../forms', '../legacy', '../pages']
+
 
 autoapi_options = [
     'members',
@@ -65,6 +71,8 @@ autoapi_options = [
     'special-members',
     'imported-members',
 ]
+
+autoapi_ignore = []
 
 # Enable typehints
 autodoc_typehints = "signature"
@@ -119,9 +127,7 @@ html_show_sphinx = False
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ["_static",
-                    "../streamlit/figs",
-]
+html_static_path = ["_static"]
 
 # These paths are either relative to html_static_path or fully qualified paths (eg. https://...).
 # Increment query parameter to invalidate the cache.
@@ -138,7 +144,7 @@ html_js_files = [
 html_output_encoding = "utf-8"
 
 # -- Options for PDF output --------------------------------------------------
-latex_logo = "../figs/logo-free-white.png"
+latex_logo = "_static/logo-free-white.png"
 
 # -- Templating --------------------------------------------------------------
 
