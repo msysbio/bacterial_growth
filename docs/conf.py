@@ -44,35 +44,11 @@ extensions = [
 
 
 # -- Options for autoapi -------------------------------------------------------
-# NOTE: It is necessary to have __init__.py files in the folders you are about to include
-# for better hierarchy in the sidebar.
 
-# NOTE: the following pair of autoapi_dirs and autoapi_ignore lists, works fine locally but fails on the RTD server
-# autoapi_dirs = ['../']  # Points to bacterial_growth root
-# autoapi_ignore = ['*/tests/*', '*/bin/*', '*/tmp_data/*',
-#                   '*/data/*',
-#                   '*/streamlit/*',
-#                   '*/templates/*',
-#                   '*/static/*',
-#                   '*/db/*',  # Ignore entire db folder, if we'd like to keep something from it: '*/db/example_folder/*',
-#                   '_project.vim',
-#                   'README.md',
-#                   '*/docs/*',
-#                   'CONTRIBUTING.md',
-#                   'setup.py']  # Ignore unnecessary files
-
+# NOTE: This pair works good in the RTD
 autoapi_dirs = ['../lib', '../initialization', '../models', '../forms', '../legacy', '../pages']
-
-
-autoapi_options = [
-    'members',
-    'undoc-members',
-    'show-inheritance',
-    'special-members',
-    'imported-members',
-]
-
 autoapi_ignore = []
+
 
 # Enable typehints
 autodoc_typehints = "signature"
