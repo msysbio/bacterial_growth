@@ -1,5 +1,6 @@
 import sys
 import subprocess
+import os
 import re
 from pathlib import Path
 
@@ -45,38 +46,39 @@ def run(file, up, down):
         else:
             raise ValueError(f"Unknown migration direction: {direction}")
 
-    # Dump database snapshot into schema.sql
-    schema_path = 'db/schema.sql'
-    db_config = get_config()
+    # Dump database snapshot into schema.sql, only in development mode:
+    if os.getenv('APP_ENV', 'development') == 'development':
+        schema_path = 'db/schema.sql'
+        db_config = get_config()
 
-    with open(schema_path, 'w') as f:
-        print(f"> Dumping schema in {schema_path}...")
+        with open(schema_path, 'w') as f:
+            print(f"> Dumping schema in {schema_path}...")
 
-        schema_output = subprocess.run([
-            '/usr/bin/mysqldump',
-            '--no-data',
-            '--skip-quote-names',
-            f'-h{db_config["host"]}',
-            f'-u{db_config["username"]}',
-            f'-p{db_config["password"]}',
-            db_config['database'],
-        ], capture_output=True).stdout.decode('utf-8')
+            schema_output = subprocess.run([
+                '/usr/bin/mysqldump',
+                '--no-data',
+                '--skip-quote-names',
+                f'-h{db_config["host"]}',
+                f'-u{db_config["username"]}',
+                f'-p{db_config["password"]}',
+                db_config['database'],
+            ], capture_output=True).stdout.decode('utf-8')
 
-        # Remove auto increment snapshots
-        schema_output = re.sub(r' AUTO_INCREMENT=[0-9]*\b', '', schema_output)
+            # Remove auto increment snapshots
+            schema_output = re.sub(r' AUTO_INCREMENT=[0-9]*\b', '', schema_output)
 
-        migration_version_data = subprocess.run([
-            '/usr/bin/mysqldump',
-            '--no-create-info',
-            '--skip-quote-names',
-            '--compact',
-            f'-h{db_config["host"]}',
-            f'-u{db_config["username"]}',
-            f'-p{db_config["password"]}',
-            db_config['database'],
-            'MigrationVersions',
-        ], capture_output=True).stdout.decode('utf-8')
+            migration_version_data = subprocess.run([
+                '/usr/bin/mysqldump',
+                '--no-create-info',
+                '--skip-quote-names',
+                '--compact',
+                f'-h{db_config["host"]}',
+                f'-u{db_config["username"]}',
+                f'-p{db_config["password"]}',
+                db_config['database'],
+                'MigrationVersions',
+            ], capture_output=True).stdout.decode('utf-8')
 
-        schema_output = re.sub(r'(-- Dump completed)', f"{migration_version_data}\n\\1", schema_output)
+            schema_output = re.sub(r'(-- Dump completed)', f"{migration_version_data}\n\\1", schema_output)
 
-        Path(schema_path).write_text(schema_output)
+            Path(schema_path).write_text(schema_output)
