@@ -11,3 +11,6 @@ sphinx-issues==3.0.1
 sphinx-notfound-page==1.0.0
 sphinx-autoapi==3.4.0
 nbsphinx==0.9.6
+
+# Fixes an issue with sphinx-autodoc:
+astroid==3.3.8
