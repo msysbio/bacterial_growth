@@ -85,11 +85,11 @@ issues_github_path = "msysbio/bacterial_growth"
 html_theme = 'furo'
 html_title = "μGrowthDB"
 html_short_title = "μGrowthDB"
-html_logo = '_static/logo-somon.svg'
-html_favicon = '_static/logo-somon.ico'
+html_logo = '_static/logo.png'
+html_favicon = '_static/favicon.ico'
 html_theme_options = {
-    "light_logo": 'logo-somon.svg',  # "crest-oceanrender-logo.svg",
-    "dark_logo": 'logo-dark.svg',  # "crest-oceanrender-logo-dark.svg",
+    "light_logo": 'logo.png',  # "crest-oceanrender-logo.svg",
+    "dark_logo": 'logo.png',  # "crest-oceanrender-logo-dark.svg",
     "sidebar_hide_name": True,
     # "announcement": "<em>Important</em> announcement!",
 }
