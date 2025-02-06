@@ -7,27 +7,6 @@
       :target: https://mgrowthdb.readthedocs.io/en/latest/?badge=latest
       :alt: Documentation Status
 
-.. NOTE:
-.. Subsequent captions are broken in PDFs: https://github.com/sphinx-doc/sphinx/issues/4977.
-
-.. NOTE:
-.. :numbered: has bugs with PDFs: https://github.com/sphinx-doc/sphinx/issues/4318.
-
-.. NOTE:
-.. only directive does not work with tocree directive for HTML.
-
-.. .. only:: latex
-..
-..    .. toctree::
-..       :hidden:
-..       :caption: User Guide
-..
-..       about/introduction
-
-.. NOTE:
-.. ":numbered: 1" means numbering is only one deep. Needed for the version history.
-
-
 .. toctree::
    :numbered: 1
    :maxdepth: 2
@@ -36,7 +15,6 @@
    about/introduction
    about/known-issues
    about/history
-..    about/integrations
 
 
 .. toctree::
@@ -67,4 +45,3 @@
    :caption: Developer Guide
 
    CONTRIBUTING
-

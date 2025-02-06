@@ -12,7 +12,8 @@ def load_yaml(file_path):
 def test_study_yaml(data):
     """
     Function that test the study yaml dataframe, checking that all the mandatory columns are not .nan or in the right format
-    inputs:
+
+    Inputs:
         - data: dataframe corresponding to the excel sheet
 
     Returns:
@@ -37,7 +38,8 @@ def test_study_yaml(data):
 def test_experiments_yaml(data):
     """
     Function that test the experiments yaml dataframe, checking that all the mandatory columns are not .nan or in the right format
-    inputs:
+
+    Inputs:
         - data: dataframe corresponding to the excel sheet
 
     Returns:
@@ -62,7 +64,8 @@ def test_experiments_yaml(data):
 def test_compartments_yaml(data):
     """
     Function that test the compartments yaml dataframe, checking that all the mandatory columns are not .nan or in the right format
-    inputs:
+
+    Inputs:
         - data: dataframe corresponding to the excel sheet
 
     Returns:
@@ -92,7 +95,8 @@ def test_compartments_yaml(data):
 def test_comu_members_yaml(data):
     """
     Function that test the community members yaml dataframe, checking that all the mandatory columns are not .nan or in the right format
-    inputs:
+
+    Inputs:
         - data: dataframe corresponding to the excel sheet
 
     Returns:
@@ -144,7 +148,8 @@ def test_communities_yaml(data):
 def test_perturbation_yaml(data):
     """
     Function that test the perturbations yaml dataframe, checking that all the mandatory columns are not .nan or in the right format
-    inputs:
+
+    Inputs:
         - data: dataframe corresponding to the excel sheet
 
     Returns:
@@ -187,7 +192,8 @@ def test_perturbation_yaml(data):
 def test_cross_sheet_issues(experiments, communities):
     """
     Function that test for issues between spreadsheets
-    inputs:
+
+    Inputs:
         - experiments: dataframe corresponding to the EXPERIMENTS excel sheet
         - communities: dataframe corresponding to the COMMUNITIES excel sheet
 

@@ -68,13 +68,14 @@ def parse_ex_to_yaml(yml_dir, template_excel):
     Function that parse the metadata template that the user uploads in step 4 and creates a yaml file
     per sheet in the excel
 
-    inputs:
+    Inputs:
         - yml_dir: path were the yaml files are going to be saved
         - template_excel: matadata excel file uploaded by the user
 
     Returns:
         - yaml file per sheet in metadata excel: STUDY.yaml, EXPERIMENTS.yaml, COMPARTMENTS.yaml,
         COMMUNITY_MEMBERS.yaml, COMMUNITIES.yaml, PERTURBATIONS.yaml
+
     """
 
     # Read the completed Excel file

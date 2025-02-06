@@ -3,15 +3,21 @@ import subprocess
 import os
 import re
 from pathlib import Path
-
 import sqlalchemy as sql
 
 from db import get_connection, get_config
 
-# TODO (2025-02-04) Reset test db with the schema.sql file. Problem: studyId is
-# DEFAULT NULL in some cases.
 
 def run(file, up, down):
+    """
+    Run a migration
+
+    Inputs
+    ------
+    file:
+
+
+    """
     migration_name = Path(file).stem
     direction = sys.argv[1] if len(sys.argv) > 1 else "up"
 
