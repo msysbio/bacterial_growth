@@ -19,14 +19,14 @@ def dynamical_query(all_advance_query):
         where_clause = ""
         if query_dict['option']:
             if query_dict['option'] == 'Project Name':
-                project_name = query_dict['value']
+                project_name = query_dict['value'].lower()
                 if project_name != '':
                     where_clause = f"""
                     FROM Study
                     WHERE projectUniqueID IN (
                         SELECT projectUniqueID
                         FROM Project
-                        WHERE projectName LIKE '%{project_name}%'
+                        WHERE LOWER(projectName) LIKE '%{project_name}%'
                         )
                     """
             elif query_dict['option'] == 'Project ID':
@@ -40,10 +40,10 @@ def dynamical_query(all_advance_query):
                     )
                 """
             elif query_dict['option'] == 'Study Name':
-                study_name = query_dict['value']
+                study_name = query_dict['value'].lower()
                 where_clause = f"""
                 FROM Study
-                WHERE studyName LIKE '%{study_name}%'
+                WHERE LOWER(studyName) LIKE '%{study_name}%'
                 """
             elif query_dict['option'] == 'Study ID':
                 study_id = query_dict['value']
@@ -52,10 +52,10 @@ def dynamical_query(all_advance_query):
                 WHERE studyId = '{study_id}'
                 """
             elif query_dict['option'] == 'Microbial Strain':
-                microb_strain = query_dict['value']
+                microb_strain = query_dict['value'].lower()
                 where_clause = f"""
                 FROM Strains
-                WHERE memberName LIKE '%{microb_strain}%'
+                WHERE LOWER(memberName) LIKE '%{microb_strain}%'
                 """
             elif query_dict['option'] == 'NCBI ID':
                 microb_ID = query_dict['value']
@@ -64,10 +64,10 @@ def dynamical_query(all_advance_query):
                 WHERE NCBId = '{microb_ID}'
                 """
             elif query_dict['option'] == 'Metabolites':
-                metabo = query_dict['value']
+                metabo = query_dict['value'].lower()
                 where_clause = f"""
                 FROM MetabolitePerExperiment
-                WHERE metabo_name LIKE '%{metabo}%'
+                WHERE LOWER(metabo_name) LIKE '%{metabo}%'
                 """
             elif query_dict['option'] == 'chEBI ID':
                 chebi_id = query_dict['value']
