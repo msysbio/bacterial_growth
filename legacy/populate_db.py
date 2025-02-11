@@ -4,6 +4,7 @@ import os
 import uuid
 
 import pandas as pd
+import sqlalchemy as sql
 
 import legacy.db_functions as db
 from legacy.yml_functions import read_yml
@@ -53,42 +54,48 @@ def save_submission_to_database(conn, yml_dir, submission, data_template):
     study_id = None
     project_id = None
 
+    study_uuid   = submission.study_uuid
+    project_uuid = submission.project_uuid
+
     if not errors:
         #defining the dictioraries depending on the raw data uploaded by the user
-        measures, metabos = get_measures_growth(data_template)
+        measures, metabos        = get_measures_growth(data_template)
         abundances_per_replicate = get_measures_reads(data_template)
-        counts_per_replicate = get_measures_counts(data_template)
-        replicate_metadata = get_replicate_metadata(data_template)
+        counts_per_replicate     = get_measures_counts(data_template)
+        replicate_metadata       = get_replicate_metadata(data_template)
 
         #reads all the yaml file
-        info_study = read_yml(info_file_study)
+        info_study       = read_yml(info_file_study)
         info_experiments = read_yml(info_file_experiments)
-        info_compart = read_yml(info_compart_file)
-        info_pertu = read_yml(info_pert_file)
-        info_mem = read_yml(info_mem_file)
-        info_comu = read_yml(info_comu_file)
+        info_compart     = read_yml(info_compart_file)
+        info_pertu       = read_yml(info_pert_file)
+        info_mem         = read_yml(info_mem_file)
+        info_comu        = read_yml(info_comu_file)
 
         #defining dictionaries per every yaml file
-        study_name_list = info_study['Study_Name']
+        study_name_list      = info_study['Study_Name']
         experiment_name_list = info_experiments['Experiment_ID']
+
         #defining the number of rows with information in every yaml
-        num_experiment = len(experiment_name_list)
-        num_compart = len(info_compart['Compartment_ID'])
-        num_pertu = len(info_pertu['Perturbation_ID'])
-        num_mem = len(info_mem['Member_ID'])
-        num_comu = len(info_comu['Community_ID'])
+        num_experiment   = len(experiment_name_list)
+        num_compart      = len(info_compart['Compartment_ID'])
+        num_pertu        = len(info_pertu['Perturbation_ID'])
+        num_mem          = len(info_mem['Member_ID'])
+        num_comu         = len(info_comu['Community_ID'])
         num_rep_metadata = len(replicate_metadata['Biological_Replicate_id'])
 
         #populating the study table
-        if 'Study_Name' in info_study:
+        if submission.type == 'update_study':
+            study_id = submission.study_id
+        elif 'Study_Name' in info_study:
             study = {
-                'studyId' : db.getStudyID(conn),
-                'studyName': info_study['Study_Name'][0],
+                'studyId' :         db.getStudyID(conn),
+                'studyName':        info_study['Study_Name'][0],
                 'studyDescription': info_study['Study_Description'][0],
-                'studyURL': info_study['Study_PublicationURL'][0],
-                'studyUniqueID': info_study['Study_UniqueID'][0],
+                'studyURL':         info_study['Study_PublicationURL'][0],
+                'studyUniqueID':    info_study['Study_UniqueID'][0],
                 'projectUniqueID':  info_study['Project_UniqueID'][0]
-                }
+            }
             if isinstance(info_study['Study_UniqueID'][0], float) :
                 study['studyUniqueID'] = str(uuid.uuid4())
 
@@ -102,18 +109,19 @@ def save_submission_to_database(conn, yml_dir, submission, data_template):
                 print('You must introduce some study information')
                 exit()
 
-        if 'Project_UniqueID' in info_study:
-
+        if submission.type in ('new_study', 'update_study'):
+            project_id = submission.project_id
+        elif 'Project_UniqueID' in info_study:
             project = {
-                'projectId' : db.getProjectID(conn),
-                'projectName': submission.project['name'],
+                'projectId' :         db.getProjectID(conn),
+                'projectName':        submission.project['name'],
                 'projectDescription': submission.project['description'],
-                'projectUniqueID': info_study['Project_UniqueID'][0]
+                'projectUniqueID':    info_study['Project_UniqueID'][0]
             }
 
             project_filtered = {k: v for k, v in project.items() if v is not None}
 
-            if len(project_filtered)>0:
+            if len(project_filtered) > 0:
                     project_id = db.addRecord(conn, 'Project', project_filtered)
                     print('\nProject ID: ', project_id)
             else:
@@ -149,6 +157,21 @@ def save_submission_to_database(conn, yml_dir, submission, data_template):
                 else:
                     print('You must introduce some study information')
                     exit()
+
+        if submission.type == 'update_study':
+            # Clear out previous data
+            conn.execute(sql.text("DELETE FROM Compartments               WHERE studyId = :study_id"), {'study_id': study_id})
+            conn.execute(sql.text("DELETE FROM Experiments                WHERE studyId = :study_id"), {'study_id': study_id})
+            conn.execute(sql.text("DELETE FROM Community                  WHERE studyId = :study_id"), {'study_id': study_id})
+            conn.execute(sql.text("DELETE FROM Perturbation               WHERE studyId = :study_id"), {'study_id': study_id})
+            conn.execute(sql.text("DELETE FROM CompartmentsPerExperiment  WHERE studyId = :study_id"), {'study_id': study_id})
+            conn.execute(sql.text("DELETE FROM TechniquesPerExperiment    WHERE studyId = :study_id"), {'study_id': study_id})
+            conn.execute(sql.text("DELETE FROM BioReplicatesPerExperiment WHERE studyId = :study_id"), {'study_id': study_id})
+            conn.execute(sql.text("DELETE FROM MetabolitePerExperiment    WHERE studyId = :study_id"), {'study_id': study_id})
+            conn.execute(sql.text("DELETE FROM MetabolitePerExperiment    WHERE studyId = :study_id"), {'study_id': study_id})
+            conn.execute(sql.text("DELETE FROM Abundances                 WHERE studyId = :study_id"), {'study_id': study_id})
+            conn.execute(sql.text("DELETE FROM FC_Counts                  WHERE studyId = :study_id"), {'study_id': study_id})
+            conn.execute(sql.text("DELETE FROM BioReplicatesMetadata      WHERE studyId = :study_id"), {'study_id': study_id})
 
         # populating compartments table
         if 'Compartment_ID' in info_compart:
@@ -414,7 +437,7 @@ def save_submission_to_database(conn, yml_dir, submission, data_template):
                 if len(biorep_metadata_filtered)>0:
                     db.addRecord(conn, 'BioReplicatesMetadata', biorep_metadata_filtered)
 
-        return study_id, errors, errors_logic, study['studyUniqueID'],study['projectUniqueID'], project_id
+        return study_id, errors, errors_logic, study_uuid, project_uuid, project_id
 
     else:
         print("ERROR")
