@@ -60,7 +60,7 @@
       <div class="form-row">
         <input
             type="submit"
-            value="{{ 'Update project' if submission.project_uuid else 'Create project' }}" />
+            value="Next" />
       </div>
     </form>
 
@@ -84,7 +84,29 @@
       </div>
 
       <div class="form-row">
-        <input type="submit" value="Verify private ID" />
+        <label class="full">
+          <span>Project name:</span>
+          <input
+              type="text"
+              name="project_name"
+              required
+              value="{{ submission.project['name'] or '' }}"
+              class="form-input-full form-input-blue"
+              placeholder="1. Provide a name for your project" />
+      </div>
+
+      <div class="form-row">
+        <label class="full">
+          <span>Project description:</span>
+          <textarea
+              name="project_description"
+              placeholder="2. Provide a project description"
+              class="form-input-full form-input-blue"
+              required>{{ submission.project['description'] or '' }}</textarea>
+      </div>
+
+      <div class="form-row">
+        <input type="submit" value="Next" />
       </div>
     </form>
 
@@ -120,7 +142,29 @@
       </div>
 
       <div class="form-row">
-        <input type="submit" value="Verify private IDs" />
+        <label class="full">
+          <span>Project name:</span>
+          <input
+              type="text"
+              name="project_name"
+              required
+              value="{{ submission.project['name'] or '' }}"
+              class="form-input-full form-input-blue"
+              placeholder="1. Provide a name for your project" />
+      </div>
+
+      <div class="form-row">
+        <label class="full">
+          <span>Project description:</span>
+          <textarea
+              name="project_description"
+              placeholder="2. Provide a project description"
+              class="form-input-full form-input-blue"
+              required>{{ submission.project['description'] or '' }}</textarea>
+      </div>
+
+      <div class="form-row">
+        <input type="submit" value="Next" />
       </div>
     </form>
   </div>

@@ -59,6 +59,28 @@ def addRecord(conn, table, args):
 
     return last_id
 
+
+def updateRecord(conn, table, pk_value, args):
+    """
+    Update an existing record
+
+    :param table: table of the DB
+    :param pk_value: primary key to find in the database
+    :param args: dictionary with the data to insert (key = db field name. value = insert value)
+    :return: id of the inserted record
+    """
+    # Get the name of the primary key field
+    phrase = "SHOW KEYS FROM "+table+" WHERE Key_name = 'PRIMARY'"
+    res = conn.execute(sql.text(phrase)).all()
+    pk = res[0][4]
+
+    set_list = [f"{key} = :{key}" for key in args]
+    args['primary_key'] = pk
+
+    phrase = f"UPDATE {table} SET {','.join(set_list)} WHERE {pk} = :primary_key"
+    res = conn.execute(sql.text(phrase), args)
+
+
 # # DATABASE SUPPLEMENTARY FUNCTIONS
 # # =================================
 
