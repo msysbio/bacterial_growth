@@ -138,19 +138,26 @@ def save_submission_to_database(conn, yml_dir, submission, data_template):
         comu_id_list =[]
 
         if submission.type == 'update_study':
-            # Clear out previous data
-            conn.execute(sql.text("DELETE FROM BioReplicatesMetadata      WHERE studyId = :study_id"), {'study_id': study_id})
-            conn.execute(sql.text("DELETE FROM FC_Counts                  WHERE studyId = :study_id"), {'study_id': study_id})
-            conn.execute(sql.text("DELETE FROM Abundances                 WHERE studyId = :study_id"), {'study_id': study_id})
-            conn.execute(sql.text("DELETE FROM MetabolitePerExperiment    WHERE studyId = :study_id"), {'study_id': study_id})
-            conn.execute(sql.text("DELETE FROM BioReplicatesPerExperiment WHERE studyId = :study_id"), {'study_id': study_id})
-            conn.execute(sql.text("DELETE FROM TechniquesPerExperiment    WHERE studyId = :study_id"), {'study_id': study_id})
-            conn.execute(sql.text("DELETE FROM CompartmentsPerExperiment  WHERE studyId = :study_id"), {'study_id': study_id})
-            conn.execute(sql.text("DELETE FROM Perturbation               WHERE studyId = :study_id"), {'study_id': study_id})
-            conn.execute(sql.text("DELETE FROM Community                  WHERE studyId = :study_id"), {'study_id': study_id})
-            conn.execute(sql.text("DELETE FROM Experiments                WHERE studyId = :study_id"), {'study_id': study_id})
-            conn.execute(sql.text("DELETE FROM Compartments               WHERE studyId = :study_id"), {'study_id': study_id})
-            conn.execute(sql.text("DELETE FROM Strains                    WHERE studyId = :study_id"), {'study_id': study_id})
+            # Clear out previous data, in reverse insertion order:
+            data_tables = [
+                "BioReplicatesMetadata",
+                "FC_Counts",
+                "Abundances",
+                "MetabolitePerExperiment",
+                "BioReplicatesPerExperiment",
+                "TechniquesPerExperiment",
+                "CompartmentsPerExperiment",
+                "Perturbation",
+                "Community",
+                "Experiments",
+                "Compartments",
+                "Strains",
+            ]
+            for table in data_tables:
+                conn.execute(
+                    sql.text(f"DELETE FROM {table} WHERE studyId = :study_id"),
+                    {'study_id': study_id}
+                )
 
         # populating strains table
         if 'Member_ID' in info_mem:
