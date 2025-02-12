@@ -16,6 +16,7 @@ timestamp=$(date +'%Y_%m_%d_%H%M%S')
 cat > "db/migrations/${timestamp}_${description}.py" <<EOF
 import sqlalchemy as sql
 
+
 def up(conn):
     query = """
 

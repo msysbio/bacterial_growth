@@ -1,5 +1,6 @@
 import sqlalchemy as sql
 
+
 def up(conn):
     query = "ALTER TABLE Project ADD UNIQUE (projectUniqueID)"
     conn.execute(sql.text(query))

@@ -1,5 +1,6 @@
 import sqlalchemy as sql
 
+
 def up(conn):
     conn.execute(sql.text("ALTER TABLE Metabolites CHANGE cheb_id chebi_id varchar(512)"))
     conn.execute(sql.text("ALTER TABLE MetabolitePerExperiment CHANGE cheb_id chebi_id varchar(255)"))
