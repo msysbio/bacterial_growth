@@ -104,7 +104,11 @@ def test_comu_members_yaml(data):
     """
     df = pd.DataFrame(data)
     errors = []
-    for column in df.columns:
+
+    required_columns = set(df.columns)
+    required_columns.discard('Assembly_GenBank_ID')
+
+    for column in required_columns:
         if column == 'Defined':
             if not df[column].isin([0, 1]).all():
                 errors.append(f"Community members: Column '{column}' must be of  must 0 or 1. No blank cells allowed.")

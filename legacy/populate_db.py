@@ -27,11 +27,11 @@ def save_submission_to_database(conn, yml_dir, submission, data_template):
         - data_template: an excel file uploaded by the user in step 4 with all the raw data
 
     Returns:
-        - study_id:                 study id of the uploaded study if susccessfull, if not it will be None
-        - errors:                   List of all the errors resulting from the get_techniques_metabolites function
-        - errors_logic:             List of all logial errors checked while populating the data into the database
-        - study['studyUniqueID']:   Study Unique ID only if all was susscessful
-        - study['projectUniqueID']: Project Unique ID only if all was susscessful
+        - study_id:     study id of the uploaded study if susccessfull, if not it will be None
+        - errors:       List of all the errors resulting from the get_techniques_metabolites function
+        - errors_logic: List of all logial errors checked while populating the data into the database
+        - study_uuid:   Study Unique ID only if all was susscessful
+        - project_uuid: Project Unique ID only if all was susscessful
     """
     # TODO (2024-10-20) Taken directly from streamlit app, so we just rename the fields for now:
     list_growth = submission.technique_types
@@ -48,7 +48,7 @@ def save_submission_to_database(conn, yml_dir, submission, data_template):
     info_pert_file        = os.path.join(yml_dir, 'PERTURBATIONS.yaml')
 
     # checks that all the options selected by the user in the interface match the uploaded raw data template
-    errors = get_techniques_metabolites(list_growth, list_metabolites,list_microbial_strains, data_template)
+    errors = get_techniques_metabolites(list_growth, list_metabolites, list_microbial_strains, data_template)
     errors_logic = []
 
     study_id = None
@@ -169,8 +169,9 @@ def save_submission_to_database(conn, yml_dir, submission, data_template):
                     'defined': info_mem['Defined'][i],
                     'memberName': info_mem['Member_Name'][i],
                     'NCBId': info_mem['NCBI_ID'][i],
-                    'descriptionMember': info_mem['Description'][i]
-                    }
+                    'assemblyGenBankId': info_mem['Assembly_GenBank_ID'][i],
+                    'descriptionMember': info_mem['Description'][i],
+                }
                 members_filtered = {k: v for k, v in members.items() if v is not None}
                 if len(members_filtered)>0:
                     members_id = db.addRecord(conn, 'Strains', members_filtered)
