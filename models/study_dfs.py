@@ -104,8 +104,6 @@ def dynamical_query(all_advance_query):
 def get_general_info(studyId, conn):
     params = {'studyId': studyId}
 
-    # TODO (2025-02-03) There are multiple studies connected to multiple projects. The project unique id is not actually unique
-
     query = """
         SELECT studyId, studyName, studyDescription, studyURL, projectId
         FROM Study
@@ -153,7 +151,7 @@ def get_experiments(studyId, conn):
         GROUP_CONCAT(DISTINCT BRI.bioreplicateId) AS bioreplicateIds,
         E.controlDescription,
         GROUP_CONCAT(DISTINCT BR.bioreplicateId) AS control_bioreplicateIds,
-        GROUP_CONCAT(DISTINCT C.comunityId) AS comunityIds,
+        GROUP_CONCAT(DISTINCT C.communityId) AS communityIds,
         GROUP_CONCAT(DISTINCT CP.compartmentId) AS compartmentIds
     FROM
         Experiments AS E
@@ -193,7 +191,7 @@ def get_compartments(studyId, conn):
 def get_communities(studyId, conn):
     query = """
     SELECT
-        C.comunityId,
+        C.communityId,
         GROUP_CONCAT(DISTINCT S.memberName) AS memberNames,
         GROUP_CONCAT(DISTINCT CP.compartmentId) AS compartmentIds
     FROM
@@ -201,11 +199,11 @@ def get_communities(studyId, conn):
     LEFT JOIN
         Strains AS S ON C.strainId = S.strainId
     LEFT JOIN
-        CompartmentsPerExperiment AS CP ON CP.comunityUniqueId = C.comunityUniqueId
+        CompartmentsPerExperiment AS CP ON CP.communityUniqueId = C.communityUniqueId
     WHERE
         C.studyId = %(studyId)s
     GROUP BY
-        C.comunityId;
+        C.communityId;
     """
     df_communities = pd.read_sql(query, conn, params={'studyId': studyId})
     return df_communities

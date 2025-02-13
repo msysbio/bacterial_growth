@@ -246,7 +246,7 @@ def populate_db(list_growth, list_metabolites, list_microbial_strains,raw_data_t
                         sys.exit()
                     comunities = {
                         'studyId': study_id,
-                        'comunityId': info_comu['Community_ID'][i],
+                        'communityId': info_comu['Community_ID'][i],
                         'strainId': strain_id
                     }
                     comunities_filtered = {k: v for k, v in comunities.items() if v is not None}
@@ -323,8 +323,8 @@ def populate_db(list_growth, list_metabolites, list_microbial_strains,raw_data_t
                         'experimentId': info['Experiment_ID'][i],
                         'compartmentUniqueId': search_id(j, compartments_id_list),
                         'compartmentId': j,
-                        'comunityUniqueId': search_id(k,comu_id_list),
-                        'comunityId': k
+                        'communityUniqueId': search_id(k,comu_id_list),
+                        'communityId': k
                     }
                     comp_per_biorep_filtered = {t: v for t, v in comp_per_biorep.items() if v is not None}
                     if len(comp_per_biorep_filtered)>0:

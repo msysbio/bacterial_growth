@@ -244,7 +244,7 @@ def save_submission_to_database(conn, yml_dir, submission, data_template):
                         errors_logic.append(error_ms)
                     comunities = {
                         'studyId': study_id,
-                        'comunityId': info_comu['Community_ID'][i],
+                        'communityId': info_comu['Community_ID'][i],
                         'strainId': strain_id
                     }
                     comunities_filtered = {k: v for k, v in comunities.items() if v is not None}
@@ -299,7 +299,6 @@ def save_submission_to_database(conn, yml_dir, submission, data_template):
                 comp_biorep = stripping_method(info_experiments['Compartment_ID'][i])
                 comu_biorep = stripping_method(info_experiments['Community_ID'][i])
 
-                # TODO: rename comunity -> community
                 # TODO Impossible to add a blank community, since there is one entry in "Community" for each member
 
                 for j,k in zip(comp_biorep, itertools.cycle(comu_biorep)):
@@ -314,8 +313,8 @@ def save_submission_to_database(conn, yml_dir, submission, data_template):
                         'experimentId': info_experiments['Experiment_ID'][i],
                         'compartmentUniqueId': search_id(j, compartments_id_list),
                         'compartmentId': j,
-                        'comunityUniqueId': community_unique_id,
-                        'comunityId': k
+                        'communityUniqueId': community_unique_id,
+                        'communityId': k
                     }
                     comp_per_biorep_filtered = {t: v for t, v in comp_per_biorep.items() if v is not None}
                     if len(comp_per_biorep_filtered)>0:
