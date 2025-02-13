@@ -15,6 +15,11 @@ def main():
     migration_files = Path(migration_dir).glob('*.py')
     migration_names = {path.stem for path in migration_files}
 
+    direction = sys.argv[1] if len(sys.argv) > 1 else "up"
+    if direction not in ('up', 'down'):
+        print("Invalid migration direction: {direction}. Expected 'up' or 'down'")
+        sys.exit(1)
+
     with get_connection() as conn:
         # Bootstrap first migration
         conn.execute(sql.text("""
@@ -32,13 +37,23 @@ def main():
         applied_migrations = {name for (name,) in conn.execute(sql.text(query)).all()}
         pending_migrations = migration_names - applied_migrations
 
-        if len(pending_migrations) == 0:
-            print("Database up-to-date, nothing to do")
-            return
+        if direction == 'up':
+            if len(pending_migrations) == 0:
+                print("Database up-to-date, nothing to do")
+                return
 
-        for name in sorted(pending_migrations):
-            migration_module = import_module(f"db.migrations.{name}")
-            run(migration_module.__file__, migration_module.up, migration_module.down)
+            for name in sorted(pending_migrations):
+                migration_module = import_module(f"db.migrations.{name}")
+                run(migration_module.__file__, migration_module.up, migration_module.down, direction="up")
+        else:
+            if len(applied_migrations) == 0:
+                print("No applied migrations to roll back")
+                return
+
+            latest_migration = max(applied_migrations)
+            migration_module = import_module(f"db.migrations.{latest_migration}")
+            run(migration_module.__file__, migration_module.up, migration_module.down, direction="down")
+
 
 
 if __name__ == "__main__":
