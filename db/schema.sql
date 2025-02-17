@@ -213,6 +213,31 @@ CREATE TABLE FC_Counts (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `Measurements`
+--
+
+DROP TABLE IF EXISTS Measurements;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE Measurements (
+  id int NOT NULL AUTO_INCREMENT,
+  bioreplicateUniqueId int NOT NULL,
+  position varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+  timeInSeconds int NOT NULL,
+  pH varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+  unit varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+  technique varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+  absoluteValue decimal(20,2) DEFAULT NULL,
+  relativeValue decimal(10,9) DEFAULT NULL,
+  subjectType varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+  subjectId varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+  PRIMARY KEY (id),
+  KEY bioreplicateUniqueId (bioreplicateUniqueId),
+  CONSTRAINT bioreplicateUniqueId FOREIGN KEY (bioreplicateUniqueId) REFERENCES BioReplicatesPerExperiment (bioreplicateUniqueId) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `MetabolitePerExperiment`
 --
 
@@ -398,6 +423,6 @@ CREATE TABLE TechniquesPerExperiment (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
-INSERT INTO MigrationVersions VALUES (1,'2024_11_11_160324_initial_schema','2025-02-05 11:02:45'),(2,'2024_11_11_164726_remove_unique_study_description_index','2025-02-05 11:02:46'),(3,'2024_11_21_115349_allow_null_medialink','2025-02-05 11:02:46'),(4,'2024_11_21_120444_fix_unique_primary_keys','2025-02-05 11:02:46'),(5,'2025_01_30_152951_fix_bioreplicates_metadata_unique_id','2025-02-05 11:02:46'),(6,'2025_02_04_134239_rename-chebi-id','2025-02-05 11:02:46'),(8,'2025_02_05_134203_make-project-and-study-uuids-unique','2025-02-05 13:46:32'),(10,'2025_02_12_170210_add-assembly-id-to-strains','2025-02-12 17:04:45'),(14,'2025_02_13_114748_increase_experiment_id_size','2025-02-13 12:10:07'),(16,'2025_02_13_120609_rename_comunity_to_community','2025-02-13 12:13:22'),(19,'2025_02_13_121409_rename_comunity_to_community_2','2025-02-13 12:16:22');
+INSERT INTO MigrationVersions VALUES (1,'2024_11_11_160324_initial_schema','2025-02-05 11:02:45'),(2,'2024_11_11_164726_remove_unique_study_description_index','2025-02-05 11:02:46'),(3,'2024_11_21_115349_allow_null_medialink','2025-02-05 11:02:46'),(4,'2024_11_21_120444_fix_unique_primary_keys','2025-02-05 11:02:46'),(5,'2025_01_30_152951_fix_bioreplicates_metadata_unique_id','2025-02-05 11:02:46'),(6,'2025_02_04_134239_rename-chebi-id','2025-02-05 11:02:46'),(8,'2025_02_05_134203_make-project-and-study-uuids-unique','2025-02-05 13:46:32'),(10,'2025_02_12_170210_add-assembly-id-to-strains','2025-02-12 17:04:45'),(14,'2025_02_13_114748_increase_experiment_id_size','2025-02-13 12:10:07'),(16,'2025_02_13_120609_rename_comunity_to_community','2025-02-13 12:13:22'),(19,'2025_02_13_121409_rename_comunity_to_community_2','2025-02-13 12:16:22'),(21,'2025_02_13_163206_create_measurements','2025-02-17 12:29:32');
 
--- Dump completed on 2025-02-13 12:16:22
+-- Dump completed on 2025-02-17 12:29:32
