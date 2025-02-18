@@ -2,9 +2,6 @@ import tests.init  # noqa: F401
 
 import unittest
 from decimal import Decimal
-import enum
-
-import sqlalchemy as sql
 
 from models.measurement import Measurement
 from tests.database_test import DatabaseTest
@@ -47,9 +44,6 @@ class TestMeasurement(DatabaseTest):
             bioreplicateId='b1',
         )
 
-        strain1_id = self.create_strain(studyId=study_id)['NCBId']
-        strain2_id = self.create_strain(studyId=study_id)['NCBId']
-
         glucose_id = self.create_metabolite_per_experiment(
             studyId=study_id,
             experimentUniqueId=experiment_uuid,
@@ -63,7 +57,7 @@ class TestMeasurement(DatabaseTest):
             metabolite={'metabo_name': 'trehalose'},
         )['chebi_id']
 
-        growth_and_metabolite_data = util.trim_lines(f"""
+        growth_and_metabolite_data = util.trim_lines("""
             Position,Biological_Replicate_id,Time,FC,glucose,trehalose
             p1,b1,60,1234567890.0,50.0,70.0
             p1,b1,75,234567890.0,30.0,40.0
@@ -101,6 +95,74 @@ class TestMeasurement(DatabaseTest):
                 (60, bioreplicate['bioreplicateUniqueId'], Decimal('1234567890.00')),
                 (75, bioreplicate['bioreplicateUniqueId'], Decimal('234567890.00')),
                 (90, bioreplicate['bioreplicateUniqueId'], Decimal('4567890.00')),
+            ]
+        )
+
+    def test_import_reads_from_csv(self):
+        study_id        = self.create_study()['studyId']
+        experiment_uuid = self.create_experiment(studyId=study_id)['experimentUniqueId']
+
+        bioreplicate = self.create_bioreplicate(
+            studyId=study_id,
+            experimentUniqueId=experiment_uuid,
+            bioreplicateId='b1',
+        )
+
+        strain1_id = self.create_strain(memberName='Bacteroides thetaiotaomicron', studyId=study_id)['strainId']
+        strain2_id = self.create_strain(memberName='Roseburia intestinalis', studyId=study_id)['strainId']
+
+        header = ",".join([
+            'Position',
+            'Biological_Replicate_id',
+            'Time',
+            'Bacteroides thetaiotaomicron_counts',
+            'Roseburia intestinalis_counts',
+            'Bacteroides thetaiotaomicron_reads',
+            'Bacteroides thetaiotaomicron_reads_std',
+            'Roseburia intestinalis_reads',
+            'Roseburia intestinalis_reads_std',
+        ])
+
+        reads_and_counts_data = util.trim_lines(f"""
+            {header}
+            p1,b1,60,100,200,100.234,10.23,200.456,20.45
+            p1,b1,75,200,400,200.234,20.23,400.456,40.45
+            p1,b1,90,300,600,300.234,30.23,600.456,60.45
+        """)
+
+        measurements = Measurement.insert_from_reads_csv(
+            self.db_session,
+            experiment_uuid,
+            reads_and_counts_data,
+        )
+
+        # Reads measurements
+        # Note: truncated to 2 decimal points
+        self.assertEqual(
+            [
+                (m.timeInSeconds, int(m.subjectId), m.absoluteValue)
+                for m in sorted(measurements, key=lambda m: (m.timeInSeconds, m.subjectId))
+                if m.technique == "16S rRNA-seq"
+            ],
+            [
+                (60, strain1_id, Decimal('100.23')), (60, strain2_id, Decimal('200.46')),
+                (75, strain1_id, Decimal('200.23')), (75, strain2_id, Decimal('400.46')),
+                (90, strain1_id, Decimal('300.23')), (90, strain2_id, Decimal('600.46')),
+            ]
+        )
+
+        # Counts measurements
+        # TODO (2025-02-18) may not be "plates"
+        self.assertEqual(
+            [
+                (m.timeInSeconds, int(m.subjectId), m.absoluteValue)
+                for m in sorted(measurements, key=lambda m: (m.timeInSeconds, m.subjectId))
+                if m.technique == "plates"
+            ],
+            [
+                (60, strain1_id, Decimal('100.00')), (60, strain2_id, Decimal('200.00')),
+                (75, strain1_id, Decimal('200.00')), (75, strain2_id, Decimal('400.00')),
+                (90, strain1_id, Decimal('300.00')), (90, strain2_id, Decimal('600.00')),
             ]
         )
 

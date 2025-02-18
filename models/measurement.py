@@ -20,6 +20,7 @@ import sqlalchemy as sql
 
 from models.orm_base import OrmBase
 from models.bioreplicate import Bioreplicate
+from models.strain import Strain
 
 class Measurement(OrmBase):
     __tablename__ = "Measurements"
@@ -51,11 +52,10 @@ class Measurement(OrmBase):
 
     @classmethod
     def insert_from_growth_csv(cls, db_session, experiment_uuid, csv_string):
-        csv_io = StringIO(csv_string)
         measurements = []
         bioreplicate_uuids = {}
 
-        reader = csv.DictReader(csv_io, dialect='unix')
+        reader = csv.DictReader(StringIO(csv_string), dialect='unix')
 
         technique = None
         metabolites = {}
@@ -98,7 +98,7 @@ class Measurement(OrmBase):
             for (name, chebi_id) in metabolites.items():
                 # TODO (2025-02-17) Relative or absolute based on OD/FC?
 
-                measurements.append(Measurement(
+                measurements.append(cls(
                     position=row['Position'],
                     timeInSeconds=float(row['Time']),
                     bioreplicateUniqueId=bioreplicate_uuid,
@@ -111,6 +111,54 @@ class Measurement(OrmBase):
                     subjectType='metabolite',
                     subjectId=chebi_id,
                 ))
+
+        db_session.add_all(measurements)
+        db_session.commit()
+
+        return measurements
+
+    @classmethod
+    def insert_from_reads_csv(cls, db_session, experiment_uuid, csv_string):
+        measurements = []
+
+        reader = csv.DictReader(StringIO(csv_string), dialect='unix')
+        strains = {}
+
+        strain_names = { c.removesuffix('_reads') for c in reader.fieldnames if c.endswith('_reads') }
+        strain_names |= { c.removesuffix('_counts') for c in reader.fieldnames if c.endswith('_counts') }
+
+        for strain_name in strain_names:
+            strains[strain_name] = Strain.find_for_experiment(db_session, experiment_uuid, strain_name)
+
+        find_bioreplicate_uuid = functools.cache(Bioreplicate.find_for_experiment)
+
+        for row in reader:
+            bioreplicate_id = row['Biological_Replicate_id']
+            bioreplicate_uuid = find_bioreplicate_uuid(db_session, experiment_uuid, bioreplicate_id)
+
+            for strain_name, strain_id in strains.items():
+                for measurement_type in ("reads", "counts"):
+                    column_name = f"{strain_name}_{measurement_type}"
+
+                    if measurement_type == 'reads':
+                        technique = '16S rRNA-seq'
+                    elif measurement_type == 'counts':
+                        # TODO (2025-02-18) What can "counts" be here?
+                        technique = 'plates'
+
+                    measurements.append(cls(
+                        position=row['Position'],
+                        timeInSeconds=float(row['Time']),
+                        bioreplicateUniqueId=bioreplicate_uuid,
+                        pH=row.get('pH', None),
+                        # TODO: units are not configurable
+                        unit='Cells/mL',
+                        technique=technique,
+                        absoluteValue=row[column_name],
+                        relativeValue=None,
+                        subjectType='strain',
+                        subjectId=strain_id,
+                    ))
 
         db_session.add_all(measurements)
         db_session.commit()
