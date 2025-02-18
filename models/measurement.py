@@ -67,6 +67,7 @@ class Measurement(OrmBase):
                 technique = column
             else:
                 # Metabolite, fetch chebi id
+                # TODO (2025-02-18) Fetch them from MetaboliteForExperiment, get chebi_id through there
                 chebi_id = db_session.execute(sql.text("""
                     SELECT chebi_id
                     FROM Metabolites
