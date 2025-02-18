@@ -76,12 +76,31 @@ class TestMeasurement(DatabaseTest):
             growth_and_metabolite_data,
         )
 
+        # Metabolite measurements
         self.assertEqual(
-            [(m.timeInSeconds, m.subjectId) for m in measurements if m.subjectType.value == "metabolite"],
+            [
+                (m.timeInSeconds, m.subjectId)
+                for m in measurements
+                if m.subjectType.value == "metabolite"
+            ],
             [
                 (60, glucose_id), (60, trehalose_id),
                 (75, glucose_id), (75, trehalose_id),
                 (90, glucose_id), (90, trehalose_id),
+            ]
+        )
+
+        # Bioreplicate (total) measurement
+        self.assertEqual(
+            [
+                (m.timeInSeconds, m.subjectId, m.absoluteValue)
+                for m in measurements
+                if m.subjectType.value == "bioreplicate"
+            ],
+            [
+                (60, bioreplicate['bioreplicateUniqueId'], Decimal('1234567890.00')),
+                (75, bioreplicate['bioreplicateUniqueId'], Decimal('234567890.00')),
+                (90, bioreplicate['bioreplicateUniqueId'], Decimal('4567890.00')),
             ]
         )
 
