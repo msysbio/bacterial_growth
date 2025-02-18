@@ -73,15 +73,11 @@ class DatabaseTest(unittest.TestCase):
         self.study_id = getattr(self, 'study_id', 0) + 1
         study_uuid = uuid4()
 
-        if 'projectUniqueID' in params:
-            project_uuid = params['projectUniqueID']
-        else:
-            project = self.create_project(**getattr(params, 'project', {}))
-            projectUniqueID = project['projectUniqueID']
+        project_uuid = self._get_or_create_dependency(params, 'projectUniqueID', 'project')
 
         params = {
             'studyId': f"SMGDB{self.study_id:07}",
-            'projectUniqueID': projectUniqueID,
+            'projectUniqueID': project_uuid,
             'studyName': f"Study {self.study_id}",
             'studyDescription': f"Study {self.study_id}",
             'studyURL': None,
@@ -97,11 +93,7 @@ class DatabaseTest(unittest.TestCase):
         # now, we'll call the primary key `experiment_id_key`
         self.experiment_id_key = getattr(self, 'experiment_id_key', 0) + 1
 
-        if 'studyId' in params:
-            study_id = params['studyId']
-        else:
-            study = self.create_study(**getattr(params, 'study', {}))
-            study_id = study['studyUniqueID']
+        study_id = self._get_or_create_dependency(params, 'studyId', 'study')
 
         params = {
             'studyId': study_id,
@@ -117,21 +109,8 @@ class DatabaseTest(unittest.TestCase):
     def create_bioreplicate(self, **params):
         self.bioreplicate_uuid = str(getattr(self, 'bioreplicate_uuid', 0) + 1)
 
-        if 'studyId' in params:
-            study_id = str(params['studyId'])
-        else:
-            study = self.create_study(**getattr(params, 'study', {}))
-            study_id = study['studyId']
-
-        if 'experimentUniqueId' in params:
-            experiment_id_key = params['experimentUniqueId']
-        else:
-            experiment_params = {
-                'studyId': study_id,
-                **getattr(params, 'experiment', {})
-            }
-            experiment = self.create_experiment(**experiment_params)
-            experiment_id_key = experiment['experimentUniqueId']
+        study_id          = self._get_or_create_dependency(params, 'studyId', 'study')
+        experiment_id_key = self._get_or_create_dependency(params, 'experimentUniqueId', 'experiment', studyId=study_id)
 
         query = "SELECT * from Study where studyId = :studyId"
         results = self.db_session.execute(sql.text(query), {'studyId': params['studyId']})
@@ -150,11 +129,7 @@ class DatabaseTest(unittest.TestCase):
     def create_strain(self, **params):
         self.strain_id = getattr(self, 'strain_id', 0) + 1
 
-        if 'studyId' in params:
-            study_id = params['studyId']
-        else:
-            study = self.create_study(**getattr(params, 'study', {}))
-            study_id = study['studyId']
+        study_id = self._get_or_create_dependency(params, 'studyId', 'study')
 
         params = {
             'studyId': study_id,
@@ -169,29 +144,10 @@ class DatabaseTest(unittest.TestCase):
         return self._create_record('Strains', params)
 
     def create_metabolite_per_experiment(self, **params):
-        if 'studyId' in params:
-            study_id = params['studyId']
-        else:
-            study = self.create_study(**getattr(params, 'study', {}))
-            study_id = study['studyId']
-
-        if 'experimentUniqueId' in params:
-            experiment_uuid = params['experimentUniqueId']
-        else:
-            experiment = self.create_experiment(**getattr(params, 'experiment', {}))
-            experiment_uuid = experiment['experimentUniqueId']
-
-        if 'chebi_id' in params:
-            chebi_id = params['chebi_id']
-        else:
-            metabolite = self.create_metabolite(**params.pop('metabolite', {}))
-            chebi_id = metabolite['chebi_id']
-
-        if 'bioreplicateUniqueId' in params:
-            bioreplicate_uuid = params['bioreplicateUniqueId']
-        else:
-            bioreplicate = self.create_bioreplicate(**getattr(params, 'bioreplicate', {}))
-            bioreplicate_uuid = bioreplicate['bioreplicateUniqueId']
+        study_id          = self._get_or_create_dependency(params, 'studyId', 'study')
+        experiment_uuid   = self._get_or_create_dependency(params, 'experimentUniqueId', 'experiment', studyId=study_id)
+        chebi_id          = self._get_or_create_dependency(params, 'chebi_id', 'metabolite')
+        bioreplicate_uuid = self._get_or_create_dependency(params, 'bioreplicateUniqueId', 'bioreplicate')
 
         params = {
             'studyId': study_id,
@@ -219,3 +175,19 @@ class DatabaseTest(unittest.TestCase):
             params[pk_names[0]] = last_id
 
         return params
+
+    def _get_or_create_dependency(self, params, key_name, object_name, **dependency_params):
+        if key_name in params:
+            key_value = params[key_name]
+        else:
+            creator_func = getattr(self, f"create_{object_name}")
+            dependency_params = {
+                **dependency_params,
+                **params.pop(object_name, {})
+            }
+
+            object = creator_func(**dependency_params)
+            key_value = object[key_name]
+
+        return key_value
+
