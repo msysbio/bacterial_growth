@@ -5,7 +5,7 @@ from uuid import uuid4
 import sqlalchemy as sql
 
 import db
-from lib.db import get_primary_key_name
+from lib.db import get_primary_key_names
 
 class DatabaseTest(unittest.TestCase):
     def setUp(self):
@@ -168,6 +168,41 @@ class DatabaseTest(unittest.TestCase):
 
         return self._create_record('Strains', params)
 
+    def create_metabolite_per_experiment(self, **params):
+        if 'studyId' in params:
+            study_id = params['studyId']
+        else:
+            study = self.create_study(**getattr(params, 'study', {}))
+            study_id = study['studyId']
+
+        if 'experimentUniqueId' in params:
+            experiment_uuid = params['experimentUniqueId']
+        else:
+            experiment = self.create_experiment(**getattr(params, 'experiment', {}))
+            experiment_uuid = experiment['experimentUniqueId']
+
+        if 'chebi_id' in params:
+            chebi_id = params['chebi_id']
+        else:
+            metabolite = self.create_metabolite(**params.pop('metabolite', {}))
+            chebi_id = metabolite['chebi_id']
+
+        if 'bioreplicateUniqueId' in params:
+            bioreplicate_uuid = params['bioreplicateUniqueId']
+        else:
+            bioreplicate = self.create_bioreplicate(**getattr(params, 'bioreplicate', {}))
+            bioreplicate_uuid = bioreplicate['bioreplicateUniqueId']
+
+        params = {
+            'studyId': study_id,
+            'experimentUniqueId': experiment_uuid,
+            'bioreplicateUniqueId': bioreplicate_uuid,
+            'chebi_id': chebi_id,
+            **params,
+        }
+
+        return self._create_record('MetabolitePerExperiment', params)
+
     def _create_record(self, table_name, params):
         column_list = ', '.join(params.keys())
         value_list  = ', '.join([f":{key}" for key in params])
@@ -175,12 +210,12 @@ class DatabaseTest(unittest.TestCase):
         query = sql.text(f"INSERT INTO {table_name} ({column_list}) VALUES ({value_list})")
         result = self.db_session.execute(query, params)
 
-        pk_name = get_primary_key_name(self.db_session, table_name)
+        pk_names = get_primary_key_names(self.db_session, table_name)
 
-        if pk_name not in params:
+        if len(pk_names) == 1 and pk_names[0] not in params:
             query = sql.text(f"select LAST_INSERT_ID() from {table_name}")
             result = self.db_session.execute(query).scalars().all()
             last_id = result[-1]
-            params[pk_name] = last_id
+            params[pk_names[0]] = last_id
 
         return params

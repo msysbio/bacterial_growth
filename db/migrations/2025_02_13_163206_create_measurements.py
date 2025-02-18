@@ -8,7 +8,7 @@ def up(conn):
             bioreplicateUniqueId int NOT NULL,
             position VARCHAR(100) NOT NULL,
             timeInSeconds int NOT NULL,
-            pH VARCHAR(100) NOT NULL,
+            pH VARCHAR(100),
             unit VARCHAR(100) NOT NULL,
             technique VARCHAR(100) NOT NULL,
             absoluteValue DECIMAL(20, 2),
