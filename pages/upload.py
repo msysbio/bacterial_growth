@@ -4,17 +4,23 @@ import tempfile
 
 from flask import render_template, session, request, redirect, url_for, send_file
 import humanize
+import pandas as pd
 
-from db import get_connection, get_transaction
+from db import (
+    get_connection,
+    get_transaction,
+    get_session,
+)
 
 from models.submission import Submission
+from models.measurement import Measurement
 import models.spreadsheet_preview as spreasheet_preview
 
 import legacy.study_spreadsheet as study_spreadsheet
 import legacy.data_spreadsheet as data_spreadsheet
 from legacy.upload_validation import validate_upload
 from legacy.populate_db import save_submission_to_database
-from legacy.chart_data import save_chart_data
+from legacy.chart_data import save_chart_data_to_files
 
 from forms.upload_step2_form import UploadStep2Form
 from forms.upload_step3_form import UploadStep3Form
@@ -140,8 +146,8 @@ def upload_study_template_xlsx():
 
 
 def upload_step4_page():
-    with get_transaction() as conn:
-        submission = Submission(session.get('submission', {}), step=4, db_conn=conn)
+    with get_session() as db_session:
+        submission = Submission(session.get('submission', {}), step=4, db_conn=db_session)
         errors = []
 
         if request.method == 'POST':
@@ -155,7 +161,7 @@ def upload_step4_page():
 
                 if len(errors) == 0:
                     (study_id, errors, errors_logic, studyUniqueID, projectUniqueID, project_id) = \
-                        save_submission_to_database(conn, yml_dir, submission, data_template)
+                        save_submission_to_database(db_session, yml_dir, submission, data_template)
 
                     if len(errors) == 0:
                         # TODO (2025-01-30) Message that data was successfully
@@ -166,7 +172,9 @@ def upload_step4_page():
                         #         **Private Study ID**: {studyUniqueID} and **Study ID**: {study_id},
                         #         **Private Project Id**: {projectUniqueID} and **Project ID**: {project_id}""")
 
-                        save_chart_data(study_id, data_template)
+                        save_chart_data_to_files(study_id, data_template)
+                        save_chart_data_to_database(db_session, study_id, data_template)
+
                         return redirect(url_for('upload_step5_page'))
 
         return render_template(
@@ -189,6 +197,27 @@ def upload_spreadsheet_preview_fragment():
         file_length=file_length,
         sheets=sheets
     )
+
+
+def save_chart_data_to_database(db_session, study_id, data_xls):
+    df_excel_growth = pd.read_excel(data_xls, sheet_name='Growth_Data_and_Metabolites')
+    # Drop columns with NaN values
+    df_excel_growth = df_excel_growth.dropna(axis=1, how='all')
+    # Drop rows where all values are NaN
+    df_excel_growth = df_excel_growth.dropna(axis=0, how='all')
+
+    if not df_excel_growth.empty:
+        Measurement.insert_from_growth_csv(db_session, study_id, df_excel_growth.to_csv(index=False))
+
+    df_excel_reads = pd.read_excel(data_xls, sheet_name='growth_per_species')
+    # Drop columns with NaN values
+    df_excel_reads = df_excel_reads.dropna(axis=1, how='all')
+    subset_columns = df_excel_reads.columns.drop('Position')
+    # Drop rows where all values are NaN
+    df_excel_reads = df_excel_reads.dropna(subset=subset_columns, how='all')
+
+    if not df_excel_reads.empty:
+        Measurement.insert_from_reads_csv(db_session, study_id, df_excel_reads.to_csv(index=False))
 
 
 def upload_step5_page():

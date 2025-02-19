@@ -1,21 +1,12 @@
-import sqlalchemy as sql
+from lib.db import execute_text
 
 
 class Strain:
     @staticmethod
-    def find_for_experiment(db_conn, experiment_uuid, strain_name):
-        params = {
-            'strain_name': strain_name,
-            'experiment_uuid': experiment_uuid,
-        }
-        strain_id = db_conn.execute(sql.text("""
+    def find_for_study(db_conn, study_id, strain_name):
+        return execute_text(db_conn, """
             SELECT strainId
             FROM Strains
-              INNER JOIN Experiments
-                ON Experiments.experimentUniqueId = :experiment_uuid
-              INNER JOIN Study
-                ON Study.studyId = Experiments.studyId
-            WHERE memberName = :strain_name
-        """), params).scalar()
-
-        return strain_id
+            WHERE studyId = :study_id
+              AND memberName = :strain_name
+        """, study_id=study_id, strain_name=strain_name).scalar()

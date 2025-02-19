@@ -222,18 +222,22 @@ DROP TABLE IF EXISTS Measurements;
 CREATE TABLE Measurements (
   id int NOT NULL AUTO_INCREMENT,
   bioreplicateUniqueId int NOT NULL,
+  studyId varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
   position varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
   timeInSeconds int NOT NULL,
   pH varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   unit varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
   technique varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
   absoluteValue decimal(20,2) DEFAULT NULL,
+  absoluteValueStd decimal(20,2) DEFAULT NULL,
   relativeValue decimal(10,9) DEFAULT NULL,
   subjectType varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
   subjectId varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (id),
   KEY bioreplicateUniqueId (bioreplicateUniqueId),
-  CONSTRAINT bioreplicateUniqueId FOREIGN KEY (bioreplicateUniqueId) REFERENCES BioReplicatesPerExperiment (bioreplicateUniqueId) ON DELETE CASCADE ON UPDATE CASCADE
+  KEY studyId (studyId),
+  CONSTRAINT bioreplicateUniqueId FOREIGN KEY (bioreplicateUniqueId) REFERENCES BioReplicatesPerExperiment (bioreplicateUniqueId) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT studyId FOREIGN KEY (studyId) REFERENCES Study (studyId) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -432,7 +436,7 @@ INSERT INTO MigrationVersions VALUES
 (14,'2025_02_13_114748_increase_experiment_id_size','2025-02-13 12:10:07'),
 (16,'2025_02_13_120609_rename_comunity_to_community','2025-02-13 12:13:22'),
 (19,'2025_02_13_121409_rename_comunity_to_community_2','2025-02-13 12:16:22'),
-(25,'2025_02_13_163206_create_measurements','2025-02-17 17:09:08'),
-(30,'2025_02_17_161750_remove_duplicated_columns_from_metabolite_per_experiment','2025-02-18 14:47:18');
+(35,'2025_02_13_163206_create_measurements','2025-02-19 13:18:06'),
+(36,'2025_02_17_161750_remove_duplicated_columns_from_metabolite_per_experiment','2025-02-19 13:18:08');
 
--- Dump completed on 2025-02-18 14:47:18
+-- Dump completed on 2025-02-19 13:18:08

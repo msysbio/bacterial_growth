@@ -94,3 +94,13 @@ def run(file, up, down, direction=None):
             schema_output = re.sub(r'(-- Dump completed)', f"{migration_version_data}\n\\1", schema_output)
 
             Path(schema_path).write_text(schema_output)
+
+            print(f"> Resetting test database...")
+            test_db_config = get_config(env='test')
+            subprocess.run([
+                '/usr/bin/mysql',
+                f'-h{test_db_config["host"]}',
+                f'-u{test_db_config["username"]}',
+                f'-p{test_db_config["password"]}',
+                test_db_config['database'],
+            ], input=schema_output.encode('utf-8'))

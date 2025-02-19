@@ -1,18 +1,12 @@
-import sqlalchemy as sql
+from lib.db import execute_text
 
 
 class Bioreplicate:
     @staticmethod
-    def find_for_experiment(db_conn, experiment_uuid, bioreplicate_id):
-        params = {
-            'bioreplicate_id': bioreplicate_id,
-            'experiment_uuid': experiment_uuid,
-        }
-        bioreplicate_uuid = db_conn.execute(sql.text("""
+    def find_for_study(db_conn, study_id, bioreplicate_id):
+        return execute_text(db_conn, """
             SELECT bioreplicateUniqueId
             FROM BioReplicatesPerExperiment
-            WHERE bioreplicateId = :bioreplicate_id
-            AND experimentUniqueId = :experiment_uuid
-        """), params).scalar()
-
-        return bioreplicate_uuid
+            WHERE studyId = :study_id
+              AND bioreplicateId = :bioreplicate_id
+        """, study_id=study_id, bioreplicate_id=bioreplicate_id).scalar()

@@ -4,20 +4,26 @@ import sqlalchemy as sql
 def up(conn):
     query = """
         CREATE TABLE Measurements (
-            id int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+            id                   int NOT NULL AUTO_INCREMENT PRIMARY KEY,
             bioreplicateUniqueId int NOT NULL,
-            position VARCHAR(100) NOT NULL,
-            timeInSeconds int NOT NULL,
-            pH VARCHAR(100),
-            unit VARCHAR(100) NOT NULL,
-            technique VARCHAR(100) NOT NULL,
-            absoluteValue DECIMAL(20, 2),
-            relativeValue DECIMAL(10, 9),
-            subjectType VARCHAR(100) NOT NULL,
-            subjectId VARCHAR(100) NOT NULL,
+            studyId              VARCHAR(100) COLLATE utf8mb4_bin NOT NULL,
+            position             VARCHAR(100) NOT NULL,
+            timeInSeconds        int NOT NULL,
+            pH                   VARCHAR(100),
+            unit                 VARCHAR(100) NOT NULL,
+            technique            VARCHAR(100) NOT NULL,
+            absoluteValue        DECIMAL(20, 2),
+            absoluteValueStd     DECIMAL(20, 2),
+            relativeValue        DECIMAL(10, 9),
+            subjectType          VARCHAR(100) NOT NULL,
+            subjectId            VARCHAR(100) NOT NULL,
 
             CONSTRAINT bioreplicateUniqueId FOREIGN KEY (bioreplicateUniqueId)
-                REFERENCES BioReplicatesPerExperiment (bioreplicateUniqueId) ON DELETE CASCADE ON UPDATE CASCADE
+                REFERENCES BioReplicatesPerExperiment (bioreplicateUniqueId)
+                ON DELETE CASCADE ON UPDATE CASCADE,
+            CONSTRAINT studyId FOREIGN KEY (studyId)
+                REFERENCES Study (studyId)
+                ON DELETE CASCADE ON UPDATE CASCADE
         );
     """
     conn.execute(sql.text(query))

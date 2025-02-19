@@ -15,6 +15,7 @@ class TestMeasurement(DatabaseTest):
         strain_id         = self.create_strain(studyId=study_id)['NCBId']
 
         measurement = Measurement(
+            studyId=study_id,
             bioreplicateUniqueId=bioreplicate_uuid,
             position='A1',
             timeInSeconds=60,
@@ -35,38 +36,35 @@ class TestMeasurement(DatabaseTest):
         self.assertTrue(measurement.id is not None)
 
     def test_import_growth_and_metabolites_from_csv(self):
-        study_id        = self.create_study()['studyId']
-        experiment_uuid = self.create_experiment(studyId=study_id)['experimentUniqueId']
+        study_id = self.create_study()['studyId']
 
         bioreplicate = self.create_bioreplicate(
             studyId=study_id,
-            experimentUniqueId=experiment_uuid,
             bioreplicateId='b1',
         )
 
         glucose_id = self.create_metabolite_per_experiment(
             studyId=study_id,
-            experimentUniqueId=experiment_uuid,
             bioreplicateUniqueId=bioreplicate['bioreplicateUniqueId'],
             metabolite={'metabo_name': 'glucose'},
         )['chebi_id']
         trehalose_id = self.create_metabolite_per_experiment(
             studyId=study_id,
-            experimentUniqueId=experiment_uuid,
             bioreplicateUniqueId=bioreplicate['bioreplicateUniqueId'],
             metabolite={'metabo_name': 'trehalose'},
         )['chebi_id']
 
+        # Note: missing trehalose measurement at t=75
         growth_and_metabolite_data = util.trim_lines("""
             Position,Biological_Replicate_id,Time,FC,glucose,trehalose
             p1,b1,60,1234567890.0,50.0,70.0
-            p1,b1,75,234567890.0,30.0,40.0
+            p1,b1,75,234567890.0,30.0,
             p1,b1,90,4567890.0,10.0,10.0
         """)
 
         measurements = Measurement.insert_from_growth_csv(
             self.db_session,
-            experiment_uuid,
+            study_id,
             growth_and_metabolite_data,
         )
 
@@ -79,7 +77,7 @@ class TestMeasurement(DatabaseTest):
             ],
             [
                 (60, glucose_id), (60, trehalose_id),
-                (75, glucose_id), (75, trehalose_id),
+                (75, glucose_id),
                 (90, glucose_id), (90, trehalose_id),
             ]
         )
@@ -99,12 +97,9 @@ class TestMeasurement(DatabaseTest):
         )
 
     def test_import_reads_from_csv(self):
-        study_id        = self.create_study()['studyId']
-        experiment_uuid = self.create_experiment(studyId=study_id)['experimentUniqueId']
-
+        study_id = self.create_study()['studyId']
         bioreplicate = self.create_bioreplicate(
             studyId=study_id,
-            experimentUniqueId=experiment_uuid,
             bioreplicateId='b1',
         )
 
@@ -123,16 +118,18 @@ class TestMeasurement(DatabaseTest):
             'Roseburia intestinalis_reads_std',
         ])
 
+        # Note: missing B. thetaiotaomicron reads and std at t=75
+        # Note: missing R. intestinalis reads_std at t=90
         reads_and_counts_data = util.trim_lines(f"""
             {header}
             p1,b1,60,100,200,100.234,10.23,200.456,20.45
-            p1,b1,75,200,400,200.234,20.23,400.456,40.45
-            p1,b1,90,300,600,300.234,30.23,600.456,60.45
+            p1,b1,75,200,400,,,400.456,40.45
+            p1,b1,90,300,600,300.234,30.23,600.456,
         """)
 
         measurements = Measurement.insert_from_reads_csv(
             self.db_session,
-            experiment_uuid,
+            study_id,
             reads_and_counts_data,
         )
 
@@ -146,7 +143,7 @@ class TestMeasurement(DatabaseTest):
             ],
             [
                 (60, strain1_id, Decimal('100.23')), (60, strain2_id, Decimal('200.46')),
-                (75, strain1_id, Decimal('200.23')), (75, strain2_id, Decimal('400.46')),
+                (75, strain2_id, Decimal('400.46')),
                 (90, strain1_id, Decimal('300.23')), (90, strain2_id, Decimal('600.46')),
             ]
         )

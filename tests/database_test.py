@@ -16,11 +16,9 @@ class DatabaseTest(unittest.TestCase):
 
         # Clean up database state before each test:
         tables = execute_text(self.db_session, 'SHOW TABLES').scalars().all()
-        execute_text(self.db_session, 'SET FOREIGN_KEY_CHECKS = 0')
         for table in tables:
             if table != 'MigrationVersions':
-                execute_text(self.db_session, f'TRUNCATE TABLE {table}')
-        execute_text(self.db_session, 'SET FOREIGN_KEY_CHECKS = 1')
+                execute_text(self.db_session, f'DELETE FROM {table}')
         self.db_session.commit()
 
     def tearDown(self):
