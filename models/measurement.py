@@ -49,8 +49,9 @@ class Measurement(OrmBase):
     # TODO (2025-02-13) Consider an enum
     technique: Mapped[str] = mapped_column(String(100), nullable=False)
 
-    absoluteValue: Mapped[Decimal] = mapped_column(Numeric(20, 2), nullable=True)
-    relativeValue: Mapped[Decimal] = mapped_column(Numeric(10, 9), nullable=True)
+    absoluteValue:    Mapped[Decimal] = mapped_column(Numeric(20, 2), nullable=True)
+    absoluteValueStd: Mapped[Decimal] = mapped_column(Numeric(20, 2), nullable=True)
+    relativeValue:    Mapped[Decimal] = mapped_column(Numeric(10, 9), nullable=True)
 
     subjectType: Mapped[str] = mapped_column(Enum(SubjectType), nullable=False)
     subjectId:   Mapped[str] = mapped_column(String(100),       nullable=False)
@@ -101,6 +102,7 @@ class Measurement(OrmBase):
                 unit='Cells/mL',
                 technique=technique,
                 absoluteValue=row[technique],
+                absoluteValueStd=None,
                 relativeValue=None,
                 subjectType='bioreplicate',
                 subjectId=bioreplicate_uuid,
@@ -155,10 +157,14 @@ class Measurement(OrmBase):
             for strain_name, strain_id in strains.items():
                 for measurement_type in ("reads", "counts"):
                     column_name = f"{strain_name}_{measurement_type}"
+                    value = row[column_name]
 
-                    if row[column_name] == '':
+                    if value == '':
                         # Missing measurement, skip
                         continue
+
+                    valueStd = row.get(f"{column_name}_std")
+                    if valueStd == '': valueStd = None
 
                     if measurement_type == 'reads':
                         technique = '16S rRNA-seq'
@@ -175,7 +181,8 @@ class Measurement(OrmBase):
                         # TODO: units are not configurable
                         unit='Cells/mL',
                         technique=technique,
-                        absoluteValue=row[column_name],
+                        absoluteValue=value,
+                        absoluteValueStd=valueStd,
                         relativeValue=None,
                         subjectType='strain',
                         subjectId=strain_id,
