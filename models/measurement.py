@@ -21,6 +21,7 @@ import sqlalchemy as sql
 from models.orm_base import OrmBase
 from models.bioreplicate import Bioreplicate
 from models.strain import Strain
+from lib.db import execute_text
 
 class Measurement(OrmBase):
     __tablename__ = "Measurements"
@@ -68,11 +69,11 @@ class Measurement(OrmBase):
             else:
                 # Metabolite, fetch chebi id
                 # TODO (2025-02-18) Fetch them from MetaboliteForExperiment, get chebi_id through there
-                chebi_id = db_session.execute(sql.text("""
+                chebi_id = execute_text(db_session, """
                     SELECT chebi_id
                     FROM Metabolites
                     WHERE metabo_name = :name
-                """), {'name': column}).scalar()
+                """, name=column).scalar()
                 metabolites[column] = chebi_id
 
         find_bioreplicate_uuid = functools.cache(Bioreplicate.find_for_experiment)

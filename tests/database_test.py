@@ -2,10 +2,11 @@ import os
 import unittest
 from uuid import uuid4
 
-import sqlalchemy as sql
-
 import db
-from lib.db import get_primary_key_names
+from lib.db import (
+    get_primary_key_names,
+    execute_text
+)
 
 class DatabaseTest(unittest.TestCase):
     def setUp(self):
@@ -14,19 +15,19 @@ class DatabaseTest(unittest.TestCase):
         self.db_session = db.get_session()
 
         # Clean up database state before each test:
-        tables = self.db_session.execute(sql.text('SHOW TABLES')).scalars().all()
-        self.db_session.execute(sql.text(f'SET FOREIGN_KEY_CHECKS = 0'))
+        tables = execute_text(self.db_session, 'SHOW TABLES').scalars().all()
+        execute_text(self.db_session, 'SET FOREIGN_KEY_CHECKS = 0')
         for table in tables:
             if table != 'MigrationVersions':
-                self.db_session.execute(sql.text(f'TRUNCATE TABLE {table}'))
-        self.db_session.execute(sql.text(f'SET FOREIGN_KEY_CHECKS = 1'))
+                execute_text(self.db_session, f'TRUNCATE TABLE {table}')
+        execute_text(self.db_session, 'SET FOREIGN_KEY_CHECKS = 1')
         self.db_session.commit()
 
     def tearDown(self):
         self.db_session.close()
 
     def simple_query(self, query, **params):
-        results = self.db_session.execute(sql.text(query), params).all()
+        results = execute_text(self.db_session, query, **params).all()
         return [row._asdict() for row in results]
 
     def create_taxon(self, **params):
@@ -37,10 +38,7 @@ class DatabaseTest(unittest.TestCase):
             **params,
         }
 
-        query = sql.text("INSERT INTO Taxa VALUES (:tax_id, :tax_names)")
-        self.db_session.execute(query, params)
-
-        return params
+        return self._create_record('Taxa', params)
 
     def create_metabolite(self, **params):
         self.metabolite_id = getattr(self, 'metabolite_id', 0) + 1
@@ -50,10 +48,7 @@ class DatabaseTest(unittest.TestCase):
             **params,
         }
 
-        query = sql.text("INSERT INTO Metabolites VALUES (:chebi_id, :metabo_name)")
-        self.db_session.execute(query, params)
-
-        return params
+        return self._create_record('Metabolites', params)
 
     def create_project(self, **params):
         self.project_id = getattr(self, 'project_id', 0) + 1
@@ -113,7 +108,7 @@ class DatabaseTest(unittest.TestCase):
         experiment_id_key = self._get_or_create_dependency(params, 'experimentUniqueId', 'experiment', studyId=study_id)
 
         query = "SELECT * from Study where studyId = :studyId"
-        results = self.db_session.execute(sql.text(query), {'studyId': params['studyId']})
+        results = execute_text(self.db_session, query, studyId=params['studyId'])
 
         params = {
             'studyId':              study_id,
@@ -163,14 +158,16 @@ class DatabaseTest(unittest.TestCase):
         column_list = ', '.join(params.keys())
         value_list  = ', '.join([f":{key}" for key in params])
 
-        query = sql.text(f"INSERT INTO {table_name} ({column_list}) VALUES ({value_list})")
-        result = self.db_session.execute(query, params)
+        query = execute_text(
+            self.db_session,
+            f"INSERT INTO {table_name} ({column_list}) VALUES ({value_list})",
+            **params,
+        )
 
         pk_names = get_primary_key_names(self.db_session, table_name)
 
         if len(pk_names) == 1 and pk_names[0] not in params:
-            query = sql.text(f"select LAST_INSERT_ID() from {table_name}")
-            result = self.db_session.execute(query).scalars().all()
+            result = execute_text(self.db_session, f"select LAST_INSERT_ID() from {table_name}").scalars().all()
             last_id = result[-1]
             params[pk_names[0]] = last_id
 
