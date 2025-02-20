@@ -3,6 +3,7 @@ from pathlib import Path
 
 import sqlalchemy as sql
 
+
 def up(conn):
     initial_schema_file = Path(os.path.dirname(__file__)) / '000_initial_schema.sql'
     initial_schema = initial_schema_file.read_text()
@@ -12,8 +13,10 @@ def up(conn):
         if len(statement) > 0:
             conn.execute(sql.text(statement))
 
+
 def down(conn):
     pass
+
 
 if __name__ == "__main__":
     from lib.migrate import run

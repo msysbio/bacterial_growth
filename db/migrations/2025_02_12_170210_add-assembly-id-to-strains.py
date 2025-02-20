@@ -3,18 +3,16 @@ import sqlalchemy as sql
 
 def up(conn):
     query = """
-        ALTER TABLE Compartments
-        MODIFY COLUMN mediaLink
-        VARCHAR(100);
+        ALTER TABLE Strains
+        ADD COLUMN assemblyGenBankId varchar(50) DEFAULT NULL;
     """
     conn.execute(sql.text(query))
 
 
 def down(conn):
     query = """
-        ALTER TABLE Compartments
-        MODIFY COLUMN mediaLink
-        VARCHAR(100) NOT NULL;
+        ALTER TABLE Strains
+        DROP COLUMN assemblyGenBankId;
     """
     conn.execute(sql.text(query))
 

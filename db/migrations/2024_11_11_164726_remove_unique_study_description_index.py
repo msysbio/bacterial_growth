@@ -1,5 +1,6 @@
 import sqlalchemy as sql
 
+
 def up(conn):
     query = """
         ALTER TABLE Study
