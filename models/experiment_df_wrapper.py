@@ -18,6 +18,7 @@ class ExperimentDfWrapper:
         return any(k for k in self.keys() if k.find(string) >= 0)
 
     def bioreplicate_dfs(self):
+        # TODO (2025-02-19) Sort C2V2 before C2V11
         return self.df.groupby('Biological_Replicate_id')
 
     def get_metabolite_keys(self):

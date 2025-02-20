@@ -6,7 +6,6 @@ from decimal import Decimal
 
 from sqlalchemy import (
     Enum,
-    ForeignKey,
     Integer,
     String,
     Numeric,
@@ -14,14 +13,13 @@ from sqlalchemy import (
 from sqlalchemy.orm import (
     Mapped,
     mapped_column,
-    relationship,
 )
-import sqlalchemy as sql
 
 from models.orm_base import OrmBase
 from models.bioreplicate import Bioreplicate
 from models.strain import Strain
 from lib.db import execute_text
+
 
 class Measurement(OrmBase):
     __tablename__ = "Measurements"
@@ -59,8 +57,6 @@ class Measurement(OrmBase):
     @classmethod
     def insert_from_growth_csv(class_, db_session, study_id, csv_string):
         measurements = []
-        bioreplicate_uuids = {}
-
         reader = csv.DictReader(StringIO(csv_string), dialect='unix')
 
         technique = None
@@ -92,7 +88,7 @@ class Measurement(OrmBase):
                 continue
 
             # Global measurement from the FC/OD column:
-            measurements.append(Measurement(
+            measurements.append(class_(
                 position=row['Position'],
                 timeInSeconds=float(row['Time']),
                 studyId=study_id,
@@ -142,8 +138,8 @@ class Measurement(OrmBase):
         reader = csv.DictReader(StringIO(csv_string), dialect='unix')
         strains = {}
 
-        strain_names = { c.removesuffix('_reads') for c in reader.fieldnames if c.endswith('_reads') }
-        strain_names |= { c.removesuffix('_counts') for c in reader.fieldnames if c.endswith('_counts') }
+        strain_names = {c.removesuffix('_reads') for c in reader.fieldnames if c.endswith('_reads')}
+        strain_names |= {c.removesuffix('_counts') for c in reader.fieldnames if c.endswith('_counts')}
 
         for strain_name in strain_names:
             strains[strain_name] = Strain.find_for_study(db_session, study_id, strain_name)
@@ -164,7 +160,8 @@ class Measurement(OrmBase):
                         continue
 
                     valueStd = row.get(f"{column_name}_std")
-                    if valueStd == '': valueStd = None
+                    if valueStd == '':
+                        valueStd = None
 
                     if measurement_type == 'reads':
                         technique = '16S rRNA-seq'

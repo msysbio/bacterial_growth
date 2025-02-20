@@ -131,8 +131,11 @@ def get_general_info(studyId, conn):
     result['techniques'] = list(conn.execute(sql.text(query), params).scalars())
 
     query = """
-        SELECT DISTINCT metabo_name, chebi_id
+        SELECT DISTINCT
+            Metabolites.metabo_name as metabo_name,
+            Metabolites.chebi_id
         FROM MetabolitePerExperiment
+          INNER JOIN Metabolites on MetabolitePerExperiment.chebi_id = Metabolites.chebi_id
         WHERE studyId = :studyId
         ORDER BY metabo_name ASC
     """
