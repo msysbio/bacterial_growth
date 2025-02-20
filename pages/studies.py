@@ -103,7 +103,7 @@ def extract_csv_separator(args):
 
 
 def get_experiment_data_for_export(studyId, conn, selected_bioreplicate_ids):
-    df_growth, _ = get_chart_data(studyId)
+    df_growth, df_reads = get_chart_data(studyId)
 
     experiments = study_dfs.get_experiments(studyId, conn)
     bioreps     = study_dfs.get_biological_replicates(studyId, conn)
@@ -117,21 +117,30 @@ def get_experiment_data_for_export(studyId, conn, selected_bioreplicate_ids):
         available_bioreplicate_ids = set((*bioreplicate_ids, f"Average {experimentId}"))
         target_bioreplicate_ids = set(selected_bioreplicate_ids).intersection(available_bioreplicate_ids)
 
-        experiment = ExperimentDfWrapper(df_growth, experimentId, bioreplicate_ids, description)
-        experiment.select_bioreplicates(target_bioreplicate_ids)
-        experiment.drop_columns('Position')
+        # Work on growth data:
+        experiment_growth = ExperimentDfWrapper(df_growth, experimentId, bioreplicate_ids, description)
+        experiment_growth.select_bioreplicates(target_bioreplicate_ids)
+        experiment_growth.drop_columns('Position')
 
         # Reorder columns:
-        measurement_columns = experiment.get_measurement_keys()
-        metabolite_columns = experiment.get_metabolite_keys()
-        experiment.reorder_columns([
-            'Time', 'Biological_Replicate_id',
-            *measurement_columns,
-            *sorted(metabolite_columns)
-        ])
+        growth_measurement_columns = experiment_growth.get_measurement_keys()
+        metabolite_columns         = experiment_growth.get_metabolite_keys()
 
-        # Add measurements to columns:
-        def add_column_measurements(column):
+        # Work on reads:
+        experiment_reads = ExperimentDfWrapper(df_reads, experimentId, bioreplicate_ids, description)
+        experiment_reads.select_bioreplicates(target_bioreplicate_ids)
+        experiment_reads.drop_columns('Position')
+
+        reads_columns = [c for c in experiment_reads.keys() if c.endswith(('_reads', '_counts'))]
+
+        # We ignore std measurements for the export
+        for column in experiment_reads.keys():
+            if column.endswith('_std'):
+                experiment_reads.drop_columns(column)
+
+        experiment = experiment_growth.merge(experiment_reads)
+
+        def relabel_columns(column):
             if column == 'Time':
                 return f"{column} (hours)"
             elif column == 'Biological_Replicate_id':
@@ -141,10 +150,21 @@ def get_experiment_data_for_export(studyId, conn, selected_bioreplicate_ids):
                 return f"{column} (Cells/mL)"
             elif column in metabolite_columns:
                 return f"{column} (mM)"
+            elif column.endswith('_reads'):
+                return f"{column.removesuffix('_reads')} reads"
+            elif column.endswith('_counts'):
+                return f"{column.removesuffix('_counts')} counts"
             else:
                 return column
 
-        experiment.rename_columns(add_column_measurements)
+        experiment.reorder_columns([
+            'Time', 'Biological_Replicate_id',
+            *sorted(reads_columns),
+            *growth_measurement_columns,
+            *sorted(metabolite_columns)
+        ])
+
+        experiment.rename_columns(relabel_columns)
 
         filtered_experiments.append(experiment)
 

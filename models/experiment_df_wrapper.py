@@ -48,3 +48,15 @@ class ExperimentDfWrapper:
             self.df = pd.concat([self.df, mean_df_specific_ids], ignore_index=True)
 
         self.df = self.df[self.df['Biological_Replicate_id'].isin(selected_bioreplicate_ids)]
+
+    def merge(self, other):
+        assert(self.experiment_id == other.experiment_id)
+
+        df = self.df.merge(other.df, on=['Time', 'Biological_Replicate_id'], validate='one_to_one')
+
+        return ExperimentDfWrapper(
+            df,
+            self.experiment_id,
+            self.experiment_bioreplicate_ids,
+            self.experiment_description,
+        )

@@ -40,29 +40,20 @@ class Submission:
 
     def update_project(self, data):
         self.type = data['submission_type']
+        self.project = {
+            'name':        data['project_name'],
+            'description': data['project_description'],
+        }
 
         if self.type == 'new_project':
             self.project_uuid = str(uuid4())
             self.study_uuid = str(uuid4())
-
-            self.project = {
-                'name':        data['project_name'],
-                'description': data['project_description'],
-            }
         elif self.type == 'new_study':
-            self.project = _get_project_data(self.db_conn, data['project_uuid'])
-            if self.project:
-                self.project_uuid = data['project_uuid']
-
+            self.project_uuid = data['project_uuid']
             self.study_uuid = str(uuid4())
         elif self.type == 'update_study':
-            self.project = _get_project_data(self.db_conn, data['project_uuid'])
-            if self.project:
-                self.project_uuid = data['project_uuid']
-
+            self.project_uuid = data['project_uuid']
             self.study_uuid = data['study_uuid']
-        else:
-            raise KeyError("Unknown self type: {}".format(self.submission_type))
 
     def update_strains(self, data):
         self.strains     = data['strains']
