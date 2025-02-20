@@ -313,7 +313,7 @@ def getExperiments(studyID, conn):
         GROUP_CONCAT(DISTINCT BRI.bioreplicateId) AS bioreplicateIds,
         E.controlDescription,
         GROUP_CONCAT(DISTINCT BR.bioreplicateId) AS control_bioreplicateIds,
-        GROUP_CONCAT(DISTINCT C.comunityId) AS comunityIds,
+        GROUP_CONCAT(DISTINCT C.communityId) AS communityIds,
         GROUP_CONCAT(DISTINCT CP.compartmentId) AS compartmentIds
     FROM
         Experiments AS E
@@ -366,7 +366,7 @@ def getPerturbations(studyID, conn):
 def getCommunities(studyID, conn):
     query = f"""
     SELECT
-        C.comunityId,
+        C.communityId,
         GROUP_CONCAT(DISTINCT S.memberName) AS memberNames,
         GROUP_CONCAT(DISTINCT CP.compartmentId) AS compartmentIds
     FROM
@@ -374,11 +374,11 @@ def getCommunities(studyID, conn):
     LEFT JOIN
         Strains AS S ON C.strainId = S.strainId
     LEFT JOIN
-        CompartmentsPerExperiment AS CP ON CP.comunityUniqueId = C.comunityUniqueId
+        CompartmentsPerExperiment AS CP ON CP.communityUniqueId = C.communityUniqueId
     WHERE
         C.studyId = '{studyID}'
     GROUP BY
-        C.comunityId;
+        C.communityId;
     """
     df_communities = conn.query(query, ttl=600)
     #columns_to_exclude = ['studyId', 'perturbationUniqueId']

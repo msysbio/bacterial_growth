@@ -97,11 +97,11 @@ DROP TABLE IF EXISTS Community;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE Community (
   studyId varchar(100) COLLATE utf8mb4_bin DEFAULT NULL,
-  comunityUniqueId int NOT NULL AUTO_INCREMENT,
-  comunityId varchar(50) COLLATE utf8mb4_bin NOT NULL,
+  communityUniqueId int NOT NULL AUTO_INCREMENT,
+  communityId varchar(100) COLLATE utf8mb4_bin NOT NULL,
   strainId int DEFAULT NULL,
-  PRIMARY KEY (comunityUniqueId),
-  UNIQUE KEY comunityId (comunityId,strainId),
+  PRIMARY KEY (communityUniqueId),
+  UNIQUE KEY communityId (communityId,strainId),
   KEY fk_1 (strainId),
   KEY fk_2 (studyId),
   CONSTRAINT Community_fk_1 FOREIGN KEY (strainId) REFERENCES Strains (strainId) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -154,15 +154,15 @@ CREATE TABLE CompartmentsPerExperiment (
   experimentId varchar(100) COLLATE utf8mb4_bin NOT NULL,
   compartmentUniqueId int NOT NULL,
   compartmentId varchar(100) COLLATE utf8mb4_bin NOT NULL,
-  comunityUniqueId int NOT NULL,
-  comunityId varchar(100) COLLATE utf8mb4_bin NOT NULL,
-  PRIMARY KEY (experimentUniqueId,compartmentUniqueId,comunityUniqueId),
+  communityUniqueId int NOT NULL,
+  communityId varchar(100) COLLATE utf8mb4_bin NOT NULL,
+  PRIMARY KEY (experimentUniqueId,compartmentUniqueId,communityUniqueId),
   KEY fk_2 (compartmentUniqueId),
-  KEY fk_3 (comunityUniqueId),
+  KEY fk_3 (communityUniqueId),
   KEY fk_4 (studyId),
   CONSTRAINT CompartmentsPerExperiment_fk_1 FOREIGN KEY (experimentUniqueId) REFERENCES Experiments (experimentUniqueId) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT CompartmentsPerExperiment_fk_2 FOREIGN KEY (compartmentUniqueId) REFERENCES Compartments (compartmentUniqueId) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT CompartmentsPerExperiment_fk_3 FOREIGN KEY (comunityUniqueId) REFERENCES Community (comunityUniqueId) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT CompartmentsPerExperiment_fk_3 FOREIGN KEY (communityUniqueId) REFERENCES Community (communityUniqueId) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT CompartmentsPerExperiment_fk_4 FOREIGN KEY (studyId) REFERENCES Study (studyId) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -177,7 +177,7 @@ DROP TABLE IF EXISTS Experiments;
 CREATE TABLE Experiments (
   studyId varchar(100) COLLATE utf8mb4_bin DEFAULT NULL,
   experimentUniqueId int NOT NULL AUTO_INCREMENT,
-  experimentId varchar(20) COLLATE utf8mb4_bin DEFAULT NULL,
+  experimentId varchar(100) COLLATE utf8mb4_bin DEFAULT NULL,
   experimentDescription text COLLATE utf8mb4_bin,
   cultivationMode varchar(50) COLLATE utf8mb4_bin DEFAULT NULL,
   controlDescription text COLLATE utf8mb4_bin,
@@ -398,6 +398,6 @@ CREATE TABLE TechniquesPerExperiment (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
-INSERT INTO MigrationVersions VALUES (1,'2024_11_11_160324_initial_schema','2025-02-05 11:02:45'),(2,'2024_11_11_164726_remove_unique_study_description_index','2025-02-05 11:02:46'),(3,'2024_11_21_115349_allow_null_medialink','2025-02-05 11:02:46'),(4,'2024_11_21_120444_fix_unique_primary_keys','2025-02-05 11:02:46'),(5,'2025_01_30_152951_fix_bioreplicates_metadata_unique_id','2025-02-05 11:02:46'),(6,'2025_02_04_134239_rename-chebi-id','2025-02-05 11:02:46'),(8,'2025_02_05_134203_make-project-and-study-uuids-unique','2025-02-05 13:46:32'),(10,'2025_02_12_170210_add-assembly-id-to-strains','2025-02-12 17:04:45');
+INSERT INTO MigrationVersions VALUES (1,'2024_11_11_160324_initial_schema','2025-02-05 11:02:45'),(2,'2024_11_11_164726_remove_unique_study_description_index','2025-02-05 11:02:46'),(3,'2024_11_21_115349_allow_null_medialink','2025-02-05 11:02:46'),(4,'2024_11_21_120444_fix_unique_primary_keys','2025-02-05 11:02:46'),(5,'2025_01_30_152951_fix_bioreplicates_metadata_unique_id','2025-02-05 11:02:46'),(6,'2025_02_04_134239_rename-chebi-id','2025-02-05 11:02:46'),(8,'2025_02_05_134203_make-project-and-study-uuids-unique','2025-02-05 13:46:32'),(10,'2025_02_12_170210_add-assembly-id-to-strains','2025-02-12 17:04:45'),(14,'2025_02_13_114748_increase_experiment_id_size','2025-02-13 12:10:07'),(16,'2025_02_13_120609_rename_comunity_to_community','2025-02-13 12:13:22'),(19,'2025_02_13_121409_rename_comunity_to_community_2','2025-02-13 12:16:22');
 
--- Dump completed on 2025-02-12 17:04:45
+-- Dump completed on 2025-02-13 12:16:22
