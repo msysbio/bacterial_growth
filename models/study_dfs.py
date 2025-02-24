@@ -280,5 +280,5 @@ def get_fc_counts(studyId, conn):
 def get_metabolites_per_replicate(studyId, conn):
     query = "SELECT * FROM MetabolitePerExperiment WHERE studyId = %(studyId)s;"
     df_metabolites = pd.read_sql(query, conn, params={'studyId': studyId})
-    columns_to_exclude = ['experimentUniqueId', 'experimentId', 'bioreplicateUniqueId']
+    columns_to_exclude = ['experimentUniqueId', 'bioreplicateUniqueId']
     return df_metabolites.drop(columns=columns_to_exclude)
