@@ -439,4 +439,3 @@ INSERT INTO MigrationVersions VALUES
 (15,'2025_02_13_163206_create_measurements','2025-02-24 13:50:50'),
 (16,'2025_02_17_161750_remove_duplicated_columns_from_metabolite_per_experiment','2025-02-24 13:50:50');
 
--- Dump completed on 2025-02-24 14:52:37
