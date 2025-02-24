@@ -2,12 +2,14 @@
 
 import os
 import sys
+import subprocess
+import re
 from pathlib import Path
 from importlib import import_module
 
 import sqlalchemy as sql
 
-from db import get_connection
+from db import get_connection, get_cli_connection_params
 from lib.migrate import run
 
 def main():
@@ -39,20 +41,49 @@ def main():
 
         if direction == 'up':
             if len(pending_migrations) == 0:
-                print("Database up-to-date, nothing to do")
-                return
-
-            for name in sorted(pending_migrations):
-                migration_module = import_module(f"db.migrations.{name}")
-                run(migration_module.__file__, migration_module.up, migration_module.down, direction="up")
+                print("> Database up-to-date, nothing to do")
+            else:
+                for name in sorted(pending_migrations):
+                    migration_module = import_module(f"db.migrations.{name}")
+                    run(migration_module.__file__, migration_module.up, migration_module.down, direction="up")
         else:
             if len(applied_migrations) == 0:
-                print("No applied migrations to roll back")
-                return
+                print("> No applied migrations to roll back")
+            else:
+                latest_migration = max(applied_migrations)
+                migration_module = import_module(f"db.migrations.{latest_migration}")
+                run(migration_module.__file__, migration_module.up, migration_module.down, direction="down")
 
-            latest_migration = max(applied_migrations)
-            migration_module = import_module(f"db.migrations.{latest_migration}")
-            run(migration_module.__file__, migration_module.up, migration_module.down, direction="down")
+        # Dump database snapshot into schema.sql, only in development mode:
+        if os.getenv('APP_ENV', 'development') == 'development':
+            schema_path = 'db/schema.sql'
+            db_connection_params = get_cli_connection_params()
+
+            with open(schema_path, 'w') as f:
+                print(f"> Dumping schema in {schema_path}...")
+
+                schema_output = subprocess.run([
+                    '/usr/bin/mysqldump',
+                    '--no-data',
+                    '--skip-quote-names',
+                    *db_connection_params,
+                ], capture_output=True).stdout.decode('utf-8')
+
+                # Remove auto increment snapshots
+                schema_output = re.sub(r' AUTO_INCREMENT=[0-9]*\b', '', schema_output)
+
+                migration_version_data = subprocess.run([
+                    '/usr/bin/mysqldump',
+                    '--no-create-info',
+                    '--skip-quote-names',
+                    '--compact',
+                    *db_connection_params,
+                    'MigrationVersions',
+                ], capture_output=True).stdout.decode('utf-8')
+
+                schema_output = re.sub(r'(-- Dump completed)', f"{migration_version_data}\n\\1", schema_output)
+
+                Path(schema_path).write_text(schema_output)
 
 
 
