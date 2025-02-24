@@ -14,6 +14,7 @@ def get_experiment(experimentId, conn):
         WHERE
             E.experimentId = :experimentId
         GROUP BY
-            E.experimentId
+            E.experimentId,
+            E.experimentDescription
     """
     return conn.execute(sql.text(query), {'experimentId': experimentId}).one()._asdict()

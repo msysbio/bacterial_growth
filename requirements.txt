@@ -4,11 +4,14 @@ Flask-WTF
 cssmin
 pandas
 plotly
-pymysql
 pytest
-sqlalchemy
 openpyxl
 humanize
+
+# Database
+sqlalchemy
+pymysql
+cryptography
 
 # Deployment
 gunicorn
