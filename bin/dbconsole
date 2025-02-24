@@ -1,17 +1,14 @@
 #! /usr/bin/env python3
 
 import os
-from db import get_config
+from db import get_cli_connection_params
 
-config = get_config()
+connection_params = get_cli_connection_params()
 
 os.execv(
     '/usr/bin/mysql', [
         '/usr/bin/mysql',
         '--local-infile',
-        f'-h{config["host"]}',
-        f'-u{config["username"]}',
-        f'-p{config["password"]}',
-        config['database']
+        *connection_params
     ]
 )

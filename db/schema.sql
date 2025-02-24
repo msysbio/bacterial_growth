@@ -2,7 +2,7 @@
 --
 -- Host: localhost    Database: BacterialGrowth
 -- ------------------------------------------------------
--- Server version	8.4.0
+-- Server version	8.4.4
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -223,22 +223,22 @@ CREATE TABLE Measurements (
   id int NOT NULL AUTO_INCREMENT,
   bioreplicateUniqueId int NOT NULL,
   studyId varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
-  position varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+  position varchar(100) NOT NULL,
   timeInSeconds int NOT NULL,
-  pH varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  unit varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
-  technique varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+  pH varchar(100) DEFAULT NULL,
+  unit varchar(100) NOT NULL,
+  technique varchar(100) NOT NULL,
   absoluteValue decimal(20,2) DEFAULT NULL,
   absoluteValueStd decimal(20,2) DEFAULT NULL,
   relativeValue decimal(10,9) DEFAULT NULL,
-  subjectType varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
-  subjectId varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+  subjectType varchar(100) NOT NULL,
+  subjectId varchar(100) NOT NULL,
   PRIMARY KEY (id),
   KEY bioreplicateUniqueId (bioreplicateUniqueId),
   KEY studyId (studyId),
   CONSTRAINT bioreplicateUniqueId FOREIGN KEY (bioreplicateUniqueId) REFERENCES BioReplicatesPerExperiment (bioreplicateUniqueId) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT studyId FOREIGN KEY (studyId) REFERENCES Study (studyId) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -286,10 +286,10 @@ DROP TABLE IF EXISTS MigrationVersions;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE MigrationVersions (
   id bigint NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `name` varchar(255) DEFAULT NULL,
   migratedAt datetime DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -425,18 +425,18 @@ CREATE TABLE TechniquesPerExperiment (
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
 INSERT INTO MigrationVersions VALUES
-(1,'2024_11_11_160324_initial_schema','2025-02-05 11:02:45'),
-(2,'2024_11_11_164726_remove_unique_study_description_index','2025-02-05 11:02:46'),
-(3,'2024_11_21_115349_allow_null_medialink','2025-02-05 11:02:46'),
-(4,'2024_11_21_120444_fix_unique_primary_keys','2025-02-05 11:02:46'),
-(5,'2025_01_30_152951_fix_bioreplicates_metadata_unique_id','2025-02-05 11:02:46'),
-(6,'2025_02_04_134239_rename-chebi-id','2025-02-05 11:02:46'),
-(8,'2025_02_05_134203_make-project-and-study-uuids-unique','2025-02-05 13:46:32'),
-(10,'2025_02_12_170210_add-assembly-id-to-strains','2025-02-12 17:04:45'),
-(14,'2025_02_13_114748_increase_experiment_id_size','2025-02-13 12:10:07'),
-(16,'2025_02_13_120609_rename_comunity_to_community','2025-02-13 12:13:22'),
-(19,'2025_02_13_121409_rename_comunity_to_community_2','2025-02-13 12:16:22'),
-(35,'2025_02_13_163206_create_measurements','2025-02-19 13:18:06'),
-(36,'2025_02_17_161750_remove_duplicated_columns_from_metabolite_per_experiment','2025-02-19 13:18:08');
+(1,'2024_11_11_160324_initial_schema','2025-02-24 10:54:24'),
+(2,'2024_11_11_164726_remove_unique_study_description_index','2025-02-24 10:54:25'),
+(3,'2024_11_21_115349_allow_null_medialink','2025-02-24 10:54:25'),
+(4,'2024_11_21_120444_fix_unique_primary_keys','2025-02-24 10:54:27'),
+(5,'2025_01_30_152951_fix_bioreplicates_metadata_unique_id','2025-02-24 10:54:28'),
+(6,'2025_02_04_134239_rename-chebi-id','2025-02-24 10:54:28'),
+(7,'2025_02_05_134203_make-project-and-study-uuids-unique','2025-02-24 10:54:28'),
+(8,'2025_02_12_170210_add-assembly-id-to-strains','2025-02-24 10:54:28'),
+(12,'2025_02_13_114748_increase_experiment_id_size','2025-02-24 10:55:04'),
+(13,'2025_02_13_120609_rename_comunity_to_community','2025-02-24 10:55:04'),
+(14,'2025_02_13_121409_rename_comunity_to_community_2','2025-02-24 10:55:05'),
+(15,'2025_02_13_163206_create_measurements','2025-02-24 13:50:50'),
+(16,'2025_02_17_161750_remove_duplicated_columns_from_metabolite_per_experiment','2025-02-24 13:50:50');
 
--- Dump completed on 2025-02-19 13:18:08
+-- Dump completed on 2025-02-24 14:52:37

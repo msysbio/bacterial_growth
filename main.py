@@ -9,7 +9,8 @@ from initialization.plotly import init_plotly
 from initialization.timing import init_timing
 
 
-def create_app(env):
+def create_app():
+    env = os.getenv('APP_ENV', 'development')
     app = Flask(__name__)
 
     app = init_config(app)
@@ -28,7 +29,6 @@ def create_app(env):
 
 
 if __name__ == "__main__":
-    env = os.getenv('APP_ENV', 'development')
-    app = create_app(env)
+    app = create_app()
 
     app.run(host="0.0.0.0", port=8081)
