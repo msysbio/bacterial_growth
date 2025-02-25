@@ -6,7 +6,7 @@ services:
     ports:
       - "3307:3306"
     environment:
-      MYSQL_USER: 'bacterial_growth'
-      MYSQL_PASSWORD: 'nVI8imBD3bl24pcP'
-      MYSQL_DATABASE: 'BacterialGrowth'
-      MYSQL_RANDOM_ROOT_PASSWORD: '1'
+      MYSQL_DATABASE:      'BacterialGrowth'
+      MYSQL_USER:          'bacterial_growth'
+      MYSQL_PASSWORD:      'nVI8imBD3bl24pcP'
+      MYSQL_ROOT_PASSWORD: 'nVI8imBD3bl24pcP'
