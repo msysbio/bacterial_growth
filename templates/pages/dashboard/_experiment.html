@@ -9,17 +9,17 @@
           <p>{{ form.description }}</p>
 
           <div class="form-row">
-            <select name="measurement" class="form-input-blue">
-              {% for measurement in form.available_growth_measurements: %}
-                {% if measurement == 'FC' %}
+            <select name="technique" class="form-input-blue">
+              {% for technique in form.available_growth_techniques: %}
+                {% if technique == 'FC' %}
                   <option value="FC">FC Counts</option>
                 {% else %}
-                  <option>{{ measurement }}</option>
+                  <option>{{ technique }}</option>
                 {% endif %}
               {% endfor %}
 
-              {% for measurement in form.available_reads_measurements: %}
-                <option>{{ measurement }}</option>
+              {% for technique in form.available_reads_techniques: %}
+                <option>{{ technique }}</option>
               {% endfor %}
 
               <option>Metabolites</option>

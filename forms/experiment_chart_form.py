@@ -25,18 +25,18 @@ class ExperimentChartForm:
         self.growth_data = ExperimentDfWrapper(df_growth, self.experiment_id, self.bioreplicate_ids)
         self.reads_data = ExperimentDfWrapper(df_reads, self.experiment_id, self.bioreplicate_ids)
 
-        self.available_growth_measurements = [
-            measurement
-            for measurement in ['OD', 'Plate Counts', 'pH', 'FC']
-            if measurement in df_growth.keys()
+        self.available_growth_techniques = [
+            technique
+            for technique in ['OD', 'Plate Counts', 'pH', 'FC']
+            if technique in df_growth.keys()
         ]
 
-        self.available_reads_measurements = []
+        self.available_reads_techniques = []
 
         if self.reads_data.has_keys_matching('_counts'):
-            self.available_reads_measurements.append('FC counts per species')
+            self.available_reads_techniques.append('FC counts per species')
         if self.reads_data.has_keys_matching('_reads'):
-            self.available_reads_measurements.append('Reads 16S rRNA Seq')
+            self.available_reads_techniques.append('Reads 16S rRNA Seq')
 
     def generate_growth_figures(self, measurement, args):
         selected_bioreplicate_ids, _ = self.extract_args(args)

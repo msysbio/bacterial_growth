@@ -36,7 +36,7 @@ def dashboard_chart_fragment():
 
     studyId      = args.pop('studyId')
     experimentId = args.pop('experimentId')
-    measurement  = args.pop('measurement')
+    technique    = args.pop('technique')
 
     with get_connection() as conn:
         experiment          = get_experiment(experimentId, conn)
@@ -44,16 +44,16 @@ def dashboard_chart_fragment():
 
         form = ExperimentChartForm(df_growth, df_reads, experiment)
 
-        if measurement == 'Reads 16S rRNA Seq':
+        if technique == 'Reads 16S rRNA Seq':
             show_log_toggle = True
             figs = form.generate_reads_figures('reads', args)
-        elif measurement == 'FC counts per species':
+        elif technique == 'FC counts per species':
             show_log_toggle = True
             figs = form.generate_reads_figures('counts', args)
-        elif measurement == 'Metabolites':
+        elif technique == 'Metabolites':
             figs = form.generate_metabolite_figures(args)
         else:
-            figs = form.generate_growth_figures(measurement, args)
+            figs = form.generate_growth_figures(technique, args)
 
         fig_htmls = []
         for fig in figs:
