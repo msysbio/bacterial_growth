@@ -38,16 +38,16 @@ class ExperimentChartForm:
         if self.reads_data.has_keys_matching('_reads'):
             self.available_reads_techniques.append('Reads 16S rRNA Seq')
 
-    def generate_growth_figures(self, measurement, args):
+    def generate_growth_figures(self, technique, args):
         selected_bioreplicate_ids, _ = self.extract_args(args)
         self.growth_data.select_bioreplicates(selected_bioreplicate_ids)
 
         fig = px.line(
             self.growth_data.df,
             x='Time',
-            y=measurement,
+            y=technique,
             color='Biological_Replicate_id',
-            title=f'{measurement} Plot for Experiment: {self.experiment_id} per Biological replicate',
+            title=f'{technique} Plot for Experiment: {self.experiment_id} per Biological replicate',
             labels={'Time': 'Hours'},
             template=PLOTLY_TEMPLATE,
             markers=True

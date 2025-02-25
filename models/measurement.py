@@ -138,8 +138,9 @@ class Measurement(OrmBase):
         reader = csv.DictReader(StringIO(csv_string), dialect='unix')
         strains = {}
 
-        strain_names = {c.removesuffix('_reads') for c in reader.fieldnames if c.endswith('_reads')}
-        strain_names |= {c.removesuffix('_counts') for c in reader.fieldnames if c.endswith('_counts')}
+        strain_names = set()
+        for suffix in ('_reads', '_counts', '_Plate_counts'):
+            strain_names |= {c.removesuffix(suffix) for c in reader.fieldnames if c.endswith(suffix)}
 
         for strain_name in strain_names:
             strains[strain_name] = Strain.find_for_study(db_session, study_id, strain_name)
@@ -151,9 +152,15 @@ class Measurement(OrmBase):
             bioreplicate_uuid = find_bioreplicate_uuid(db_session, study_id, bioreplicate_id)
 
             for strain_name, strain_id in strains.items():
-                for measurement_type in ("reads", "counts"):
+                technique_mapping = [
+                    ('reads', '16S rRNA-seq'),
+                    ('counts', 'FC'),
+                    ('Plate_counts', 'plates'),
+                ]
+
+                for measurement_type, technique in technique_mapping:
                     column_name = f"{strain_name}_{measurement_type}"
-                    value = row[column_name]
+                    value = row.get(column_name, '')
 
                     if value == '':
                         # Missing measurement, skip
@@ -162,12 +169,6 @@ class Measurement(OrmBase):
                     valueStd = row.get(f"{column_name}_std")
                     if valueStd == '':
                         valueStd = None
-
-                    if measurement_type == 'reads':
-                        technique = '16S rRNA-seq'
-                    elif measurement_type == 'counts':
-                        # TODO (2025-02-18) What can "counts" be here?
-                        technique = 'plates'
 
                     measurements.append(class_(
                         position=row['Position'],

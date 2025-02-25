@@ -149,12 +149,11 @@ class TestMeasurement(DatabaseTest):
         )
 
         # Counts measurements
-        # TODO (2025-02-18) may not be "plates"
         self.assertEqual(
             [
                 (m.timeInSeconds, int(m.subjectId), m.absoluteValue)
                 for m in sorted(measurements, key=lambda m: (m.timeInSeconds, m.subjectId))
-                if m.technique == "plates"
+                if m.technique == "FC"
             ],
             [
                 (60, strain1_id, Decimal('100.00')), (60, strain2_id, Decimal('200.00')),
