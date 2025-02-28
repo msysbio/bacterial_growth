@@ -9,10 +9,12 @@ from sqlalchemy import (
     Integer,
     String,
     Numeric,
+    ForeignKey,
 )
 from sqlalchemy.orm import (
     Mapped,
     mapped_column,
+    relationship,
 )
 
 from models.orm_base import OrmBase
@@ -31,9 +33,8 @@ class Measurement(OrmBase):
 
     id: Mapped[int] = mapped_column(primary_key=True)
 
-    # Note: should be a ForeignKey + relationship. However, ORM model is not
-    # defined yet.
-    bioreplicateUniqueId: Mapped[int] = mapped_column(Integer, nullable=False)
+    bioreplicateUniqueId: Mapped[int] = mapped_column(ForeignKey('BioReplicatesPerExperiment.bioreplicateUniqueId'))
+    bioreplicate: Mapped['Bioreplicate'] = relationship(back_populates='measurements')
 
     # Note: should be a ForeignKey + relationship. However, ORM model is not
     # defined yet.
@@ -53,6 +54,19 @@ class Measurement(OrmBase):
 
     subjectType: Mapped[str] = mapped_column(Enum(SubjectType), nullable=False)
     subjectId:   Mapped[str] = mapped_column(String(100),       nullable=False)
+
+    # TODO figure out a possible way to get this to work?
+    #
+    # @classmethod
+    # def join_subject(class_, subject_class):
+    #     match subject_class.__name__:
+    #         case 'Metabolite':
+    #             return
+    #         case _:
+    #             raise ValueError(f"Unknown subject type: {subject_class}")
+    #
+    #     return class_.where(subjectType == 'metabolite').join(class_.subjectId == subject_class.chebi_id)
+
 
     @classmethod
     def insert_from_growth_csv(class_, db_session, study_id, csv_string):
@@ -89,17 +103,15 @@ class Measurement(OrmBase):
 
             # Global measurement from the FC/OD column:
             measurements.append(class_(
-                position=row['Position'],
-                timeInSeconds=float(row['Time']),
                 studyId=study_id,
                 bioreplicateUniqueId=bioreplicate_uuid,
+                position=row['Position'],
+                timeInSeconds=round(float(row['Time']) * 3600),
                 pH=row.get('pH', None),
                 # TODO: units are not configurable
                 unit='Cells/mL',
                 technique=technique,
                 absoluteValue=row[technique],
-                absoluteValueStd=None,
-                relativeValue=None,
                 subjectType='bioreplicate',
                 subjectId=bioreplicate_uuid,
             ))
@@ -113,7 +125,7 @@ class Measurement(OrmBase):
 
                 measurements.append(class_(
                     position=row['Position'],
-                    timeInSeconds=float(row['Time']),
+                    timeInSeconds=round(float(row['Time']) * 3600),
                     studyId=study_id,
                     bioreplicateUniqueId=bioreplicate_uuid,
                     pH=row.get('pH', None),
@@ -121,7 +133,6 @@ class Measurement(OrmBase):
                     unit='mM',
                     technique=technique,
                     absoluteValue=row[name],
-                    relativeValue=None,
                     subjectType='metabolite',
                     subjectId=chebi_id,
                 ))
@@ -172,7 +183,7 @@ class Measurement(OrmBase):
 
                     measurements.append(class_(
                         position=row['Position'],
-                        timeInSeconds=float(row['Time']),
+                        timeInSeconds=round(float(row['Time']) * 3600),
                         studyId=study_id,
                         bioreplicateUniqueId=bioreplicate_uuid,
                         pH=row.get('pH', None),
