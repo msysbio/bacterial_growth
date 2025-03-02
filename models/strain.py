@@ -1,14 +1,7 @@
-import sqlalchemy as sql
-from sqlalchemy import (
-    Enum,
-    Integer,
-    String,
-    Numeric,
-)
+from sqlalchemy import String
 from sqlalchemy.orm import (
     Mapped,
     mapped_column,
-    relationship,
 )
 
 from lib.db import execute_text

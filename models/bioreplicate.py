@@ -1,10 +1,8 @@
 from typing import List
 
 from sqlalchemy import (
-    Enum,
-    Integer,
     String,
-    Numeric,
+    ForeignKey,
 )
 from sqlalchemy.orm import (
     Mapped,
@@ -25,8 +23,12 @@ class Bioreplicate(OrmBase):
     studyId:      Mapped[str] = mapped_column(String(100), nullable=False)
     experimentId: Mapped[str] = mapped_column(String(100), nullable=False)
 
+    experimentUniqueId: Mapped[int] = mapped_column(ForeignKey('Experiments'), nullable=False)
+    experiment: Mapped['Experiment'] = relationship(back_populates='bioreplicates')
+
     measurements: Mapped[List["Measurement"]] = relationship(
-        back_populates="bioreplicate", cascade="all, delete-orphan"
+        back_populates="bioreplicate",
+        cascade="all, delete-orphan"
     )
 
     @staticmethod

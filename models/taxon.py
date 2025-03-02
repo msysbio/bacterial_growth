@@ -1,5 +1,6 @@
 import sqlalchemy as sql
 
+
 class Taxon():
     @staticmethod
     def search_by_name(db_conn, term, page=1, per_page=10):
@@ -23,7 +24,7 @@ class Taxon():
             OFFSET :offset
         """
         results = db_conn.execute(sql.text(query), {
-            'first_word': term,
+            'first_word': first_word,
             'term_pattern': term_pattern,
             'per_page': per_page,
             'offset': (page - 1) * per_page,

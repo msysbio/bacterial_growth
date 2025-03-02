@@ -1,10 +1,13 @@
 from flask import render_template, request
 import sqlalchemy as sql
-from db import get_connection
+
+from db import get_session
 from forms.experiment_chart_form import ExperimentChartForm
-from models.study_dfs import get_experiments
-from models.experiment import get_experiment
-from legacy.chart_data import get_chart_data
+from models.study import Study
+from models.experiment import Experiment
+
+
+PLOTLY_TEMPLATE = 'plotly_white'
 
 
 def dashboard_index_page():
@@ -12,13 +15,12 @@ def dashboard_index_page():
     studyId          = request.args.get('studyId')
     experiment_forms = []
 
-    with get_connection() as conn:
+    with get_session() as db_session:
         if studyId:
-            query = "SELECT studyName FROM Study WHERE studyId = :studyId LIMIT 1"
-            studyName = conn.execute(sql.text(query), {'studyId': studyId}).scalar()
+            query = sql.select(Experiment).where(Experiment.studyId == studyId)
+            experiment_forms = [ExperimentChartForm(e) for e in db_session.scalars(query).all()]
 
-            df_experiments = get_experiments(studyId, conn)
-            experiment_forms = ExperimentChartForm.from_df(studyId, df_experiments)
+            studyName = db_session.get(Study, studyId).studyName
 
         return render_template(
             "pages/dashboard/index.html",
@@ -34,15 +36,13 @@ def dashboard_chart_fragment():
     width = args.pop('width')
     show_log_toggle = False
 
-    studyId      = args.pop('studyId')
-    experimentId = args.pop('experimentId')
-    technique    = args.pop('technique')
+    _                  = args.pop('studyId')
+    experimentUniqueId = args.pop('experimentUniqueId')
+    technique          = args.pop('technique')
 
-    with get_connection() as conn:
-        experiment          = get_experiment(experimentId, conn)
-        df_growth, df_reads = get_chart_data(studyId)
-
-        form = ExperimentChartForm(df_growth, df_reads, experiment)
+    with get_session() as db_session:
+        experiment = db_session.get(Experiment, experimentUniqueId)
+        form       = ExperimentChartForm(experiment)
 
         if technique == 'Reads 16S rRNA Seq':
             show_log_toggle = True
@@ -51,7 +51,8 @@ def dashboard_chart_fragment():
             show_log_toggle = True
             figs = form.generate_reads_figures('counts', args)
         elif technique == 'Metabolites':
-            figs = form.generate_metabolite_figures(args)
+            # TODO (2025-03-02) Separate "technique" and "subject type"
+            figs = form.generate_metabolite_figures('FC', args)
         else:
             figs = form.generate_growth_figures(technique, args)
 

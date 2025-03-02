@@ -55,21 +55,8 @@ class Measurement(OrmBase):
     subjectType: Mapped[str] = mapped_column(Enum(SubjectType), nullable=False)
     subjectId:   Mapped[str] = mapped_column(String(100),       nullable=False)
 
-    # TODO figure out a possible way to get this to work?
-    #
-    # @classmethod
-    # def join_subject(class_, subject_class):
-    #     match subject_class.__name__:
-    #         case 'Metabolite':
-    #             return
-    #         case _:
-    #             raise ValueError(f"Unknown subject type: {subject_class}")
-    #
-    #     return class_.where(subjectType == 'metabolite').join(class_.subjectId == subject_class.chebi_id)
-
-
     @classmethod
-    def insert_from_growth_csv(class_, db_session, study_id, csv_string):
+    def insert_from_growth_csv(Self, db_session, study_id, csv_string):
         measurements = []
         reader = csv.DictReader(StringIO(csv_string), dialect='unix')
 
@@ -102,7 +89,7 @@ class Measurement(OrmBase):
                 continue
 
             # Global measurement from the FC/OD column:
-            measurements.append(class_(
+            measurements.append(Self(
                 studyId=study_id,
                 bioreplicateUniqueId=bioreplicate_uuid,
                 position=row['Position'],
@@ -117,13 +104,11 @@ class Measurement(OrmBase):
             ))
 
             for (name, chebi_id) in metabolites.items():
-                # TODO (2025-02-17) Relative or absolute based on OD/FC?
-
                 if row[name] == '':
                     # Missing measurement, skip
                     continue
 
-                measurements.append(class_(
+                measurements.append(Self(
                     position=row['Position'],
                     timeInSeconds=round(float(row['Time']) * 3600),
                     studyId=study_id,
@@ -143,7 +128,7 @@ class Measurement(OrmBase):
         return measurements
 
     @classmethod
-    def insert_from_reads_csv(class_, db_session, study_id, csv_string):
+    def insert_from_reads_csv(Self, db_session, study_id, csv_string):
         measurements = []
 
         reader = csv.DictReader(StringIO(csv_string), dialect='unix')
@@ -181,7 +166,7 @@ class Measurement(OrmBase):
                     if valueStd == '':
                         valueStd = None
 
-                    measurements.append(class_(
+                    measurements.append(Self(
                         position=row['Position'],
                         timeInSeconds=round(float(row['Time']) * 3600),
                         studyId=study_id,

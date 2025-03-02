@@ -179,9 +179,7 @@ def get_experiments(studyId, conn):
         E.cultivationMode,
         E.controlDescription;
     """
-    df_experiments = pd.read_sql(query, conn, params={'studyId': studyId})
-    columns_to_exclude = ['experimentUniqueId']
-    return df_experiments.drop(columns=columns_to_exclude)
+    return pd.read_sql(query, conn, params={'studyId': studyId})
 
 
 def get_compartments(studyId, conn):

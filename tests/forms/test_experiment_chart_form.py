@@ -1,23 +1,23 @@
 import tests.init
 
 import unittest
-from decimal import Decimal
 
 from tests.database_test import DatabaseTest
-from models.measurement_chart import MeasurementChart
+from forms.experiment_chart_form import ExperimentChartForm
+from models.experiment import Experiment
 
-class TestMeasurementChart(DatabaseTest):
+class TestExperimentChartForm(DatabaseTest):
     def test_metabolite_chart(self):
         bioreplicate = self.create_bioreplicate()
 
         study_id          = bioreplicate['studyId']
-        experiment_uuid   = bioreplicate['experimentUniqueId']
         bioreplicate_uuid = bioreplicate['bioreplicateUniqueId']
 
-        chart = MeasurementChart(study_id, experiment_uuid)
+        experiment = self.db_session.get(Experiment, bioreplicate['experimentUniqueId'])
+        chart = ExperimentChartForm(experiment)
 
-        m1 = self.create_metabolite(chebi_id='1', metabo_name='glucose')
-        m2 = self.create_metabolite(chebi_id='2', metabo_name='trehalose')
+        self.create_metabolite(chebi_id='1', metabo_name='glucose')
+        self.create_metabolite(chebi_id='2', metabo_name='trehalose')
 
         shared_params = {
             'studyId': study_id,
@@ -38,7 +38,7 @@ class TestMeasurementChart(DatabaseTest):
 
         self.db_session.commit()
 
-        chart_df = chart.get_single_df([bioreplicate_uuid], technique='FC', subject_type='metabolite')
+        chart_df = chart.get_df([bioreplicate_uuid], technique='FC', subject_type='metabolite')
 
         self.assertEqual(chart_df['time'].tolist(), [1, 2, 1, 2])
         self.assertEqual(
@@ -51,13 +51,13 @@ class TestMeasurementChart(DatabaseTest):
         bioreplicate = self.create_bioreplicate()
 
         study_id          = bioreplicate['studyId']
-        experiment_uuid   = bioreplicate['experimentUniqueId']
         bioreplicate_uuid = bioreplicate['bioreplicateUniqueId']
 
-        chart = MeasurementChart(study_id, experiment_uuid)
+        experiment = self.db_session.get(Experiment, bioreplicate['experimentUniqueId'])
+        chart = ExperimentChartForm(experiment)
 
-        s1 = self.create_strain(strainId=1, memberName='R. intestinalis',     studyId=study_id)
-        s2 = self.create_strain(strainId=2, memberName='B. thetaiotaomicron', studyId=study_id)
+        self.create_strain(strainId=1, memberName='R. intestinalis',     studyId=study_id)
+        self.create_strain(strainId=2, memberName='B. thetaiotaomicron', studyId=study_id)
 
         shared_params = {
             'studyId': study_id,
@@ -78,7 +78,7 @@ class TestMeasurementChart(DatabaseTest):
 
         self.db_session.commit()
 
-        chart_df = chart.get_single_df([bioreplicate_uuid], technique='16S', subject_type='strain')
+        chart_df = chart.get_df([bioreplicate_uuid], technique='16S', subject_type='strain')
 
         self.assertEqual(chart_df['time'].tolist(), [1, 2, 1, 2])
         self.assertEqual(

@@ -1,6 +1,7 @@
 import os
 import unittest
 from uuid import uuid4
+from decimal import Decimal
 
 import db
 from lib.db import (
@@ -10,7 +11,11 @@ from lib.db import (
 
 class DatabaseTest(unittest.TestCase):
     def setUp(self):
-        assert os.environ['APP_ENV'] == 'test'
+        self.assertEqual(
+            os.environ.get('APP_ENV'),
+            'test',
+            "Make sure you `import tests.init` before anything else in the test",
+        )
 
         self.db_session = db.get_session()
 
@@ -100,17 +105,17 @@ class DatabaseTest(unittest.TestCase):
         return self._create_record('Experiments', params)
 
     def create_bioreplicate(self, **params):
-        self.bioreplicate_uuid = str(getattr(self, 'bioreplicate_uuid', 0) + 1)
+        self.bioreplicate_uuid = getattr(self, 'bioreplicate_uuid', 0) + 1
 
         study_id          = self._get_or_create_dependency(params, 'studyId', 'study')
         experiment_id_key = self._get_or_create_dependency(params, 'experimentUniqueId', 'experiment', studyId=study_id)
 
         query = "SELECT * from Study where studyId = :studyId"
-        results = execute_text(self.db_session, query, studyId=params['studyId'])
+        results = execute_text(self.db_session, query, studyId=study_id)
 
         params = {
             'studyId':              study_id,
-            'bioreplicateUniqueId': self.bioreplicate_uuid,
+            'bioreplicateUniqueId': str(self.bioreplicate_uuid),
             'bioreplicateId':       f"Bioreplicate {self.bioreplicate_uuid}",
             'experimentUniqueId':   experiment_id_key,
             'experimentId':         f"Experiment {experiment_id_key}",
@@ -152,6 +157,28 @@ class DatabaseTest(unittest.TestCase):
 
         return self._create_record('MetabolitePerExperiment', params)
 
+    def create_measurement(self, **params):
+        study_id          = self._get_or_create_dependency(params, 'studyId', 'study')
+        bioreplicate_uuid = self._get_or_create_dependency(params, 'bioreplicateUniqueId', 'bioreplicate')
+
+        subject_id   = params['subjectId']
+        subject_type = params['subjectType']
+
+        params = {
+            'studyId':              study_id,
+            'bioreplicateUniqueId': bioreplicate_uuid,
+            'position':             'A1',
+            'timeInSeconds':        3600,
+            'unit':                 'unknown',
+            'technique':            'FC',
+            'absoluteValue':        Decimal('100.000'),
+            'subjectId':            subject_id,
+            'subjectType':          subject_type,
+            **params,
+        }
+
+        return self._create_record('Measurements', params)
+
     def _create_record(self, table_name, params):
         column_list = ', '.join(params.keys())
         value_list  = ', '.join([f":{key}" for key in params])
@@ -185,4 +212,3 @@ class DatabaseTest(unittest.TestCase):
             key_value = object[key_name]
 
         return key_value
-
