@@ -116,7 +116,7 @@ class Measurement(OrmBase):
                     pH=row.get('pH', None),
                     # TODO: units are not configurable
                     unit='mM',
-                    technique=technique,
+                    technique=f"Metabolites ({technique})",
                     absoluteValue=row[name],
                     subjectType='metabolite',
                     subjectId=chebi_id,

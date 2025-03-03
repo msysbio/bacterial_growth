@@ -1,4 +1,5 @@
 {% macro render_experiment_form(form) %}
+
   {% set experiment = form.experiment %}
 
   <details class="experiment-container">
@@ -16,8 +17,6 @@
               {% for technique in form.available_techniques: %}
                 <option>{{ technique }}</option>
               {% endfor %}
-
-              <option>Metabolites</option>
             </select>
           </div>
 
