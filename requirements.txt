@@ -5,6 +5,7 @@ cssmin
 pandas
 plotly
 pytest
+pytest-env
 openpyxl
 humanize
 
