@@ -150,7 +150,7 @@ class Measurement(OrmBase):
             for strain_name, strain_id in strains.items():
                 technique_mapping = [
                     ('reads', '16S rRNA-seq'),
-                    ('counts', 'FC'),
+                    ('counts', 'FC per species'),
                     ('Plate_counts', 'plates'),
                 ]
 

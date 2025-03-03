@@ -17,7 +17,7 @@ def dashboard_index_page():
 
     with get_session() as db_session:
         if studyId:
-            query = sql.select(Experiment).where(Experiment.studyId == studyId)
+            query = sql.select(Experiment).where(Experiment.studyId == studyId).order_by(Experiment.experimentId)
             experiment_forms = [ExperimentChartForm(e) for e in db_session.scalars(query).all()]
 
             studyName = db_session.get(Study, studyId).studyName
@@ -44,12 +44,9 @@ def dashboard_chart_fragment():
         experiment = db_session.get(Experiment, experimentUniqueId)
         form       = ExperimentChartForm(experiment)
 
-        if technique == 'Reads 16S rRNA Seq':
+        if technique in ('16S rRNA-seq', 'FC per species'):
             show_log_toggle = True
-            figs = form.generate_reads_figures('reads', args)
-        elif technique == 'FC counts per species':
-            show_log_toggle = True
-            figs = form.generate_reads_figures('counts', args)
+            figs = form.generate_reads_figures(technique, args)
         elif technique == 'Metabolites':
             # TODO (2025-03-02) Separate "technique" and "subject type"
             figs = form.generate_metabolite_figures('FC', args)

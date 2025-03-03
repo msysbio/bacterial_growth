@@ -26,19 +26,14 @@ class ExperimentChartForm:
                 .join(Bioreplicate)
                 .distinct()
                 .where(Bioreplicate.experimentUniqueId == self.experiment.experimentUniqueId)
+                .order_by(Measurement.technique)
             ).scalars()
-
-        # self.available_growth_techniques =
-        # self.available_reads_techniques = []
-        #
-        # if self.reads_data.has_keys_matching('_counts'):
-        #     self.available_reads_techniques.append('FC counts per species')
-        # if self.reads_data.has_keys_matching('_reads'):
-        #     self.available_reads_techniques.append('Reads 16S rRNA Seq')
 
     def generate_growth_figures(self, technique, args):
         selected_bioreplicate_uuids, _ = self.extract_args(args)
         df = self.get_df(selected_bioreplicate_uuids, technique, 'bioreplicate')
+        if len(df) == 0:
+            continue
 
         fig = px.line(
             df,
@@ -57,63 +52,52 @@ class ExperimentChartForm:
 
         return [fig]
 
-    def generate_reads_figures(self, read_type, args):
-        selected_bioreplicate_ids, apply_log = self.extract_args(args)
-        self.reads_data.select_bioreplicates(selected_bioreplicate_ids)
+    def generate_reads_figures(self, technique, args):
+        selected_bioreplicate_uuids, apply_log = self.extract_args(args)
 
         figs = []
-        for index, (bioreplicate_id, bioreplicate_df) in enumerate(self.reads_data.bioreplicate_dfs()):
-            if read_type == 'reads':
+        for index, bioreplicate_uuid in enumerate(selected_bioreplicate_uuids):
+            df = self.get_df([bioreplicate_uuid], technique, 'strain')
+            if len(df) == 0:
+                continue
+
+            # TODO (2025-03-02) Hacky
+            bioreplicate_id = df['bioreplicateId'].tolist()[0]
+
+            if technique == '16S rRNA-seq':
                 title = f'16S reads: {bioreplicate_id} per Microbial Strain'
-                species_columns = bioreplicate_df.filter(regex='_reads$').columns
-                std_columns = bioreplicate_df.filter(regex='_reads_std$').columns
             else:
                 title = f'FC Counts: {bioreplicate_id} per Microbial Strain'
-                species_columns = bioreplicate_df.filter(like='_counts').columns
-                std_columns = None
 
-            linear_y_label = 'Cells/mL'
-            log_y_label = 'log(Cells)/mL'
-
-            melted_df = bioreplicate_df.melt(
-                id_vars=['Time', 'Biological_Replicate_id'],
-                value_vars=sorted(species_columns),
-                var_name='Species',
-                value_name=linear_y_label
-            )
+            value_label = 'Cells/mL'
+            value_std = None
 
             if apply_log[index]:
+                value_label = 'log(Cells)/mL'
+
                 # If we have 0 values, we'll get NaNs, which is okay for
                 # rendering purposes, so we ignore the error:
                 with np.errstate(divide='ignore'):
-                    melted_df[log_y_label] = np.log10(melted_df[linear_y_label])
+                    df['value'] = np.log10(df['value'])
+            else:
+                value_std = df['std']
 
-            melted_df['Species'] = melted_df['Species'].map(
-                lambda s: re.sub(r'_(reads|counts)$', '', s)
-            )
-            error_y = None
-
-            if std_columns is not None and not apply_log[index]:
-                std_df = bioreplicate_df.melt(
-                    id_vars=['Time', 'Biological_Replicate_id'],
-                    value_vars=sorted(std_columns),
-                    var_name='Species',
-                    value_name='STD'
-                )
-                error_y = std_df['STD']
-
-                if len(error_y) == 0:
+                if len(value_std) == 0:
                     # STD values were blank, don't draw error bars
-                    error_y = None
+                    value_std = None
 
             figs.append(px.line(
-                melted_df,
-                x='Time',
-                y=(log_y_label if apply_log[index] else linear_y_label),
-                error_y=error_y,
-                color='Species',
+                df,
+                x='time',
+                y='value',
+                color='subjectName',
+                error_y=value_std,
                 title=title,
-                labels={'Time': 'Hours'},
+                labels={
+                    'time': 'Hours',
+                    'value': value_label,
+                    'subjectName': 'Species',
+                },
                 template=PLOTLY_TEMPLATE,
                 markers=True
             ))
@@ -126,6 +110,8 @@ class ExperimentChartForm:
         figs = []
         for bioreplicate_uuid in selected_bioreplicate_uuids:
             df = self.get_df([bioreplicate_uuid], technique, 'metabolite')
+            if len(df) == 0:
+                continue
 
             # TODO (2025-03-02) Hacky
             bioreplicate_id = df['bioreplicateId'].tolist()[0]
@@ -182,6 +168,7 @@ class ExperimentChartForm:
             sql.select(
                 (Measurement.timeInSeconds // 3600).label("time"),
                 Measurement.absoluteValue.label("value"),
+                Measurement.absoluteValueStd.label("std"),
                 subjectName,
                 Bioreplicate.bioreplicateId,
             )
