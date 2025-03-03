@@ -15,12 +15,14 @@ from sqlalchemy.orm import (
     Mapped,
     mapped_column,
     relationship,
+    aliased,
 )
 from sqlalchemy.ext.hybrid import hybrid_property
 
 from models.orm_base import OrmBase
 from models.bioreplicate import Bioreplicate
 from models.strain import Strain
+from models.metabolite import Metabolite
 from lib.db import execute_text
 
 
@@ -59,6 +61,21 @@ class Measurement(OrmBase):
     @hybrid_property
     def timeInHours(self):
         return self.timeInSeconds // 3600
+
+    def subject_join(subject_type):
+        if subject_type == 'metabolite':
+            name = Metabolite.metabo_name.label("subjectName")
+            join = (Metabolite, Measurement.subjectId == Metabolite.chebi_id)
+        elif subject_type == 'strain':
+            name = Strain.memberName.label("subjectName")
+            join = (Strain, Measurement.subjectId == Strain.strainId)
+        elif subject_type == 'bioreplicate':
+            name = Bioreplicate.bioreplicateId.label("subjectName")
+            Subject = aliased(Bioreplicate)
+            join = (Subject, Measurement.subjectId == Subject.bioreplicateUniqueId)
+
+        return (name, join)
+
 
     @classmethod
     def insert_from_growth_csv(Self, db_session, study_id, csv_string):

@@ -5,9 +5,10 @@ import numpy as np
 import pandas as pd
 import sqlalchemy as sql
 import sqlalchemy.dialects.mysql as mysql
-from sqlalchemy.orm import aliased
+from sqlalchemy.sql.expression import literal_column, literal
 
 from db import get_connection, get_session
+from models.experiment import Experiment
 from models.measurement import Measurement
 from models.metabolite import Metabolite
 from models.strain import Strain
@@ -34,6 +35,10 @@ class ExperimentChartForm:
         bioreplicate_uuids = [b.bioreplicateUniqueId for b in selected_bioreplicates]
 
         df = self.get_df(bioreplicate_uuids, technique, 'bioreplicate')
+        if include_average:
+            average_df = self.get_average_df(technique, 'bioreplicate')
+            print(average_df)
+            df = pd.concat((df, average_df))
 
         fig = self._render_figure(
             df,
@@ -88,6 +93,41 @@ class ExperimentChartForm:
                 },
             ))
 
+        if include_average:
+            df = self.get_average_df(technique, 'strain')
+
+            # Last "apply_log" entry (TODO hacky):
+            if apply_log[-1]:
+                value_label = 'log(Cells)/mL'
+
+                # If we have 0 values, we'll get NaNs, which is okay for
+                # rendering purposes, so we ignore the error:
+                with np.errstate(divide='ignore'):
+                    df['value'] = np.log10(df['value'])
+            else:
+                value_std = df['std']
+
+                if value_std.isnull().all():
+                    # STD values were blank, don't draw error bars
+                    value_std = None
+
+            if technique == '16S rRNA-seq':
+                title = f'16S reads: Average {self.experiment.experimentId} per Microbial Strain'
+            else:
+                title = f'FC Counts: Average {self.experiment.experimentId} per Microbial Strain'
+
+            figs.append(self._render_figure(
+                df,
+                # TODO (2025-03-03) STD should be handled consistently with apply_log
+                error_y=value_std,
+                title=title,
+                labels={
+                    'time': 'Hours',
+                    'value': value_label,
+                    'subjectName': 'Species',
+                },
+            ))
+
         return figs
 
     def generate_metabolite_figures(self, technique, args):
@@ -106,6 +146,22 @@ class ExperimentChartForm:
                     'subjectName': 'Metabolite',
                 },
             ))
+
+        if include_average:
+            df = self.get_average_df(technique, 'metabolite')
+            print(df)
+
+            figs.append(self._render_figure(
+                df,
+                error_y=df['std'],
+                title=f'Average metabolite concentrations for: {self.experiment.experimentId}',
+                labels={
+                    'time': 'Hours',
+                    'value': 'mM',
+                    'subjectName': 'Metabolite',
+                },
+            ))
+
 
         return figs
 
@@ -132,16 +188,7 @@ class ExperimentChartForm:
         return selected_bioreplicates, include_average, apply_log
 
     def get_df(self, bioreplicate_uuids, technique, subject_type):
-        if subject_type == 'metabolite':
-            subjectName = Metabolite.metabo_name.label("subjectName")
-            subjectJoin = (Metabolite, Measurement.subjectId == Metabolite.chebi_id)
-        elif subject_type == 'strain':
-            subjectName = Strain.memberName.label("subjectName")
-            subjectJoin = (Strain, Measurement.subjectId == Strain.strainId)
-        elif subject_type == 'bioreplicate':
-            subjectName = Bioreplicate.bioreplicateId.label("subjectName")
-            Subject = aliased(Bioreplicate)
-            subjectJoin = (Subject, Measurement.subjectId == Subject.bioreplicateUniqueId)
+        subjectName, subjectJoin = Measurement.subject_join(subject_type)
 
         query = (
             sql.select(
@@ -160,9 +207,36 @@ class ExperimentChartForm:
             )
             .order_by('subjectName', Measurement.timeInSeconds)
         )
-        statement = query.compile(dialect=mysql.dialect())
 
         with get_connection() as db_conn:
+            statement = query.compile(dialect=mysql.dialect())
+            return pd.read_sql(statement, db_conn)
+
+    def get_average_df(self, technique, subject_type):
+        subjectName, subjectJoin = Measurement.subject_join(subject_type)
+
+        query = (
+            sql.select(
+                (Measurement.timeInSeconds // 3600).label("time"),
+                sql.func.avg(Measurement.absoluteValue).label("value"),
+                sql.func.stddev(Measurement.absoluteValue).label("std"),
+                subjectName,
+                literal_column('CONCAT("Average ", Experiments.experimentId)').label("bioreplicateId"),
+            )
+            .join(Bioreplicate, Measurement.bioreplicateUniqueId == Bioreplicate.bioreplicateUniqueId)
+            .join(Experiment, Bioreplicate.experimentUniqueId == Experiment.experimentUniqueId)
+            .join(*subjectJoin)
+            .where(
+                Measurement.technique == technique,
+                Measurement.subjectType == subject_type,
+                Experiment.experimentUniqueId == self.experiment.experimentUniqueId,
+            )
+            .group_by(Measurement.timeInSeconds, subjectName)
+            .order_by(sql.text('subjectName'), Measurement.timeInSeconds)
+        )
+
+        with get_connection() as db_conn:
+            statement = query.compile(dialect=mysql.dialect())
             return pd.read_sql(statement, db_conn)
 
     def _render_figure(self, df, **params):
