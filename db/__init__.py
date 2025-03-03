@@ -53,8 +53,11 @@ def get_connection():
     return DB.connect()
 
 
-def get_session():
-    return orm.Session(DB)
+def get_session(conn=None):
+    if conn:
+        return orm.Session(bind=conn)
+    else:
+        return orm.Session(DB)
 
 
 def get_transaction():

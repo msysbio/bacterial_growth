@@ -27,7 +27,7 @@ def dynamical_query(all_advance_query):
                         SELECT projectUniqueID
                         FROM Project
                         WHERE LOWER(projectName) LIKE '%{project_name}%'
-                        )
+                    )
                     """
             elif query_dict['option'] == 'Project ID':
                 project_id = query_dict['value']

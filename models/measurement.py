@@ -16,6 +16,7 @@ from sqlalchemy.orm import (
     mapped_column,
     relationship,
 )
+from sqlalchemy.ext.hybrid import hybrid_property
 
 from models.orm_base import OrmBase
 from models.bioreplicate import Bioreplicate
@@ -54,6 +55,10 @@ class Measurement(OrmBase):
 
     subjectType: Mapped[str] = mapped_column(Enum(SubjectType), nullable=False)
     subjectId:   Mapped[str] = mapped_column(String(100),       nullable=False)
+
+    @hybrid_property
+    def timeInHours(self):
+        return self.timeInSeconds // 3600
 
     @classmethod
     def insert_from_growth_csv(Self, db_session, study_id, csv_string):

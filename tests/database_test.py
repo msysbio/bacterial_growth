@@ -17,7 +17,8 @@ class DatabaseTest(unittest.TestCase):
             "Make sure you `import tests.init` before anything else in the test",
         )
 
-        self.db_session = db.get_session()
+        self.db_conn = db.get_connection()
+        self.db_session = db.get_session(conn=self.db_conn)
 
         # Clean up database state before each test:
         tables = execute_text(self.db_session, 'SHOW TABLES').scalars().all()

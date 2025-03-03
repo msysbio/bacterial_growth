@@ -3,6 +3,7 @@ import tests.init  # noqa: F401
 import unittest
 from decimal import Decimal
 
+from models.experiment import Experiment
 from models.measurement import Measurement
 from tests.database_test import DatabaseTest
 import lib.util as util
@@ -18,7 +19,7 @@ class TestMeasurement(DatabaseTest):
             studyId=study_id,
             bioreplicateUniqueId=bioreplicate_uuid,
             position='A1',
-            timeInSeconds=60,
+            timeInSeconds=60 * 3600,
             pH=Decimal('7.4'),
             unit='Cells/mL',
             technique='FC',
@@ -71,7 +72,7 @@ class TestMeasurement(DatabaseTest):
         # Metabolite measurements
         self.assertEqual(
             [
-                (m.timeInSeconds, m.subjectId)
+                (m.timeInHours, m.subjectId)
                 for m in measurements
                 if m.subjectType.value == "metabolite"
             ],
@@ -85,7 +86,7 @@ class TestMeasurement(DatabaseTest):
         # Bioreplicate (total) measurement
         self.assertEqual(
             [
-                (m.timeInSeconds, m.subjectId, m.absoluteValue)
+                (m.timeInHours, m.subjectId, m.absoluteValue)
                 for m in measurements
                 if m.subjectType.value == "bioreplicate"
             ],
@@ -103,8 +104,14 @@ class TestMeasurement(DatabaseTest):
             bioreplicateId='b1',
         )
 
-        strain1_id = self.create_strain(memberName='Bacteroides thetaiotaomicron', studyId=study_id)['strainId']
-        strain2_id = self.create_strain(memberName='Roseburia intestinalis', studyId=study_id)['strainId']
+        strain1_id = self.create_strain(
+            memberName='Bacteroides thetaiotaomicron',
+            studyId=study_id,
+        )['strainId']
+        strain2_id = self.create_strain(
+            memberName='Roseburia intestinalis',
+            studyId=study_id,
+        )['strainId']
 
         header = ",".join([
             'Position',
@@ -137,8 +144,8 @@ class TestMeasurement(DatabaseTest):
         # Note: truncated to 2 decimal points
         self.assertEqual(
             [
-                (m.timeInSeconds, int(m.subjectId), m.absoluteValue)
-                for m in sorted(measurements, key=lambda m: (m.timeInSeconds, m.subjectId))
+                (m.timeInHours, int(m.subjectId), m.absoluteValue)
+                for m in sorted(measurements, key=lambda m: (m.timeInHours, m.subjectId))
                 if m.technique == "16S rRNA-seq"
             ],
             [
@@ -151,9 +158,9 @@ class TestMeasurement(DatabaseTest):
         # Counts measurements
         self.assertEqual(
             [
-                (m.timeInSeconds, int(m.subjectId), m.absoluteValue)
-                for m in sorted(measurements, key=lambda m: (m.timeInSeconds, m.subjectId))
-                if m.technique == "FC"
+                (m.timeInHours, int(m.subjectId), m.absoluteValue)
+                for m in sorted(measurements, key=lambda m: (m.timeInHours, m.subjectId))
+                if m.technique == "FC per species"
             ],
             [
                 (60, strain1_id, Decimal('100.00')), (60, strain2_id, Decimal('200.00')),
