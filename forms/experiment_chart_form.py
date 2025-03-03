@@ -33,21 +33,16 @@ class ExperimentChartForm:
         selected_bioreplicate_uuids, _ = self.extract_args(args)
         df = self.get_df(selected_bioreplicate_uuids, technique, 'bioreplicate')
         if len(df) == 0:
-            continue
+            return []
 
-        fig = px.line(
+        fig = self._render_figure(
             df,
-            x='time',
-            y='value',
-            color='subjectName',
             title=f'{technique} Plot for Experiment: {self.experiment.experimentId} per Biological replicate',
             labels={
                 'time': 'Hours',
                 'value': 'Cells/mL',
                 'subjectName': 'Bioreplicate',
             },
-            template=PLOTLY_TEMPLATE,
-            markers=True
         )
 
         return [fig]
@@ -86,11 +81,9 @@ class ExperimentChartForm:
                     # STD values were blank, don't draw error bars
                     value_std = None
 
-            figs.append(px.line(
+            figs.append(self._render_figure(
                 df,
-                x='time',
-                y='value',
-                color='subjectName',
+                # TODO (2025-03-03) STD should be handled consistently with apply_log
                 error_y=value_std,
                 title=title,
                 labels={
@@ -98,8 +91,6 @@ class ExperimentChartForm:
                     'value': value_label,
                     'subjectName': 'Species',
                 },
-                template=PLOTLY_TEMPLATE,
-                markers=True
             ))
 
         return figs
@@ -116,19 +107,14 @@ class ExperimentChartForm:
             # TODO (2025-03-02) Hacky
             bioreplicate_id = df['bioreplicateId'].tolist()[0]
 
-            figs.append(px.line(
+            figs.append(self._render_figure(
                 df,
-                x='time',
-                y='value',
-                color='subjectName',
                 title=f'Metabolite Concentrations: {bioreplicate_id} per Metabolite',
                 labels={
                     'time': 'Hours',
                     'value': 'mM',
                     'subjectName': 'Metabolite',
                 },
-                template=PLOTLY_TEMPLATE,
-                markers=True
             ))
 
         return figs
@@ -185,3 +171,14 @@ class ExperimentChartForm:
 
         with get_connection() as db_conn:
             return pd.read_sql(statement, db_conn)
+
+    def _render_figure(self, df, **params):
+        return px.line(
+            df,
+            x='time',
+            y='value',
+            color='subjectName',
+            template=PLOTLY_TEMPLATE,
+            markers=True,
+            **params
+        )
