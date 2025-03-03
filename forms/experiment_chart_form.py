@@ -7,7 +7,7 @@ import sqlalchemy as sql
 import sqlalchemy.dialects.mysql as mysql
 from sqlalchemy.orm import aliased
 
-from db import get_connection
+from db import get_connection, get_session
 from models.measurement import Measurement
 from models.metabolite import Metabolite
 from models.strain import Strain
@@ -30,10 +30,10 @@ class ExperimentChartForm:
             ).scalars()
 
     def generate_growth_figures(self, technique, args):
-        selected_bioreplicate_uuids, _ = self.extract_args(args)
-        df = self.get_df(selected_bioreplicate_uuids, technique, 'bioreplicate')
-        if len(df) == 0:
-            return []
+        selected_bioreplicates, include_average, _ = self.extract_args(args)
+        bioreplicate_uuids = [b.bioreplicateUniqueId for b in selected_bioreplicates]
+
+        df = self.get_df(bioreplicate_uuids, technique, 'bioreplicate')
 
         fig = self._render_figure(
             df,
@@ -48,21 +48,16 @@ class ExperimentChartForm:
         return [fig]
 
     def generate_reads_figures(self, technique, args):
-        selected_bioreplicate_uuids, apply_log = self.extract_args(args)
+        selected_bioreplicates, include_average, apply_log = self.extract_args(args)
 
         figs = []
-        for index, bioreplicate_uuid in enumerate(selected_bioreplicate_uuids):
-            df = self.get_df([bioreplicate_uuid], technique, 'strain')
-            if len(df) == 0:
-                continue
-
-            # TODO (2025-03-02) Hacky
-            bioreplicate_id = df['bioreplicateId'].tolist()[0]
+        for index, bioreplicate in enumerate(selected_bioreplicates):
+            df = self.get_df([bioreplicate.bioreplicateUniqueId], technique, 'strain')
 
             if technique == '16S rRNA-seq':
-                title = f'16S reads: {bioreplicate_id} per Microbial Strain'
+                title = f'16S reads: {bioreplicate.bioreplicateId} per Microbial Strain'
             else:
-                title = f'FC Counts: {bioreplicate_id} per Microbial Strain'
+                title = f'FC Counts: {bioreplicate.bioreplicateId} per Microbial Strain'
 
             value_label = 'Cells/mL'
             value_std = None
@@ -96,20 +91,15 @@ class ExperimentChartForm:
         return figs
 
     def generate_metabolite_figures(self, technique, args):
-        selected_bioreplicate_uuids, _ = self.extract_args(args)
+        selected_bioreplicates, include_average, _ = self.extract_args(args)
 
         figs = []
-        for bioreplicate_uuid in selected_bioreplicate_uuids:
-            df = self.get_df([bioreplicate_uuid], technique, 'metabolite')
-            if len(df) == 0:
-                continue
-
-            # TODO (2025-03-02) Hacky
-            bioreplicate_id = df['bioreplicateId'].tolist()[0]
+        for bioreplicate in selected_bioreplicates:
+            df = self.get_df([bioreplicate.bioreplicateUniqueId], technique, 'metabolite')
 
             figs.append(self._render_figure(
                 df,
-                title=f'Metabolite Concentrations: {bioreplicate_id} per Metabolite',
+                title=f'Metabolite Concentrations: {bioreplicate.bioreplicateId} per Metabolite',
                 labels={
                     'time': 'Hours',
                     'value': 'mM',
@@ -120,7 +110,7 @@ class ExperimentChartForm:
         return figs
 
     def extract_args(self, args):
-        selected_bioreplicate_ids = []
+        bioreplicate_uuids = []
         include_average = False
         apply_log = [False for _ in args]
 
@@ -128,15 +118,18 @@ class ExperimentChartForm:
             if arg.endswith(':_average'):
                 include_average = True
             elif arg.startswith('bioreplicate:'):
-                selected_bioreplicate_ids.append(arg[len('bioreplicate:'):])
+                bioreplicate_uuids.append(arg[len('bioreplicate:'):])
             elif arg.startswith('apply_log:'):
                 index = int(arg[len('apply_log:'):])
                 apply_log[index] = True
 
-        if include_average:
-            selected_bioreplicate_ids.append(f"Average {self.experiment.experimentId}")
+        with get_session() as db_session:
+            selected_bioreplicates = db_session.scalars(
+                sql.select(Bioreplicate)
+                .where(Bioreplicate.bioreplicateUniqueId.in_(bioreplicate_uuids))
+            ).all()
 
-        return selected_bioreplicate_ids, apply_log
+        return selected_bioreplicates, include_average, apply_log
 
     def get_df(self, bioreplicate_uuids, technique, subject_type):
         if subject_type == 'metabolite':
