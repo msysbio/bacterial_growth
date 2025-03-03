@@ -425,17 +425,17 @@ CREATE TABLE TechniquesPerExperiment (
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
 INSERT INTO MigrationVersions VALUES
-(1,'2024_11_11_160324_initial_schema','2025-02-25 10:17:52'),
-(2,'2024_11_11_164726_remove_unique_study_description_index','2025-02-25 10:17:52'),
-(3,'2024_11_21_115349_allow_null_medialink','2025-02-25 10:17:52'),
-(4,'2024_11_21_120444_fix_unique_primary_keys','2025-02-25 10:17:52'),
-(5,'2025_01_30_152951_fix_bioreplicates_metadata_unique_id','2025-02-25 10:17:52'),
-(6,'2025_02_04_134239_rename-chebi-id','2025-02-25 10:17:52'),
-(7,'2025_02_05_134203_make-project-and-study-uuids-unique','2025-02-25 10:17:52'),
-(8,'2025_02_12_170210_add-assembly-id-to-strains','2025-02-25 10:17:53'),
-(9,'2025_02_13_114748_increase_experiment_id_size','2025-02-25 10:17:53'),
-(10,'2025_02_13_120609_rename_comunity_to_community','2025-02-25 10:17:53'),
-(11,'2025_02_13_121409_rename_comunity_to_community_2','2025-02-25 10:17:53'),
-(12,'2025_02_13_163206_create_measurements','2025-02-25 10:17:53'),
-(13,'2025_02_17_161750_remove_duplicated_columns_from_metabolite_per_experiment','2025-02-25 10:17:53');
+(1,'2024_11_11_160324_initial_schema','2025-03-03 11:55:00'),
+(2,'2024_11_11_164726_remove_unique_study_description_index','2025-03-03 11:55:00'),
+(3,'2024_11_21_115349_allow_null_medialink','2025-03-03 11:55:00'),
+(4,'2024_11_21_120444_fix_unique_primary_keys','2025-03-03 11:55:00'),
+(5,'2025_01_30_152951_fix_bioreplicates_metadata_unique_id','2025-03-03 11:55:01'),
+(6,'2025_02_04_134239_rename-chebi-id','2025-03-03 11:55:01'),
+(7,'2025_02_05_134203_make-project-and-study-uuids-unique','2025-03-03 11:55:01'),
+(8,'2025_02_12_170210_add-assembly-id-to-strains','2025-03-03 11:55:01'),
+(9,'2025_02_13_114748_increase_experiment_id_size','2025-03-03 11:55:01'),
+(10,'2025_02_13_120609_rename_comunity_to_community','2025-03-03 11:55:01'),
+(11,'2025_02_13_121409_rename_comunity_to_community_2','2025-03-03 11:55:01'),
+(12,'2025_02_13_163206_create_measurements','2025-03-03 11:55:01'),
+(13,'2025_02_17_161750_remove_duplicated_columns_from_metabolite_per_experiment','2025-03-03 11:55:01');
 

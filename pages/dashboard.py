@@ -50,7 +50,7 @@ def dashboard_chart_fragment():
         if technique in ('16S rRNA-seq', 'FC per species'):
             show_log_toggle = True
             figs = form.generate_reads_figures(technique, args)
-        elif technique.startswith('Metabolites ('):
+        elif technique == 'Metabolites':
             # TODO (2025-03-02) Separate "technique" and "subject type"
             figs = form.generate_metabolite_figures(technique, args)
         else:

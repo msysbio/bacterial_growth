@@ -60,14 +60,14 @@ class Measurement(OrmBase):
         measurements = []
         reader = csv.DictReader(StringIO(csv_string), dialect='unix')
 
-        technique = None
+        techniques = []
         metabolites = {}
 
         for column in reader.fieldnames:
-            if column in {'Position', 'Biological_Replicate_id', 'Time', 'pH'}:
+            if column in {'Position', 'Biological_Replicate_id', 'Time'}:
                 continue
-            elif column in {'FC', 'OD'}:
-                technique = column
+            elif column in {'FC', 'OD', 'pH'}:
+                techniques.append(column)
             else:
                 # Metabolite, fetch chebi id
                 # TODO (2025-02-18) Fetch them from MetaboliteForExperiment, get chebi_id through there
@@ -84,24 +84,29 @@ class Measurement(OrmBase):
             bioreplicate_id = row['Biological_Replicate_id']
             bioreplicate_uuid = find_bioreplicate_uuid(db_session, study_id, bioreplicate_id)
 
-            if row[technique] == '':
-                # Missing measurement, skip
+            if bioreplicate_uuid is None:
+                # Missing bioreplicate, skip
                 continue
 
-            # Global measurement from the FC/OD column:
-            measurements.append(Self(
-                studyId=study_id,
-                bioreplicateUniqueId=bioreplicate_uuid,
-                position=row['Position'],
-                timeInSeconds=round(float(row['Time']) * 3600),
-                pH=row.get('pH', None),
-                # TODO: units are not configurable
-                unit='Cells/mL',
-                technique=technique,
-                absoluteValue=row[technique],
-                subjectType='bioreplicate',
-                subjectId=bioreplicate_uuid,
-            ))
+            # Global measurement from the FC/OD/pH column:
+            for technique in techniques:
+                if row[technique] == '':
+                    # Missing measurement, skip
+                    continue
+
+                measurements.append(Self(
+                    studyId=study_id,
+                    bioreplicateUniqueId=bioreplicate_uuid,
+                    position=row['Position'],
+                    timeInSeconds=round(float(row['Time']) * 3600),
+                    pH=row.get('pH', None),
+                    # TODO: units are not configurable
+                    unit='Cells/mL',
+                    technique=technique,
+                    absoluteValue=row[technique],
+                    subjectType='bioreplicate',
+                    subjectId=bioreplicate_uuid,
+                ))
 
             for (name, chebi_id) in metabolites.items():
                 if row[name] == '':
@@ -116,7 +121,8 @@ class Measurement(OrmBase):
                     pH=row.get('pH', None),
                     # TODO: units are not configurable
                     unit='mM',
-                    technique=f"Metabolites ({technique})",
+                    # TODO (2025-03-03) What is the actual technique?
+                    technique='Metabolites',
                     absoluteValue=row[name],
                     subjectType='metabolite',
                     subjectId=chebi_id,

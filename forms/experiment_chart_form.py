@@ -77,7 +77,7 @@ class ExperimentChartForm:
             else:
                 value_std = df['std']
 
-                if len(value_std) == 0:
+                if value_std.isnull().all():
                     # STD values were blank, don't draw error bars
                     value_std = None
 
