@@ -111,9 +111,11 @@ class Measurement(OrmBase):
 
             # Global measurement from the FC/OD/pH column:
             for technique in techniques:
+                value = row[technique]
+
                 if row[technique] == '':
-                    # Missing measurement, skip
-                    continue
+                    # Missing measurement:
+                    value = None
 
                 measurements.append(Self(
                     studyId=study_id,
@@ -124,15 +126,17 @@ class Measurement(OrmBase):
                     # TODO: units are not configurable
                     unit='Cells/mL',
                     technique=technique,
-                    absoluteValue=row[technique],
+                    absoluteValue=value,
                     subjectType='bioreplicate',
                     subjectId=bioreplicate_uuid,
                 ))
 
             for (name, chebi_id) in metabolites.items():
-                if row[name] == '':
-                    # Missing measurement, skip
-                    continue
+                value = row[name]
+
+                if value == '':
+                    # Missing measurement:
+                    value = None
 
                 measurements.append(Self(
                     position=row['Position'],
@@ -144,7 +148,7 @@ class Measurement(OrmBase):
                     unit='mM',
                     # TODO (2025-03-03) What is the actual technique?
                     technique='Metabolites',
-                    absoluteValue=row[name],
+                    absoluteValue=value,
                     subjectType='metabolite',
                     subjectId=chebi_id,
                 ))
@@ -186,8 +190,8 @@ class Measurement(OrmBase):
                     value = row.get(column_name, '')
 
                     if value == '':
-                        # Missing measurement, skip
-                        continue
+                        # Missing measurement:
+                        value = None
 
                     valueStd = row.get(f"{column_name}_std")
                     if valueStd == '':
