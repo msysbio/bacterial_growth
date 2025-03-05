@@ -72,14 +72,14 @@ class TestMeasurement(DatabaseTest):
         # Metabolite measurements
         self.assertEqual(
             [
-                (m.timeInHours, m.subjectId)
+                (m.timeInHours, m.subjectId, m.absoluteValue)
                 for m in measurements
                 if m.subjectType.value == "metabolite"
             ],
             [
-                (60, glucose_id), (60, trehalose_id),
-                (75, glucose_id),
-                (90, glucose_id), (90, trehalose_id),
+                (60, glucose_id, Decimal('50.0')), (60, trehalose_id, Decimal('70.0')),
+                (75, glucose_id, Decimal('30.0')), (75, trehalose_id, None),
+                (90, glucose_id, Decimal('10.0')), (90, trehalose_id, Decimal('10.0')),
             ]
         )
 
@@ -150,7 +150,7 @@ class TestMeasurement(DatabaseTest):
             ],
             [
                 (60, strain1_id, Decimal('100.23')), (60, strain2_id, Decimal('200.46')),
-                (75, strain2_id, Decimal('400.46')),
+                (75, strain1_id, None),              (75, strain2_id, Decimal('400.46')),
                 (90, strain1_id, Decimal('300.23')), (90, strain2_id, Decimal('600.46')),
             ]
         )
