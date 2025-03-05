@@ -7,7 +7,7 @@ from forms.experiment_chart_form import ExperimentChartForm
 from models.experiment import Experiment
 
 class TestExperimentChartForm(DatabaseTest):
-    def test_metabolite_chart(self):
+    def test_df_for_metabolite_chart(self):
         bioreplicate = self.create_bioreplicate()
 
         study_id          = bioreplicate['studyId']
@@ -47,7 +47,7 @@ class TestExperimentChartForm(DatabaseTest):
         )
         self.assertEqual(chart_df['subjectName'].tolist(), ['glucose', 'glucose', 'trehalose', 'trehalose'])
 
-    def test_strain_chart(self):
+    def test_df_for_strain_chart(self):
         bioreplicate = self.create_bioreplicate()
 
         study_id          = bioreplicate['studyId']
@@ -90,6 +90,122 @@ class TestExperimentChartForm(DatabaseTest):
             chart_df['subjectName'].tolist(),
             ['B. thetaiotaomicron', 'B. thetaiotaomicron', 'R. intestinalis', 'R. intestinalis'],
         )
+
+    def test_average_df_for_strain_chart(self):
+        experiment      = self.create_experiment()
+        study_id        = experiment['studyId']
+        experiment_uuid = experiment['experimentUniqueId']
+
+        bioreplicate1 = self.create_bioreplicate(experimentUniqueId=experiment_uuid, studyId=study_id)
+        bioreplicate2 = self.create_bioreplicate(experimentUniqueId=experiment_uuid, studyId=study_id)
+
+        self.create_strain(strainId=1, memberName='R. intestinalis', studyId=study_id)
+
+        experiment = self.db_session.get(Experiment, experiment_uuid)
+        chart = ExperimentChartForm(experiment)
+
+        shared_params = {
+            'studyId': study_id,
+            'subjectId': 1,
+            'subjectType': 'strain',
+            'technique': '16S',
+        }
+
+        # First time point:
+        self.create_measurement(
+            bioreplicateUniqueId=bioreplicate1['bioreplicateUniqueId'],
+            timeInSeconds=3600,
+            absoluteValue=100.0,
+            **shared_params,
+        )
+        self.create_measurement(
+            bioreplicateUniqueId=bioreplicate2['bioreplicateUniqueId'],
+            timeInSeconds=3600,
+            absoluteValue=200.0,
+            **shared_params,
+        )
+
+        # Second time point:
+        self.create_measurement(
+            bioreplicateUniqueId=bioreplicate1['bioreplicateUniqueId'],
+            timeInSeconds=7200,
+            absoluteValue=200.0,
+            **shared_params,
+        )
+        self.create_measurement(
+            bioreplicateUniqueId=bioreplicate2['bioreplicateUniqueId'],
+            timeInSeconds=7200,
+            absoluteValue=250.0,
+            **shared_params,
+        )
+
+        self.db_session.commit()
+
+        chart_df = chart.get_average_df(technique='16S', subject_type='strain')
+
+        self.assertEqual(chart_df['time'].tolist(), [1, 2])
+        self.assertEqual(chart_df['value'].tolist(), [150.0, 225.0])
+
+    def test_average_df_for_bioreplicate_chart(self):
+        experiment      = self.create_experiment()
+        study_id        = experiment['studyId']
+        experiment_uuid = experiment['experimentUniqueId']
+
+        bioreplicate1 = self.create_bioreplicate(experimentUniqueId=experiment_uuid, studyId=study_id)
+        bioreplicate2 = self.create_bioreplicate(experimentUniqueId=experiment_uuid, studyId=study_id)
+
+        self.create_strain(strainId=1, memberName='R. intestinalis', studyId=study_id)
+
+        experiment = self.db_session.get(Experiment, experiment_uuid)
+        chart = ExperimentChartForm(experiment)
+
+        shared_params = {
+            'studyId': study_id,
+            'technique': '16S',
+        }
+
+        # First time point:
+        self.create_measurement(
+            bioreplicateUniqueId=bioreplicate1['bioreplicateUniqueId'],
+            subjectId=bioreplicate1['bioreplicateUniqueId'],
+            subjectType='bioreplicate',
+            timeInSeconds=3600,
+            absoluteValue=200.0,
+            **shared_params,
+        )
+        self.create_measurement(
+            bioreplicateUniqueId=bioreplicate2['bioreplicateUniqueId'],
+            subjectId=bioreplicate2['bioreplicateUniqueId'],
+            subjectType='bioreplicate',
+            timeInSeconds=3600,
+            absoluteValue=300.0,
+            **shared_params,
+        )
+
+        # Second time point:
+        self.create_measurement(
+            bioreplicateUniqueId=bioreplicate1['bioreplicateUniqueId'],
+            subjectId=bioreplicate1['bioreplicateUniqueId'],
+            subjectType='bioreplicate',
+            timeInSeconds=7200,
+            absoluteValue=100.0,
+            **shared_params,
+        )
+        self.create_measurement(
+            bioreplicateUniqueId=bioreplicate2['bioreplicateUniqueId'],
+            subjectId=bioreplicate2['bioreplicateUniqueId'],
+            subjectType='bioreplicate',
+            timeInSeconds=7200,
+            absoluteValue=350.0,
+            **shared_params,
+        )
+
+        self.db_session.commit()
+
+        chart_df = chart.get_average_df(technique='16S', subject_type='bioreplicate')
+
+        self.assertEqual(chart_df['time'].tolist(), [1, 2])
+        self.assertEqual(chart_df['value'].tolist(), [250.0, 225.0])
 
 
 if __name__ == '__main__':

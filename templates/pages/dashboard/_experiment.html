@@ -35,7 +35,7 @@
             </div>
           {% endfor %}
 
-          {% set key = "bioreplicate:{}:_average".format(form.experiment_id) %}
+          {% set key = "bioreplicate:{}:_average".format(form.experiment.experimentId) %}
           <div class="form-row">
             <input
               type="checkbox"

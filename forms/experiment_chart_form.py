@@ -213,7 +213,12 @@ class ExperimentChartForm:
             return pd.read_sql(statement, db_conn)
 
     def get_average_df(self, technique, subject_type):
-        subjectName, subjectJoin = Measurement.subject_join(subject_type)
+        if subject_type == 'bioreplicate':
+            subjectName = literal_column(f"'Average {self.experiment.experimentId}'").label('subjectName')
+            subjectJoin = None
+        else:
+            subjectName, subjectJoin = Measurement.subject_join(subject_type)
+            grouping = (Measurement.timeInSeconds, subjectName)
 
         query = (
             sql.select(
@@ -225,7 +230,6 @@ class ExperimentChartForm:
             )
             .join(Bioreplicate, Measurement.bioreplicateUniqueId == Bioreplicate.bioreplicateUniqueId)
             .join(Experiment, Bioreplicate.experimentUniqueId == Experiment.experimentUniqueId)
-            .join(*subjectJoin)
             .where(
                 Measurement.technique == technique,
                 Measurement.subjectType == subject_type,
@@ -234,6 +238,9 @@ class ExperimentChartForm:
             .group_by(Measurement.timeInSeconds, subjectName)
             .order_by(sql.text('subjectName'), Measurement.timeInSeconds)
         )
+
+        if subjectJoin is not None:
+            query = query.join(*subjectJoin)
 
         with get_connection() as db_conn:
             statement = query.compile(dialect=mysql.dialect())

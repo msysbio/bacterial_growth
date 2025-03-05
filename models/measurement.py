@@ -76,7 +76,6 @@ class Measurement(OrmBase):
 
         return (name, join)
 
-
     @classmethod
     def insert_from_growth_csv(Self, db_session, study_id, csv_string):
         measurements = []
