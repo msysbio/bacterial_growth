@@ -160,7 +160,7 @@ class TestMeasurement(DatabaseTest):
             [
                 (m.timeInHours, int(m.subjectId), m.absoluteValue)
                 for m in sorted(measurements, key=lambda m: (m.timeInHours, m.subjectId))
-                if m.technique == "FC per species"
+                if m.technique == "FC counts per species"
             ],
             [
                 (60, strain1_id, Decimal('100.00')), (60, strain2_id, Decimal('200.00')),

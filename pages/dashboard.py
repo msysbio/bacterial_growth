@@ -47,7 +47,7 @@ def dashboard_chart_fragment():
         experiment = db_session.get(Experiment, experimentUniqueId)
         form       = ExperimentChartForm(experiment)
 
-        if technique in ('16S rRNA-seq', 'FC per species'):
+        if technique in ('16S rRNA-seq', 'FC counts per species'):
             show_log_toggle = True
             figs = form.generate_reads_figures(technique, args)
         elif technique == 'Metabolites':
