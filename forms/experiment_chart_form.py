@@ -31,14 +31,13 @@ class ExperimentChartForm:
             ).scalars()
 
     def generate_growth_figures(self, technique, args):
-        selected_bioreplicates, include_average, _ = self.extract_args(args)
+        selected_bioreplicates, include_average, _ = self._extract_args(args)
         bioreplicate_uuids = [b.bioreplicateUniqueId for b in selected_bioreplicates]
 
         df = self.get_df(bioreplicate_uuids, technique, 'bioreplicate')
         if include_average:
             average_df = self.get_average_df(technique, 'bioreplicate')
-            print(average_df)
-            df = pd.concat((df, average_df))
+            df         = pd.concat((df, average_df))
 
         fig = self._render_figure(
             df,
@@ -53,7 +52,7 @@ class ExperimentChartForm:
         return [fig]
 
     def generate_reads_figures(self, technique, args):
-        selected_bioreplicates, include_average, apply_log = self.extract_args(args)
+        selected_bioreplicates, include_average, apply_log = self._extract_args(args)
 
         figs = []
         for index, bioreplicate in enumerate(selected_bioreplicates):
@@ -64,22 +63,7 @@ class ExperimentChartForm:
             else:
                 title = f'FC Counts: {bioreplicate.bioreplicateId} per Microbial Strain'
 
-            value_label = 'Cells/mL'
-            value_std = None
-
-            if apply_log[index]:
-                value_label = 'log(Cells)/mL'
-
-                # If we have 0 values, we'll get NaNs, which is okay for
-                # rendering purposes, so we ignore the error:
-                with np.errstate(divide='ignore'):
-                    df['value'] = np.log10(df['value'])
-            else:
-                value_std = df['std']
-
-                if value_std.isnull().all():
-                    # STD values were blank, don't draw error bars
-                    value_std = None
+            value_label, value_std = self._transform_values(df, log=apply_log[index])
 
             figs.append(self._render_figure(
                 df,
@@ -97,19 +81,7 @@ class ExperimentChartForm:
             df = self.get_average_df(technique, 'strain')
 
             # Last "apply_log" entry (TODO hacky):
-            if apply_log[-1]:
-                value_label = 'log(Cells)/mL'
-
-                # If we have 0 values, we'll get NaNs, which is okay for
-                # rendering purposes, so we ignore the error:
-                with np.errstate(divide='ignore'):
-                    df['value'] = np.log10(df['value'])
-            else:
-                value_std = df['std']
-
-                if value_std.isnull().all():
-                    # STD values were blank, don't draw error bars
-                    value_std = None
+            value_label, value_std = self._transform_values(df, log=apply_log[-1])
 
             if technique == '16S rRNA-seq':
                 title = f'16S reads: Average {self.experiment.experimentId} per Microbial Strain'
@@ -131,7 +103,7 @@ class ExperimentChartForm:
         return figs
 
     def generate_metabolite_figures(self, technique, args):
-        selected_bioreplicates, include_average, _ = self.extract_args(args)
+        selected_bioreplicates, include_average, _ = self._extract_args(args)
 
         figs = []
         for bioreplicate in selected_bioreplicates:
@@ -149,7 +121,6 @@ class ExperimentChartForm:
 
         if include_average:
             df = self.get_average_df(technique, 'metabolite')
-            print(df)
 
             figs.append(self._render_figure(
                 df,
@@ -165,7 +136,7 @@ class ExperimentChartForm:
 
         return figs
 
-    def extract_args(self, args):
+    def _extract_args(self, args):
         bioreplicate_uuids = []
         include_average = False
         apply_log = [False for _ in args]
@@ -245,6 +216,26 @@ class ExperimentChartForm:
         with get_connection() as db_conn:
             statement = query.compile(dialect=mysql.dialect())
             return pd.read_sql(statement, db_conn)
+
+    def _transform_values(self, df, *, log=False):
+        value_label = 'Cells/mL'
+        value_std = None
+
+        if log:
+            value_label = 'log(Cells)/mL'
+
+            # If we have 0 values, we'll get NaNs, which is okay for
+            # rendering purposes, so we ignore the error:
+            with np.errstate(divide='ignore'):
+                df['value'] = np.log10(df['value'])
+        else:
+            value_std = df['std']
+
+            if value_std.isnull().all():
+                # STD values were blank, don't draw error bars
+                value_std = None
+
+        return value_label, value_std
 
     def _render_figure(self, df, **params):
         return px.line(
