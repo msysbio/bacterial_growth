@@ -164,9 +164,19 @@ class Measurement(OrmBase):
         reader = csv.DictReader(StringIO(csv_string), dialect='unix')
         strains = {}
 
+        technique_mapping = {
+            'reads': '16S rRNA-seq',
+            'counts': 'FC counts per species',
+            'Plate_counts': 'plates',
+        }
+        available_technique_mapping = {}
+
         strain_names = set()
-        for suffix in ('_reads', '_counts', '_Plate_counts'):
-            strain_names |= {c.removesuffix(suffix) for c in reader.fieldnames if c.endswith(suffix)}
+        for suffix in ('reads', 'counts', '_Plate_counts'):
+            for c in reader.fieldnames:
+                if c.endswith(f'_{suffix}'):
+                    strain_names.add(c.removesuffix(f'_{suffix}'))
+                    available_technique_mapping[suffix] = technique_mapping[suffix]
 
         for strain_name in strain_names:
             strains[strain_name] = Strain.find_for_study(db_session, study_id, strain_name)
@@ -178,17 +188,10 @@ class Measurement(OrmBase):
             bioreplicate_uuid = find_bioreplicate_uuid(db_session, study_id, bioreplicate_id)
 
             for strain_name, strain_id in strains.items():
-                technique_mapping = [
-                    ('reads', '16S rRNA-seq'),
-                    ('counts', 'FC counts per species'),
-                    ('Plate_counts', 'plates'),
-                ]
-
-                for measurement_type, technique in technique_mapping:
+                for measurement_type, technique in available_technique_mapping.items():
                     column_name = f"{strain_name}_{measurement_type}"
                     value = row.get(column_name, '')
 
-                    # TODO (2025-03-05) If technique is completely missing, it generates empty values, check entire column
                     # TODO (2025-03-05) Class that translates spreadsheet terminology to code terminology (reads, std, etc)
 
                     if value == '':

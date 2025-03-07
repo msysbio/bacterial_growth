@@ -1,17 +1,13 @@
-import re
-
 import plotly.express as px
 import numpy as np
 import pandas as pd
 import sqlalchemy as sql
 import sqlalchemy.dialects.mysql as mysql
-from sqlalchemy.sql.expression import literal_column, literal
+from sqlalchemy.sql.expression import literal_column
 
 from db import get_connection, get_session
 from models.experiment import Experiment
 from models.measurement import Measurement
-from models.metabolite import Metabolite
-from models.strain import Strain
 from models.bioreplicate import Bioreplicate
 
 PLOTLY_TEMPLATE = 'plotly_white'
@@ -54,14 +50,14 @@ class ExperimentChartForm:
     def generate_reads_figures(self, technique, args):
         selected_bioreplicates, include_average, apply_log = self._extract_args(args)
 
+        if technique == '16S rRNA-seq':
+            measurement_label = '16S reads'
+        else:
+            measurement_label = 'FC Counts'
+
         figs = []
         for index, bioreplicate in enumerate(selected_bioreplicates):
             df = self.get_df([bioreplicate.bioreplicateUniqueId], technique, 'strain')
-
-            if technique == '16S rRNA-seq':
-                title = f'16S reads: {bioreplicate.bioreplicateId} per Microbial Strain'
-            else:
-                title = f'FC Counts: {bioreplicate.bioreplicateId} per Microbial Strain'
 
             value_label, value_std = self._transform_values(df, log=apply_log[index])
 
@@ -69,7 +65,7 @@ class ExperimentChartForm:
                 df,
                 # TODO (2025-03-03) STD should be handled consistently with apply_log
                 error_y=value_std,
-                title=title,
+                title=f'{measurement_label}: {bioreplicate.bioreplicateId} per Microbial Strain',
                 labels={
                     'time': 'Hours',
                     'value': value_label,
@@ -83,16 +79,11 @@ class ExperimentChartForm:
             # Last "apply_log" entry (TODO hacky):
             value_label, value_std = self._transform_values(df, log=apply_log[-1])
 
-            if technique == '16S rRNA-seq':
-                title = f'16S reads: Average {self.experiment.experimentId} per Microbial Strain'
-            else:
-                title = f'FC Counts: Average {self.experiment.experimentId} per Microbial Strain'
-
             figs.append(self._render_figure(
                 df,
                 # TODO (2025-03-03) STD should be handled consistently with apply_log
                 error_y=value_std,
-                title=title,
+                title=f'{measurement_label}: Average {self.experiment.experimentId} per Microbial Strain',
                 labels={
                     'time': 'Hours',
                     'value': value_label,
@@ -135,7 +126,6 @@ class ExperimentChartForm:
                 },
             ))
 
-
         return figs
 
     def _extract_args(self, args):
@@ -163,15 +153,12 @@ class ExperimentChartForm:
     def get_df(self, bioreplicate_uuids, technique, subject_type):
         subjectName, subjectJoin = Measurement.subject_join(subject_type)
 
-        # TODO (2025-03-05) Consider removing Bioreplicate.bioreplicateId
-
         query = (
             sql.select(
                 (Measurement.timeInSeconds // 3600).label("time"),
                 Measurement.value,
                 Measurement.std,
                 subjectName,
-                Bioreplicate.bioreplicateId,
             )
             .join(Bioreplicate)
             .join(*subjectJoin)
@@ -189,11 +176,10 @@ class ExperimentChartForm:
 
     def get_average_df(self, technique, subject_type):
         if subject_type == 'bioreplicate':
-            subjectName = literal_column(f"'Average {self.experiment.experimentId}'").label('subjectName')
+            subjectName = literal_column('CONCAT("Average ", Experiments.experimentId)').label('subjectName')
             subjectJoin = None
         else:
             subjectName, subjectJoin = Measurement.subject_join(subject_type)
-            grouping = (Measurement.timeInSeconds, subjectName)
 
         query = (
             sql.select(
@@ -201,7 +187,6 @@ class ExperimentChartForm:
                 sql.func.avg(Measurement.value).label("value"),
                 sql.func.stddev(Measurement.value).label("std"),
                 subjectName,
-                literal_column('CONCAT("Average ", Experiments.experimentId)').label("bioreplicateId"),
             )
             .join(Bioreplicate)
             .join(Experiment)

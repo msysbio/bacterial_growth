@@ -96,6 +96,12 @@ class TestMeasurement(DatabaseTest):
             ]
         )
 
+        # No measurements available for OD, since it wasn't in the CSV:
+        self.assertEqual(
+            [m.timeInHours for m in measurements if m.technique == "OD"],
+            []
+        )
+
     def test_import_reads_from_csv(self):
         study_id = self.create_study()['studyId']
         bioreplicate = self.create_bioreplicate(
@@ -165,6 +171,12 @@ class TestMeasurement(DatabaseTest):
                 (75, strain1_id, Decimal('200.00')), (75, strain2_id, Decimal('400.00')),
                 (90, strain1_id, Decimal('300.00')), (90, strain2_id, Decimal('600.00')),
             ]
+        )
+
+        # No measurements available for "plates", since there were no _Plate_counts in the CSV:
+        self.assertEqual(
+            [m.timeInHours for m in measurements if m.technique == "plates"],
+            []
         )
 
 
