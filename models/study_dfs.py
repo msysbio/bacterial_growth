@@ -37,13 +37,13 @@ def dynamical_query(all_advance_query):
                     SELECT projectUniqueID
                     FROM Project
                     WHERE projectId = '{project_id}'
-                    )
+                )
                 """
             elif query_dict['option'] == 'Study Name':
                 study_name = query_dict['value'].lower()
                 where_clause = f"""
-                FROM Study
-                WHERE LOWER(studyName) LIKE '%{study_name}%'
+                    FROM Study
+                    WHERE LOWER(studyName) LIKE '%{study_name}%'
                 """
             elif query_dict['option'] == 'Study ID':
                 study_id = query_dict['value']

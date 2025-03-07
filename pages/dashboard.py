@@ -7,9 +7,6 @@ from models.study import Study
 from models.experiment import Experiment
 
 
-PLOTLY_TEMPLATE = 'plotly_white'
-
-
 def dashboard_index_page():
     studyName        = None
     studyId          = request.args.get('studyId')

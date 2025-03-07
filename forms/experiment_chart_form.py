@@ -122,6 +122,8 @@ class ExperimentChartForm:
         if include_average:
             df = self.get_average_df(technique, 'metabolite')
 
+            # TODO (2025-03-05) Instead of hardcoding, add units
+
             figs.append(self._render_figure(
                 df,
                 error_y=df['std'],
@@ -161,15 +163,17 @@ class ExperimentChartForm:
     def get_df(self, bioreplicate_uuids, technique, subject_type):
         subjectName, subjectJoin = Measurement.subject_join(subject_type)
 
+        # TODO (2025-03-05) Consider removing Bioreplicate.bioreplicateId
+
         query = (
             sql.select(
                 (Measurement.timeInSeconds // 3600).label("time"),
-                Measurement.absoluteValue.label("value"),
-                Measurement.absoluteValueStd.label("std"),
+                Measurement.value,
+                Measurement.std,
                 subjectName,
                 Bioreplicate.bioreplicateId,
             )
-            .join(Bioreplicate, Measurement.bioreplicateUniqueId == Bioreplicate.bioreplicateUniqueId)
+            .join(Bioreplicate)
             .join(*subjectJoin)
             .where(
                 Measurement.bioreplicateUniqueId.in_(bioreplicate_uuids),
@@ -194,13 +198,13 @@ class ExperimentChartForm:
         query = (
             sql.select(
                 (Measurement.timeInSeconds // 3600).label("time"),
-                sql.func.avg(Measurement.absoluteValue).label("value"),
-                sql.func.stddev(Measurement.absoluteValue).label("std"),
+                sql.func.avg(Measurement.value).label("value"),
+                sql.func.stddev(Measurement.value).label("std"),
                 subjectName,
                 literal_column('CONCAT("Average ", Experiments.experimentId)').label("bioreplicateId"),
             )
-            .join(Bioreplicate, Measurement.bioreplicateUniqueId == Bioreplicate.bioreplicateUniqueId)
-            .join(Experiment, Bioreplicate.experimentUniqueId == Experiment.experimentUniqueId)
+            .join(Bioreplicate)
+            .join(Experiment)
             .where(
                 Measurement.technique == technique,
                 Measurement.subjectType == subject_type,

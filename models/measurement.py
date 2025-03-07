@@ -51,9 +51,8 @@ class Measurement(OrmBase):
     # TODO (2025-02-13) Consider an enum
     technique: Mapped[str] = mapped_column(String(100), nullable=False)
 
-    absoluteValue:    Mapped[Decimal] = mapped_column(Numeric(20, 2), nullable=True)
-    absoluteValueStd: Mapped[Decimal] = mapped_column(Numeric(20, 2), nullable=True)
-    relativeValue:    Mapped[Decimal] = mapped_column(Numeric(10, 9), nullable=True)
+    value: Mapped[Decimal] = mapped_column(Numeric(20, 2), nullable=True)
+    std:   Mapped[Decimal] = mapped_column(Numeric(20, 2), nullable=True)
 
     subjectType: Mapped[str] = mapped_column(Enum(SubjectType), nullable=False)
     subjectId:   Mapped[str] = mapped_column(String(100),       nullable=False)
@@ -126,7 +125,7 @@ class Measurement(OrmBase):
                     # TODO: units are not configurable
                     unit='Cells/mL',
                     technique=technique,
-                    absoluteValue=value,
+                    value=value,
                     subjectType='bioreplicate',
                     subjectId=bioreplicate_uuid,
                 ))
@@ -139,16 +138,16 @@ class Measurement(OrmBase):
                     value = None
 
                 measurements.append(Self(
-                    position=row['Position'],
-                    timeInSeconds=round(float(row['Time']) * 3600),
                     studyId=study_id,
                     bioreplicateUniqueId=bioreplicate_uuid,
+                    position=row['Position'],
+                    timeInSeconds=round(float(row['Time']) * 3600),
                     pH=row.get('pH', None),
                     # TODO: units are not configurable
                     unit='mM',
                     # TODO (2025-03-03) What is the actual technique?
                     technique='Metabolites',
-                    absoluteValue=value,
+                    value=value,
                     subjectType='metabolite',
                     subjectId=chebi_id,
                 ))
@@ -189,6 +188,9 @@ class Measurement(OrmBase):
                     column_name = f"{strain_name}_{measurement_type}"
                     value = row.get(column_name, '')
 
+                    # TODO (2025-03-05) If technique is completely missing, it generates empty values, check entire column
+                    # TODO (2025-03-05) Class that translates spreadsheet terminology to code terminology (reads, std, etc)
+
                     if value == '':
                         # Missing measurement:
                         value = None
@@ -206,9 +208,8 @@ class Measurement(OrmBase):
                         # TODO: units are not configurable
                         unit='Cells/mL',
                         technique=technique,
-                        absoluteValue=value,
-                        absoluteValueStd=valueStd,
-                        relativeValue=None,
+                        value=value,
+                        std=valueStd,
                         subjectType='strain',
                         subjectId=strain_id,
                     ))

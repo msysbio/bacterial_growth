@@ -23,7 +23,7 @@ class TestExperimentChartForm(DatabaseTest):
             'studyId': study_id,
             'bioreplicateUniqueId': bioreplicate_uuid,
             'technique': 'FC',
-            'absoluteValue': 200.0,
+            'value': 200.0,
         }
         self.create_measurement(subjectId='1', subjectType='metabolite', timeInSeconds=3600, **shared_params)
         self.create_measurement(subjectId='1', subjectType='metabolite', timeInSeconds=7200, **shared_params)
@@ -63,7 +63,7 @@ class TestExperimentChartForm(DatabaseTest):
             'studyId': study_id,
             'bioreplicateUniqueId': bioreplicate_uuid,
             'technique': '16S',
-            'absoluteValue': 200.0,
+            'value': 200.0,
         }
         self.create_measurement(subjectId='1', subjectType='strain', timeInSeconds=3600, **shared_params)
         self.create_measurement(subjectId='1', subjectType='strain', timeInSeconds=7200, **shared_params)
@@ -115,13 +115,13 @@ class TestExperimentChartForm(DatabaseTest):
         self.create_measurement(
             bioreplicateUniqueId=bioreplicate1['bioreplicateUniqueId'],
             timeInSeconds=3600,
-            absoluteValue=100.0,
+            value=100.0,
             **shared_params,
         )
         self.create_measurement(
             bioreplicateUniqueId=bioreplicate2['bioreplicateUniqueId'],
             timeInSeconds=3600,
-            absoluteValue=200.0,
+            value=200.0,
             **shared_params,
         )
 
@@ -129,13 +129,13 @@ class TestExperimentChartForm(DatabaseTest):
         self.create_measurement(
             bioreplicateUniqueId=bioreplicate1['bioreplicateUniqueId'],
             timeInSeconds=7200,
-            absoluteValue=200.0,
+            value=200.0,
             **shared_params,
         )
         self.create_measurement(
             bioreplicateUniqueId=bioreplicate2['bioreplicateUniqueId'],
             timeInSeconds=7200,
-            absoluteValue=250.0,
+            value=250.0,
             **shared_params,
         )
 
@@ -170,7 +170,7 @@ class TestExperimentChartForm(DatabaseTest):
             subjectId=bioreplicate1['bioreplicateUniqueId'],
             subjectType='bioreplicate',
             timeInSeconds=3600,
-            absoluteValue=200.0,
+            value=200.0,
             **shared_params,
         )
         self.create_measurement(
@@ -178,7 +178,7 @@ class TestExperimentChartForm(DatabaseTest):
             subjectId=bioreplicate2['bioreplicateUniqueId'],
             subjectType='bioreplicate',
             timeInSeconds=3600,
-            absoluteValue=300.0,
+            value=300.0,
             **shared_params,
         )
 
@@ -188,7 +188,7 @@ class TestExperimentChartForm(DatabaseTest):
             subjectId=bioreplicate1['bioreplicateUniqueId'],
             subjectType='bioreplicate',
             timeInSeconds=7200,
-            absoluteValue=100.0,
+            value=100.0,
             **shared_params,
         )
         self.create_measurement(
@@ -196,7 +196,7 @@ class TestExperimentChartForm(DatabaseTest):
             subjectId=bioreplicate2['bioreplicateUniqueId'],
             subjectType='bioreplicate',
             timeInSeconds=7200,
-            absoluteValue=350.0,
+            value=350.0,
             **shared_params,
         )
 

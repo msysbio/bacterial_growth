@@ -172,7 +172,7 @@ class DatabaseTest(unittest.TestCase):
             'timeInSeconds':        3600,
             'unit':                 'unknown',
             'technique':            'FC',
-            'absoluteValue':        Decimal('100.000'),
+            'value':                Decimal('100.000'),
             'subjectId':            subject_id,
             'subjectType':          subject_type,
             **params,

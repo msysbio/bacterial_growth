@@ -23,8 +23,7 @@ class TestMeasurement(DatabaseTest):
             pH=Decimal('7.4'),
             unit='Cells/mL',
             technique='FC',
-            absoluteValue=Decimal('100_000.0'),
-            relativeValue=None,
+            value=Decimal('100_000.0'),
             subjectType='strain',
             subjectId=strain_id,
         )
@@ -72,7 +71,7 @@ class TestMeasurement(DatabaseTest):
         # Metabolite measurements
         self.assertEqual(
             [
-                (m.timeInHours, m.subjectId, m.absoluteValue)
+                (m.timeInHours, m.subjectId, m.value)
                 for m in measurements
                 if m.subjectType.value == "metabolite"
             ],
@@ -86,7 +85,7 @@ class TestMeasurement(DatabaseTest):
         # Bioreplicate (total) measurement
         self.assertEqual(
             [
-                (m.timeInHours, m.subjectId, m.absoluteValue)
+                (m.timeInHours, m.subjectId, m.value)
                 for m in measurements
                 if m.subjectType.value == "bioreplicate"
             ],
@@ -141,24 +140,23 @@ class TestMeasurement(DatabaseTest):
         )
 
         # Reads measurements
-        # Note: truncated to 2 decimal points
         self.assertEqual(
             [
-                (m.timeInHours, int(m.subjectId), m.absoluteValue)
+                (m.timeInHours, int(m.subjectId), m.value)
                 for m in sorted(measurements, key=lambda m: (m.timeInHours, m.subjectId))
                 if m.technique == "16S rRNA-seq"
             ],
             [
-                (60, strain1_id, Decimal('100.23')), (60, strain2_id, Decimal('200.46')),
-                (75, strain1_id, None),              (75, strain2_id, Decimal('400.46')),
-                (90, strain1_id, Decimal('300.23')), (90, strain2_id, Decimal('600.46')),
+                (60, strain1_id, Decimal('100.234')), (60, strain2_id, Decimal('200.456')),
+                (75, strain1_id, None),               (75, strain2_id, Decimal('400.456')),
+                (90, strain1_id, Decimal('300.234')), (90, strain2_id, Decimal('600.456')),
             ]
         )
 
         # Counts measurements
         self.assertEqual(
             [
-                (m.timeInHours, int(m.subjectId), m.absoluteValue)
+                (m.timeInHours, int(m.subjectId), m.value)
                 for m in sorted(measurements, key=lambda m: (m.timeInHours, m.subjectId))
                 if m.technique == "FC counts per species"
             ],

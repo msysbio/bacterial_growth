@@ -228,9 +228,8 @@ CREATE TABLE Measurements (
   pH varchar(100) DEFAULT NULL,
   unit varchar(100) NOT NULL,
   technique varchar(100) NOT NULL,
-  absoluteValue decimal(20,3) DEFAULT NULL,
-  absoluteValueStd decimal(20,3) DEFAULT NULL,
-  relativeValue decimal(10,9) DEFAULT NULL,
+  `value` decimal(20,3) DEFAULT NULL,
+  std decimal(20,3) DEFAULT NULL,
   subjectType varchar(100) NOT NULL,
   subjectId varchar(100) NOT NULL,
   PRIMARY KEY (id),
@@ -436,6 +435,6 @@ INSERT INTO MigrationVersions VALUES
 (9,'2025_02_13_114748_increase_experiment_id_size','2025-03-03 12:20:13'),
 (10,'2025_02_13_120609_rename_comunity_to_community','2025-03-03 12:20:13'),
 (11,'2025_02_13_121409_rename_comunity_to_community_2','2025-03-03 12:20:13'),
-(12,'2025_02_13_163206_create_measurements','2025-03-03 12:20:13'),
-(13,'2025_02_17_161750_remove_duplicated_columns_from_metabolite_per_experiment','2025-03-03 12:20:13');
+(14,'2025_02_13_163206_create_measurements','2025-03-07 10:26:15'),
+(15,'2025_02_17_161750_remove_duplicated_columns_from_metabolite_per_experiment','2025-03-07 10:26:15');
 

@@ -12,9 +12,8 @@ def up(conn):
             pH                   VARCHAR(100),
             unit                 VARCHAR(100) NOT NULL,
             technique            VARCHAR(100) NOT NULL,
-            absoluteValue        DECIMAL(20, 3),
-            absoluteValueStd     DECIMAL(20, 3),
-            relativeValue        DECIMAL(10, 9),
+            value                DECIMAL(20, 3),
+            std                  DECIMAL(20, 3),
             subjectType          VARCHAR(100) NOT NULL,
             subjectId            VARCHAR(100) NOT NULL,
 
