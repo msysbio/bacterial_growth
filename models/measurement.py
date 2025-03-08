@@ -23,6 +23,7 @@ from models.orm_base import OrmBase
 from models.bioreplicate import Bioreplicate
 from models.strain import Strain
 from models.metabolite import Metabolite
+from db import get_session
 from lib.db import execute_text
 
 
@@ -60,6 +61,16 @@ class Measurement(OrmBase):
     @hybrid_property
     def timeInHours(self):
         return self.timeInSeconds // 3600
+
+    @classmethod
+    def get_subject(Self, subject_id, subject_type):
+        with get_session() as db_session:
+            if subject_type == 'metabolite':
+                return db_session.get(Metabolite, subject_id)
+            elif subject_type == 'strain':
+                return db_session.get(Strain, subject_id)
+            elif subject_type == 'bioreplicate':
+                return db_session.get(Bioreplicate, subject_id)
 
     def subject_join(subject_type):
         if subject_type == 'metabolite':

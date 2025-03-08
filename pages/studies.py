@@ -1,13 +1,23 @@
 import zipfile
 from io import BytesIO
+import functools
 
 from flask import render_template, send_file, request
+import sqlalchemy as sql
 
 import models.study_dfs as study_dfs
-from models.experiment_df_wrapper import ExperimentDfWrapper
+from models.study import Study
+from models.experiment import Experiment
+from models.bioreplicate import Bioreplicate
+from models.measurement import Measurement
 
-from legacy.chart_data import get_chart_data
-from db import get_connection
+from db import get_connection, get_session
+from lib.db import execute_into_df
+
+# TODO (2025-03-08) Average bioreplicate
+# TODO (2025-03-08) Extract to class
+# TODO (2025-03-08) Counts, reads
+# TODO (2025-03-08) Write tests
 
 
 def study_show_page(studyId):
@@ -27,29 +37,30 @@ def study_show_page(studyId):
 
 
 def study_export_page(studyId):
-    with get_connection() as conn:
-        study = study_dfs.get_general_info(studyId, conn)
+    with get_session() as db_session:
+        study = db_session.get(Study, studyId)
 
-        study['experiments']           = study_dfs.get_experiments(studyId, conn)
-        study['biological_replicates'] = study_dfs.get_biological_replicates(studyId, conn)
-
-        return render_template("pages/studies/export.html", study=study, studyId=studyId)
+        return render_template(
+            "pages/studies/export.html",
+            study=study,
+            studyId=studyId,
+        )
 
 
 def study_export_preview_fragment(studyId):
     sep = extract_csv_separator(request.args)
 
-    with get_connection() as conn:
+    with get_session() as db_session:
         csv_previews = []
-        selected_bioreplicate_ids = request.args.getlist('bioreplicates')
+        bioreplicate_uuids = request.args.getlist('bioreplicates')
 
-        for experiment in get_experiment_data_for_export(studyId, conn, selected_bioreplicate_ids):
-            if len(experiment.df) == 0:
+        for experiment, experiment_df in get_experiment_data_for_export(studyId, db_session, bioreplicate_uuids):
+            if len(experiment_df) == 0:
                 continue
 
-            csv = experiment.df[:5].to_csv(index=False, sep=sep)
+            csv = experiment_df[:5].to_csv(index=False, sep=sep)
             csv_previews.append(f"""
-                <h3>{experiment.experiment_id}.csv ({len(experiment.df)} rows)</h3>
+                <h3>{experiment.experimentId}.csv ({len(experiment_df)} rows)</h3>
                 <pre>{csv}</pre>
             """)
 
@@ -59,21 +70,22 @@ def study_export_preview_fragment(studyId):
 def study_download_zip(studyId):
     sep = extract_csv_separator(request.args)
 
-    with get_connection() as conn:
+    with get_session() as db_session:
         csv_data = []
-        selected_bioreplicate_ids = request.args.getlist('bioreplicates')
-        experiments = get_experiment_data_for_export(studyId, conn, selected_bioreplicate_ids)
+        bioreplicate_uuids = request.args.getlist('bioreplicates')
+        experiments = []
 
-        for experiment in experiments:
-            if len(experiment.df) == 0:
+        for experiment, experiment_df in get_experiment_data_for_export(studyId, db_session, bioreplicate_uuids):
+            if len(experiment_df) == 0:
                 continue
 
-            csv_bytes = experiment.df.to_csv(index=False, sep=sep)
-            csv_name = f"{experiment.experiment_id}.csv"
+            csv_bytes = experiment_df.to_csv(index=False, sep=sep)
+            csv_name = f"{experiment.experimentId}.csv"
 
             csv_data.append((csv_name, csv_bytes))
+            experiments.append(experiment)
 
-        study = study_dfs.get_general_info(studyId, conn)
+        study = study_dfs.get_general_info(studyId, db_session)
         readme_text = render_template('pages/studies/export_readme.md', study=study, experiments=experiments)
 
     zip_file = createzip(csv_data, readme_text)
@@ -102,73 +114,91 @@ def extract_csv_separator(args):
     return sep
 
 
-def get_experiment_data_for_export(studyId, conn, selected_bioreplicate_ids):
-    df_growth, df_reads = get_chart_data(studyId)
-
-    experiments = study_dfs.get_experiments(studyId, conn)
-    bioreps     = study_dfs.get_biological_replicates(studyId, conn)
+def get_experiment_data_for_export(studyId, db_session, bioreplicate_uuids):
+    experiments = db_session.scalars(
+        sql.select(Experiment)
+        .join(Bioreplicate)
+        .where(Experiment.studyId == studyId)
+        .where(Bioreplicate.bioreplicateUniqueId.in_(bioreplicate_uuids))
+        .group_by(Experiment.experimentUniqueId)
+    ).all()
 
     filtered_experiments = []
+    get_subject = functools.cache(Measurement.get_subject)
 
-    for experimentId, description in zip(experiments['experimentId'], experiments['experimentDescription']):
-        # Filter data by the requested bioreplicates:
-        bioreplicate_ids = bioreps[bioreps['experimentId'] == experimentId]['bioreplicateId']
+    for experiment in experiments:
+        measurement_dfs = []
+        measurement_targets = {
+            'bioreplicate': set(),
+            'metabolite':   set(),
+            'strain':       set(),
+        }
 
-        available_bioreplicate_ids = set((*bioreplicate_ids, f"Average {experimentId}"))
-        target_bioreplicate_ids = set(selected_bioreplicate_ids).intersection(available_bioreplicate_ids)
+        # Collect targets for each column of measurements:
+        for bioreplicate in experiment.bioreplicates:
+            for measurement in bioreplicate.measurements:
+                if measurement.subjectType.value == 'bioreplicate':
+                    measurement_targets['bioreplicate'].add((
+                        measurement.technique,
+                        measurement.unit,
+                    ))
+                else:
+                    subject = get_subject(measurement.subjectId, measurement.subjectType.value)
+                    measurement_targets[measurement.subjectType.value].add((
+                        subject,
+                        measurement.technique,
+                        measurement.unit,
+                    ))
 
-        # Work on growth data:
-        experiment_growth = ExperimentDfWrapper(df_growth, experimentId, bioreplicate_ids, description)
-        experiment_growth.select_bioreplicates(target_bioreplicate_ids)
-        experiment_growth.drop_columns('Position')
+        for (technique, unit) in measurement_targets['bioreplicate']:
+            query = measurement_base_query(experiment, bioreplicate_uuids, f"{technique} ({unit})").where(
+                Measurement.subjectType == 'bioreplicate',
+                Measurement.technique == technique,
+            )
+            measurement_dfs.append(execute_into_df(db_session, query))
 
-        # Reorder columns:
-        growth_measurement_columns = experiment_growth.get_measurement_keys()
-        metabolite_columns         = experiment_growth.get_metabolite_keys()
+        for subject_type in ('strain', 'metabolite'):
+            for (subject, technique, unit) in sorted(measurement_targets[subject_type]):
+                query = measurement_base_query(experiment, bioreplicate_uuids, f"{subject.name} ({unit})").where(
+                    Measurement.subjectType == subject_type,
+                    Measurement.subjectId == subject.id,
+                )
+                measurement_dfs.append(execute_into_df(db_session, query))
 
-        # Work on reads:
-        experiment_reads = ExperimentDfWrapper(df_reads, experimentId, bioreplicate_ids, description)
-        experiment_reads.select_bioreplicates(target_bioreplicate_ids)
-        experiment_reads.drop_columns('Position')
+        if len(measurement_dfs) == 0:
+            continue
 
-        reads_columns = [c for c in experiment_reads.keys() if c.endswith(('_reads', '_counts'))]
+        # Join separate dataframes, one per column
+        experiment_df = measurement_dfs[0]
+        for df in measurement_dfs[1:]:
+            experiment_df = experiment_df.merge(
+                df,
+                how='left',
+                on=['Time (hours)', 'Biological Replicate ID'],
+                validate='one_to_one',
+                suffixes=(None, None),
+            )
 
-        # We ignore std measurements for the export
-        for column in experiment_reads.keys():
-            if column.endswith('_std'):
-                experiment_reads.drop_columns(column)
-
-        experiment = experiment_growth.merge(experiment_reads)
-
-        def relabel_columns(column):
-            if column == 'Time':
-                return f"{column} (hours)"
-            elif column == 'Biological_Replicate_id':
-                # Tidy up the name for readability:
-                return "Biological Replicate ID"
-            elif column == 'FC':
-                return f"{column} (Cells/mL)"
-            elif column in metabolite_columns:
-                return f"{column} (mM)"
-            elif column.endswith('_reads'):
-                return f"{column.removesuffix('_reads')} reads"
-            elif column.endswith('_counts'):
-                return f"{column.removesuffix('_counts')} counts"
-            else:
-                return column
-
-        experiment.reorder_columns([
-            'Time', 'Biological_Replicate_id',
-            *sorted(reads_columns),
-            *growth_measurement_columns,
-            *sorted(metabolite_columns)
-        ])
-
-        experiment.rename_columns(relabel_columns)
-
-        filtered_experiments.append(experiment)
+        filtered_experiments.append((experiment, experiment_df))
 
     return filtered_experiments
+
+
+def measurement_base_query(experiment, bioreplicate_uuids, value_label):
+    return (
+        sql.select(
+            Measurement.timeInHours.label("Time (hours)"),
+            Bioreplicate.bioreplicateId.label("Biological Replicate ID"),
+            Measurement.value.label(value_label),
+        )
+        .join(Bioreplicate)
+        .join(Experiment)
+        .where(
+            Experiment.experimentUniqueId == experiment.experimentUniqueId,
+            Bioreplicate.bioreplicateUniqueId.in_(bioreplicate_uuids),
+        )
+        .order_by(Bioreplicate.bioreplicateId, Measurement.timeInSeconds)
+    )
 
 
 def createzip(csv_data: list[tuple[str, bytes]], readme_text: str):

@@ -9,6 +9,7 @@ from sqlalchemy.orm import (
     mapped_column,
     relationship,
 )
+from sqlalchemy.ext.hybrid import hybrid_property
 
 from models.orm_base import OrmBase
 from lib.db import execute_text
@@ -27,9 +28,18 @@ class Bioreplicate(OrmBase):
     experiment: Mapped['Experiment'] = relationship(back_populates='bioreplicates')
 
     measurements: Mapped[List["Measurement"]] = relationship(
-        back_populates="bioreplicate",
-        cascade="all, delete-orphan"
+        order_by='Measurement.timeInSeconds',
+        back_populates='bioreplicate',
+        cascade='all, delete-orphan'
     )
+
+    @hybrid_property
+    def id(self):
+        return self.bioreplicateUniqueId
+
+    @hybrid_property
+    def name(self):
+        return self.bioreplicateId
 
     @staticmethod
     def find_for_study(db_conn, study_id, bioreplicate_id):

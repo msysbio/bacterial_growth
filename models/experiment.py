@@ -1,7 +1,10 @@
 from typing import List
 
 import sqlalchemy as sql
-from sqlalchemy import String
+from sqlalchemy import (
+    String,
+    ForeignKey,
+)
 from sqlalchemy.orm import (
     Mapped,
     mapped_column,
@@ -9,6 +12,7 @@ from sqlalchemy.orm import (
 )
 
 from models.orm_base import OrmBase
+from models.study import Study
 from models.bioreplicate import Bioreplicate
 
 
@@ -21,11 +25,13 @@ class Experiment(OrmBase):
     experimentDescription: Mapped[str] = mapped_column(String)
 
     bioreplicates: Mapped[List['Bioreplicate']] = relationship(
+        order_by="Bioreplicate.bioreplicateUniqueId",
         back_populates='experiment',
         cascade="all, delete-orphan"
     )
 
-    studyId: Mapped[str] = mapped_column(String(100), nullable=False)
+    studyId: Mapped[str] = mapped_column(ForeignKey('Study'), nullable=False)
+    study: Mapped['Study'] = relationship(back_populates='experiments')
 
 
 def get_experiment(experimentUniqueId, conn):

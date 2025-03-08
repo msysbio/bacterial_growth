@@ -2,10 +2,10 @@ import plotly.express as px
 import numpy as np
 import pandas as pd
 import sqlalchemy as sql
-import sqlalchemy.dialects.mysql as mysql
 from sqlalchemy.sql.expression import literal_column
 
 from db import get_connection, get_session
+from lib.db import execute_into_df
 from models.experiment import Experiment
 from models.measurement import Measurement
 from models.bioreplicate import Bioreplicate
@@ -171,8 +171,7 @@ class ExperimentChartForm:
         )
 
         with get_connection() as db_conn:
-            statement = query.compile(dialect=mysql.dialect())
-            return pd.read_sql(statement, db_conn)
+            return execute_into_df(db_conn, query)
 
     def get_average_df(self, technique, subject_type):
         if subject_type == 'bioreplicate':
@@ -203,8 +202,7 @@ class ExperimentChartForm:
             query = query.join(*subjectJoin)
 
         with get_connection() as db_conn:
-            statement = query.compile(dialect=mysql.dialect())
-            return pd.read_sql(statement, db_conn)
+            return execute_into_df(db_conn, query)
 
     def _transform_values(self, df, *, log=False):
         value_label = 'Cells/mL'

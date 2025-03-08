@@ -4,6 +4,7 @@ from sqlalchemy.orm import (
     Mapped,
     mapped_column,
 )
+from sqlalchemy.ext.hybrid import hybrid_property
 
 from models.orm_base import OrmBase
 
@@ -13,6 +14,17 @@ class Metabolite(OrmBase):
 
     chebi_id:    Mapped[str] = mapped_column(primary_key=True)
     metabo_name: Mapped[str] = mapped_column(String(100), nullable=False)
+
+    def __lt__(self, other):
+        return self.metabo_name < other.metabo_name
+
+    @hybrid_property
+    def id(self):
+        return self.chebi_id
+
+    @hybrid_property
+    def name(self):
+        return self.metabo_name
 
     # TODO (2024-09-26) Duplicates taxa completion a lot, try to make completion
     # logic generic, to an extent.
