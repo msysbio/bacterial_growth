@@ -10,7 +10,7 @@ def up(conn):
             position             VARCHAR(100) NOT NULL,
             timeInSeconds        int NOT NULL,
             pH                   VARCHAR(100),
-            unit                 VARCHAR(100) NOT NULL,
+            unit                 VARCHAR(100),
             technique            VARCHAR(100) NOT NULL,
             value                DECIMAL(20, 3),
             std                  DECIMAL(20, 3),
