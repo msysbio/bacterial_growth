@@ -70,7 +70,7 @@
               {% endfor %}
 
               <label>
-                <input type="checkbox" name="bioreplicates" value="Average {{ experiment.experimentId }}" />
+                <input type="checkbox" name="bioreplicates" value="_average:{{ experiment.experimentUniqueId }}" />
                 Average {{ experiment.experimentId }}
               </label>
             </div>

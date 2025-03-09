@@ -127,14 +127,19 @@ class Measurement(OrmBase):
                     # Missing measurement:
                     value = None
 
+                # TODO: units need to be configurable
+                if technique == 'pH':
+                    unit = None
+                else:
+                    unit = 'Cells/mL'
+
                 measurements.append(Self(
                     studyId=study_id,
                     bioreplicateUniqueId=bioreplicate_uuid,
                     position=row['Position'],
                     timeInSeconds=round(float(row['Time']) * 3600),
                     pH=row.get('pH', None),
-                    # TODO: units are not configurable
-                    unit='Cells/mL',
+                    unit=unit,
                     technique=technique,
                     value=value,
                     subjectType='bioreplicate',
@@ -183,7 +188,7 @@ class Measurement(OrmBase):
         available_technique_mapping = {}
 
         strain_names = set()
-        for suffix in ('reads', 'counts', '_Plate_counts'):
+        for suffix in ('reads', 'counts', 'Plate_counts'):
             for c in reader.fieldnames:
                 if c.endswith(f'_{suffix}'):
                     strain_names.add(c.removesuffix(f'_{suffix}'))
@@ -227,6 +232,8 @@ class Measurement(OrmBase):
                         subjectType='strain',
                         subjectId=strain_id,
                     ))
+
+                    print(measurements[-1])
 
         db_session.add_all(measurements)
         db_session.commit()

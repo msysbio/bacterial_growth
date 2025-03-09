@@ -33,6 +33,12 @@ class Experiment(OrmBase):
     studyId: Mapped[str] = mapped_column(ForeignKey('Study'), nullable=False)
     study: Mapped['Study'] = relationship(back_populates='experiments')
 
+    @property
+    def measurements(self):
+        for bioreplicate in self.bioreplicates:
+            for measurement in bioreplicate.measurements:
+                yield measurement
+
 
 def get_experiment(experimentUniqueId, conn):
     query = """
