@@ -1,12 +1,8 @@
 from uuid import uuid4
+import copy
 from typing import List, Tuple
 
 import sqlalchemy as sql
-
-from models.project import Project
-from models.study import Study
-from models.taxon import Taxon
-from models.metabolite import Metabolite
 
 
 class Submission:
@@ -83,6 +79,8 @@ class Submission:
         self.metabolites     = data['metabolites']
 
     def fetch_strains(self) -> List[Tuple[str, str]]:
+        from models.taxon import Taxon
+
         return self.db_conn.execute(
             sql.select(
                 Taxon.tax_id.label("id"),
@@ -92,6 +90,8 @@ class Submission:
         ).all()
 
     def fetch_metabolites(self) -> List[Tuple[str, str]]:
+        from models.metabolite import Metabolite
+
         return self.db_conn.execute(
             sql.select(
                 Metabolite.chebi_id.label("id"),
@@ -101,22 +101,21 @@ class Submission:
         ).all()
 
     def fetch_new_strains(self):
-        if len(self.new_strains) == 0:
-            return []
+        from models import Taxon
 
-        new_strains = sorted(self.new_strains, key=lambda s: int(s['species']))
-        species_ids = [s['species'] for s in new_strains]
+        new_strains = []
 
-        query = f"""
-            SELECT tax_names
-            FROM Taxa
-            WHERE tax_id IN ({','.join(species_ids)})
-            ORDER BY tax_id
-        """
-        species_names = self.db_conn.execute(sql.text(query)).scalars()
+        for strain in self.new_strains:
+            if 'species_name' in strain:
+                continue
 
-        for strain, name in zip(new_strains, species_names):
-            strain['species_name'] = name
+            new_strains.append(copy.deepcopy(strain))
+
+            new_strains[-1]['species_name'] = self.db_conn.scalars(
+                sql.select(Taxon.tax_names)
+                .where(Taxon.tax_id == strain['species'])
+                .limit(1)
+            ).one_or_none()
 
         return new_strains
 
@@ -139,12 +138,16 @@ class Submission:
         }
 
     def _find_project_id(self):
+        from models.project import Project
+
         return self.db_conn.scalars(
             sql.select(Project.projectId)
             .where(Project.projectUniqueID == self.project_uuid)
         ).one_or_none()
 
     def _find_study_id(self):
+        from models.study import Study
+
         return self.db_conn.scalars(
             sql.select(Study.studyId)
             .where(Study.studyUniqueID == self.study_uuid)

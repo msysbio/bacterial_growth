@@ -7,6 +7,7 @@ import sqlalchemy as sql
 from tests.database_test import DatabaseTest
 from models import Submission
 
+
 class TestSubmission(DatabaseTest):
     def test_project_and_studies(self):
         p1 = self.create_project(projectName="Project 1")
@@ -47,13 +48,31 @@ class TestSubmission(DatabaseTest):
         submission = Submission({'strains': [t1['tax_id']]}, step=1, db_conn=self.db_conn)
         self.assertEqual(
             submission.fetch_strains(),
-            [('1', 'R. intestinalis')],
+            [(t1['tax_id'], 'R. intestinalis')],
         )
 
         submission.update_strains({'strains': [t1['tax_id'], t2['tax_id']], 'new_strains': []})
         self.assertEqual(
             submission.fetch_strains(),
-            [('1', 'R. intestinalis'), ('2', 'B. thetaiotaomicron')],
+            [(t1['tax_id'], 'R. intestinalis'), (t2['tax_id'], 'B. thetaiotaomicron')],
+        )
+
+        new_strains = [
+            {'name': 'R. intestinalis 2',     'species': t1['tax_id']},
+            {'name': 'B. thetaiotaomicron 2', 'species': t2['tax_id']},
+            {'name': 'R. intestinalis 3',     'species': t1['tax_id']},
+            {'name': 'Nonexistent',           'species': '999'},
+        ]
+        submission.update_strains({'strains': [], 'new_strains': new_strains})
+
+        self.assertEqual(
+            sorted([(s['name'], s['species_name']) for s in submission.fetch_new_strains()]),
+            sorted([
+                ('R. intestinalis 2',     'R. intestinalis'),
+                ('R. intestinalis 3',     'R. intestinalis'),
+                ('B. thetaiotaomicron 2', 'B. thetaiotaomicron'),
+                ('Nonexistent',           None),
+            ]),
         )
 
     def test_metabolites(self):
