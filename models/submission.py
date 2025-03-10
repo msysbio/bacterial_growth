@@ -1,6 +1,10 @@
 from uuid import uuid4
+from typing import List, Tuple
 
 import sqlalchemy as sql
+
+from models.taxon import Taxon
+from models.metabolite import Metabolite
 
 
 class Submission:
@@ -47,13 +51,13 @@ class Submission:
 
         if self.type == 'new_project':
             self.project_uuid = str(uuid4())
-            self.study_uuid = str(uuid4())
+            self.study_uuid   = str(uuid4())
         elif self.type == 'new_study':
             self.project_uuid = data['project_uuid']
-            self.study_uuid = str(uuid4())
+            self.study_uuid   = str(uuid4())
         elif self.type == 'update_study':
             self.project_uuid = data['project_uuid']
-            self.study_uuid = data['study_uuid']
+            self.study_uuid   = data['study_uuid']
 
     def update_strains(self, data):
         self.strains     = data['strains']
@@ -76,39 +80,23 @@ class Submission:
         self.technique_types = data['technique_types']
         self.metabolites     = data['metabolites']
 
-    def fetch_strains(self):
-        if len(self.strains) == 0:
-            return []
+    def fetch_strains(self) -> List[Tuple[str, str]]:
+        return self.db_conn.execute(
+            sql.select(
+                Taxon.tax_id.label("id"),
+                Taxon.tax_names.label("name"),
+            )
+            .where(Taxon.tax_id.in_(self.strains))
+        ).all()
 
-        # TODO (2024-09-22) Figure out a sensible way to bind ids
-
-        query = f"""
-            SELECT
-                tax_id AS id,
-                tax_names AS name
-            FROM Taxa
-            WHERE tax_id IN ({','.join(self.strains)})
-        """
-        result = self.db_conn.execute(sql.text(query)).all()
-
-        return [(entry.id, entry.name) for entry in result]
-
-    def fetch_metabolites(self):
-        if len(self.metabolites) == 0:
-            return []
-
-        # TODO (2024-09-22) Figure out a sensible way to bind ids
-
-        query = f"""
-            SELECT
-                chebi_id AS id,
-                metabo_name AS name
-            FROM Metabolites
-            WHERE chebi_id IN ({','.join([f"'{chebi_id}'" for chebi_id in self.metabolites])})
-        """
-        result = self.db_conn.execute(sql.text(query)).all()
-
-        return [(entry.id, entry.name) for entry in result]
+    def fetch_metabolites(self) -> List[Tuple[str, str]]:
+        return self.db_conn.execute(
+            sql.select(
+                Metabolite.chebi_id.label("id"),
+                Metabolite.metabo_name.label("name"),
+            )
+            .where(Metabolite.chebi_id.in_(self.metabolites))
+        ).all()
 
     def fetch_new_strains(self):
         if len(self.new_strains) == 0:

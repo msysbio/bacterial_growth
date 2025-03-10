@@ -1,7 +1,18 @@
 import sqlalchemy as sql
+from sqlalchemy import String
+from sqlalchemy.orm import (
+    Mapped,
+    mapped_column,
+)
 
+from models.orm_base import OrmBase
 
-class Taxon():
+class Taxon(OrmBase):
+    __tablename__ = 'Taxa'
+
+    tax_id:    Mapped[str] = mapped_column(String(512), primary_key=True)
+    tax_names: Mapped[str] = mapped_column(String(512))
+
     @staticmethod
     def search_by_name(db_conn, term, page=1, per_page=10):
         term = term.lower().strip()
