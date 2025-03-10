@@ -233,8 +233,6 @@ class Measurement(OrmBase):
                         subjectId=strain_id,
                     ))
 
-                    print(measurements[-1])
-
         db_session.add_all(measurements)
         db_session.commit()
 
