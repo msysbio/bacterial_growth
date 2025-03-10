@@ -155,7 +155,7 @@ class ExperimentChartForm:
 
         query = (
             sql.select(
-                (Measurement.timeInSeconds // 3600).label("time"),
+                Measurement.timeInHours.label("time"),
                 Measurement.value,
                 Measurement.std,
                 subjectName,
@@ -182,7 +182,7 @@ class ExperimentChartForm:
 
         query = (
             sql.select(
-                (Measurement.timeInSeconds // 3600).label("time"),
+                Measurement.timeInHours.label("time"),
                 sql.func.avg(Measurement.value).label("value"),
                 sql.func.stddev(Measurement.value).label("std"),
                 subjectName,

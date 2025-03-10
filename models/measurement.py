@@ -60,7 +60,7 @@ class Measurement(OrmBase):
 
     @hybrid_property
     def timeInHours(self):
-        return self.timeInSeconds // 3600
+        return self.timeInSeconds / 3600
 
     @classmethod
     def get_subject(Self, subject_id, subject_type):
