@@ -4,6 +4,9 @@ __pycache__
 # Ignore data files from uploads:
 tmp_data/*
 
+# Ignore route dump used for tooling purposes:
+.routes.json
+
 # Ignore _build from readthedocs when run locally
 docs/_build/
 

@@ -42,13 +42,11 @@ $(document).ready(function() {
       let $experiment = $form.find('.experiment');
       let $chart      = $experiment.find('.chart');
 
-      let width        = Math.floor($chart.width());
-      let experimentId = $experiment.data('experimentId');
-
+      let width          = Math.floor($chart.width());
       let scrollPosition = $(document).scrollTop();
 
       $.ajax({
-        url: `/dashboard/chart?studyId=${studyId || ''}&experimentId=${experimentId}&width=${width}`,
+        url: `/dashboard/chart?studyId=${studyId || ''}&width=${width}`,
         dataType: 'html',
         data: $form.serializeArray(),
         success: function(response) {

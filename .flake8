@@ -1,0 +1,12 @@
+# vim: ft=dosini
+
+[flake8]
+extend-ignore =
+  # Multiple spaces before operator: want to keep it for aligning code
+  E221,
+  # Line too long: sometimes, it can't be avoided
+  E501
+exclude =
+    .git,
+    __pycache__
+max-complexity = 10

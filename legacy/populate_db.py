@@ -140,6 +140,7 @@ def save_submission_to_database(conn, yml_dir, submission, data_template):
         if submission.type == 'update_study':
             # Clear out previous data, in reverse insertion order:
             data_tables = [
+                "Measurements",
                 "BioReplicatesMetadata",
                 "FC_Counts",
                 "Abundances",
@@ -153,6 +154,7 @@ def save_submission_to_database(conn, yml_dir, submission, data_template):
                 "Compartments",
                 "Strains",
             ]
+
             for table in data_tables:
                 conn.execute(
                     sql.text(f"DELETE FROM {table} WHERE studyId = :study_id"),
@@ -392,10 +394,7 @@ def save_submission_to_database(conn, yml_dir, submission, data_template):
                             metabo_rep = {
                                 'studyId': study_id,
                                 'experimentUniqueId': search_id(info_experiments['Experiment_ID'][i],biorep_id_list),
-                                'experimentId': info_experiments['Experiment_ID'][i],
-                                'bioreplicateId': rep_biorep[j],
                                 'bioreplicateUniqueId': search_id(rep_biorep[j],rep_id_list) ,
-                                'metabo_name' : k,
                                 'chebi_id': chebi_id
                             }
                             metabo_rep_filtered = {k: v for k, v in metabo_rep.items() if v is not None}

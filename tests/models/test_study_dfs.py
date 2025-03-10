@@ -23,7 +23,7 @@ class TestStudyDsf(unittest.TestCase):
         self.assertSqlQuery(query, """
             SELECT DISTINCT studyId
             FROM Study
-            WHERE studyName LIKE '%Example%'
+            WHERE LOWER(studyName) LIKE '%example%'
         """)
 
         query = study_dfs.dynamical_query([
@@ -32,7 +32,7 @@ class TestStudyDsf(unittest.TestCase):
         self.assertSqlQuery(query, """
             SELECT DISTINCT studyId
             FROM Strains
-            WHERE memberName LIKE '%Rhodospirillum%'
+            WHERE LOWER(memberName) LIKE '%rhodospirillum%'
         """)
 
     def test_dynamical_query_with_logic_operators(self):
@@ -43,11 +43,11 @@ class TestStudyDsf(unittest.TestCase):
         self.assertSqlQuery(query, """
             SELECT DISTINCT studyId
             FROM Study
-            WHERE studyName LIKE '%human%'
+            WHERE LOWER(studyName) LIKE '%human%'
             AND studyId IN (
                 SELECT DISTINCT studyId
                 FROM MetabolitePerExperiment
-                WHERE metabo_name LIKE '%acetyl%'
+                WHERE LOWER(metabo_name) LIKE '%acetyl%'
             )
         """)
 

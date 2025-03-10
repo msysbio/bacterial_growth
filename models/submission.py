@@ -151,13 +151,13 @@ class Submission:
     def _find_project_id(self):
         if self.project_uuid is None:
             return None
-        query = f"SELECT projectId FROM Project WHERE projectUniqueID = :uuid"
+        query = 'SELECT projectId FROM Project WHERE projectUniqueID = :uuid'
         return self.db_conn.execute(sql.text(query), {'uuid': self.project_uuid}).scalar()
 
     def _find_study_id(self):
         if self.study_uuid is None:
             return None
-        query = f"SELECT studyId FROM Study WHERE studyUniqueId = :uuid"
+        query = 'SELECT studyId FROM Study WHERE studyUniqueId = :uuid'
         return self.db_conn.execute(sql.text(query), {'uuid': self.study_uuid}).scalar()
 
     def _sync_project_type(self):

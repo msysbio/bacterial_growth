@@ -26,7 +26,7 @@ def get_chart_data(studyId):
     return (df_growth, df_reads)
 
 
-def save_chart_data(studyId, xls_1):
+def save_chart_data_to_files(studyId, xls_1):
     filepath = os.path.realpath(__file__)
     current_dir = os.path.dirname(filepath)
     root_dir = os.path.dirname(current_dir)

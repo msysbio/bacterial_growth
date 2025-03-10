@@ -3,7 +3,8 @@
     "type": "template"
   },
   "forms/*.py": {
-    "type": "form"
+    "type": "form",
+    "alternate": "tests/forms/test_{}.py"
   },
   "models/*.py": {
     "type": "model",

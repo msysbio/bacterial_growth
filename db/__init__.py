@@ -3,6 +3,7 @@ import tomllib
 from pathlib import Path
 
 import sqlalchemy
+import sqlalchemy.orm as orm
 
 
 def _create_engine():
@@ -24,8 +25,9 @@ def _create_engine():
     return engine
 
 
-def get_config():
-    env = os.getenv('APP_ENV', 'development')
+def get_config(env=None):
+    if env is None:
+        env = os.getenv('APP_ENV', 'development')
     return tomllib.loads(Path('db/config.toml').read_text())[env]
 
 
@@ -49,6 +51,13 @@ def get_cli_connection_params():
 
 def get_connection():
     return DB.connect()
+
+
+def get_session(conn=None):
+    if conn:
+        return orm.Session(bind=conn)
+    else:
+        return orm.Session(DB)
 
 
 def get_transaction():

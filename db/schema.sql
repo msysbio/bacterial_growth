@@ -213,6 +213,34 @@ CREATE TABLE FC_Counts (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `Measurements`
+--
+
+DROP TABLE IF EXISTS Measurements;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE Measurements (
+  id int NOT NULL AUTO_INCREMENT,
+  bioreplicateUniqueId int NOT NULL,
+  studyId varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  position varchar(100) NOT NULL,
+  timeInSeconds int NOT NULL,
+  pH varchar(100) DEFAULT NULL,
+  unit varchar(100) DEFAULT NULL,
+  technique varchar(100) NOT NULL,
+  `value` decimal(20,3) DEFAULT NULL,
+  std decimal(20,3) DEFAULT NULL,
+  subjectType varchar(100) NOT NULL,
+  subjectId varchar(100) NOT NULL,
+  PRIMARY KEY (id),
+  KEY bioreplicateUniqueId (bioreplicateUniqueId),
+  KEY studyId (studyId),
+  CONSTRAINT bioreplicateUniqueId FOREIGN KEY (bioreplicateUniqueId) REFERENCES BioReplicatesPerExperiment (bioreplicateUniqueId) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT studyId FOREIGN KEY (studyId) REFERENCES Study (studyId) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `MetabolitePerExperiment`
 --
 
@@ -222,10 +250,7 @@ DROP TABLE IF EXISTS MetabolitePerExperiment;
 CREATE TABLE MetabolitePerExperiment (
   studyId varchar(100) COLLATE utf8mb4_bin DEFAULT NULL,
   experimentUniqueId int NOT NULL,
-  experimentId varchar(100) COLLATE utf8mb4_bin NOT NULL,
   bioreplicateUniqueId int NOT NULL,
-  bioreplicateId varchar(100) COLLATE utf8mb4_bin NOT NULL,
-  metabo_name varchar(255) COLLATE utf8mb4_bin DEFAULT NULL,
   chebi_id varchar(255) COLLATE utf8mb4_bin NOT NULL,
   PRIMARY KEY (experimentUniqueId,bioreplicateUniqueId,chebi_id),
   KEY fk_1 (chebi_id),
@@ -398,6 +423,18 @@ CREATE TABLE TechniquesPerExperiment (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
-INSERT INTO MigrationVersions VALUES (1,'2024_11_11_160324_initial_schema','2025-02-24 10:54:24'),(2,'2024_11_11_164726_remove_unique_study_description_index','2025-02-24 10:54:25'),(3,'2024_11_21_115349_allow_null_medialink','2025-02-24 10:54:25'),(4,'2024_11_21_120444_fix_unique_primary_keys','2025-02-24 10:54:27'),(5,'2025_01_30_152951_fix_bioreplicates_metadata_unique_id','2025-02-24 10:54:28'),(6,'2025_02_04_134239_rename-chebi-id','2025-02-24 10:54:28'),(7,'2025_02_05_134203_make-project-and-study-uuids-unique','2025-02-24 10:54:28'),(8,'2025_02_12_170210_add-assembly-id-to-strains','2025-02-24 10:54:28'),(12,'2025_02_13_114748_increase_experiment_id_size','2025-02-24 10:55:04'),(13,'2025_02_13_120609_rename_comunity_to_community','2025-02-24 10:55:04'),(14,'2025_02_13_121409_rename_comunity_to_community_2','2025-02-24 10:55:05');
+INSERT INTO MigrationVersions VALUES
+(1,'2024_11_11_160324_initial_schema','2025-03-03 12:20:12'),
+(2,'2024_11_11_164726_remove_unique_study_description_index','2025-03-03 12:20:12'),
+(3,'2024_11_21_115349_allow_null_medialink','2025-03-03 12:20:12'),
+(4,'2024_11_21_120444_fix_unique_primary_keys','2025-03-03 12:20:12'),
+(5,'2025_01_30_152951_fix_bioreplicates_metadata_unique_id','2025-03-03 12:20:12'),
+(6,'2025_02_04_134239_rename-chebi-id','2025-03-03 12:20:12'),
+(7,'2025_02_05_134203_make-project-and-study-uuids-unique','2025-03-03 12:20:12'),
+(8,'2025_02_12_170210_add-assembly-id-to-strains','2025-03-03 12:20:12'),
+(9,'2025_02_13_114748_increase_experiment_id_size','2025-03-03 12:20:13'),
+(10,'2025_02_13_120609_rename_comunity_to_community','2025-03-03 12:20:13'),
+(11,'2025_02_13_121409_rename_comunity_to_community_2','2025-03-03 12:20:13'),
+(16,'2025_02_13_163206_create_measurements','2025-03-09 11:09:49'),
+(17,'2025_02_17_161750_remove_duplicated_columns_from_metabolite_per_experiment','2025-03-09 11:09:49');
 
--- Dump completed on 2025-02-24 12:01:35

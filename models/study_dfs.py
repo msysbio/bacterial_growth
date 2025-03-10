@@ -27,7 +27,7 @@ def dynamical_query(all_advance_query):
                         SELECT projectUniqueID
                         FROM Project
                         WHERE LOWER(projectName) LIKE '%{project_name}%'
-                        )
+                    )
                     """
             elif query_dict['option'] == 'Project ID':
                 project_id = query_dict['value']
@@ -37,13 +37,13 @@ def dynamical_query(all_advance_query):
                     SELECT projectUniqueID
                     FROM Project
                     WHERE projectId = '{project_id}'
-                    )
+                )
                 """
             elif query_dict['option'] == 'Study Name':
                 study_name = query_dict['value'].lower()
                 where_clause = f"""
-                FROM Study
-                WHERE LOWER(studyName) LIKE '%{study_name}%'
+                    FROM Study
+                    WHERE LOWER(studyName) LIKE '%{study_name}%'
                 """
             elif query_dict['option'] == 'Study ID':
                 study_id = query_dict['value']
@@ -131,8 +131,11 @@ def get_general_info(studyId, conn):
     result['techniques'] = list(conn.execute(sql.text(query), params).scalars())
 
     query = """
-        SELECT DISTINCT metabo_name, chebi_id
+        SELECT DISTINCT
+            Metabolites.metabo_name as metabo_name,
+            Metabolites.chebi_id
         FROM MetabolitePerExperiment
+          INNER JOIN Metabolites on MetabolitePerExperiment.chebi_id = Metabolites.chebi_id
         WHERE studyId = :studyId
         ORDER BY metabo_name ASC
     """
@@ -176,9 +179,7 @@ def get_experiments(studyId, conn):
         E.cultivationMode,
         E.controlDescription;
     """
-    df_experiments = pd.read_sql(query, conn, params={'studyId': studyId})
-    columns_to_exclude = ['experimentUniqueId']
-    return df_experiments.drop(columns=columns_to_exclude)
+    return pd.read_sql(query, conn, params={'studyId': studyId})
 
 
 def get_compartments(studyId, conn):
@@ -277,5 +278,5 @@ def get_fc_counts(studyId, conn):
 def get_metabolites_per_replicate(studyId, conn):
     query = "SELECT * FROM MetabolitePerExperiment WHERE studyId = %(studyId)s;"
     df_metabolites = pd.read_sql(query, conn, params={'studyId': studyId})
-    columns_to_exclude = ['experimentUniqueId', 'experimentId', 'bioreplicateUniqueId']
+    columns_to_exclude = ['experimentUniqueId', 'bioreplicateUniqueId']
     return df_metabolites.drop(columns=columns_to_exclude)
