@@ -14,6 +14,7 @@ def init_timing(app):
 
 def start_request_timing():
     g.start_time = time.monotonic_ns()
+    g.sql_time_ns = 0.0
 
 
 def log_request_timing(response):
@@ -21,8 +22,11 @@ def log_request_timing(response):
         duration_ns = time.monotonic_ns() - g.start_time
         duration_ms = round(duration_ns / 1_000_000, 2)
 
+        sql_duration_ms = round(g.sql_time_ns / 1_000_000, 2)
+
         logger = current_app.logger.getChild('timing')
-        logger.info(f"[{duration_ms}ms] Full request")
+        logger.info(f"[{duration_ms}ms] Full request total")
+        logger.info(f"[{sql_duration_ms}ms] Full request SQL")
 
     return response
 
@@ -40,6 +44,8 @@ def start_db_timing(conn, cursor, statement, parameters, context, executemany):
 def log_db_timing(conn, cursor, statement, parameters, context, executemany):
     duration_ns = time.monotonic_ns() - conn.info["start_time"].pop(-1)
     duration_ms = round(duration_ns / 1_000_000, 2)
+
+    g.sql_time_ns += duration_ns
 
     logger = current_app.logger.getChild('timing')
     logger.info(f"[{duration_ms}ms] Query: {statement}")
