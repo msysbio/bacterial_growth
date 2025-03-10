@@ -56,7 +56,7 @@ class DatabaseTest(unittest.TestCase):
 
     def create_project(self, **params):
         self.project_id = getattr(self, 'project_id', 0) + 1
-        project_uuid = uuid4()
+        project_uuid = str(uuid4())
 
         params = {
             'projectId': project_uuid,
@@ -70,7 +70,7 @@ class DatabaseTest(unittest.TestCase):
 
     def create_study(self, **params):
         self.study_id = getattr(self, 'study_id', 0) + 1
-        study_uuid = uuid4()
+        study_uuid = str(uuid4())
 
         project_uuid = self._get_or_create_dependency(params, 'projectUniqueID', 'project')
 

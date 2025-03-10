@@ -3,9 +3,12 @@ from typing import List, Tuple
 
 import sqlalchemy as sql
 
-from models.taxon import Taxon
-from models.metabolite import Metabolite
-
+from models import(
+    Project,
+    Study,
+    Taxon,
+    Metabolite,
+)
 
 class Submission:
     def __init__(self, data, step, db_conn=None):
@@ -137,16 +140,16 @@ class Submission:
         }
 
     def _find_project_id(self):
-        if self.project_uuid is None:
-            return None
-        query = 'SELECT projectId FROM Project WHERE projectUniqueID = :uuid'
-        return self.db_conn.execute(sql.text(query), {'uuid': self.project_uuid}).scalar()
+        return self.db_conn.scalars(
+            sql.select(Project.projectId)
+            .where(Project.projectUniqueID == self.project_uuid)
+        ).one_or_none()
 
     def _find_study_id(self):
-        if self.study_uuid is None:
-            return None
-        query = 'SELECT studyId FROM Study WHERE studyUniqueId = :uuid'
-        return self.db_conn.execute(sql.text(query), {'uuid': self.study_uuid}).scalar()
+        return self.db_conn.scalars(
+            sql.select(Study.studyId)
+            .where(Study.studyUniqueID == self.study_uuid)
+        ).one_or_none()
 
     def _sync_project_type(self):
         if self.project_id and self.study_id:

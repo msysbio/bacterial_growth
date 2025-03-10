@@ -13,7 +13,9 @@ from models.orm_base import OrmBase
 class Study(OrmBase):
     __tablename__ = 'Study'
 
-    studyId: Mapped[str] = mapped_column(String(100), primary_key=True)
+    studyUniqueID: Mapped[str] = mapped_column(String(100), primary_key=True)
+
+    studyId:   Mapped[str] = mapped_column(String(100), nullable=False)
     studyName: Mapped[str] = mapped_column(String(100), nullable=False)
 
     experiments: Mapped[List['Experiment']] = relationship(
