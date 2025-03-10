@@ -155,19 +155,3 @@ class Submission:
             self.type = 'new_study'
         else:
             self.type = 'new_project'
-
-
-def _get_project_data(db_conn, uuid):
-    query = """
-        SELECT
-            projectName AS name,
-            projectDescription AS description
-        FROM Project
-        WHERE projectUniqueID = :uuid
-    """
-    result = db_conn.execute(sql.text(query), {'uuid': uuid}).one_or_none()
-
-    if result is None:
-        return None
-    else:
-        return result._asdict()
