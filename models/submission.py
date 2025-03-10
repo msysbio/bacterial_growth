@@ -3,12 +3,11 @@ from typing import List, Tuple
 
 import sqlalchemy as sql
 
-from models import(
-    Project,
-    Study,
-    Taxon,
-    Metabolite,
-)
+from models.project import Project
+from models.study import Study
+from models.taxon import Taxon
+from models.metabolite import Metabolite
+
 
 class Submission:
     def __init__(self, data, step, db_conn=None):

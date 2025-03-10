@@ -3,8 +3,7 @@ from pathlib import Path
 
 import sqlalchemy as sql
 
-from models.experiment import Experiment
-from models.measurement import Measurement
+from models import Measurement
 
 with get_session() as db_session:
     for study_id in ['SMGDB00000001', 'SMGDB00000002', 'SMGDB00000003']:

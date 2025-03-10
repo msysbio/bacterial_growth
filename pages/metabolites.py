@@ -5,7 +5,7 @@ from flask import render_template, request
 import sqlalchemy as sql
 
 from db import get_connection
-from models.metabolite import Metabolite
+from models import Metabolite
 
 
 def metabolite_show_page(chebi_id):

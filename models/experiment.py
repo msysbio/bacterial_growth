@@ -12,8 +12,6 @@ from sqlalchemy.orm import (
 )
 
 from models.orm_base import OrmBase
-from models.study import Study
-from models.bioreplicate import Bioreplicate
 
 
 class Experiment(OrmBase):

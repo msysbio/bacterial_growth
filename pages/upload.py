@@ -11,9 +11,10 @@ from db import (
     get_transaction,
     get_session,
 )
-
-from models.submission import Submission
-from models.measurement import Measurement
+from models import (
+    Submission,
+    Measurement,
+)
 import models.spreadsheet_preview as spreasheet_preview
 
 import legacy.study_spreadsheet as study_spreadsheet

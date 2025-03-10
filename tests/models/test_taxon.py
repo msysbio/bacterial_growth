@@ -4,7 +4,7 @@ import unittest
 
 import sqlalchemy as sql
 
-from models.taxon import Taxon
+from models import Taxon
 from tests.database_test import DatabaseTest
 
 

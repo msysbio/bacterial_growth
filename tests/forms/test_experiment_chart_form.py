@@ -4,7 +4,7 @@ import unittest
 
 from tests.database_test import DatabaseTest
 from forms.experiment_chart_form import ExperimentChartForm
-from models.experiment import Experiment
+from models import Experiment
 
 class TestExperimentChartForm(DatabaseTest):
     def test_df_for_metabolite_chart(self):

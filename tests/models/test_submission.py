@@ -5,7 +5,7 @@ import unittest
 import sqlalchemy as sql
 
 from tests.database_test import DatabaseTest
-from models.submission import Submission
+from models import Submission
 
 class TestSubmission(DatabaseTest):
     def test_project_and_studies(self):

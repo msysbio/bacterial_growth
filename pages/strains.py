@@ -4,7 +4,7 @@ from flask import render_template, request
 import sqlalchemy as sql
 
 from db import get_connection
-from models.taxon import Taxon
+from models import Taxon
 
 
 def strain_show_page(id):
