@@ -43,18 +43,18 @@ class TestSubmission(DatabaseTest):
         t2 = self.create_taxon(tax_names="B. thetaiotaomicron")
 
         submission = Submission({}, step=1, db_conn=self.db_conn)
-        self.assertEqual(submission.fetch_strains(), [])
+        self.assertEqual(submission.fetch_taxa(), [])
 
         submission = Submission({'strains': [t1['tax_id']]}, step=1, db_conn=self.db_conn)
         self.assertEqual(
-            submission.fetch_strains(),
-            [(t1['tax_id'], 'R. intestinalis')],
+            [t.tax_names for t in submission.fetch_taxa()],
+            ['R. intestinalis'],
         )
 
         submission.update_strains({'strains': [t1['tax_id'], t2['tax_id']], 'new_strains': []})
         self.assertEqual(
-            submission.fetch_strains(),
-            [(t1['tax_id'], 'R. intestinalis'), (t2['tax_id'], 'B. thetaiotaomicron')],
+            [t.tax_names for t in submission.fetch_taxa()],
+            ['R. intestinalis', 'B. thetaiotaomicron'],
         )
 
         new_strains = [
@@ -80,12 +80,12 @@ class TestSubmission(DatabaseTest):
         m2 = self.create_metabolite(metabo_name="trehalose")
 
         submission = Submission({}, step=1, db_conn=self.db_conn)
-        self.assertEqual(submission.fetch_strains(), [])
+        self.assertEqual(submission.fetch_taxa(), [])
 
         submission = Submission({'metabolites': [m1['chebi_id']]}, step=1, db_conn=self.db_conn)
         self.assertEqual(
-            submission.fetch_metabolites(),
-            [(m1['chebi_id'], 'glucose')],
+            [m.metabo_name for m in submission.fetch_metabolites()],
+            ['glucose'],
         )
 
         submission = Submission(
@@ -94,8 +94,8 @@ class TestSubmission(DatabaseTest):
             db_conn=self.db_conn,
         )
         self.assertEqual(
-            submission.fetch_metabolites(),
-            [(m1['chebi_id'], 'glucose'), (m2['chebi_id'], 'trehalose')],
+            [m.metabo_name for m in submission.fetch_metabolites()],
+            ['glucose', 'trehalose'],
         )
 
 

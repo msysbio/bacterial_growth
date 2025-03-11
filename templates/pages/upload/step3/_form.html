@@ -62,8 +62,8 @@
                 multiple="multiple"
                 name="metabolites"
                 class="form-input-blue form-input-full js-metabolites-select">
-              {% for (chebi_id, name) in submission.fetch_metabolites() %}
-                <option value="{{ chebi_id }}" selected>{{ name }}</option>
+              {% for metabolite in submission.fetch_metabolites() %}
+                <option value="{{ metabolite.chebi_id }}" selected>{{ metabolite.metabo_name }}</option>
               {% endfor %}
             </select>
           </label>

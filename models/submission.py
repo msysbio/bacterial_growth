@@ -4,11 +4,14 @@ from typing import List, Tuple
 
 import sqlalchemy as sql
 
+from db import get_session
+
 
 class Submission:
     def __init__(self, data, step, db_conn=None):
-        self.step    = step
-        self.db_conn = db_conn
+        self.step       = step
+        self.db_conn    = db_conn
+        self.db_session = get_session(db_conn)
 
         # Step 1:
         self.type         = data.get('type',         None)
@@ -78,25 +81,19 @@ class Submission:
         self.technique_types = data['technique_types']
         self.metabolites     = data['metabolites']
 
-    def fetch_strains(self) -> List[Tuple[str, str]]:
+    def fetch_taxa(self):
         from models.taxon import Taxon
 
-        return self.db_conn.execute(
-            sql.select(
-                Taxon.tax_id.label("id"),
-                Taxon.tax_names.label("name"),
-            )
+        return self.db_session.scalars(
+            sql.select(Taxon)
             .where(Taxon.tax_id.in_(self.strains))
         ).all()
 
-    def fetch_metabolites(self) -> List[Tuple[str, str]]:
+    def fetch_metabolites(self):
         from models.metabolite import Metabolite
 
-        return self.db_conn.execute(
-            sql.select(
-                Metabolite.chebi_id.label("id"),
-                Metabolite.metabo_name.label("name"),
-            )
+        return self.db_session.scalars(
+            sql.select(Metabolite)
             .where(Metabolite.chebi_id.in_(self.metabolites))
         ).all()
 
