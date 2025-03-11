@@ -1,15 +1,15 @@
-{% macro render_step1_status(submission) %}
+{% macro render_step1_status(submission_form) %}
 
-  {% set complete = submission.project_uuid %}
+  {% set complete = submission_form.project_uuid %}
 
   <ul class="upload-status">
     {% if complete %}
 
       <li class="complete">
-        <span class="icon"></span> Project UUID: {{ submission.project_uuid }}
+        <span class="icon"></span> Project UUID: {{ submission_form.project_uuid }}
       </li>
       <li class="complete">
-        <span class="icon"></span> Study UUID: {{ submission.study_uuid }}
+        <span class="icon"></span> Study UUID: {{ submission_form.study_uuid }}
       </li>
 
     {% else %}

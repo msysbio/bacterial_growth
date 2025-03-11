@@ -5,26 +5,26 @@ import unittest
 import sqlalchemy as sql
 
 from tests.database_test import DatabaseTest
-from models import Submission
+from forms.submission_form import SubmissionForm
 
 
-class TestSubmission(DatabaseTest):
+class TestSubmissionForm(DatabaseTest):
     def test_project_and_studies(self):
         p1 = self.create_project(projectName="Project 1")
         p2 = self.create_project(projectName="Project 2")
         s2 = self.create_study(projectUniqueID=p2['projectUniqueID'])
 
-        submission = Submission({}, step=1, db_conn=self.db_conn)
+        submission = SubmissionForm({}, step=1, db_conn=self.db_conn)
         self.assertEqual(submission.project_id, None)
         # No project, no study
         self.assertEqual(submission.type, 'new_project')
 
-        submission = Submission({'project_uuid': p1['projectUniqueID']}, step=1, db_conn=self.db_conn)
+        submission = SubmissionForm({'project_uuid': p1['projectUniqueID']}, step=1, db_conn=self.db_conn)
         self.assertEqual(submission.project_id, p1['projectId'])
         # Project present, but no study:
         self.assertEqual(submission.type, 'new_study')
 
-        submission = Submission(
+        submission = SubmissionForm(
             {
                 'project_uuid': p2['projectUniqueID'],
                 'study_uuid': s2['studyUniqueID'],
@@ -42,10 +42,10 @@ class TestSubmission(DatabaseTest):
         t1 = self.create_taxon(tax_names="R. intestinalis")
         t2 = self.create_taxon(tax_names="B. thetaiotaomicron")
 
-        submission = Submission({}, step=1, db_conn=self.db_conn)
+        submission = SubmissionForm({}, step=1, db_conn=self.db_conn)
         self.assertEqual(submission.fetch_taxa(), [])
 
-        submission = Submission({'strains': [t1['tax_id']]}, step=1, db_conn=self.db_conn)
+        submission = SubmissionForm({'strains': [t1['tax_id']]}, step=1, db_conn=self.db_conn)
         self.assertEqual(
             [t.tax_names for t in submission.fetch_taxa()],
             ['R. intestinalis'],
@@ -79,16 +79,16 @@ class TestSubmission(DatabaseTest):
         m1 = self.create_metabolite(metabo_name="glucose")
         m2 = self.create_metabolite(metabo_name="trehalose")
 
-        submission = Submission({}, step=1, db_conn=self.db_conn)
+        submission = SubmissionForm({}, step=1, db_conn=self.db_conn)
         self.assertEqual(submission.fetch_taxa(), [])
 
-        submission = Submission({'metabolites': [m1['chebi_id']]}, step=1, db_conn=self.db_conn)
+        submission = SubmissionForm({'metabolites': [m1['chebi_id']]}, step=1, db_conn=self.db_conn)
         self.assertEqual(
             [m.metabo_name for m in submission.fetch_metabolites()],
             ['glucose'],
         )
 
-        submission = Submission(
+        submission = SubmissionForm(
             {'metabolites': [m1['chebi_id'], m2['chebi_id']]},
             step=1,
             db_conn=self.db_conn,
