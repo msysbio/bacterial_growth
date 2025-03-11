@@ -36,6 +36,13 @@ def upload_status_page():
         )
 
 
+def clear_submission_action():
+    if 'submission' in session:
+        del session['submission']
+
+    return redirect(url_for('upload_status_page'))
+
+
 def upload_step1_page():
     with get_connection() as conn:
         submission = Submission(session.get('submission', {}), step=1, db_conn=conn)
