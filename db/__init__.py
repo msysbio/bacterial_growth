@@ -55,7 +55,13 @@ def get_connection():
 
 def get_session(conn=None):
     if conn:
-        return orm.Session(bind=conn)
+        if isinstance(conn, orm.Session):
+            return conn
+        elif isinstance(conn, sqlalchemy.Connection):
+            return orm.Session(bind=conn)
+        else:
+            message = f"The `conn` argument is of type {type(conn)}, it needs to be an SQLAlchemy connection"
+            raise TypeError(message)
     else:
         return orm.Session(DB)
 
