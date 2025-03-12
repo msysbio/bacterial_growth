@@ -4,6 +4,13 @@ from typing import List, Tuple
 
 import sqlalchemy as sql
 
+from models import (
+    Taxon,
+    Metabolite,
+    Project,
+    Study,
+    Submission,
+)
 from db import get_session
 
 
@@ -13,96 +20,89 @@ class SubmissionForm:
         self.db_conn    = db_conn
         self.db_session = get_session(db_conn)
 
-        # Step 1:
-        self.type         = data.get('type',         None)
-        self.project_uuid = data.get('project_uuid', None)
-        self.study_uuid   = data.get('study_uuid',   None)
+        # Load submission object
+        if data:
+            self.submission = Submission(**data)
+        else:
+            self.submission = Submission(
+                projectUniqueID=data.get('projectUniqueID', None),
+                studyUniqueID=data.get('studyUniqueID', None),
+                userUniqueID=data.get('userUniqueID', 'TODO'),
+                studyDesign={
+                    'project':         data.get('project', {'name': None, 'description': None}),
+                    'vessel_type':     data.get('vessel_type',     None),
+                    'bottle_count':    data.get('bottle_count',    None),
+                    'plate_count':     data.get('plate_count',     None),
+                    'vessel_count':    data.get('vessel_count',    None),
+                    'column_count':    data.get('column_count',    None),
+                    'row_count':       data.get('row_count',       None),
+                    'timepoint_count': data.get('timepoint_count', None),
+                    'technique_types': data.get('technique_types', []),
+                    'strains':         data.get('strains',         []),
+                    'new_strains':     data.get('new_strains',     []),
+                    'metabolites':     data.get('metabolites',     []),
+                }
+            )
 
-        self.project = data.get('project', {'name': None, 'description': None})
-
-        # Check for an existing project/study:
+        # Check for an existing project/study and set the submission "type" accordingly:
         self.project_id = self._find_project_id()
         self.study_id   = self._find_study_id()
-
-        self._sync_project_type()
-
-        # Step 2:
-        self.strains     = data.get('strains', [])
-        self.new_strains = data.get('new_strains', [])
-
-        # Step 3:
-        self.vessel_type  = data.get('vessel_type', None)
-
-        self.bottle_count = data.get('bottle_count', None)
-        self.plate_count  = data.get('plate_count', None)
-        self.vessel_count = data.get('vessel_count', None)
-        self.column_count = data.get('column_count', None)
-        self.row_count    = data.get('row_count', None)
-
-        self.timepoint_count = data.get('timepoint_count', None)
-        self.technique_types = data.get('technique_types', [])
-        self.metabolites     = data.get('metabolites', [])
+        self.type       = self._determine_project_type()
 
     def update_project(self, data):
         self.type = data['submission_type']
-        self.project = {
+        self.submission.studyDesign['project'] = {
             'name':        data['project_name'],
             'description': data['project_description'],
         }
 
         if self.type == 'new_project':
-            self.project_uuid = str(uuid4())
-            self.study_uuid   = str(uuid4())
+            self.submission.projectUniqueID = str(uuid4())
+            self.submission.studyUniqueID   = str(uuid4())
         elif self.type == 'new_study':
-            self.project_uuid = data['project_uuid']
-            self.study_uuid   = str(uuid4())
+            self.submission.projectUniqueID = data['project_uuid']
+            self.submission.studyUniqueID   = str(uuid4())
         elif self.type == 'update_study':
-            self.project_uuid = data['project_uuid']
-            self.study_uuid   = data['study_uuid']
+            self.submission.projectUniqueID = data['project_uuid']
+            self.submission.studyUniqueID   = data['study_uuid']
 
     def update_strains(self, data):
-        self.strains     = data['strains']
-        self.new_strains = data['new_strains']
+        self.submission.studyDesign['strains']     = data['strains']
+        self.submission.studyDesign['new_strains'] = data['new_strains']
 
     def update_study_design(self, data):
-        self.vessel_type  = data.get('vessel_type', None)
+        study_design = self.submission.studyDesign
 
-        self.bottle_count = data['bottle_count']
-        self.plate_count  = data['plate_count']
-        self.column_count = data['column_count']
-        self.row_count    = data['row_count']
+        study_design['vessel_type'] = data.get('vessel_type', None)
 
-        if self.vessel_type == 'bottles':
-            self.vessel_count = self.bottle_count
-        elif self.vessel_type == 'plates':
-            self.vessel_count = self.plate_count
+        study_design['bottle_count'] = data['bottle_count']
+        study_design['plate_count']  = data['plate_count']
+        study_design['column_count'] = data['column_count']
+        study_design['row_count']    = data['row_count']
 
-        self.timepoint_count = data['timepoint_count']
-        self.technique_types = data['technique_types']
-        self.metabolites     = data['metabolites']
+        if study_design['vessel_type'] == 'bottles':
+            study_design['vessel_count'] = data['bottle_count']
+        elif study_design['vessel_type'] == 'plates':
+            study_design['vessel_count'] = data['plate_count']
+
+        study_design['timepoint_count'] = data['timepoint_count']
+        study_design['technique_types'] = data['technique_types']
+        study_design['metabolites']     = data['metabolites']
+
+        self.submission.studyDesign = study_design
 
     def fetch_taxa(self):
-        from models.taxon import Taxon
+        strains = self.submission.studyDesign['strains']
 
         return self.db_session.scalars(
             sql.select(Taxon)
-            .where(Taxon.tax_id.in_(self.strains))
-        ).all()
-
-    def fetch_metabolites(self):
-        from models.metabolite import Metabolite
-
-        return self.db_session.scalars(
-            sql.select(Metabolite)
-            .where(Metabolite.chebi_id.in_(self.metabolites))
+            .where(Taxon.tax_id.in_(strains))
         ).all()
 
     def fetch_new_strains(self):
-        from models import Taxon
-
         new_strains = []
 
-        for strain in self.new_strains:
+        for strain in self.submission.studyDesign['new_strains']:
             if 'species_name' in strain:
                 continue
 
@@ -116,44 +116,45 @@ class SubmissionForm:
 
         return new_strains
 
+
+    def fetch_metabolites(self):
+        metabolites = self.submission.studyDesign['metabolites']
+
+        return self.db_session.scalars(
+            sql.select(Metabolite)
+            .where(Metabolite.chebi_id.in_(metabolites))
+        ).all()
+
     def _asdict(self):
         return {
-            'type':            self.type,
-            'project_uuid':    self.project_uuid,
-            'study_uuid':      self.study_uuid,
-            'project':         self.project,
-            'strains':         self.strains,
-            'new_strains':     self.new_strains,
-            'vessel_type':     self.vessel_type,
-            'bottle_count':    self.bottle_count,
-            'plate_count':     self.plate_count,
-            'column_count':    self.column_count,
-            'row_count':       self.row_count,
-            'timepoint_count': self.timepoint_count,
-            'technique_types': self.technique_types,
-            'metabolites':     self.metabolites,
+            'projectUniqueID': self.submission.projectUniqueID,
+            'studyUniqueID':   self.submission.studyUniqueID,
+            'userUniqueID':    self.submission.userUniqueID,
+            'studyDesign':     self.submission.studyDesign,
         }
 
     def _find_project_id(self):
-        from models.project import Project
+        if self.submission.projectUniqueID is None:
+            return None
 
         return self.db_conn.scalars(
             sql.select(Project.projectId)
-            .where(Project.projectUniqueID == self.project_uuid)
+            .where(Project.projectUniqueID == self.submission.projectUniqueID)
         ).one_or_none()
 
     def _find_study_id(self):
-        from models.study import Study
+        if self.submission.studyUniqueID is None:
+            return None
 
         return self.db_conn.scalars(
             sql.select(Study.studyId)
-            .where(Study.studyUniqueID == self.study_uuid)
+            .where(Study.studyUniqueID == self.submission.studyUniqueID)
         ).one_or_none()
 
-    def _sync_project_type(self):
+    def _determine_project_type(self):
         if self.project_id and self.study_id:
-            self.type = 'update_study'
+            return 'update_study'
         elif self.project_id:
-            self.type = 'new_study'
+            return 'new_study'
         else:
-            self.type = 'new_project'
+            return 'new_project'

@@ -1,14 +1,14 @@
-{% macro render_step2_status(submission_form) %}
+{% macro render_step2_status(submission) %}
 
-  {% set complete = submission_form.strains|length > 0 %}
+  {% set complete = submission.studyDesign['strains']|length > 0 %}
 
   <ul class="upload-status">
     {% if complete %}
       <li class="complete">
-        <span class="icon"></span> {{ submission_form.strains|length }} strain(s) selected
+        <span class="icon"></span> {{ submission.studyDesign['strains']|length }} strain(s) selected
       </li>
       <li class="complete">
-        <span class="icon"></span> {{ submission_form.new_strains|length }} new strain(s) added
+        <span class="icon"></span> {{ submission.studyDesign['new_strains']|length }} new strain(s) added
       </li>
 
     {% else %}

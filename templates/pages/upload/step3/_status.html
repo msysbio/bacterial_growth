@@ -1,7 +1,7 @@
-{% macro render_step3_status(submission_form) %}
+{% macro render_step3_status(submission) %}
 
   <ul class="upload-status">
-    {% if submission_form.vessel_type %}
+    {% if submission.studyDesign['vessel_type'] %}
       <li class="complete">
         <span class="icon"></span> Study design filled in
       </li>

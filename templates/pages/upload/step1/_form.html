@@ -1,23 +1,21 @@
 {% from 'pages/upload/step1/_status.html' import render_step1_status %}
 
-{% macro render_step1_form(submission, error) %}
+{% macro render_step1_form(submission_form, submission, error) %}
 
-  {% if submission.project_uuid %}
-    {{ render_step1_status(submission)  }}
-  {% else %}
+  {% if not submission.projectUniqueID %}
     {% include 'pages/upload/step1/_info.html' %}
   {% endif %}
 
   <p>
     <select class="form-input-blue js-submission-type">
       <option value="">Choose an option</option>
-      <option value="new_project" {{ 'selected' if submission.type == 'new_project' }}>
+      <option value="new_project" {{ 'selected' if submission_form.type == 'new_project' }}>
       Add a new study to a new project
       </option>
-      <option value="new_study" {{ 'selected' if submission.type == 'new_study' }}>
+      <option value="new_study" {{ 'selected' if submission_form.type == 'new_study' }}>
       Add a new study to a previous project
       </option>
-      <option value="update_study" {{ 'selected' if submission.type == 'update_study' }}>
+      <option value="update_study" {{ 'selected' if submission_form.type == 'update_study' }}>
       Add a new version of a study to a previous project
       </option>
     </select>
@@ -42,7 +40,7 @@
               type="text"
               name="project_name"
               required
-              value="{{ submission.project['name'] or '' }}"
+              value="{{ submission.studyDesign['project']['name'] or '' }}"
               class="form-input-full form-input-blue"
               placeholder="1. Provide a name for your project" />
       </div>
@@ -54,7 +52,7 @@
               name="project_description"
               placeholder="2. Provide a project description"
               class="form-input-full form-input-blue"
-              required>{{ submission.project['description'] or '' }}</textarea>
+              required>{{ submission.studyDesign['project']['description'] or '' }}</textarea>
       </div>
 
       <div class="form-row">
@@ -77,7 +75,7 @@
           <input
               type="text"
               name="project_uuid"
-              value="{{ submission.project_uuid or '' }}"
+              value="{{ submission.projectUniqueID or '' }}"
               class="form-input-full form-input-blue"
               placeholder="1. Provide the private project ID" />
         </label>
@@ -90,7 +88,7 @@
               type="text"
               name="project_name"
               required
-              value="{{ submission.project['name'] or '' }}"
+              value="{{ submission.studyDesign['project']['name'] or '' }}"
               class="form-input-full form-input-blue"
               placeholder="1. Provide a name for your project" />
       </div>
@@ -102,7 +100,7 @@
               name="project_description"
               placeholder="2. Provide a project description"
               class="form-input-full form-input-blue"
-              required>{{ submission.project['description'] or '' }}</textarea>
+              required>{{ submission['studyDesign']['project']['description'] or '' }}</textarea>
       </div>
 
       <div class="form-row">
@@ -123,7 +121,7 @@
           <input
               type="text"
               name="project_uuid"
-              value="{{ submission.project_uuid or '' }}"
+              value="{{ submission.projectUniqueID or '' }}"
               class="form-input-full form-input-blue"
               placeholder="1. Provide the private project ID" />
         </label>
@@ -135,7 +133,7 @@
           <input
               type="text"
               name="study_uuid"
-              value="{{ submission.study_uuid or '' }}"
+              value="{{ submission.studyUniqueID or '' }}"
               class="form-input-full form-input-blue"
               placeholder="1. Provide the private study ID" />
         </label>
@@ -148,7 +146,7 @@
               type="text"
               name="project_name"
               required
-              value="{{ submission.project['name'] or '' }}"
+              value="{{ submission.studyDesign['project']['name'] or '' }}"
               class="form-input-full form-input-blue"
               placeholder="1. Provide a name for your project" />
       </div>
@@ -160,7 +158,7 @@
               name="project_description"
               placeholder="2. Provide a project description"
               class="form-input-full form-input-blue"
-              required>{{ submission.project['description'] or '' }}</textarea>
+              required>{{ submission.studyDesign['project']['description'] or '' }}</textarea>
       </div>
 
       <div class="form-row">

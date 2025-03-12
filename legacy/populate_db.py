@@ -17,14 +17,14 @@ from legacy.parse_raw_data import (
 )
 
 
-def save_submission_to_database(conn, yml_dir, submission, data_template):
+def save_submission_to_database(conn, yml_dir, submission_form, data_template):
     """
     Function that populates all the data from the yaml files if not errors, in case of errors the function stops and returns the error
 
     inputs:
-        - conn:          a database connection
-        - submission:    a dict with submission details
-        - data_template: an excel file uploaded by the user in step 4 with all the raw data
+        - conn:            a database connection
+        - submission_form: a SubmissionForm object with submission details
+        - data_template:   an excel file uploaded by the user in step 4 with all the raw data
 
     Returns:
         - study_id:     study id of the uploaded study if susccessfull, if not it will be None
@@ -33,12 +33,14 @@ def save_submission_to_database(conn, yml_dir, submission, data_template):
         - study_uuid:   Study Unique ID only if all was susscessful
         - project_uuid: Project Unique ID only if all was susscessful
     """
-    # TODO (2024-10-20) Taken directly from streamlit app, so we just rename the fields for now:
-    list_growth = submission.technique_types
-    list_metabolites = [name for (chebi_id, name) in submission.fetch_metabolites()]
+    submission = submission_form.submission
 
-    list_microbial_strains = [name for (id, name) in submission.fetch_strains()]
-    list_microbial_strains += [strain['name'] for strain in submission.fetch_new_strains()]
+    # TODO (2024-10-20) Taken directly from streamlit app, so we just rename the fields for now:
+    list_growth = submission.studyDesign['technique_types']
+    list_metabolites = [m.metabo_name for m in submission_form.fetch_metabolites()]
+
+    list_microbial_strains = [t.tax_names for t in submission_form.fetch_taxa()]
+    list_microbial_strains += [strain['name'] for strain in submission_form.fetch_new_strains()]
 
     info_file_study       = os.path.join(yml_dir, 'STUDY.yaml')
     info_file_experiments = os.path.join(yml_dir, 'EXPERIMENTS.yaml')
@@ -54,8 +56,8 @@ def save_submission_to_database(conn, yml_dir, submission, data_template):
     study_id = None
     project_id = None
 
-    study_uuid   = submission.study_uuid
-    project_uuid = submission.project_uuid
+    study_uuid   = submission.studyUniqueID
+    project_uuid = submission.projectUniqueID
 
     if not errors:
         #defining the dictioraries depending on the raw data uploaded by the user
@@ -85,8 +87,8 @@ def save_submission_to_database(conn, yml_dir, submission, data_template):
         num_rep_metadata = len(replicate_metadata['Biological_Replicate_id'])
 
         #populating the study table
-        if submission.type == 'update_study':
-            study_id = submission.study_id
+        if submission_form.type == 'update_study':
+            study_id = submission_form.study_id
         elif 'Study_Name' in info_study:
             study = {
                 'studyId' :         db.getStudyID(conn),
@@ -112,16 +114,16 @@ def save_submission_to_database(conn, yml_dir, submission, data_template):
         if 'Project_UniqueID' in info_study:
             project = {
                 'projectId' :         db.getProjectID(conn),
-                'projectName':        submission.project['name'],
-                'projectDescription': submission.project['description'],
+                'projectName':        submission.studyDesign['project']['name'],
+                'projectDescription': submission.studyDesign['project']['description'],
                 'projectUniqueID':    info_study['Project_UniqueID'][0]
             }
 
             project_filtered = {k: v for k, v in project.items() if v is not None}
 
             if len(project_filtered) > 0:
-                if submission.type in ('new_study', 'update_study'):
-                    project_id = submission.project_id
+                if submission_form.type in ('new_study', 'update_study'):
+                    project_id = submission_form.project_id
                     db.updateRecord(conn, 'Project', project_id, project_filtered)
                 else:
                     project_id = db.addRecord(conn, 'Project', project_filtered)
@@ -137,7 +139,7 @@ def save_submission_to_database(conn, yml_dir, submission, data_template):
         mem_name_id_list = []
         comu_id_list =[]
 
-        if submission.type == 'update_study':
+        if submission_form.type == 'update_study':
             # Clear out previous data, in reverse insertion order:
             data_tables = [
                 "Measurements",

@@ -32,6 +32,7 @@ def upload_status_page():
         return render_template(
             "pages/upload/index.html",
             submission_form=submission_form,
+            submission=submission_form.submission,
         )
 
 
@@ -43,18 +44,15 @@ def upload_step1_page():
         if request.method == 'POST':
             submission_form.update_project(request.form)
 
-            if submission_form.project:
-                session['submission'] = submission_form._asdict()
-                return redirect(url_for('upload_step2_page'))
-            else:
-                error = "No project found with this UUID"
+            session['submission'] = submission_form._asdict()
+            return redirect(url_for('upload_step2_page'))
 
         return render_template(
             "pages/upload/index.html",
             submission_form=submission_form,
+            submission=submission_form.submission,
             error=error
         )
-
 
 def upload_step2_page():
     with get_connection() as conn:
@@ -70,29 +68,31 @@ def upload_step2_page():
         return render_template(
             "pages/upload/index.html",
             submission_form=submission_form,
+            submission=submission_form.submission,
         )
 
 
 def upload_step3_page():
     with get_connection() as conn:
         submission_form = SubmissionForm(session.get('submission', {}), step=3, db_conn=conn)
+        submission = submission_form.submission
 
         if request.method == 'POST':
             form = UploadStep3Form(request.form)
             submission_form.update_study_design(form.data)
             session['submission'] = submission_form._asdict()
 
-            metabolite_names = [name for (id, name) in submission_form.fetch_metabolites()]
-            taxa_names       = [name for (id, name) in submission_form.fetch_strains()]
+            metabolite_names = [m.metabo_name for m in submission_form.fetch_metabolites()]
+            taxa_names       = [t.tax_names for t in submission_form.fetch_taxa()]
 
             spreadsheet = data_spreadsheet.create_excel(
-                submission_form.technique_types,
+                submission.studyDesign['technique_types'],
                 metabolite_names,
-                submission_form.vessel_type,
-                submission_form.vessel_count,
-                submission_form.column_count,
-                submission_form.row_count,
-                submission_form.timepoint_count,
+                submission.studyDesign['vessel_type'],
+                submission.studyDesign['vessel_count'],
+                submission.studyDesign['column_count'],
+                submission.studyDesign['row_count'],
+                submission.studyDesign['timepoint_count'],
                 taxa_names,
             )
 
@@ -102,11 +102,12 @@ def upload_step3_page():
                 download_name="template_data.xlsx",
             )
         else:
-            upload_form = UploadStep3Form(obj=submission_form)
+            upload_form = UploadStep3Form(data=submission.studyDesign)
 
             return render_template(
                 "pages/upload/index.html",
                 submission_form=submission_form,
+                submission=submission_form.submission,
                 upload_form=upload_form
             )
 
@@ -114,9 +115,10 @@ def upload_step3_page():
 def upload_study_template_xlsx():
     with get_connection() as conn:
         submission_form = SubmissionForm(session.get('submission', {}), step=3, db_conn=conn)
+        submission = submission_form.submission
 
-        taxa_ids   = submission_form.strains
-        taxa_names = [name for (id, name) in submission_form.fetch_strains()]
+        taxa_ids   = submission.studyDesign['strains']
+        taxa_names = [t.tax_names for t in submission_form.fetch_taxa()]
 
         new_strains = [
             {
@@ -133,8 +135,8 @@ def upload_study_template_xlsx():
             taxa_names,
             taxa_ids,
             new_strains,
-            submission_form.project_uuid,
-            submission_form.study_uuid,
+            submission.projectUniqueID,
+            submission.studyUniqueID,
         )
 
         return send_file(
@@ -179,6 +181,7 @@ def upload_step4_page():
         return render_template(
             "pages/upload/index.html",
             submission_form=submission_form,
+            submission=submission_form.submission,
             errors=errors,
         )
 
@@ -205,6 +208,7 @@ def upload_step5_page():
         return render_template(
             "pages/upload/index.html",
             submission_form=submission_form,
+            submission=submission_form.submission,
         )
 
 

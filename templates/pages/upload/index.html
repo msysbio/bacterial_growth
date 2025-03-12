@@ -66,9 +66,9 @@
           {% endcall %}
 
           {% if submission_form.step == 1 %}
-            {{ render_step1_form(submission_form, error) }}
+            {{ render_step1_form(submission_form, submission, error) }}
           {% else %}
-            {{ render_step1_status(submission_form) }}
+            {{ render_step1_status(submission) }}
           {% endif %}
         </div>
 
@@ -83,9 +83,9 @@
           {% endcall %}
 
           {% if submission_form.step == 2 %}
-            {{ render_step2_form(submission_form) }}
+            {{ render_step2_form(submission_form, submission) }}
           {% else %}
-            {{ render_step2_status(submission_form) }}
+            {{ render_step2_status(submission) }}
           {% endif %}
         </div>
 
@@ -102,7 +102,7 @@
           {% if submission_form.step == 3 %}
             {{ render_step3_form(submission_form, upload_form) }}
           {% else %}
-            {{ render_step3_status(submission_form) }}
+            {{ render_step3_status(submission) }}
           {% endif %}
         </div>
 
