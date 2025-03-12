@@ -1,7 +1,7 @@
 runtime! projects/flask.vim
 
-silent AckIgnore .micromamba/ static/build/ static/js/vendor/
-silent TagsExclude .micromamba/* static/build/* static/js/vendor/*
+silent AckIgnore .micromamba/ static/build/ static/js/vendor/ docs/_build
+silent TagsExclude .micromamba/* static/build/* static/js/vendor/* docs/_build/*
 
 set tags+=micromamba.tags
 
