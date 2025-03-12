@@ -43,6 +43,13 @@ def upload_status_page():
     )
 
 
+def clear_submission_action():
+    if 'submission' in session:
+        del session['submission']
+
+    return redirect(url_for('upload_status_page'))
+
+
 def upload_step1_page():
     submission_form = SubmissionForm(
         session.get('submission', {}),

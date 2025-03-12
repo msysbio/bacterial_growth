@@ -140,6 +140,14 @@
           {% endif %}
         </div>
       </div>
+
+      <form
+        action="{{ url_for('clear_submission_action') }}"
+        onSubmit="return confirm('This will clear all entered content, are you sure?')"
+        class="simple-form"
+        method="POST">
+        <input type="submit" class="flex-right" value="Clear form" />
+      </form>
     </article>
   </div>
 {% endblock %}
