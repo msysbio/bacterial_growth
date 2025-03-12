@@ -15,7 +15,7 @@ from db import get_session
 
 
 class SubmissionForm:
-    def __init__(self, data, step, db_conn=None):
+    def __init__(self, data, step, db_conn=None, user_uuid=None):
         self.step       = step
         self.db_conn    = db_conn
         self.db_session = get_session(db_conn)
@@ -27,7 +27,7 @@ class SubmissionForm:
             self.submission = Submission(
                 projectUniqueID=data.get('projectUniqueID', None),
                 studyUniqueID=data.get('studyUniqueID', None),
-                userUniqueID=data.get('userUniqueID', 'TODO'),
+                userUniqueID=data.get('userUniqueID', user_uuid),
                 studyDesign={
                     'project':         data.get('project', {'name': None, 'description': None}),
                     'vessel_type':     data.get('vessel_type',     None),
