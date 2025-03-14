@@ -3,6 +3,7 @@ import copy
 from typing import List, Tuple
 
 import sqlalchemy as sql
+from sqlalchemy.orm.attributes import flag_modified
 
 from models import (
     Taxon,
@@ -11,36 +12,39 @@ from models import (
     Study,
     Submission,
 )
-from db import get_session
 
 
 class SubmissionForm:
-    def __init__(self, data, step, db_conn=None, user_uuid=None):
+    def __init__(self, submission_id, step, db_session=None, user_uuid=None):
         self.step       = step
-        self.db_conn    = db_conn
-        self.db_session = get_session(db_conn)
+        self.db_session = db_session
 
         # Load submission object
-        if data:
-            self.submission = Submission(**data)
-        else:
+        self.submission = None
+        if submission_id is not None:
+            self.submission = self.db_session.get(Submission, submission_id)
+
+        if self.submission is None:
             self.submission = Submission(
-                projectUniqueID=data.get('projectUniqueID', None),
-                studyUniqueID=data.get('studyUniqueID', None),
-                userUniqueID=data.get('userUniqueID', user_uuid),
+                projectUniqueID=None,
+                studyUniqueID=None,
+                userUniqueID=user_uuid,
                 studyDesign={
-                    'project':         data.get('project', {'name': None, 'description': None}),
-                    'vessel_type':     data.get('vessel_type',     None),
-                    'bottle_count':    data.get('bottle_count',    None),
-                    'plate_count':     data.get('plate_count',     None),
-                    'vessel_count':    data.get('vessel_count',    None),
-                    'column_count':    data.get('column_count',    None),
-                    'row_count':       data.get('row_count',       None),
-                    'timepoint_count': data.get('timepoint_count', None),
-                    'technique_types': data.get('technique_types', []),
-                    'strains':         data.get('strains',         []),
-                    'new_strains':     data.get('new_strains',     []),
-                    'metabolites':     data.get('metabolites',     []),
+                    'project': {
+                        'name':        None,
+                        'description': None,
+                    },
+                    'vessel_type':     None,
+                    'bottle_count':    None,
+                    'plate_count':     None,
+                    'vessel_count':    None,
+                    'column_count':    None,
+                    'row_count':       None,
+                    'timepoint_count': None,
+                    'technique_types': [],
+                    'strains':         [],
+                    'new_strains':     [],
+                    'metabolites':     [],
                 }
             )
 
@@ -55,6 +59,7 @@ class SubmissionForm:
             'name':        data['project_name'],
             'description': data['project_description'],
         }
+        flag_modified(self.submission, 'studyDesign')
 
         if self.type == 'new_project':
             self.submission.projectUniqueID = str(uuid4())
@@ -69,6 +74,7 @@ class SubmissionForm:
     def update_strains(self, data):
         self.submission.studyDesign['strains']     = data['strains']
         self.submission.studyDesign['new_strains'] = data['new_strains']
+        flag_modified(self.submission, 'studyDesign')
 
     def update_study_design(self, data):
         study_design = self.submission.studyDesign
@@ -90,6 +96,7 @@ class SubmissionForm:
         study_design['metabolites']     = data['metabolites']
 
         self.submission.studyDesign = study_design
+        flag_modified(self.submission, 'studyDesign')
 
     def fetch_taxa(self):
         strains = self.submission.studyDesign['strains']
@@ -108,14 +115,13 @@ class SubmissionForm:
 
             new_strains.append(copy.deepcopy(strain))
 
-            new_strains[-1]['species_name'] = self.db_conn.scalars(
+            new_strains[-1]['species_name'] = self.db_session.scalars(
                 sql.select(Taxon.tax_names)
                 .where(Taxon.tax_id == strain['species'])
                 .limit(1)
             ).one_or_none()
 
         return new_strains
-
 
     def fetch_metabolites(self):
         metabolites = self.submission.studyDesign['metabolites']
@@ -125,19 +131,17 @@ class SubmissionForm:
             .where(Metabolite.chebi_id.in_(metabolites))
         ).all()
 
-    def _asdict(self):
-        return {
-            'projectUniqueID': self.submission.projectUniqueID,
-            'studyUniqueID':   self.submission.studyUniqueID,
-            'userUniqueID':    self.submission.userUniqueID,
-            'studyDesign':     self.submission.studyDesign,
-        }
+    def save(self):
+        self.db_session.add(self.submission)
+        self.db_session.commit()
+
+        return self.submission.id
 
     def _find_project_id(self):
         if self.submission.projectUniqueID is None:
             return None
 
-        return self.db_conn.scalars(
+        return self.db_session.scalars(
             sql.select(Project.projectId)
             .where(Project.projectUniqueID == self.submission.projectUniqueID)
         ).one_or_none()
@@ -146,7 +150,7 @@ class SubmissionForm:
         if self.submission.studyUniqueID is None:
             return None
 
-        return self.db_conn.scalars(
+        return self.db_session.scalars(
             sql.select(Study.studyId)
             .where(Study.studyUniqueID == self.submission.studyUniqueID)
         ).one_or_none()

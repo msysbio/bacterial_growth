@@ -21,7 +21,7 @@ import models.spreadsheet_preview as spreasheet_preview
 import legacy.study_spreadsheet as study_spreadsheet
 import legacy.data_spreadsheet as data_spreadsheet
 from legacy.upload_validation import validate_upload
-from legacy.populate_db import save_submission_to_database
+from legacy.populate_db import save_measurements_to_database
 from legacy.chart_data import save_chart_data_to_files
 
 from forms.upload_step2_form import UploadStep2Form
@@ -30,9 +30,9 @@ from forms.upload_step3_form import UploadStep3Form
 
 def upload_status_page():
     submission_form = SubmissionForm(
-        session.get('submission', {}),
+        session.get('submission_id', None),
         step=0,
-        db_conn=g.db_conn,
+        db_session=g.db_session,
         user_uuid=g.current_user.uuid,
     )
 
@@ -52,17 +52,17 @@ def clear_submission_action():
 
 def upload_step1_page():
     submission_form = SubmissionForm(
-        session.get('submission', {}),
+        session.get('submission_id', None),
         step=1,
-        db_conn=g.db_conn,
+        db_session=g.db_session,
         user_uuid=g.current_user.uuid,
     )
     error = None
 
     if request.method == 'POST':
         submission_form.update_project(request.form)
+        session['submission_id'] = submission_form.save()
 
-        session['submission'] = submission_form._asdict()
         return redirect(url_for('upload_step2_page'))
 
     return render_template(
@@ -75,16 +75,16 @@ def upload_step1_page():
 
 def upload_step2_page():
     submission_form = SubmissionForm(
-        session.get('submission', {}),
+        session.get('submission_id', None),
         step=2,
-        db_conn=g.db_conn,
+        db_session=g.db_session,
         user_uuid=g.current_user.uuid,
     )
     form = UploadStep2Form(request.form)
 
     if request.method == 'POST':
         submission_form.update_strains(form.data)
-        session['submission_form'] = submission_form._asdict()
+        session['submission_id'] = submission_form.save()
 
         return redirect(url_for('upload_step3_page'))
 
@@ -97,9 +97,9 @@ def upload_step2_page():
 
 def upload_step3_page():
     submission_form = SubmissionForm(
-        session.get('submission', {}),
+        session.get('submission_id', None),
         step=3,
-        db_conn=g.db_conn,
+        db_session=g.db_session,
         user_uuid=g.current_user.uuid,
     )
     submission = submission_form.submission
@@ -107,7 +107,7 @@ def upload_step3_page():
     if request.method == 'POST':
         form = UploadStep3Form(request.form)
         submission_form.update_study_design(form.data)
-        session['submission'] = submission_form._asdict()
+        session['submission_id'] = submission_form.save()
 
         metabolite_names = [m.metabo_name for m in submission_form.fetch_metabolites()]
         taxa_names       = [t.tax_names for t in submission_form.fetch_taxa()]
@@ -141,9 +141,9 @@ def upload_step3_page():
 
 def upload_study_template_xlsx():
     submission_form = SubmissionForm(
-        session.get('submission', {}),
+        session.get('submission_id', None),
         step=3,
-        db_conn=g.db_conn,
+        db_session=g.db_session,
         user_uuid=g.current_user.uuid,
     )
     submission = submission_form.submission
@@ -179,9 +179,9 @@ def upload_study_template_xlsx():
 
 def upload_step4_page():
     submission_form = SubmissionForm(
-        session.get('submission', {}),
+        session.get('submission_id', None),
         step=4,
-        db_conn=g.db_session,
+        db_session=g.db_session,
         user_uuid=g.current_user.uuid,
     )
     errors = []
@@ -197,7 +197,7 @@ def upload_step4_page():
 
             if len(errors) == 0:
                 (study_id, errors, errors_logic, studyUniqueID, projectUniqueID, project_id) = \
-                    save_submission_to_database(g.db_session, yml_dir, submission_form, data_template)
+                    save_measurements_to_database(g.db_session, yml_dir, submission_form, data_template)
 
                 if len(errors) == 0:
                     # TODO (2025-01-30) Message that data was successfully
@@ -238,9 +238,9 @@ def upload_spreadsheet_preview_fragment():
 
 def upload_step5_page():
     submission_form = SubmissionForm(
-        session.get('submission', {}),
+        session.get('submission_id', None),
         step=5,
-        db_conn=g.db_conn,
+        db_session=g.db_session,
         user_uuid=g.current_user.uuid,
     )
 

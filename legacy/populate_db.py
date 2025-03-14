@@ -17,7 +17,7 @@ from legacy.parse_raw_data import (
 )
 
 
-def save_submission_to_database(conn, yml_dir, submission_form, data_template):
+def save_measurements_to_database(conn, yml_dir, submission_form, data_template):
     """
     Function that populates all the data from the yaml files if not errors, in case of errors the function stops and returns the error
 

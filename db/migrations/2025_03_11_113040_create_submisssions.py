@@ -10,7 +10,10 @@ def up(conn):
             studyUniqueID   VARCHAR(100) COLLATE utf8mb4_bin,
             userUniqueID    VARCHAR(100) COLLATE utf8mb4_bin,
 
-            studyDesign JSON DEFAULT (JSON_OBJECT())
+            studyDesign JSON DEFAULT (JSON_OBJECT()),
+
+            createdAt datetime DEFAULT CURRENT_TIMESTAMP,
+            updatedAt datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
         );
     """
     params = {}
