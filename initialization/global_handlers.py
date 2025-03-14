@@ -7,12 +7,18 @@ from db import get_connection, get_session
 
 
 def init_global_handlers(app):
+    app.before_request(_make_session_permanent)
     app.before_request(_open_db_connection)
     app.before_request(_fetch_user)
 
     app.after_request(_close_db_connection)
 
     return app
+
+
+def _make_session_permanent():
+    # By default, expires in 31 days
+    session.permanent = True
 
 
 def _open_db_connection():

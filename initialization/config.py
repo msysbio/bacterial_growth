@@ -2,6 +2,9 @@ import os
 
 
 def init_config(app):
+    """
+    Configuration reference: <https://flask.palletsprojects.com/en/stable/config/>
+    """
     app_env   = os.getenv('APP_ENV', 'development')
     log_level = os.getenv('LOG_LEVEL', None)
     timing    = os.getenv('TIME')
@@ -33,6 +36,7 @@ def init_config(app):
             TEMPLATES_AUTO_RELOAD=False,
             EXPLAIN_TEMPLATE_LOADING=True,
             SECRET_KEY='TODO production_key',
+            SESSION_COOKIE_SECURE=True,
         )
     else:
         raise KeyError(f"Unknown APP_ENV: {app_env}")
