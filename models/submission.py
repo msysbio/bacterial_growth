@@ -1,5 +1,8 @@
 import sqlalchemy as sql
-from sqlalchemy import String
+from sqlalchemy import (
+    String,
+    LargeBinary,
+)
 from sqlalchemy.orm import (
     Mapped,
     mapped_column,
@@ -19,3 +22,6 @@ class Submission(OrmBase):
     userUniqueID:    Mapped[str] = mapped_column(String(100), nullable=False)
 
     studyDesign: Mapped[JSON] = mapped_column(JSON, nullable=False)
+
+    studyXls: Mapped[bytes | None] = mapped_column(LargeBinary)
+    dataXls:  Mapped[bytes | None] = mapped_column(LargeBinary)

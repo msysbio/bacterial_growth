@@ -12,6 +12,9 @@ def up(conn):
 
             studyDesign JSON DEFAULT (JSON_OBJECT()),
 
+            studyXls LONGBLOB,
+            dataXls LONGBLOB,
+
             createdAt datetime DEFAULT CURRENT_TIMESTAMP,
             updatedAt datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
         );

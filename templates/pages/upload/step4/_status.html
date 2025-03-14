@@ -1,12 +1,25 @@
-{% macro render_step4_status(_submission_form) %}
+{% macro render_step4_status(submission) %}
 
   <ul class="upload-status">
-    <li class="incomplete">
-      <span class="icon"></span> Study design not uploaded
-    </li>
-    <li class="incomplete">
-      <span class="icon"></span> Experimental data not uploaded
-    </li>
+    {% if submission.studyXls: %}
+      <li class="complete">
+        <span class="icon"></span> Study design uploaded
+      </li>
+    {% else %}
+      <li class="incomplete">
+        <span class="icon"></span> Study design not uploaded
+      </li>
+    {% endif %}
+
+    {% if submission.dataXls: %}
+      <li class="complete">
+        <span class="icon"></span> Experimental data uploaded
+      </li>
+    {% else %}
+      <li class="incomplete">
+        <span class="icon"></span> Experimental data not uploaded
+      </li>
+    {% endif %}
   </ul>
 
 {% endmacro %}

@@ -46,6 +46,7 @@ class SubmissionForm:
                     'new_strains':     [],
                     'metabolites':     [],
                 }
+
             )
 
         # Check for an existing project/study and set the submission "type" accordingly:

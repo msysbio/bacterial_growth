@@ -211,6 +211,10 @@ def upload_step4_page():
                     save_chart_data_to_files(study_id, data_template)
                     _save_chart_data_to_database(g.db_session, study_id, data_template)
 
+                    submission_form.submission.studyXls = study_template
+                    submission_form.submission.dataXls = data_template
+                    submission_form.save()
+
                     return redirect(url_for('upload_step5_page'))
 
     return render_template(
