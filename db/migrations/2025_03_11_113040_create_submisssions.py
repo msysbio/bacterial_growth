@@ -15,8 +15,8 @@ def up(conn):
             studyXls LONGBLOB,
             dataXls LONGBLOB,
 
-            createdAt datetime DEFAULT CURRENT_TIMESTAMP,
-            updatedAt datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+            createdAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            updatedAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
         );
     """
     params = {}

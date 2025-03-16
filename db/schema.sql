@@ -395,8 +395,8 @@ CREATE TABLE Submissions (
   studyDesign json DEFAULT (json_object()),
   studyXls longblob,
   dataXls longblob,
-  createdAt datetime DEFAULT CURRENT_TIMESTAMP,
-  updatedAt datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  createdAt datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updatedAt datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -458,5 +458,5 @@ INSERT INTO MigrationVersions VALUES
 (11,'2025_02_13_121409_rename_comunity_to_community_2','2025-03-03 12:20:13'),
 (16,'2025_02_13_163206_create_measurements','2025-03-09 11:09:49'),
 (17,'2025_02_17_161750_remove_duplicated_columns_from_metabolite_per_experiment','2025-03-09 11:09:49'),
-(20,'2025_03_11_113040_create_submisssions','2025-03-14 16:33:50');
+(21,'2025_03_11_113040_create_submisssions','2025-03-16 17:26:57');
 

@@ -1,0 +1,63 @@
+{% macro render_user_submissions(user_submissions, current_submission) %}
+
+  <div class="user-submissions">
+    <ul>
+      {% for user_submission in user_submissions %}
+        <li class="{{ "current" if user_submission.id == current_submission.id }}">
+          <h4>
+            {{ user_submission.studyDesign.get('project', {}).get('name', '<Unknown project>') }}
+            {{ "(currently editing)" if user_submission.id == current_submission.id }}
+          </h4>
+          <table>
+            <tr>
+              <td>Last update:</td>
+              <td>
+                {% if user_submission.updatedAt %}
+                  <time datetime="{{ user_submission.updatedAt.isoformat() }}">
+                    {{ user_submission.updatedAt.strftime("%c") }}
+                  </time>
+                {% endif %}
+              </td>
+            </tr>
+            <tr>
+              <td>Started:</td>
+              <td>
+                {% if user_submission.createdAt %}
+                  <time datetime="{{ user_submission.createdAt.isoformat() }}">
+                    {{ user_submission.createdAt.strftime("%c") }}
+                  </time>
+                {% endif %}
+              </td>
+            </tr>
+            <tr>
+              <td>Completion status:</td>
+              <td>{{ user_submission.completed_step_count }}/5</td>
+            </tr>
+            <tr>
+              <td>Actions:</td>
+              <td>
+                <form
+                  action="{{ url_for('edit_submission_action', id=user_submission.id) }}"
+                  class="simple-form"
+                  style="display: inline"
+                  method="POST">
+                  <input type="submit" class="flex-right" value="Edit" />
+                </form>
+
+                <form
+                  action="{{ url_for('delete_submission_action', id=user_submission.id) }}"
+                  onSubmit="return confirm('This will discard the data in this submission, are you sure?')"
+                  class="simple-form"
+                  style="display: inline"
+                  method="POST">
+                  <input type="submit" class="flex-right" value="Delete" />
+                </form>
+              </td>
+            </tr>
+          </table>
+        </li>
+      {% endfor %}
+    </li>
+  </div>
+
+{% endmacro %}

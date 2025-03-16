@@ -10,6 +10,8 @@
 {% from 'pages/upload/step4/_status.html' import render_step4_status %}
 {% from 'pages/upload/step5/_status.html' import render_step5_status %}
 
+{% from 'pages/upload/_user_submissions.html' import render_user_submissions %}
+
 {% macro section_link(current_step, target_step, page) %}
   {% if target_step != current_step %}
     <a class="section-heading" href="{{ url_for(page) }}">
@@ -53,6 +55,19 @@
           reliability.
         </p>
       {% endif %}
+
+      {% if user_submissions %}
+        {{ render_user_submissions(user_submissions, submission) }}
+
+        <form
+          action="{{ url_for('new_submission_action') }}"
+          class="simple-form"
+          method="POST">
+          <input type="submit" class="flex-right" value="New submission" />
+        </form>
+      {% endif %}
+
+      <br>
 
       <div class="upload-steps">
         {% set step1_classes = [
@@ -140,14 +155,6 @@
           {% endif %}
         </div>
       </div>
-
-      <form
-        action="{{ url_for('clear_submission_action') }}"
-        onSubmit="return confirm('This will clear all entered content, are you sure?')"
-        class="simple-form"
-        method="POST">
-        <input type="submit" class="flex-right" value="Clear form" />
-      </form>
     </article>
   </div>
 {% endblock %}

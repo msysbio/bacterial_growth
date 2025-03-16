@@ -13,8 +13,12 @@ from flask import (
 )
 import humanize
 import pandas as pd
+import sqlalchemy as sql
 
-from models import Measurement
+from models import (
+    Measurement,
+    Submission,
+)
 from forms.submission_form import SubmissionForm
 import models.spreadsheet_preview as spreasheet_preview
 
@@ -36,16 +40,42 @@ def upload_status_page():
         user_uuid=g.current_user.uuid,
     )
 
+    if g.current_user.uuid:
+        user_submissions = g.db_session.scalars(
+            sql.select(Submission)
+            .where(Submission.userUniqueID == g.current_user.uuid)
+            .order_by(Submission.updatedAt)
+        )
+    else:
+        user_submissions = None
+
     return render_template(
         "pages/upload/index.html",
         submission_form=submission_form,
         submission=submission_form.submission,
+        user_submissions=user_submissions,
     )
 
 
-def clear_submission_action():
-    if 'submission' in session:
-        del session['submission']
+def new_submission_action():
+    if 'submission_id' in session:
+        del session['submission_id']
+
+    return redirect(url_for('upload_step1_page'))
+
+
+def edit_submission_action(id):
+    session['submission_id'] = id
+
+    return redirect(url_for('upload_status_page'))
+
+
+def delete_submission_action(id):
+    if 'submission_id' in session:
+        del session['submission_id']
+
+    g.db_session.execute(sql.delete(Submission).where(Submission.id == id))
+    g.db_session.commit()
 
     return redirect(url_for('upload_status_page'))
 
