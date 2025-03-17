@@ -208,6 +208,21 @@ $(document).ready(function() {
       submit_excel_form($container);
     });
 
+    $step4.on('change', '.js-preview select', function() {
+      let $select       = $(this);
+      let selectedSheet = $select.val();
+
+      $sheets = $(this).parents('.js-preview').find('.js-sheet');
+      $sheets.addClass('hidden');
+
+      if (selectedSheet != '') {
+        $sheets.filter(`.js-sheet-${selectedSheet}`).removeClass('hidden');
+      }
+    });
+
+    // Trigger initial sheet preview
+    $('.js-preview select').trigger('change');
+
     function submit_excel_form($container) {
       let url        = $container.prop('action')
       let $preview   = $container.find('.js-preview');
@@ -226,20 +241,6 @@ $(document).ready(function() {
         processData: false,
         success: function(response) {
           $preview.html(response);
-
-          $preview.find('select').on('change', function() {
-            let $select       = $(this);
-            let selectedSheet = $select.val();
-
-            // TODO reusable util
-            $sheets = $preview.find('.js-sheet');
-            $sheets.addClass('hidden');
-
-            if (selectedSheet != '') {
-              $sheets.filter(`.js-sheet-${selectedSheet}`).removeClass('hidden');
-            }
-          });
-
           $preview.find('select').trigger('change');
         }
       })

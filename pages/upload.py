@@ -21,7 +21,6 @@ from models import (
     ExcelFile,
 )
 from forms.submission_form import SubmissionForm
-import models.spreadsheet_preview as spreadsheet_preview
 
 import legacy.study_spreadsheet as study_spreadsheet
 import legacy.data_spreadsheet as data_spreadsheet
@@ -215,20 +214,23 @@ def upload_step4_page():
         db_session=g.db_session,
         user_uuid=g.current_user.uuid,
     )
+    submission = submission_form.submission
     errors = []
 
     if request.method == 'POST':
         with tempfile.TemporaryDirectory() as yml_dir:
-            study_file = ExcelFile.from_upload(request.files['study-template'])
-            data_file  = ExcelFile.from_upload(request.files['data-template'])
+            if request.files['study-template']:
+                submission.studyFile = ExcelFile.from_upload(request.files['study-template'])
+            if request.files['data-template']:
+                submission.dataFile  = ExcelFile.from_upload(request.files['data-template'])
 
             # TODO (2025-01-30) Check for project name and study name uniqueness
 
-            errors = validate_upload(yml_dir, study_file.content, data_file.content)
+            errors = validate_upload(yml_dir, submission.studyFile.content, submission.dataFile.content)
 
             if len(errors) == 0:
                 (study_id, errors, errors_logic, studyUniqueID, projectUniqueID, project_id) = \
-                    save_measurements_to_database(g.db_session, yml_dir, submission_form, data_file.content)
+                    save_measurements_to_database(g.db_session, yml_dir, submission_form, submission.dataFile.content)
 
                 if len(errors) == 0:
                     # TODO (2025-01-30) Message that data was successfully
@@ -239,11 +241,8 @@ def upload_step4_page():
                     #         **Private Study ID**: {studyUniqueID} and **Study ID**: {study_id},
                     #         **Private Project Id**: {projectUniqueID} and **Project ID**: {project_id}""")
 
-                    save_chart_data_to_files(study_id, data_file.content)
-                    _save_chart_data_to_database(g.db_session, study_id, data_file.content)
-
-                    submission_form.submission.studyFile = study_file
-                    submission_form.submission.dataFile = data_file
+                    save_chart_data_to_files(study_id, submission.dataFile.content)
+                    _save_chart_data_to_database(g.db_session, study_id, submission.dataFile.content)
                     submission_form.save()
 
                     return redirect(url_for('upload_step5_page'))
@@ -257,17 +256,11 @@ def upload_step4_page():
 
 
 def upload_spreadsheet_preview_fragment():
-    file = request.files['file']
-    sheets = spreadsheet_preview.generate_preview(file)
-
-    file_length = humanize.naturalsize(file.seek(0, os.SEEK_END))
-    file.seek(0, os.SEEK_SET)
+    excel_file = ExcelFile.from_upload(request.files['file'])
 
     return render_template(
         "pages/upload/step4/spreadsheet_preview.html",
-        file=file,
-        file_length=file_length,
-        sheets=sheets
+        excel_file=excel_file,
     )
 
 

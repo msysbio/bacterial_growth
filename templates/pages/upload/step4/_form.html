@@ -1,6 +1,7 @@
 {% from 'utils/_form_errors.html' import render_form_errors %}
+{% from 'pages/upload/step4/_spreadsheet_preview.html' import render_spreadsheet_preview %}
 
-{% macro render_step4_form(_submission_form, errors) %}
+{% macro render_step4_form(submission_form, errors) %}
 
   <form
       class="simple-form"
@@ -40,6 +41,9 @@
         </div>
 
         <div class="preview js-preview">
+          {% if submission_form.submission.dataFileId: %}
+            {{ render_spreadsheet_preview(submission_form.submission.dataFile) }}
+          {% endif %}
         </div>
       </div>
 
@@ -74,6 +78,9 @@
         </div>
 
         <div class="preview js-preview">
+          {% if submission_form.submission.studyFileId: %}
+            {{ render_spreadsheet_preview(submission_form.submission.studyFile) }}
+          {% endif %}
         </div>
       </div>
     </div>

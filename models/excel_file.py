@@ -1,4 +1,5 @@
 from datetime import datetime
+from io import BytesIO
 
 from sqlalchemy import (
     String,
@@ -12,6 +13,7 @@ from sqlalchemy.orm import (
 from sqlalchemy.types import DateTime
 from sqlalchemy.schema import FetchedValue
 import humanize
+import pandas as pd
 
 from models.orm_base import OrmBase
 
@@ -40,3 +42,13 @@ class ExcelFile(OrmBase):
     @property
     def humanized_size(self):
         return humanize.naturalsize(self.size)
+
+    def extract_sheets(self):
+        excel = pd.ExcelFile(BytesIO(self.content))
+
+        sheets = {
+            name: pd.read_excel(excel, engine='openpyxl', sheet_name=name)
+            for name in excel.sheet_names
+        }
+
+        return sheets
