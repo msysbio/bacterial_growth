@@ -27,6 +27,7 @@ def init_assets(app):
         'css/select2-custom.css',
         'css/reset.css',
         'css/utils.css',
+        'css/fonts.css',
         'css/main.css',
         'css/sidebar.css',
         'css/search.css',
