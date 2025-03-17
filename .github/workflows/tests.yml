@@ -9,7 +9,8 @@ on:
     branches: ["main"]
 
 env:
-  APP_ENV: test
+  APP_ENV: "test"
+  PYTHONPATH: "."
 
 permissions:
   contents: read
@@ -49,8 +50,6 @@ jobs:
         password = "testrootpass"
         database = "BacterialGrowthTest"
         EOF
-
-        pwd
 
         mysql -u root --protocol=tcp --password=testrootpass <<EOF
           drop database BacterialGrowthTest;
