@@ -42,12 +42,6 @@ jobs:
       with:
         python-version: "3.12"
 
-    - name: Install python dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install pytest
-        pip install -r requirements.txt
-
     - name: Set up database
       run: |
         cat > db/config.toml <<EOF
@@ -62,7 +56,13 @@ jobs:
           create database BacterialGrowthTest;
         EOF
 
-        bin/dbconsole < db/schema.sql
+        mysql -u root --protocol=tcp --password=testrootpass < db/schema.sql
+
+    - name: Install python dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pytest
+        pip install -r requirements.txt
 
     - name: Run tests
       run: |
