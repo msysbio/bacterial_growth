@@ -50,7 +50,7 @@ jobs:
         database = "BacterialGrowthTest"
         EOF
 
-        mysql -u root --password=testrootpass <<EOF
+        mysql -u root --protocol=tcp --password=testrootpass <<EOF
           drop database BacterialGrowthTest;
           create database BacterialGrowthTest;
         EOF
