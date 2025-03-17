@@ -17,6 +17,9 @@ command! Eschema :e db/schema.sql
 command! -nargs=? -complete=custom,s:CompleteSchema
       \ Eschema call s:Eschema(<q-args>)
 
+command! -nargs=? -complete=custom,s:CompleteMigration
+      \ Emigration call s:Emigration(<q-args>)
+
 function! s:Eschema(model_name)
   edit db/schema.sql
 
@@ -36,4 +39,32 @@ function! s:CompleteSchema(A, L, P)
   endfor
 
   return join(tables, "\n")
+endfunction
+
+function! s:Emigration(name) abort
+  let files = glob('db/migrations/*.py', 1, 1)
+
+  if a:name == ''
+    exe $'edit {files[-1]}'
+    return
+  endif
+
+  for file in files
+    let basename = fnamemodify(file, ':t')
+
+    if basename =~ '^[[:digit:]_]\+_'..a:name
+      exe $'edit {file}'
+      return
+    endif
+  endfor
+
+  echoerr $"Migration not found: {a:name}"
+endfunction
+
+function! s:CompleteMigration(A, L, P)
+  let files     = glob('db/migrations/*.py', 1, 1)
+  let basenames = map(files, {_, f -> fnamemodify(f, ':t')})
+  let names     = map(basenames, {_, b -> matchstr(b, '^[[:digit:]_]\+_\zs.*\ze\.\(py\|sql\)')})
+
+  return join(names, "\n")
 endfunction
