@@ -9,6 +9,9 @@ def init_timing(app):
     app.before_request(start_request_timing)
     app.after_request(log_request_timing)
 
+    sql_event.listens_for(Engine, "before_cursor_execute", start_db_timing)
+    sql_event.listens_for(Engine, "after_cursor_execute", log_db_timing)
+
     return app
 
 
@@ -34,13 +37,11 @@ def log_request_timing(response):
 # Reference:
 # https://docs.sqlalchemy.org/en/20/faq/performance.html#how-can-i-profile-a-sqlalchemy-powered-application
 #
-@sql_event.listens_for(Engine, "before_cursor_execute")
 def start_db_timing(conn, cursor, statement, parameters, context, executemany):
     start_time = time.monotonic_ns()
     conn.info.setdefault("start_time", []).append(start_time)
 
 
-@sql_event.listens_for(Engine, "after_cursor_execute")
 def log_db_timing(conn, cursor, statement, parameters, context, executemany):
     duration_ns = time.monotonic_ns() - conn.info["start_time"].pop(-1)
     duration_ms = round(duration_ns / 1_000_000, 2)
