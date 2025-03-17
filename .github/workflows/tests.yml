@@ -56,7 +56,7 @@ jobs:
           create database BacterialGrowthTest;
         EOF
 
-        mysql -u root --protocol=tcp --password=testrootpass < db/schema.sql
+        mysql -u root --protocol=tcp --password=testrootpass --database="BacterialGrowthTest" < db/schema.sql
 
     - name: Install python dependencies
       run: |
