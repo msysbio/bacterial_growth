@@ -40,10 +40,10 @@ def get_cli_connection_params():
         extra_params = ['--protocol=tcp']
 
     return [
-        f'-h{config["host"]}',
+        f'-h{config.get("host", "localhost")}',
         f'-u{config["username"]}',
         f'-p{config["password"]}',
-        f'--port={config["port"]}',
+        f'--port={config.get("port", "3306")}',
         *extra_params,
         config['database']
     ]
