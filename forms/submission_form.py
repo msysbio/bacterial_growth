@@ -15,7 +15,7 @@ from models import (
 
 
 class SubmissionForm:
-    def __init__(self, submission_id, step, db_session=None, user_uuid=None):
+    def __init__(self, submission_id=None, step=0, db_session=None, user_uuid=None):
         self.step       = step
         self.db_session = db_session
 
@@ -71,6 +71,9 @@ class SubmissionForm:
         elif self.type == 'update_study':
             self.submission.projectUniqueID = data['project_uuid']
             self.submission.studyUniqueID   = data['study_uuid']
+
+        self.project_id = self._find_project_id()
+        self.study_id   = self._find_study_id()
 
     def update_strains(self, data):
         self.submission.studyDesign['strains']     = data['strains']
