@@ -1,4 +1,5 @@
 from .bioreplicate import Bioreplicate
+from .excel_file import ExcelFile
 from .experiment import Experiment
 from .measurement import Measurement
 from .metabolite import Metabolite

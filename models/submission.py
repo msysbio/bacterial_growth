@@ -1,13 +1,13 @@
 from datetime import datetime
 
-import sqlalchemy as sql
 from sqlalchemy import (
     String,
-    LargeBinary,
+    ForeignKey,
 )
 from sqlalchemy.orm import (
     Mapped,
     mapped_column,
+    relationship,
 )
 from sqlalchemy.types import (
     JSON,
@@ -29,8 +29,19 @@ class Submission(OrmBase):
 
     studyDesign: Mapped[JSON] = mapped_column(JSON, nullable=False)
 
-    studyXls: Mapped[bytes | None] = mapped_column(LargeBinary)
-    dataXls:  Mapped[bytes | None] = mapped_column(LargeBinary)
+    studyFileId: Mapped[int] = mapped_column(ForeignKey('ExcelFiles.id'))
+    dataFileId:  Mapped[int] = mapped_column(ForeignKey('ExcelFiles.id'))
+
+    studyFile: Mapped['ExcelFile'] = relationship(
+        foreign_keys=[studyFileId],
+        cascade='all, delete-orphan',
+        single_parent=True,
+    )
+    dataFile: Mapped['ExcelFile'] = relationship(
+        foreign_keys=[dataFileId],
+        cascade='all, delete-orphan',
+        single_parent=True,
+    )
 
     createdAt: Mapped[datetime] = mapped_column(DateTime, server_default=FetchedValue())
     updatedAt: Mapped[datetime] = mapped_column(DateTime, server_default=FetchedValue())
@@ -41,6 +52,6 @@ class Submission(OrmBase):
             1 if self.projectUniqueID and self.studyUniqueID else 0,
             1 if len(self.studyDesign['strains']) + len(self.studyDesign['new_strains']) > 0 else 0,
             1 if len(self.studyDesign['technique_types']) > 0 and self.studyDesign['timepoint_count'] else 0,
-            1 if self.studyXls and self.dataXls else 0,
+            1 if self.studyFileId and self.dataFileId else 0,
             0, # final step
         ])

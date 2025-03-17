@@ -1,7 +1,7 @@
 {% macro render_step4_status(submission) %}
 
   <ul class="upload-status">
-    {% if submission.studyXls: %}
+    {% if submission.studyFileId: %}
       <li class="complete">
         <span class="icon"></span> Study design uploaded
       </li>
@@ -11,7 +11,7 @@
       </li>
     {% endif %}
 
-    {% if submission.dataXls: %}
+    {% if submission.dataFileId: %}
       <li class="complete">
         <span class="icon"></span> Experimental data uploaded
       </li>

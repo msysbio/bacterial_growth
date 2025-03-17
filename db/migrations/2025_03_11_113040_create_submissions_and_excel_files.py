@@ -3,6 +3,19 @@ import sqlalchemy as sql
 
 def up(conn):
     query = """
+        CREATE TABLE ExcelFiles (
+            id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+
+            filename VARCHAR(255),
+            size     INT NOT NULL,
+            content  LONGBLOB NOT NULL,
+
+            createdAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+        );
+    """
+    conn.execute(sql.text(query))
+
+    query = """
         CREATE TABLE Submissions (
             id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
 
@@ -12,23 +25,19 @@ def up(conn):
 
             studyDesign JSON DEFAULT (JSON_OBJECT()),
 
-            studyXls LONGBLOB,
-            dataXls LONGBLOB,
+            studyFileId INT,
+            dataFileId INT,
 
             createdAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
             updatedAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
         );
     """
-    params = {}
-
-    conn.execute(sql.text(query), params)
+    conn.execute(sql.text(query))
 
 
 def down(conn):
-    query = """
-        DROP TABLE Submissions;
-    """
-    conn.execute(sql.text(query))
+    conn.execute(sql.text("DROP TABLE Submissions;"))
+    conn.execute(sql.text("DROP TABLE ExcelFiles;"))
 
 
 if __name__ == "__main__":

@@ -18,9 +18,10 @@ import sqlalchemy as sql
 from models import (
     Measurement,
     Submission,
+    ExcelFile,
 )
 from forms.submission_form import SubmissionForm
-import models.spreadsheet_preview as spreasheet_preview
+import models.spreadsheet_preview as spreadsheet_preview
 
 import legacy.study_spreadsheet as study_spreadsheet
 import legacy.data_spreadsheet as data_spreadsheet
@@ -45,7 +46,7 @@ def upload_status_page():
             sql.select(Submission)
             .where(Submission.userUniqueID == g.current_user.uuid)
             .order_by(Submission.updatedAt)
-        )
+        ).all()
     else:
         user_submissions = None
 
@@ -218,16 +219,16 @@ def upload_step4_page():
 
     if request.method == 'POST':
         with tempfile.TemporaryDirectory() as yml_dir:
-            study_template = request.files['study-template'].read()
-            data_template = request.files['data-template'].read()
+            study_file = ExcelFile.from_upload(request.files['study-template'])
+            data_file  = ExcelFile.from_upload(request.files['data-template'])
 
             # TODO (2025-01-30) Check for project name and study name uniqueness
 
-            errors = validate_upload(yml_dir, study_template, data_template)
+            errors = validate_upload(yml_dir, study_file.content, data_file.content)
 
             if len(errors) == 0:
                 (study_id, errors, errors_logic, studyUniqueID, projectUniqueID, project_id) = \
-                    save_measurements_to_database(g.db_session, yml_dir, submission_form, data_template)
+                    save_measurements_to_database(g.db_session, yml_dir, submission_form, data_file.content)
 
                 if len(errors) == 0:
                     # TODO (2025-01-30) Message that data was successfully
@@ -238,11 +239,11 @@ def upload_step4_page():
                     #         **Private Study ID**: {studyUniqueID} and **Study ID**: {study_id},
                     #         **Private Project Id**: {projectUniqueID} and **Project ID**: {project_id}""")
 
-                    save_chart_data_to_files(study_id, data_template)
-                    _save_chart_data_to_database(g.db_session, study_id, data_template)
+                    save_chart_data_to_files(study_id, data_file.content)
+                    _save_chart_data_to_database(g.db_session, study_id, data_file.content)
 
-                    submission_form.submission.studyXls = study_template
-                    submission_form.submission.dataXls = data_template
+                    submission_form.submission.studyFile = study_file
+                    submission_form.submission.dataFile = data_file
                     submission_form.save()
 
                     return redirect(url_for('upload_step5_page'))
@@ -257,7 +258,7 @@ def upload_step4_page():
 
 def upload_spreadsheet_preview_fragment():
     file = request.files['file']
-    sheets = spreasheet_preview.generate_preview(file)
+    sheets = spreadsheet_preview.generate_preview(file)
 
     file_length = humanize.naturalsize(file.seek(0, os.SEEK_END))
     file.seek(0, os.SEEK_SET)
