@@ -27,6 +27,15 @@ class Submission(OrmBase):
     studyUniqueID:   Mapped[str] = mapped_column(String(100), nullable=False)
     userUniqueID:    Mapped[str] = mapped_column(String(100), nullable=False)
 
+    project: Mapped['Project'] = relationship(
+        foreign_keys=[projectUniqueID],
+        primaryjoin="Submission.projectUniqueID == Project.projectUniqueID",
+    )
+    study: Mapped['Study'] = relationship(
+        foreign_keys=[studyUniqueID],
+        primaryjoin="Submission.studyUniqueID == Study.studyUniqueID",
+    )
+
     studyDesign: Mapped[JSON] = mapped_column(JSON, nullable=False)
 
     studyFileId: Mapped[int] = mapped_column(ForeignKey('ExcelFiles.id'))

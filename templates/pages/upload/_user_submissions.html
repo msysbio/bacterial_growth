@@ -5,6 +5,14 @@
       {% for user_submission in user_submissions %}
         <li class="{{ "current" if user_submission.id == current_submission.id }}">
           <h4>
+            {% if not user_submission.project %}
+              📚 New project:
+            {% elif not user_submission.study %}
+              📋 New study for project:
+            {% else %}
+              🔃 Study update for project:
+            {% endif %}
+
             {{ user_submission.studyDesign.get('project', {}).get('name', '<Unknown project>') }}
             {{ "(currently editing)" if user_submission.id == current_submission.id }}
           </h4>
