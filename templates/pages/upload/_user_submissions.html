@@ -1,3 +1,6 @@
+{% from 'utils/_time_tag.html' import time_tag %}
+{% from 'utils/_post_button.html' import post_button %}
+
 {% macro render_user_submissions(user_submissions, current_submission) %}
 
   <div class="user-submissions">
@@ -19,23 +22,11 @@
           <table>
             <tr>
               <td>Last update:</td>
-              <td>
-                {% if user_submission.updatedAt %}
-                  <time datetime="{{ user_submission.updatedAt.isoformat() }}">
-                    {{ user_submission.updatedAt.strftime("%c") }}
-                  </time>
-                {% endif %}
-              </td>
+              <td>{{ time_tag(user_submission.updatedAt) }}</td>
             </tr>
             <tr>
               <td>Started:</td>
-              <td>
-                {% if user_submission.createdAt %}
-                  <time datetime="{{ user_submission.createdAt.isoformat() }}">
-                    {{ user_submission.createdAt.strftime("%c") }}
-                  </time>
-                {% endif %}
-              </td>
+              <td>{{ time_tag(user_submission.createdAt) }}</td>
             </tr>
             <tr>
               <td>Completion status:</td>
@@ -44,22 +35,12 @@
             <tr>
               <td>Actions:</td>
               <td>
-                <form
-                  action="{{ url_for('edit_submission_action', id=user_submission.id) }}"
-                  class="simple-form"
-                  style="display: inline"
-                  method="POST">
-                  <input type="submit" class="flex-right" value="Edit" />
-                </form>
-
-                <form
-                  action="{{ url_for('delete_submission_action', id=user_submission.id) }}"
-                  onSubmit="return confirm('This will discard the data in this submission, are you sure?')"
-                  class="simple-form"
-                  style="display: inline"
-                  method="POST">
-                  <input type="submit" class="flex-right" value="Delete" />
-                </form>
+                {{ post_button("Edit", url_for('edit_submission_action', id=user_submission.id)) }}
+                {{ post_button(
+                  "Delete",
+                  url_for('edit_submission_action', id=user_submission.id),
+                  confirm="This will discard the data in this submission, are you sure?"
+                ) }}
               </td>
             </tr>
           </table>

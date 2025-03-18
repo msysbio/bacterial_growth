@@ -11,6 +11,7 @@
 {% from 'pages/upload/step5/_status.html' import render_step5_status %}
 
 {% from 'pages/upload/_user_submissions.html' import render_user_submissions %}
+{% from 'utils/_post_button.html' import post_button %}
 
 {% macro section_link(current_step, target_step, page) %}
   {% if target_step != current_step %}
@@ -59,12 +60,9 @@
       {% if user_submissions %}
         {{ render_user_submissions(user_submissions, submission) }}
 
-        <form
-          action="{{ url_for('new_submission_action') }}"
-          class="simple-form"
-          method="POST">
-          <input type="submit" class="flex-right" value="New submission" />
-        </form>
+        <div class="flex-row">
+          {{ post_button("New submission", url_for('new_submission_action'), class="flex-right") }}
+        </div>
       {% endif %}
 
       <br>
