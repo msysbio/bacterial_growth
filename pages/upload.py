@@ -33,12 +33,7 @@ from forms.upload_step3_form import UploadStep3Form
 
 
 def upload_status_page():
-    submission_form = SubmissionForm(
-        session.get('submission_id', None),
-        step=0,
-        db_session=g.db_session,
-        user_uuid=g.current_user.uuid,
-    )
+    submission_form = _init_submission_form(step=0)
 
     if g.current_user.uuid:
         user_submissions = g.db_session.scalars(
@@ -57,36 +52,8 @@ def upload_status_page():
     )
 
 
-def new_submission_action():
-    if 'submission_id' in session:
-        del session['submission_id']
-
-    return redirect(url_for('upload_step1_page'))
-
-
-def edit_submission_action(id):
-    session['submission_id'] = id
-
-    return redirect(url_for('upload_status_page'))
-
-
-def delete_submission_action(id):
-    if 'submission_id' in session:
-        del session['submission_id']
-
-    g.db_session.execute(sql.delete(Submission).where(Submission.id == id))
-    g.db_session.commit()
-
-    return redirect(url_for('upload_status_page'))
-
-
 def upload_step1_page():
-    submission_form = SubmissionForm(
-        session.get('submission_id', None),
-        step=1,
-        db_session=g.db_session,
-        user_uuid=g.current_user.uuid,
-    )
+    submission_form = _init_submission_form(step=1)
     error = None
 
     if request.method == 'POST':
@@ -104,12 +71,7 @@ def upload_step1_page():
 
 
 def upload_step2_page():
-    submission_form = SubmissionForm(
-        session.get('submission_id', None),
-        step=2,
-        db_session=g.db_session,
-        user_uuid=g.current_user.uuid,
-    )
+    submission_form = _init_submission_form(step=2)
     form = UploadStep2Form(request.form)
 
     if request.method == 'POST':
@@ -126,12 +88,7 @@ def upload_step2_page():
 
 
 def upload_step3_page():
-    submission_form = SubmissionForm(
-        session.get('submission_id', None),
-        step=3,
-        db_session=g.db_session,
-        user_uuid=g.current_user.uuid,
-    )
+    submission_form = _init_submission_form(step=3)
     submission = submission_form.submission
 
     if request.method == 'POST':
@@ -170,12 +127,7 @@ def upload_step3_page():
 
 
 def upload_study_template_xlsx():
-    submission_form = SubmissionForm(
-        session.get('submission_id', None),
-        step=3,
-        db_session=g.db_session,
-        user_uuid=g.current_user.uuid,
-    )
+    submission_form = _init_submission_form(step=3)
     submission = submission_form.submission
 
     taxa_ids   = submission.studyDesign['strains']
@@ -208,12 +160,7 @@ def upload_study_template_xlsx():
 
 
 def upload_step4_page():
-    submission_form = SubmissionForm(
-        session.get('submission_id', None),
-        step=4,
-        db_session=g.db_session,
-        user_uuid=g.current_user.uuid,
-    )
+    submission_form = _init_submission_form(step=4)
     submission = submission_form.submission
     errors = []
 
@@ -265,17 +212,21 @@ def upload_spreadsheet_preview_fragment():
 
 
 def upload_step5_page():
-    submission_form = SubmissionForm(
-        session.get('submission_id', None),
-        step=5,
-        db_session=g.db_session,
-        user_uuid=g.current_user.uuid,
-    )
+    submission_form = _init_submission_form(step=5)
 
     return render_template(
         "pages/upload/index.html",
         submission_form=submission_form,
         submission=submission_form.submission,
+    )
+
+
+def _init_submission_form(step):
+    return SubmissionForm(
+        session.get('submission_id', None),
+        step=step,
+        db_session=g.db_session,
+        user_uuid=g.current_user.uuid,
     )
 
 
