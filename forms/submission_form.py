@@ -141,6 +141,14 @@ class SubmissionForm:
 
         return self.submission.id
 
+    def html_step_classes(self, target_step):
+        if self.step < target_step:
+            return 'disabled'
+        elif self.step == target_step:
+            return 'active'
+        else:
+            return ''
+
     def _find_project_id(self):
         if self.submission.projectUniqueID is None:
             return None
