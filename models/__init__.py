@@ -4,6 +4,8 @@ from .experiment import Experiment
 from .measurement import Measurement
 from .metabolite import Metabolite
 from .project import Project
+from .project_user import ProjectUser
 from .study import Study
+from .study_user import StudyUser
 from .submission import Submission
 from .taxon import Taxon
