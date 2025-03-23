@@ -64,15 +64,5 @@
   .submit-row {
     column-gap: 20px !important;
     line-height: 42px;
-
-    .copy-button {
-      white-space: nowrap;
-      border-radius: var(--border-radius) 0 0 var(--border-radius);
-      cursor: pointer;
-    }
-
-    input[type="text"] {
-      border-radius: 0 var(--border-radius) var(--border-radius) 0;
-    }
   }
 }

@@ -34,6 +34,7 @@ def init_assets(app):
         'css/dashboard.css',
         'css/upload.css',
         'css/export.css',
+        'css/profile.css',
         filters='cssmin',
         output='build/app.css'
     ))

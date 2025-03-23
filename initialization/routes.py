@@ -7,7 +7,8 @@ import pages.static as static_pages
 import pages.strains as strain_pages
 import pages.studies as study_pages
 import pages.upload as upload_pages
-import pages.submission as submission_pages
+import pages.submissions as submission_pages
+import pages.users as user_pages
 
 
 def init_routes(app):
@@ -65,6 +66,9 @@ def init_routes(app):
         view_func=search_pages.search_index_page,
         methods=["GET", "POST"],
     )
+
+    app.add_url_rule("/profile", view_func=user_pages.user_show_page)
+    app.add_url_rule("/login",   view_func=user_pages.user_login_action, methods=["POST"])
 
     return app
 

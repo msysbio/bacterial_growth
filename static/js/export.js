@@ -37,26 +37,5 @@ $(document).ready(function() {
 
       $form.find('.js-export-url').val($form.prop('action') + '?' + $form.serialize())
     }
-
-    if (navigator.clipboard) {
-      $form.on('click', '.js-copy-button', function(e) {
-        e.preventDefault();
-
-        let $button = $(this);
-        let input = $button.next('input');
-
-        navigator.clipboard.writeText(input.val());
-
-        $button.text('Copied ✅');
-        $button.prop('disabled', true);
-
-        setTimeout(function () {
-          $button.text('Copy 📋');
-          $button.prop('disabled', false);
-        }, 2000);
-      });
-    } else {
-      // TODO Hide button and just show an input?
-    }
   });
 });
