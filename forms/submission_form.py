@@ -89,6 +89,7 @@ class SubmissionForm:
         # Check whether projects exist:
         self.project_id = self._find_project_id()
         self.study_id   = self._find_study_id()
+        self.type       = self._determine_project_type()
 
     def update_strains(self, data):
         self.submission.studyDesign['strains']     = data['strains']

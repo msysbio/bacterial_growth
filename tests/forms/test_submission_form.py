@@ -20,10 +20,12 @@ class TestSubmissionForm(DatabaseTest):
         self.assertEqual(submission_form.type, 'new_project')
 
         submission_form.update_project({
-            'submission_type':     'new_study',
             'project_uuid':        p1['projectUniqueID'],
             'project_name':        'Project 1 (updated)',
             'project_description': 'Test',
+            'study_uuid':          None,
+            'study_name':          'Study 1',
+            'study_description':   'Test',
         })
 
         self.assertEqual(submission_form.project_id, p1['projectId'])
@@ -36,12 +38,15 @@ class TestSubmissionForm(DatabaseTest):
             'study_uuid':          s2['studyUniqueID'],
             'project_name':        'Project 2 (updated)',
             'project_description': 'Test',
+            'study_name':          'Study 2 (updated)',
+            'study_description':   'Test',
         })
 
         self.assertEqual(submission_form.project_id, p2['projectId'])
         self.assertEqual(submission_form.study_id, s2['studyId'])
         self.assertEqual(submission_form.type, 'update_study')
         self.assertEqual(submission_form.submission.studyDesign['project']['name'], 'Project 2 (updated)')
+        self.assertEqual(submission_form.submission.studyDesign['study']['name'], 'Study 2 (updated)')
 
 
     def test_strains(self):
