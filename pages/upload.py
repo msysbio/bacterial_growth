@@ -61,9 +61,10 @@ def upload_step1_page():
 
     if request.method == 'POST':
         submission_form.update_project(request.form)
-        session['submission_id'] = submission_form.save()
 
-        return redirect(url_for('upload_step2_page'))
+        if len(submission_form.errors) == 0:
+            session['submission_id'] = submission_form.save()
+            return redirect(url_for('upload_step2_page'))
 
     if g.current_user:
         projects = g.db_session.scalars(

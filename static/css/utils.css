@@ -146,6 +146,12 @@ form.simple-form {
   .help {
     font-style: italic;
   }
+
+  input.error,
+  textarea.error {
+    border: 1px solid red;
+    box-shadow: inset 0 0 5px #a94442;
+  }
 }
 
 .form-input-blue {

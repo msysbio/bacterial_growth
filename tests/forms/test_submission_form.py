@@ -2,8 +2,6 @@ import tests.init  # noqa: F401
 
 import unittest
 
-import sqlalchemy as sql
-
 from tests.database_test import DatabaseTest
 from forms.submission_form import SubmissionForm
 
@@ -20,12 +18,10 @@ class TestSubmissionForm(DatabaseTest):
         self.assertEqual(submission_form.type, 'new_project')
 
         submission_form.update_project({
-            'project_uuid':        p1['projectUniqueID'],
-            'project_name':        'Project 1 (updated)',
-            'project_description': 'Test',
-            'study_uuid':          None,
-            'study_name':          'Study 1',
-            'study_description':   'Test',
+            'project_uuid': p1['projectUniqueID'],
+            'project_name': 'Project 1 (updated)',
+            'study_uuid':   '_new',
+            'study_name':   'Study 1',
         })
 
         self.assertEqual(submission_form.project_id, p1['projectId'])
@@ -33,12 +29,11 @@ class TestSubmissionForm(DatabaseTest):
         self.assertEqual(submission_form.submission.studyDesign['project']['name'], 'Project 1 (updated)')
 
         submission_form.update_project({
-            'submission_type':     'update_study',
             'project_uuid':        p2['projectUniqueID'],
             'study_uuid':          s2['studyUniqueID'],
             'project_name':        'Project 2 (updated)',
-            'project_description': 'Test',
             'study_name':          'Study 2 (updated)',
+            'project_description': 'Test',
             'study_description':   'Test',
         })
 
@@ -47,7 +42,35 @@ class TestSubmissionForm(DatabaseTest):
         self.assertEqual(submission_form.type, 'update_study')
         self.assertEqual(submission_form.submission.studyDesign['project']['name'], 'Project 2 (updated)')
         self.assertEqual(submission_form.submission.studyDesign['study']['name'], 'Study 2 (updated)')
+        self.assertEqual(submission_form.submission.studyDesign['project']['description'], 'Test')
+        self.assertEqual(submission_form.submission.studyDesign['study']['description'], 'Test')
 
+    def test_project_and_study_uniqueness_validation(self):
+        p1 = self.create_project(projectName="Project 1")
+        self.create_study(studyName="Study 1", projectUniqueID=p1['projectUniqueID'])
+
+        submission_form = SubmissionForm(db_session=self.db_session)
+        valid_params = {
+            'project_uuid': '_new',
+            'study_uuid':   '_new',
+            'project_name': 'Project 1 (new)',
+            'study_name':   'Study 1 (new)',
+        }
+
+        submission_form.update_project(valid_params)
+        self.assertEqual(submission_form.errors, {})
+
+        submission_form.update_project({**valid_params, 'project_name': 'Project 1'})
+        self.assertTrue(submission_form.has_error('project_name'))
+        self.assertEqual(submission_form.errors.get('project_name'), ["Project name is taken"])
+        self.assertEqual(submission_form.error_messages(), ["Project name is taken"])
+
+        # TODO (2025-03-24) Discuss whether study names should be unique
+        #
+        # submission_form.update_project({**valid_params, 'study_name': 'Study 1'})
+        # self.assertTrue(submission_form.has_error('study_name'))
+        # self.assertEqual(submission_form.errors['study_name'], ["Study name is taken"])
+        # self.assertEqual(submission_form.error_messages(), ["Study name is taken"])
 
     def test_strains(self):
         t1 = self.create_taxon(tax_names="R. intestinalis")

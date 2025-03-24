@@ -16,6 +16,14 @@
       action="{{ url_for('upload_step1_page') }}"
       class="simple-form">
 
+    {% if submission_form.errors: %}
+      <ul class="error-message-list">
+        {% for message in submission_form.error_messages(): %}
+          <li>{{ message }}</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+
     <div class="columns">
       <div class="column project-column">
         <h3>Project</h3>
@@ -55,7 +63,7 @@
                 name="project_name"
                 required
                 value="{{ submission.studyDesign['project']['name'] or '' }}"
-                class="form-input-full form-input-blue"
+                class="form-input-full form-input-blue {{ "error" if submission_form.has_error('project_name') }}"
                 placeholder="Example: Gut microbiome growth studies" />
         </div>
 
@@ -107,7 +115,7 @@
                 name="study_name"
                 required
                 value="{{ submission.studyDesign['study']['name'] or '' }}"
-                class="form-input-full form-input-blue"
+                class="form-input-full form-input-blue {{ "error" if submission_form.has_error('study_name') }}"
                 placeholder="Example: The Growth of Bacterial Cultures (Monod, 1949)" />
         </div>
 
