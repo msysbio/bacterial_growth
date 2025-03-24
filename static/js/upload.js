@@ -72,7 +72,7 @@ $(document).ready(function() {
         delay: 100,
         cache: true,
       },
-      templateResult: select2Highlighter($multipleStrainSelect),
+      templateResult: select2Highlighter,
     });
 
     $multipleStrainSelect.on('change', function() {
@@ -137,6 +137,7 @@ $(document).ready(function() {
           delay: 100,
           cache: true,
         },
+        templateResult: select2Highlighter,
       });
     }
 
@@ -203,7 +204,7 @@ $(document).ready(function() {
         delay: 100,
         cache: true,
       },
-      templateResult: select2Highlighter($metabolitesSelect),
+      templateResult: select2Highlighter,
     });
     $metabolitesSelect.trigger('change');
   });
@@ -227,11 +228,11 @@ $(document).ready(function() {
       $input[0].files = e.originalEvent.dataTransfer.files;
 
       $(this).removeClass('drop-hover');
-      submit_excel_form($container);
+      submitExcelForm($container);
     });
     $step4.on('change', 'input[type=file]', function(e) {
       let $container = $(this).parents('.js-upload-container');
-      submit_excel_form($container);
+      submitExcelForm($container);
     });
 
     $step4.on('change', '.js-preview select', function() {
@@ -249,7 +250,7 @@ $(document).ready(function() {
     // Trigger initial sheet preview
     $('.js-preview select').trigger('change');
 
-    function submit_excel_form($container) {
+    function submitExcelForm($container) {
       let url        = $container.prop('action')
       let $preview   = $container.find('.js-preview');
       let $fileInput = $container.find('input[type=file]');

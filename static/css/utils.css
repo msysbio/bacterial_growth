@@ -170,6 +170,7 @@ form.simple-form {
   color: white;
   text-decoration: none;
   line-height: 1.1;
+  white-space: nowrap;
 
   &:hover {
     background-color: rgb(7, 110, 126);
@@ -186,6 +187,7 @@ form.simple-form {
   text-decoration: none;
   line-height: 1.1;
   color: black;
+  white-space: nowrap;
 
   &:hover {
     background-color: #eee;
