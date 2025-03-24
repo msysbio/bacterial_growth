@@ -74,4 +74,15 @@ $(document).ready(function() {
   } else {
     // TODO Hide button and just show an input?
   }
+
+  // Open single select2 dropdowns on focus
+  // Reference: https://stackoverflow.com/a/49261426
+  $(document).on('focus', '.select2-selection.select2-selection--single', function (e) {
+    $(this).closest('.select2-container').siblings('select:enabled').select2('open');
+
+    // Note: Hacky, but it doesn't seem like the search input focuses reliably otherwise
+    setTimeout(function() {
+      $('.select2-container--open .select2-search__field').focus();
+    }, 200);
+  });
 });

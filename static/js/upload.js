@@ -65,6 +65,7 @@ $(document).ready(function() {
       multiple: true,
       width: '100%',
       theme: 'custom',
+      minimumInputLength: 1,
       ajax: {
         url: '/strains/completion',
         dataType: 'json',
@@ -121,14 +122,15 @@ $(document).ready(function() {
 
       // Initialize single-strain selection:
       let $strainSelect = $newForm.find('.js-single-strain-select');
-      initialize_single_strain_select($strainSelect);
+      initializeSingleStrainSelect($strainSelect);
     }
 
-    function initialize_single_strain_select($select) {
+    function initializeSingleStrainSelect($select) {
       $select.select2({
         placeholder: 'Select parent species',
         theme: 'custom',
         width: '100%',
+        minimumInputLength: 1,
         ajax: {
           url: '/strains/completion',
           dataType: 'json',
@@ -138,9 +140,9 @@ $(document).ready(function() {
       });
     }
 
-    initialize_single_strain_select($step2.find('.js-single-strain-select'));
+    initializeSingleStrainSelect($step2.find('.js-single-strain-select'));
 
-    function update_strain_list() {
+    function updateStrainList() {
       let $form       = $multipleStrainSelect.parents('form');
       let $strainList = $form.find('.strain-list');
       let template    = $form.find('template.strain-list-item').html();
@@ -171,12 +173,12 @@ $(document).ready(function() {
     let $step3form = $step3.find('form');
 
     $('select[name=vessel_type]').on('change', function() {
-      update_vessel_count_inputs();
+      updateVesselCountInputs();
     });
 
-    update_vessel_count_inputs();
+    updateVesselCountInputs();
 
-    function update_vessel_count_inputs() {
+    function updateVesselCountInputs() {
       let $vesselTypeInput = $step3form.find('select[name=vessel_type]');
       let vesselType = $vesselTypeInput.val();
 
@@ -194,6 +196,7 @@ $(document).ready(function() {
       multiple: true,
       theme: 'custom',
       width: '100%',
+      minimumInputLength: 1,
       ajax: {
         url: '/metabolites/completion',
         dataType: 'json',
