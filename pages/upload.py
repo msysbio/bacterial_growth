@@ -19,6 +19,10 @@ from models import (
     Measurement,
     Submission,
     ExcelFile,
+    Project,
+    ProjectUser,
+    Study,
+    StudyUser,
 )
 from forms.submission_form import SubmissionForm
 
@@ -54,7 +58,6 @@ def upload_status_page():
 
 def upload_step1_page():
     submission_form = _init_submission_form(step=1)
-    error = None
 
     if request.method == 'POST':
         submission_form.update_project(request.form)
@@ -62,11 +65,31 @@ def upload_step1_page():
 
         return redirect(url_for('upload_step2_page'))
 
+    if g.current_user:
+        projects = g.db_session.scalars(
+            sql.select(Project)
+            .join(Study)
+            .join(ProjectUser)
+            .where(ProjectUser.userUniqueID == g.current_user.uuid)
+            .order_by(Project.projectId.asc())
+        ).all()
+
+        studies = g.db_session.scalars(
+            sql.select(Study)
+            .join(StudyUser)
+            .where(StudyUser.userUniqueID == g.current_user.uuid)
+            .order_by(Study.studyId.asc())
+        ).all()
+    else:
+        projects = []
+        studies = []
+
     return render_template(
         "pages/upload/index.html",
         submission_form=submission_form,
         submission=submission_form.submission,
-        error=error
+        projects=projects,
+        studies=studies,
     )
 
 

@@ -74,7 +74,7 @@
           {% endcall %}
 
           {% if submission_form.step == 1 %}
-            {{ render_step1_form(submission_form, submission, error) }}
+            {{ render_step1_form(submission_form, submission, projects, studies) }}
           {% else %}
             {{ render_step1_status(submission) }}
           {% endif %}

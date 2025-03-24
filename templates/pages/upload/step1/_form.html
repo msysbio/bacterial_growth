@@ -1,170 +1,130 @@
-{% from 'pages/upload/step1/_status.html' import render_step1_status %}
-
-{% macro render_step1_form(submission_form, submission, error) %}
-
-  {% if not submission.projectUniqueID %}
-    {% include 'pages/upload/step1/_info.html' %}
-  {% endif %}
-
+{% macro render_step1_form(submission_form, submission, projects, studies) %}
   <p>
-    <select class="form-input-blue js-submission-type">
-      <option value="">Choose an option</option>
-      <option value="new_project" {{ 'selected' if submission_form.type == 'new_project' }}>
-      Add a new study to a new project
-      </option>
-      <option value="new_study" {{ 'selected' if submission_form.type == 'new_study' }}>
-      Add a new study to a previous project
-      </option>
-      <option value="update_study" {{ 'selected' if submission_form.type == 'update_study' }}>
-      Add a new version of a study to a previous project
-      </option>
-    </select>
+    A project groups multiple studies together. You can start a new project or
+    select an existing one. This name will only be visible to you and is used
+    for oganizational purposes.
   </p>
 
-  {% if error %}
-    <p class="error-message">{{ error }}</p>
-  {% endif %}
+  <p>
+    Your study should describe a focused investigation on a particular research
+    question. Each study may have contain multiple experiments described in
+    later steps. Select one from the list to update the existing information.
+  </p>
 
-  <div class="submission-forms">
-    <form
-        method="POST"
-        action="{{ url_for('upload_step1_page') }}"
-        class="simple-form hidden"
-        id="form-new_project">
-      <input type="hidden" name="submission_type" value="new_project" />
+  <form
+      method="POST"
+      action="{{ url_for('upload_step1_page') }}"
+      class="simple-form">
 
-      <div class="form-row">
-        <label class="full">
-          <span>Project name:</span>
-          <input
-              type="text"
-              name="project_name"
-              required
-              value="{{ submission.studyDesign['project']['name'] or '' }}"
-              class="form-input-full form-input-blue"
-              placeholder="1. Provide a name for your project" />
-      </div>
+    <div class="columns">
+      <div class="column project-column">
+        <h3>Project</h3>
 
-      <div class="form-row">
-        <label class="full">
-          <span>Project description:</span>
-          <textarea
-              name="project_description"
-              placeholder="2. Provide a project description"
-              class="form-input-full form-input-blue"
-              required>{{ submission.studyDesign['project']['description'] or '' }}</textarea>
-      </div>
+        <br>
 
-      <div class="form-row">
-        <input
-            type="submit"
-            value="Next" />
-      </div>
-    </form>
-
-    <form
-        method="POST"
-        action="{{ url_for('upload_step1_page') }}"
-        class="simple-form hidden"
-        id="form-new_study">
-      <input type="hidden" name="submission_type" value="new_study" />
-
-      <div class="form-row">
-        <label class="full">
-          <span>Private project ID:</span>
-          <input
-              type="text"
+        <div class="form-row">
+          <select
               name="project_uuid"
-              value="{{ submission.projectUniqueID or '' }}"
-              class="form-input-full form-input-blue"
-              placeholder="1. Provide the private project ID" />
-        </label>
+              id="project_uuid"
+              class="form-input-blue form-input-full js-project-select">
+            <option
+                value="_new"
+                data-name="{{ submission.studyDesign['project']['name'] }}"
+                data-description="{{ submission.studyDesign['project']['description'] }}">
+              New project
+            </option>
+
+            {% for project in projects: %}
+              <option
+                  value="{{ project.projectUniqueID }}"
+                  {{ "selected" if project.projectUniqueID == submission.projectUniqueID }}
+                  data-name="{{ project.projectName }}"
+                  data-description="{{ project.projectDescription }}"
+                  data-study-uuids="{{ project.studyUuids }}">
+                [{{ project.projectId }}] {{ project.projectName }}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="form-row">
+          <label class="full">
+            <span>Project name (required):</span>
+            <input
+                type="text"
+                name="project_name"
+                required
+                value="{{ submission.studyDesign['project']['name'] or '' }}"
+                class="form-input-full form-input-blue"
+                placeholder="Example: Gut microbiome growth studies" />
+        </div>
+
+        <div class="form-row">
+          <label class="full">
+            <span>Project description:</span>
+            <textarea
+                name="project_description"
+                placeholder="Description of the studies collected in this project."
+                class="form-input-full form-input-blue">{{ submission.studyDesign['project']['description'] or '' }}</textarea>
+        </div>
       </div>
 
-      <div class="form-row">
-        <label class="full">
-          <span>Project name:</span>
-          <input
-              type="text"
-              name="project_name"
-              required
-              value="{{ submission.studyDesign['project']['name'] or '' }}"
-              class="form-input-full form-input-blue"
-              placeholder="1. Provide a name for your project" />
-      </div>
+      <div class="column study-column">
+        <h3>Study</h3>
 
-      <div class="form-row">
-        <label class="full">
-          <span>Project description:</span>
-          <textarea
-              name="project_description"
-              placeholder="2. Provide a project description"
-              class="form-input-full form-input-blue"
-              required>{{ submission['studyDesign']['project']['description'] or '' }}</textarea>
-      </div>
+        <br>
 
-      <div class="form-row">
-        <input type="submit" value="Next" />
-      </div>
-    </form>
-
-    <form
-        method="POST"
-        action="{{ url_for('upload_step1_page') }}"
-        class="simple-form hidden"
-        id="form-update_study">
-      <input type="hidden" name="submission_type" value="update_study" />
-
-      <div class="form-row">
-        <label class="full">
-          <span>Private project ID:</span>
-          <input
-              type="text"
-              name="project_uuid"
-              value="{{ submission.projectUniqueID or '' }}"
-              class="form-input-full form-input-blue"
-              placeholder="1. Provide the private project ID" />
-        </label>
-      </div>
-
-      <div class="form-row">
-        <label class="full">
-          <span>Private study ID:</span>
-          <input
-              type="text"
+        <div class="form-row">
+          <select
               name="study_uuid"
-              value="{{ submission.studyUniqueID or '' }}"
-              class="form-input-full form-input-blue"
-              placeholder="1. Provide the private study ID" />
-        </label>
-      </div>
+              id="study_uuid"
+              class="form-input-blue form-input-full js-study-select">
+            <option
+                value="_new"
+                data-name="{{ submission.studyDesign['study']['name'] }}"
+                data-description="{{ submission.studyDesign['study']['description'] }}">
+              New study
+            </option>
 
-      <div class="form-row">
-        <label class="full">
-          <span>Project name:</span>
-          <input
-              type="text"
-              name="project_name"
-              required
-              value="{{ submission.studyDesign['project']['name'] or '' }}"
-              class="form-input-full form-input-blue"
-              placeholder="1. Provide a name for your project" />
-      </div>
+            {% for study in studies: %}
+              <option
+                  value="{{ study.studyUniqueID }}"
+                  {{ "selected" if study.studyUniqueID == submission.studyUniqueID }}
+                  data-name="{{ study.studyName }}"
+                  data-description="{{ study.studyDescription }}"
+                  data-project-uuid="{{ study.projectUniqueID }}">
+                [{{ study.studyId }}] {{ study.studyName }}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
 
-      <div class="form-row">
-        <label class="full">
-          <span>Project description:</span>
-          <textarea
-              name="project_description"
-              placeholder="2. Provide a project description"
-              class="form-input-full form-input-blue"
-              required>{{ submission.studyDesign['project']['description'] or '' }}</textarea>
-      </div>
+        <div class="form-row">
+          <label class="full">
+            <span>Study name (required):</span>
+            <input
+                type="text"
+                name="study_name"
+                required
+                value="{{ submission.studyDesign['study']['name'] or '' }}"
+                class="form-input-full form-input-blue"
+                placeholder="Example: The Growth of Bacterial Cultures (Monod, 1949)" />
+        </div>
 
-      <div class="form-row">
-        <input type="submit" value="Next" />
+        <div class="form-row">
+          <label class="full">
+            <span>Study description:</span>
+            <textarea
+                name="study_description"
+                placeholder="Short description of this study."
+                class="form-input-full form-input-blue">{{ submission.studyDesign['study']['description'] or '' }}</textarea>
+        </div>
       </div>
-    </form>
-  </div>
+    </div>
+
+    <div class="form-row">
+      <input type="submit" value="Next" />
+    </div>
+  </form>
 
 {% endmacro %}

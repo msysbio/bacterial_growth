@@ -1,34 +1,57 @@
 $(document).ready(function() {
-  $('.upload-page .step-content.step-1').each(function() {
+  $('.upload-page .step-content.step-1.active').each(function() {
     let $step1 = $(this);
+    let $form = $step1.find('form');
 
-    // Show form corresponding to currently selected submission type
-    showForms($step1.find('.js-submission-type').val());
+    updateProjectFields();
+    updateStudyFields();
 
-    // Show form when submission type changes
-    $step1.on('change', '.js-submission-type', function() {
-      let $select        = $(this);
-      let submissionType = $select.val();
+    $step1.on('change', '.js-project-select', function() { updateProjectFields(); });
+    $step1.on('change', '.js-study-select', function() { updateStudyFields(); });
 
-      showForms(submissionType);
-    });
+    function updateProjectFields() {
+      let $select = $form.find('.js-project-select');
+      let $option = $select.find('option:selected');
 
-    function showForms(submissionType) {
-      $forms = $step1.find('.submission-forms form');
-      $forms.addClass('hidden');
+      $form.find('input[name=project_name]').val($option.data('name'));
+      $form.find('textarea[name=project_description]').val($option.data('description'));
 
-      if (submissionType != '') {
-        $forms.filter(`#form-${submissionType}`).removeClass('hidden');
+      // If the selected study is not in this project, reset the study form
+      if ($option.val() != '_new') {
+        let selectedStudyUuid = $form.find('.js-study-select option:selected').val();
+        let projectStudies = $option.data('studyUuids');
+
+        if (!projectStudies.includes(selectedStudyUuid)) {
+          $form.find('.js-study-select').val('_new').trigger('change');
+        }
+      }
+    }
+
+    function updateStudyFields() {
+      let $select = $form.find('.js-study-select');
+      let $option = $select.find('option:selected');
+
+      $form.find('input[name=study_name]').val($option.data('name'));
+      $form.find('textarea[name=study_description]').val($option.data('description'));
+
+      // If the selected project is not the parent of this study, find it in the project form
+      if ($option.val() != '_new') {
+        let selectedProjectUuid = $form.find('.js-project-select option:selected').val();
+        let projectUuid = $option.data('projectUuid');
+
+        if (projectUuid != selectedProjectUuid) {
+          $form.find('.js-project-select').val(projectUuid).trigger('change');
+        }
       }
     }
   });
 
-  $('.upload-page .step-content.step-2').each(function() {
+  $('.upload-page .step-content.step-2.active').each(function() {
     let $step2 = $(this);
 
     $step2.on('click', '.js-add-strain', function(e) {
       e.preventDefault();
-      add_new_strain_form($(e.currentTarget), {});
+      addNewStrainForm($(e.currentTarget), {});
     });
 
     $step2.on('click', '.js-remove-new-strain', function(e) {
@@ -78,7 +101,7 @@ $(document).ready(function() {
 
     $multipleStrainSelect.trigger('change');
 
-    function add_new_strain_form($addStrainButton, newStrain) {
+    function addNewStrainForm($addStrainButton, newStrain) {
       // We need to prepend all names and ids with "new-strain-N" for uniqueness:
 
       let newStrainIndex = $step2.find('.js-new-strain-container').length;
@@ -143,7 +166,7 @@ $(document).ready(function() {
     }
   });
 
-  $('.upload-page .step-content.step-3').each(function() {
+  $('.upload-page .step-content.step-3.active').each(function() {
     let $step3     = $(this);
     let $step3form = $step3.find('form');
 
@@ -182,7 +205,7 @@ $(document).ready(function() {
     $metabolitesSelect.trigger('change');
   });
 
-  $('.upload-page .step-content.step-4').each(function() {
+  $('.upload-page .step-content.step-4.active').each(function() {
     let $step4 = $(this);
 
     $step4.on('dragover', '.js-file-upload', function(e) {

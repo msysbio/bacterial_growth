@@ -68,8 +68,19 @@
     }
   }
 
+  .step-1 {
+    .column {
+      width: 50%;
+    }
+  }
+
   .submission-forms {
     margin-top: 20px;
+  }
+
+  .submission-type-row {
+    align-items: flex-start;
+    gap: 10px;
   }
 
   .columns {

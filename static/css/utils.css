@@ -142,6 +142,10 @@ form.simple-form {
       background-color: rgb(7, 110, 126);
     }
   }
+
+  .help {
+    font-style: italic;
+  }
 }
 
 .form-input-blue {

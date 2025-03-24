@@ -19,34 +19,43 @@ class SubmissionForm:
         self.step       = step
         self.db_session = db_session
 
+        defaultStudyDesign = {
+            'project': {
+                'name':        None,
+                'description': None,
+            },
+            'study': {
+                'name':        None,
+                'description': None,
+            },
+            'vessel_type':     None,
+            'bottle_count':    None,
+            'plate_count':     None,
+            'vessel_count':    None,
+            'column_count':    None,
+            'row_count':       None,
+            'timepoint_count': None,
+            'technique_types': [],
+            'strains':         [],
+            'new_strains':     [],
+            'metabolites':     [],
+        }
+
         # Load submission object
         self.submission = None
         if submission_id is not None:
             self.submission = self.db_session.get(Submission, submission_id)
+            self.submission.studyDesign = {
+                **defaultStudyDesign,
+                **self.submission.studyDesign,
+            }
 
         if self.submission is None:
             self.submission = Submission(
                 projectUniqueID=None,
                 studyUniqueID=None,
                 userUniqueID=user_uuid,
-                studyDesign={
-                    'project': {
-                        'name':        None,
-                        'description': None,
-                    },
-                    'vessel_type':     None,
-                    'bottle_count':    None,
-                    'plate_count':     None,
-                    'vessel_count':    None,
-                    'column_count':    None,
-                    'row_count':       None,
-                    'timepoint_count': None,
-                    'technique_types': [],
-                    'strains':         [],
-                    'new_strains':     [],
-                    'metabolites':     [],
-                }
-
+                studyDesign=defaultStudyDesign,
             )
 
         # Check for an existing project/study and set the submission "type" accordingly:
@@ -55,23 +64,29 @@ class SubmissionForm:
         self.type       = self._determine_project_type()
 
     def update_project(self, data):
-        self.type = data['submission_type']
+        # Update text fields:
         self.submission.studyDesign['project'] = {
             'name':        data['project_name'],
             'description': data['project_description'],
         }
+        self.submission.studyDesign['study'] = {
+            'name':        data['study_name'],
+            'description': data['study_description'],
+        }
         flag_modified(self.submission, 'studyDesign')
 
-        if self.type == 'new_project':
+        # Update IDs:
+        if data['project_uuid'] == '_new':
             self.submission.projectUniqueID = str(uuid4())
-            self.submission.studyUniqueID   = str(uuid4())
-        elif self.type == 'new_study':
+        else:
             self.submission.projectUniqueID = data['project_uuid']
-            self.submission.studyUniqueID   = str(uuid4())
-        elif self.type == 'update_study':
-            self.submission.projectUniqueID = data['project_uuid']
-            self.submission.studyUniqueID   = data['study_uuid']
 
+        if data['study_uuid'] == '_new':
+            self.submission.studyUniqueID = str(uuid4())
+        else:
+            self.submission.studyUniqueID = data['study_uuid']
+
+        # Check whether projects exist:
         self.project_id = self._find_project_id()
         self.study_id   = self._find_study_id()
 
