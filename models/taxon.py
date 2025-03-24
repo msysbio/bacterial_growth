@@ -25,7 +25,7 @@ class Taxon(OrmBase):
         query = """
             SELECT
                 tax_id AS id,
-                tax_names AS text
+                CONCAT(tax_names, ' (NCBI:', tax_id, ')') AS text
             FROM Taxa
             WHERE LOWER(tax_names) LIKE :term_pattern
             ORDER BY

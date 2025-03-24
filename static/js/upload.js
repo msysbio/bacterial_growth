@@ -84,7 +84,7 @@ $(document).ready(function() {
 
       $(this).find('option').each(function() {
         let $option = $(this);
-        let name    = $option.text();
+        let name    = $option.text().replace(/\s*\(NCBI:.*\)/, '');
         let id      = $option.val();
 
         if (!selectedIds.has(id)) {
