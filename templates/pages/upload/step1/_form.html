@@ -37,8 +37,8 @@
               class="form-input-blue form-input-full js-project-select">
             <option
                 value="_new"
-                data-name="{{ submission.studyDesign['project']['name'] }}"
-                data-description="{{ submission.studyDesign['project']['description'] }}">
+                data-name="{{ submission.studyDesign['project']['name'] or '' }}"
+                data-description="{{ submission.studyDesign['project']['description'] or '' }}">
               New project
             </option>
 
@@ -89,8 +89,8 @@
               class="form-input-blue form-input-full js-study-select">
             <option
                 value="_new"
-                data-name="{{ submission.studyDesign['study']['name'] }}"
-                data-description="{{ submission.studyDesign['study']['description'] }}">
+                data-name="{{ submission.studyDesign['study']['name'] or '' }}"
+                data-description="{{ submission.studyDesign['study']['description'] or '' }}">
               New study
             </option>
 
