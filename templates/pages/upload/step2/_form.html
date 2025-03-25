@@ -27,7 +27,7 @@
               class="strain-select js-multiple-strain-select">
             {% for taxon in submission_form.fetch_taxa(): %}
               <option value={{ taxon.tax_id }} selected="selected">
-                {{ taxon.tax_names }} (NCBI:{{ taxon.tax_id }})
+              {{ taxon.tax_names }} (NCBI:{{ taxon.tax_id }})
               </option>
             {% endfor %}
           </select>
@@ -59,9 +59,16 @@
         </li>
       </template>
 
+      <template class="new-strain-parent-preview">
+        <div>
+          Parent strain: <strong>${name}</strong>
+          (<a href="https://www.ncbi.nlm.nih.gov/datasets/taxonomy/${id}/" target="_blank">NCBI:${id}</a>)
+        </div>
+      </template>
+
       <template
-        class="new-strain"
-        data-initial='{{ submission['studyDesign'].new_strains|tojson }}'>
+          class="new-strain"
+          data-initial='{{ submission['studyDesign'].new_strains|tojson }}'>
         {{ render_new_strain_form(data=None, prefix='') }}
       </template>
     </form>

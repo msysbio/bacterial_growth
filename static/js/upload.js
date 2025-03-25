@@ -139,34 +139,40 @@ $(document).ready(function() {
         },
         templateResult: select2Highlighter,
       });
-    }
 
-    initializeSingleStrainSelect($step2.find('.js-single-strain-select'));
+      $select.on('change', function() { updateParentPreview($select) });
 
-    function updateStrainList() {
-      let $form       = $multipleStrainSelect.parents('form');
-      let $strainList = $form.find('.strain-list');
-      let template    = $form.find('template.strain-list-item').html();
-      let selectedIds = new Set($multipleStrainSelect.val());
+      function updateParentPreview($select) {
+        let $container     = $select.parents('.js-new-strain-container').log();
+        let $parentPreview = $container.find('.js-parent-preview').log();
+        let template       = $('template.new-strain-parent-preview').html();
+        let selectedId     = $select.val();
 
-      $strainList.html('');
+        $parentPreview.html('');
 
-      $(this).find('option').each(function() {
-        let $option = $(this);
-        let name    = $option.text();
-        let id      = $option.val();
+        $select.find('option').each(function() {
+          let $option = $(this);
+          let name    = $option.text().replace(/\s*\(NCBI:.*\)/, '');
+          let id      = $option.val();
 
-        if (!selectedIds.has(id)) {
-          return;
-        }
+          if (selectedId != id) {
+            return;
+          }
 
-        let newListItemHtml = template.
-          replaceAll('${id}', id).
-          replaceAll('${name}', name);
+          let previewHtml = template.
+            replaceAll('${id}', id).
+            replaceAll('${name}', name);
 
-        $strainList.append($(newListItemHtml));
-      });
-    }
+          $parentPreview.append($(previewHtml));
+        });
+      }
+
+      updateParentPreview($select);
+    };
+
+    $step2.find('.js-single-strain-select').each(function() {
+      initializeSingleStrainSelect($(this));
+    });
   });
 
   $('.upload-page .step-content.step-3.active').each(function() {
