@@ -165,6 +165,8 @@ def save_measurements_to_database(conn, yml_dir, submission_form, data_template)
 
         # populating strains table
         if 'Member_ID' in info_mem:
+            # TODO (2025-03-25) Look up information from the submission, by name?
+
             for i in range(num_mem):
                 mem_id = info_mem['Member_ID'][i]
                 members = {

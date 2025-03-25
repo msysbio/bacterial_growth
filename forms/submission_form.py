@@ -84,7 +84,7 @@ class SubmissionForm:
         flag_modified(self.submission, 'studyDesign')
 
         # Validate uniqueness:
-        self._validate_unique_names()
+        self._validate_unique_project_names()
 
         # Check whether projects exist:
         self.project_id = self._find_project_id()
@@ -94,6 +94,7 @@ class SubmissionForm:
     def update_strains(self, data):
         self.submission.studyDesign['strains']     = data['strains']
         self.submission.studyDesign['new_strains'] = data['new_strains']
+
         flag_modified(self.submission, 'studyDesign')
 
     def update_study_design(self, data):
@@ -198,11 +199,11 @@ class SubmissionForm:
         else:
             return 'new_project'
 
-    def _validate_unique_names(self):
+    def _validate_unique_project_names(self):
         self.errors = {}
 
         project_name = self.submission.studyDesign['project']['name']
-        study_name   = self.submission.studyDesign['study']['name']
+        # study_name   = self.submission.studyDesign['study']['name']
 
         if len(project_name) > 0:
             project_exists = self.db_session.query(

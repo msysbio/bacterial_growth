@@ -390,6 +390,7 @@ CREATE TABLE Strains (
   NCBId int DEFAULT NULL,
   descriptionMember text COLLATE utf8mb4_bin,
   assemblyGenBankId varchar(50) COLLATE utf8mb4_bin DEFAULT NULL,
+  userUniqueID varchar(100) COLLATE utf8mb4_bin DEFAULT NULL,
   PRIMARY KEY (strainId),
   KEY fk_1 (studyId),
   CONSTRAINT Strains_fk_1 FOREIGN KEY (studyId) REFERENCES Study (studyId) ON DELETE CASCADE ON UPDATE CASCADE
@@ -512,5 +513,6 @@ INSERT INTO MigrationVersions VALUES
 (16,'2025_02_13_163206_create_measurements','2025-03-09 11:09:49'),
 (17,'2025_02_17_161750_remove_duplicated_columns_from_metabolite_per_experiment','2025-03-09 11:09:49'),
 (23,'2025_03_11_113040_create_submissions_and_excel_files','2025-03-17 10:04:03'),
-(25,'2025_03_21_112110_create_project_and_study_user_join_tables','2025-03-21 10:31:34');
+(25,'2025_03_21_112110_create_project_and_study_user_join_tables','2025-03-21 10:31:34'),
+(26,'2025_03_25_133231_add_user_id_to_new_strains','2025-03-25 12:34:13');
 
