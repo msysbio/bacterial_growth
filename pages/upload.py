@@ -197,15 +197,15 @@ def upload_step4_page():
     errors = []
 
     if request.method == 'POST':
+        if request.files['study-template']:
+            submission.studyFile = ExcelFile.from_upload(request.files['study-template'])
+        if request.files['data-template']:
+            submission.dataFile  = ExcelFile.from_upload(request.files['data-template'])
+
+        submission_form.save()
+
         with tempfile.TemporaryDirectory() as yml_dir:
-            if request.files['study-template']:
-                submission.studyFile = ExcelFile.from_upload(request.files['study-template'])
-            if request.files['data-template']:
-                submission.dataFile  = ExcelFile.from_upload(request.files['data-template'])
-
-            # TODO (2025-01-30) Check for project name and study name uniqueness
-
-            errors = validate_upload(yml_dir, submission.studyFile.content, submission.dataFile.content)
+            errors = validate_upload(yml_dir, submission)
 
             if len(errors) == 0:
                 (study_id, errors, errors_logic, studyUniqueID, projectUniqueID, project_id) = \
