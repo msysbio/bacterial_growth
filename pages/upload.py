@@ -120,25 +120,8 @@ def upload_step3_page():
         submission_form.update_study_design(form.data)
         session['submission_id'] = submission_form.save()
 
-        metabolite_names = [m.metabo_name for m in submission_form.fetch_metabolites()]
-        taxa_names       = [t.tax_names for t in submission_form.fetch_taxa()]
+        return redirect(url_for('upload_step4_page'))
 
-        spreadsheet = data_spreadsheet.create_excel(
-            submission.studyDesign['technique_types'],
-            metabolite_names,
-            submission.studyDesign['vessel_type'],
-            submission.studyDesign['vessel_count'],
-            submission.studyDesign['column_count'],
-            submission.studyDesign['row_count'],
-            submission.studyDesign['timepoint_count'],
-            taxa_names,
-        )
-
-        return send_file(
-            io.BytesIO(spreadsheet),
-            as_attachment=True,
-            download_name="template_data.xlsx",
-        )
     else:
         upload_form = UploadStep3Form(data=submission.studyDesign)
 
@@ -150,7 +133,7 @@ def upload_step3_page():
         )
 
 
-def upload_study_template_xlsx():
+def download_study_template_xlsx():
     submission_form = _init_submission_form(step=3)
     submission = submission_form.submission
 
@@ -180,6 +163,31 @@ def upload_study_template_xlsx():
         io.BytesIO(spreadsheet),
         as_attachment=True,
         download_name="template_study.xlsx",
+    )
+
+
+def download_data_template_xlsx():
+    submission_form = _init_submission_form(step=3)
+    submission = submission_form.submission
+
+    metabolite_names = [m.metabo_name for m in submission_form.fetch_metabolites()]
+    taxa_names       = [t.tax_names for t in submission_form.fetch_taxa()]
+
+    spreadsheet = data_spreadsheet.create_excel(
+        submission.studyDesign['technique_types'],
+        metabolite_names,
+        submission.studyDesign['vessel_type'],
+        submission.studyDesign['vessel_count'],
+        submission.studyDesign['column_count'],
+        submission.studyDesign['row_count'],
+        submission.studyDesign['timepoint_count'],
+        taxa_names,
+    )
+
+    return send_file(
+        io.BytesIO(spreadsheet),
+        as_attachment=True,
+        download_name="template_data.xlsx",
     )
 
 

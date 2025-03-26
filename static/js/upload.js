@@ -143,8 +143,8 @@ $(document).ready(function() {
       $select.on('change', function() { updateParentPreview($select) });
 
       function updateParentPreview($select) {
-        let $container     = $select.parents('.js-new-strain-container').log();
-        let $parentPreview = $container.find('.js-parent-preview').log();
+        let $container     = $select.parents('.js-new-strain-container');
+        let $parentPreview = $container.find('.js-parent-preview');
         let template       = $('template.new-strain-parent-preview').html();
         let selectedId     = $select.val();
 

@@ -1,90 +1,80 @@
 {% macro render_step3_form(submission_form, upload_form) %}
-  <div class="columns">
-    <div class="column" style="width: 50%;">
-      {% include 'pages/upload/step3/_info1.html' %}
+  <form
+      class="simple-form"
+      action="{{ url_for('upload_step3_page') }}"
+      method="POST">
 
-      <form
-          class="simple-form"
-          action="{{ url_for('upload_step3_page') }}"
-          method="POST">
+    <div class="form-row">
+      <label>
+        <div>Type of vessel used</div>
+        {{ upload_form.vessel_type(class='form-input-blue') }}
+      </label>
 
-        <div class="form-row">
-          <label>
-            <span>Type of vessel used</span>
-            {{ upload_form.vessel_type(class='form-input-blue') }}
-          </label>
+      <div class="vessel-count vessel-bottles">
+        <label>
+          <div>Number of bottles</div>
+          {{ upload_form.bottle_count(class='form-input-blue') }}
+        </label>
+      </div>
 
-          <div class="vessel-count vessel-bottles">
-            <label>
-              <span>Number of bottles</span>
-              {{ upload_form.bottle_count(class='form-input-blue') }}
-            </label>
-          </div>
+      <div class="vessel-count vessel-agar_plates hidden">
+        <label>
+          <div>Number of plates</div>
+          {{ upload_form.plate_count(class='form-input-blue') }}
+        </label>
+      </div>
 
-          <div class="vessel-count vessel-agar_plates hidden">
-            <label>
-              <span>Number of plates</span>
-              {{ upload_form.plate_count(class='form-input-blue') }}
-            </label>
-          </div>
+      <div class="vessel-count vessel-well_plates vessel-mini_react hidden">
+        <label>
+          <div>Number of columns</div>
+          {{ upload_form.column_count(class='form-input-blue') }}
+        </label>
 
-          <div class="vessel-count vessel-well_plates vessel-mini_react hidden">
-            <label>
-              <span>Number of columns</span>
-              {{ upload_form.column_count(class='form-input-blue') }}
-            </label>
+        <label>
+          <div>Number of rows</div>
+          {{ upload_form.row_count(class='form-input-blue') }}
+        </label>
+      </div>
 
-            <label>
-              <span>Number of rows</span>
-              {{ upload_form.row_count(class='form-input-blue') }}
-            </label>
-          </div>
-        </div>
-
-        <div class="form-row">
-          <label>
-            <span>Number of measurement time-points</span>
-            {{ upload_form.timepoint_count(class='form-input-blue form-input-full') }}
-          </label>
-        </div>
-
-        <div class="form-row">
-          <label>
-            <span>Techniques used to measure growth</span>
-            {{ upload_form.technique_types(class='form-input-blue form-input-full') }}
-          </label>
-        </div>
-
-        <div class="form-row">
-          <label class="full">
-            <span>If metabolites were measured, select which ones:</span>
-            <select
-                multiple="multiple"
-                name="metabolites"
-                class="form-input-blue form-input-full js-metabolites-select">
-              {% for metabolite in submission_form.fetch_metabolites() %}
-                <option value="{{ metabolite.chebi_id }}" selected>{{ metabolite.metabo_name }}</option>
-              {% endfor %}
-            </select>
-          </label>
-        </div>
-
-        <div class="form-row">
-          <input
-              type="submit"
-              class="form-input-full"
-              value="Click here to Download the Data Template" />
-        </div>
-      </form>
+      <label>
+        <div>Number of measurement time-points</div>
+        {{ upload_form.timepoint_count(class='form-input-blue form-input-full') }}
+      </label>
     </div>
 
-    <div class="column" style="width: 50%;">
-      {% include 'pages/upload/step3/_info2.html' %}
-
-      <a href="{{ url_for('upload_study_template_xlsx') }}" class="green-button full text-center">
-        Click here to download the study template
-      </a>
+    <div class="form-row">
+      <label>
+        <div>Techniques used to measure growth</div>
+        {{ upload_form.technique_types(class='form-input-blue form-input-full') }}
+      </label>
     </div>
-  </div>
+
+    <div class="form-row">
+      <label class="full">
+        <div>If metabolites were measured, select which ones:</div>
+        <select
+            multiple="multiple"
+            name="metabolites"
+            class="form-input-blue form-input-full js-metabolites-select">
+          {% for metabolite in submission_form.fetch_metabolites() %}
+            <option value="{{ metabolite.chebi_id }}" selected>{{ metabolite.metabo_name }}</option>
+          {% endfor %}
+        </select>
+      </label>
+    </div>
+
+    <p>
+      In case you do not find a specific metabolite, choose the closest one
+      from the list and look in the incoming terms. For more information
+      visit the <a href="https://www.ebi.ac.uk/chebi">ChEBI website</a>.
+    </p>
+
+    <div class="form-row">
+      <input
+          type="submit"
+          class="form-input-full"
+          value="Next" />
+    </div>
+  </form>
 
 {% endmacro %}
