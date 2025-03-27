@@ -48,7 +48,7 @@
                   {{ "selected" if project.projectUniqueID == submission.projectUniqueID }}
                   data-name="{{ project.projectName }}"
                   data-description="{{ project.projectDescription }}"
-                  data-study-uuids="{{ project.studyUuids }}">
+                  data-study-uuids="{{ project.studyUuids|tojson }}">
                 [{{ project.projectId }}] {{ project.projectName }}
               </option>
             {% endfor %}
