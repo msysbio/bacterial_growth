@@ -66,9 +66,7 @@
         </div>
       </template>
 
-      <template
-          class="new-strain"
-          data-initial='{{ submission['studyDesign'].new_strains|tojson }}'>
+      <template class="new-strain">
         {{ render_new_strain_form(data=None, prefix='') }}
       </template>
     </form>

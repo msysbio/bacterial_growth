@@ -1,3 +1,7 @@
+{% from 'pages/upload/step3/_bioreplicate_form.html' import render_bioreplicate_form %}
+{% from 'pages/upload/step3/_strain_form.html' import render_strain_form %}
+{% from 'pages/upload/step3/_metabolite_form.html' import render_metabolite_form %}
+
 {% macro render_step3_form(submission_form, upload_form) %}
   <form
       class="simple-form"
@@ -42,32 +46,33 @@
       </label>
     </div>
 
-    <div class="form-row">
-      <label>
-        <div>Techniques used to measure growth</div>
-        {{ upload_form.technique_types(class='form-input-blue form-input-full') }}
-      </label>
-    </div>
+    {% for technique in submission_form.fetch_techniques(): %}
+      {{ render_technique_form(data=technique, prefix='technique-{}-'.format(loop.index0)) }}
+    {% endfor %}
 
     <div class="form-row">
-      <label class="full">
-        <div>If metabolites were measured, select which ones:</div>
-        <select
-            multiple="multiple"
-            name="metabolites"
-            class="form-input-blue form-input-full js-metabolites-select">
-          {% for metabolite in submission_form.fetch_metabolites() %}
-            <option value="{{ metabolite.chebi_id }}" selected>{{ metabolite.metabo_name }}</option>
-          {% endfor %}
-        </select>
-      </label>
+      <p>
+        Add a type of measurement included in the study:
+      </p>
+
+      <div class="flex-right">
+        <a href="#" class="white-button js-add js-add-bioreplicate">+ Bioreplicate</a>
+        <a href="#" class="white-button js-add js-add-strains">+ Strains</a>
+        <a href="#" class="white-button js-add js-add-metabolites">+ Metabolites</a>
+      </div>
     </div>
 
-    <p>
-      In case you do not find a specific metabolite, choose the closest one
-      from the list and look in the incoming terms. For more information
-      visit the <a href="https://www.ebi.ac.uk/chebi">ChEBI website</a>.
-    </p>
+    <template class="bioreplicate-form">
+      {{ render_bioreplicate_form(data=None, prefix='') }}
+    </template>
+
+    <template class="strain-form">
+      {{ render_strain_form(data=None, prefix='') }}
+    </template>
+
+    <template class="metabolite-form">
+      {{ render_metabolite_form(submission_form, data=None, prefix='') }}
+    </template>
 
     <div class="form-row">
       <input

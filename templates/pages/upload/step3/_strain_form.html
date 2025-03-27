@@ -1,0 +1,60 @@
+{% macro render_strain_form(data, prefix) %}
+
+  <div class="technique-container js-technique-container">
+    <h3>Strain-level measurement</h3>
+
+    <p>
+      Counts of specific strains within a vessel. Could be measured directly
+      (e.g. via fluorescence), or it could be calculated based on relative
+      measurements multiplied by total counts.
+    </p>
+
+    <div class="form-row">
+      <label style="width: 50%;">
+        <div>Type of measurement technique</div>
+        <select
+            name="{{ prefix }}type"
+            class="form-input-full form-input-blue js-type-select" />
+          <option value="fc">Flow Cytometry per species</option>
+          <option value="plates">Plate Counts per species</option>
+          <option value="16s">16S rRNA-seq</option>
+        </select>
+      </label>
+
+      <label style="width: 50%;">
+        <span>Units:</span>
+        <select
+            name="{{ prefix }}units"
+            class="form-input-full form-input-blue js-unit-select" />
+          <option value="counts">Cells/mL</option>
+          <option value="reads">Reads</option>
+          <option value="">N/A</option>
+        </select>
+      </label>
+    </div>
+
+    <div class="form-row">
+      <label class="full">
+        <div>Description of methodology</div>
+        <textarea
+            name="{{ prefix }}description"
+            class="form-input-full form-input-blue"
+            required
+            placeholder="Example: We measured total FC and multiplied it by the relative bacterial density..."
+            rows=2>{{ data['description'] if data }}</textarea>
+      </label>
+
+      <div class="no-label">
+        <a href="#" class="white-button js-remove">🗑 Remove</a>
+      </div>
+    </div>
+
+    <div class="form-row js-preview">
+    </div>
+
+    <template class="js-preview">
+      In the data spreadsheet, this measurement will be available as...
+    </template>
+  </div>
+
+{% endmacro %}

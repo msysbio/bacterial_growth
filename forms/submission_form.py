@@ -152,6 +152,9 @@ class SubmissionForm:
             .where(Metabolite.chebi_id.in_(metabolites))
         ).all()
 
+    def fetch_techniques(self):
+        return []
+
     def save(self):
         self.db_session.add(self.submission)
         self.db_session.commit()

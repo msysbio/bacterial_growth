@@ -1,0 +1,66 @@
+{% macro render_metabolite_form(submission_form, data, prefix) %}
+
+  <div class="technique-container js-technique-container">
+    <h3>Metabolite measurement</h3>
+
+    <p>
+      Start typing the name of metabolites in the input field and pick the ones
+      the study measures. In case you do not find a specific metabolite, choose
+      the closest one from the list and leave a note in the "Description"
+      field. For more information visit the
+      <a href="https://www.ebi.ac.uk/chebi">ChEBI website</a>.
+    </p>
+
+    <div class="form-row">
+      <label style="width: 30%;">
+        <span>Units:</span>
+        <select
+            name="{{ prefix }}units"
+            class="form-input-full form-input-blue js-unit-select" />
+          <option value="milimolars">mM</option>
+          <option value="micromolars">μM</option>
+          <option value="picomolars">pM</option>
+        </select>
+      </label>
+    </div>
+
+    <div class="form-row">
+      <label class="full">
+        <span>List of metabolites:</span>
+        <select
+            multiple="multiple"
+            name="metabolites"
+            placeholder="Example: glucose"
+            class="form-input-blue form-input-full js-metabolites-select">
+          {% for metabolite in submission_form.fetch_metabolites() %}
+            <option value="{{ metabolite.chebi_id }}" selected>{{ metabolite.metabo_name }}</option>
+          {% endfor %}
+        </select>
+      </label>
+    </div>
+
+    <div class="form-row">
+      <label class="full">
+        <div>Description of methodology</div>
+        <textarea
+            name="{{ prefix }}description"
+            class="form-input-full form-input-blue"
+            required
+            placeholder="Example: We used HPLC..."
+            rows=2>{{ data['description'] if data }}</textarea>
+      </label>
+
+      <div class="no-label">
+        <a href="#" class="white-button js-remove">🗑 Remove</a>
+      </div>
+    </div>
+
+    <div class="form-row js-preview">
+    </div>
+
+    <template class="js-preview">
+      In the data spreadsheet, this measurement will be available as...
+    </template>
+  </div>
+
+{% endmacro %}
