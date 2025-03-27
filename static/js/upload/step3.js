@@ -29,13 +29,17 @@ $(document).ready(function() {
     });
 
     function addTechniqueForm($addButton) {
+      let subjectType;
       let templateHtml;
 
       if ($addButton.is('.js-add-bioreplicate')) {
+        subjectType = 'bioreplicate'
         templateHtml = $('template.bioreplicate-form').html();
       } else if ($addButton.is('.js-add-strains')) {
+        subjectType = 'strain'
         templateHtml = $('template.strain-form').html();
       } else if ($addButton.is('.js-add-metabolites')) {
+        subjectType = 'metabolite'
         templateHtml = $('template.metabolite-form').html();
       }
 
@@ -51,22 +55,19 @@ $(document).ready(function() {
         attr('name', `technique-${techniqueIndex}-description`);
 
       // Specific types of measurements require specific units:
-      $newForm.on('change', 'select.js-type-select', function() {
-        let $typeSelect = $(this).log();
-        let $unitsSelect = $newForm.find('.js-unit-select');
-
-        let type = $typeSelect.val()
-
-        if (type == 'ph') {
-          $unitsSelect.val('');
-          $unitsSelect.prop('disabled', true);
-        } else if (type == '16s') {
-          $unitsSelect.val('reads');
-          $unitsSelect.prop('disabled', true);
-        } else {
-          $unitsSelect.prop('disabled', false);
-        }
+      $newForm.on('change', '.js-type-select', function() {
+        let $typeSelect = $(this);
+        updateUnitSelect($newForm, $typeSelect);
       });
+
+      updateUnitSelect($newForm, $newForm.find('.js-type-select'));
+
+      // When the type or unit of measurement change, generate preview:
+      $newForm.on('change', '.js-type-select,.js-unit-select', function() {
+        updatePreview($newForm, subjectType);
+      });
+
+      updatePreview($newForm, subjectType);
 
       $newForm.find('.js-metabolites-select').each(function() {
         let $select = $(this);
@@ -90,6 +91,51 @@ $(document).ready(function() {
 
       // Insert into DOM
       $addButton.parents('.form-row').before($newForm);
+    }
+
+    function updateUnitSelect($form, $typeSelect) {
+      let $unitsSelect = $form.find('.js-unit-select');
+      let type = $typeSelect.val();
+
+      if (type == 'ph') {
+        $unitsSelect.val('');
+        $unitsSelect.prop('disabled', true);
+      } else if (type == '16s') {
+        $unitsSelect.val('reads');
+        $unitsSelect.prop('disabled', true);
+      } else {
+        $unitsSelect.prop('disabled', false);
+      }
+    }
+
+    function updatePreview($form, subjectType) {
+      let $typeSelect = $form.find('.js-type-select');
+      let $unitsSelect = $form.find('.js-unit-select');
+
+      let type = $typeSelect.find('option:selected').data('shortName');
+      let units = '(' + $unitsSelect.find('option:selected').text() + ')';
+      let subject = null;
+
+      if (subjectType == 'strain') {
+        subject = '&lt;strain name&gt;';
+        type = null;
+      } else if (subjectType == 'metabolite') {
+        subject = '&lt;metabolite name&gt;';
+        type = null;
+      }
+
+      console.log([subject, type, units]);
+
+      if (units == '(N/A)') {
+        units = null;
+      }
+
+      console.log([subject, type, units].filter(Boolean));
+
+      let columnName = [subject, type, units].filter(Boolean).join(' ');
+      let previewText = `Column name in spreadsheet: <strong>${columnName}</strong>`;
+
+      $form.find('.js-preview').html(previewText);
     }
   });
 });
