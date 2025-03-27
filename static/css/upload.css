@@ -74,6 +74,18 @@
     }
   }
 
+  .step-3 {
+    .technique-container {
+      h3 {
+        margin-top: 0;
+      }
+
+      border: 2px solid #eee;
+      border-radius: var(--border-radius);
+      padding: 10px;
+    }
+  }
+
   .submission-forms {
     margin-top: 20px;
   }

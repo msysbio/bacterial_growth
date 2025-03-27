@@ -32,6 +32,14 @@
   margin-left: auto;
 }
 
+hr {
+  height: 4px;
+  background-color: #eee;
+  border: 0;
+  border-radius: 4px;
+  margin: 16px 0;
+}
+
 .error-message {
   display: block;
   background: pink;
@@ -127,6 +135,10 @@ form.simple-form {
       font-size: 14px;
       font-weight: 400;
       line-height: 2;
+
+      &.help {
+        line-height: 1.2;
+      }
     }
   }
 
@@ -145,6 +157,7 @@ form.simple-form {
 
   .help {
     font-style: italic;
+    opacity: 0.6;
   }
 
   input.error,

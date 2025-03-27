@@ -63,7 +63,7 @@ $(document).ready(function() {
       updateUnitSelect($newForm, $newForm.find('.js-type-select'));
 
       // When the type or unit of measurement change, generate preview:
-      $newForm.on('change', '.js-type-select,.js-unit-select', function() {
+      $newForm.on('change', '.js-type-select,.js-unit-select,.js-include-std', function() {
         updatePreview($newForm, subjectType);
       });
 
@@ -111,31 +111,36 @@ $(document).ready(function() {
     function updatePreview($form, subjectType) {
       let $typeSelect = $form.find('.js-type-select');
       let $unitsSelect = $form.find('.js-unit-select');
+      let $stdCheckbox = $form.find('.js-include-std');
 
       let type = $typeSelect.find('option:selected').data('shortName');
       let units = '(' + $unitsSelect.find('option:selected').text() + ')';
+      let includeStd = $stdCheckbox.is(':checked');
       let subject = null;
 
       if (subjectType == 'strain') {
         subject = '&lt;strain name&gt;';
-        type = null;
       } else if (subjectType == 'metabolite') {
         subject = '&lt;metabolite name&gt;';
         type = null;
       }
 
-      console.log([subject, type, units]);
-
       if (units == '(N/A)') {
         units = null;
       }
 
-      console.log([subject, type, units].filter(Boolean));
-
       let columnName = [subject, type, units].filter(Boolean).join(' ');
-      let previewText = `Column name in spreadsheet: <strong>${columnName}</strong>`;
+      let previewLines = ["Column name(s) in spreadsheet:", "<ul>"]
+      previewLines.push(`<li><strong>${columnName}</strong></li>`);
 
-      $form.find('.js-preview').html(previewText);
+      if (includeStd) {
+        let columnName = [subject, type, 'STD'].filter(Boolean).join(' ');
+        previewLines.push(`<li><strong>${columnName}</strong></li>`)
+      }
+
+      previewLines.push("</ul>");
+
+      $form.find('.js-preview').html(previewLines.join("\n"));
     }
   });
 });

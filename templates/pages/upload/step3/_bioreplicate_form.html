@@ -8,6 +8,8 @@
       the vessel.
     </p>
 
+    <hr>
+
     <div class="form-row">
       <label style="width: 50%;">
         <div>Type of measurement technique</div>
@@ -48,18 +50,34 @@
             placeholder="Example: We used the Foobar OD9000 machine with..."
             rows=2>{{ data['description'] if data }}</textarea>
       </label>
+    </div>
 
-      <div class="no-label">
+    <div class="form-row" style="margin-top: 10px">
+      <label class="full" style="align-content: center;">
+        Include STD:
+        <input
+            type="checkbox"
+            class="js-include-std"
+            name="{{ prefix }}include-std"
+            {{ "checked" if data and data['include-std'] }} />
+        <div class="help">
+          If you have multiple technical replicates, you can submit your point
+          estimate as the measurement and add the standard deviation in a
+          separate column.
+        </div>
+      </label>
+    </div>
+
+    <hr>
+
+    <div class="form-row">
+      <div class="js-preview">
+      </div>
+
+      <div class="no-label flex-right">
         <a href="#" class="white-button js-remove">🗑 Remove</a>
       </div>
     </div>
-
-    <div class="form-row js-preview">
-    </div>
-
-    <template class="js-preview">
-      In the data spreadsheet, this measurement will be available as...
-    </template>
   </div>
 
 {% endmacro %}
