@@ -10,6 +10,16 @@
         <span class="icon"></span> Study design incomplete
       </li>
     {% endif %}
+
+    {% if submission.studyDesign['techniques']|length > 0: %}
+      <li class="complete">
+        <span class="icon"></span> {{ submission.studyDesign['techniques']|length }} measurement techniques added
+      </li>
+    {% else %}
+      <li class="incomplete">
+        <span class="icon"></span> No measurement techniques added yet
+      </li>
+    {% endif %}
   </ul>
 
 {% endmacro %}

@@ -80,7 +80,11 @@
         margin-top: 0;
       }
 
-      border: 2px solid #eee;
+      border: 2px solid var(--border-color);
+      &.new {
+        border-style: dashed;
+      }
+
       border-radius: var(--border-radius);
       padding: 10px;
     }

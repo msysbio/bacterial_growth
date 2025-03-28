@@ -53,10 +53,13 @@ $(document).ready(function() {
         $input.attr('name', `techniques-${techniqueIndex}-${name}`);
       });
 
-      initializeTechniqueForm($newForm);
+      // Give it a different style:
+      $newForm.addClass('new');
 
       // Insert into DOM
       $addButton.parents('.form-row').before($newForm);
+
+      initializeTechniqueForm($newForm);
     }
 
     // Initialize existing forms:
