@@ -1,8 +1,28 @@
 from flask_wtf import FlaskForm
-from wtforms import SelectField, SelectMultipleField, IntegerField
+from wtforms import (
+    SelectField,
+    SelectMultipleField,
+    IntegerField,
+    StringField,
+    BooleanField,
+    FieldList,
+    FormField,
+)
 from wtforms.validators import DataRequired
 
 # TODO (2024-09-30) Extract types of vessels etc into enums in the database for easy model lookup
+
+
+class TechniqueForm(FlaskForm):
+    class Meta:
+        csrf = False
+
+    type        = StringField('type', validators=[DataRequired()])
+    subjectType = StringField('subjectType', validators=[DataRequired()])
+    units       = StringField('units', validators=[DataRequired()])
+    description = StringField('description')
+    includeStd  = BooleanField('includeStd')
+    metabolites = SelectMultipleField('metabolites')
 
 
 class UploadStep3Form(FlaskForm):
@@ -20,13 +40,4 @@ class UploadStep3Form(FlaskForm):
 
     timepoint_count = IntegerField('timepoint_count', validators=[DataRequired()])
 
-    technique_types = SelectMultipleField('technique_types', choices=[
-        ('od',        "Optical Density"),
-        ('plates',    "Plate Counts"),
-        ('plates_ps', "Plate Counts (per species)"),
-        ('fc',        "Flow Cytometry"),
-        ('fc_ps',     "Flow Cytometry (per species)"),
-        ('rna',       "16S rRNA-seq"),
-    ], validators=[DataRequired()])
-
-    metabolites = SelectMultipleField('metabolites')
+    techniques = FieldList(FormField(TechniqueForm), min_entries=1)

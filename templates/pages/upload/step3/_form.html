@@ -3,6 +3,13 @@
 {% from 'pages/upload/step3/_metabolite_form.html' import render_metabolite_form %}
 
 {% macro render_step3_form(submission_form, upload_form) %}
+  <p>
+    Please describe the vessels (biological replicates) that you use in the
+    study and how many time points you measured.
+  </p>
+
+  <br>
+
   <form
       class="simple-form"
       action="{{ url_for('upload_step3_page') }}"
@@ -46,12 +53,32 @@
       </label>
     </div>
 
-    {% for technique in submission_form.fetch_techniques(): %}
-      {{ render_technique_form(data=technique, prefix='technique-{}-'.format(loop.index0)) }}
+    <p>
+      For every type of growth measurement you performed, please add a new
+      entry by using the buttons below. In the next step, you'll download a
+      data template where the rows will each represent a biological replicate
+      and a time point, and the columns will match the measurements from these
+      techniques.
+    </p>
+
+    <br>
+
+    {% for technique in submission_form.submission['studyDesign']['techniques']: %}
+      {% set prefix = 'techniques-{}-'.format(loop.index0)  %}
+
+      {% if technique['subjectType'] == 'bioreplicate': %}
+        {{ render_bioreplicate_form(data=technique, prefix=prefix) }}
+      {% elif technique['subjectType'] == 'strain': %}
+        {{ render_strain_form(data=technique, prefix=prefix) }}
+      {% elif technique['subjectType'] == 'metabolite': %}
+        {{ render_metabolite_form(submission_form, technique_index=loop.index0, data=technique, prefix=prefix) }}
+      {% else: %}
+        {{ technique|tojson }}
+      {% endif %}
     {% endfor %}
 
     <div class="form-row">
-      <p>
+      <p style="margin-top: 0; align-content: center;">
         Add a type of measurement included in the study:
       </p>
 
@@ -71,13 +98,13 @@
     </template>
 
     <template class="metabolite-form">
-      {{ render_metabolite_form(submission_form, data=None, prefix='') }}
+      {{ render_metabolite_form(submission_form, technique_index=None, data=None, prefix='') }}
     </template>
 
     <div class="form-row">
       <input
           type="submit"
-          class="form-input-full"
+          class="form-input-blue"
           value="Next" />
     </div>
   </form>

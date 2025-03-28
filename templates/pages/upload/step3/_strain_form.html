@@ -1,6 +1,6 @@
 {% macro render_strain_form(data, prefix) %}
 
-  <div class="technique-container js-technique-container">
+  <div class="technique-container js-technique-container" data-subject-type="strain">
     <h3>Strain-level measurement</h3>
 
     <p>
@@ -10,6 +10,8 @@
     </p>
 
     <hr>
+
+    <input type="hidden" name="{{ prefix }}subjectType" value="strain" />
 
     <div class="form-row">
       <label style="width: 50%;">
@@ -47,7 +49,6 @@
         <textarea
             name="{{ prefix }}description"
             class="form-input-full form-input-blue"
-            required
             placeholder="Example: We measured total FC and multiplied it by the relative bacterial density..."
             rows=2>{{ data['description'] if data }}</textarea>
       </label>
@@ -59,8 +60,8 @@
         <input
             type="checkbox"
             class="js-include-std"
-            name="{{ prefix }}include-std"
-            {{ "checked" if data and data['include-std'] }} />
+            name="{{ prefix }}includeStd"
+            {{ "checked" if data and data['includeStd'] }} />
         <div class="help">
           If you have multiple technical replicates, you can submit your point
           estimate as the measurement and add the standard deviation in a

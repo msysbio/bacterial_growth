@@ -1,6 +1,6 @@
-{% macro render_metabolite_form(submission_form, data, prefix) %}
+{% macro render_metabolite_form(submission_form, technique_index, data, prefix) %}
 
-  <div class="technique-container js-technique-container">
+  <div class="technique-container js-technique-container" data-subject-type="metabolite">
     <h3>Metabolite measurement</h3>
 
     <p>
@@ -13,8 +13,27 @@
 
     <hr>
 
+    <input type="hidden" name="{{ prefix }}type" value="metabolite" />
+    <input type="hidden" name="{{ prefix }}subjectType" value="metabolite" />
+
     <div class="form-row">
-      <label style="width: 30%;">
+      <label class="full">
+        <span>List of metabolites:</span>
+        <select
+            multiple="multiple"
+            name="{{ prefix }}metabolites"
+            required
+            placeholder="Example: glucose"
+            class="form-input-blue form-input-full js-metabolites-select">
+          {% for metabolite in submission_form.fetch_metabolites(technique_index): %}
+            <option value="{{ metabolite.chebi_id }}" selected>
+              {{ metabolite.metabo_name }}
+            </option>
+          {% endfor %}
+        </select>
+      </label>
+
+      <label style="width: 20%;">
         <span>Units:</span>
         <select
             name="{{ prefix }}units"
@@ -28,26 +47,10 @@
 
     <div class="form-row">
       <label class="full">
-        <span>List of metabolites:</span>
-        <select
-            multiple="multiple"
-            name="metabolites"
-            placeholder="Example: glucose"
-            class="form-input-blue form-input-full js-metabolites-select">
-          {% for metabolite in submission_form.fetch_metabolites() %}
-            <option value="{{ metabolite.chebi_id }}" selected>{{ metabolite.metabo_name }}</option>
-          {% endfor %}
-        </select>
-      </label>
-    </div>
-
-    <div class="form-row">
-      <label class="full">
         <div>Description of methodology</div>
         <textarea
             name="{{ prefix }}description"
             class="form-input-full form-input-blue"
-            required
             placeholder="Example: We used HPLC..."
             rows=2>{{ data['description'] if data }}</textarea>
       </label>
@@ -59,8 +62,8 @@
         <input
             type="checkbox"
             class="js-include-std"
-            name="{{ prefix }}include-std"
-            {{ "checked" if data and data['include-std'] }} />
+            name="{{ prefix }}includeStd"
+            {{ "checked" if data and data['includeStd'] }} />
         <div class="help">
           If you have multiple technical replicates, you can submit your point
           estimate as the measurement and add the standard deviation in a

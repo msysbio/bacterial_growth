@@ -32,10 +32,9 @@ class SubmissionForm:
             'column_count':    None,
             'row_count':       None,
             'timepoint_count': None,
-            'technique_types': [],
             'strains':         [],
             'new_strains':     [],
-            'metabolites':     [],
+            'techniques':      [],
         }
 
         # Load submission object
@@ -113,8 +112,7 @@ class SubmissionForm:
             study_design['vessel_count'] = data['plate_count']
 
         study_design['timepoint_count'] = data['timepoint_count']
-        study_design['technique_types'] = data['technique_types']
-        study_design['metabolites']     = data['metabolites']
+        study_design['techniques'] = data['techniques']
 
         self.submission.studyDesign = study_design
         flag_modified(self.submission, 'studyDesign')
@@ -144,16 +142,18 @@ class SubmissionForm:
 
         return new_strains
 
-    def fetch_metabolites(self):
-        metabolites = self.submission.studyDesign['metabolites']
+    def fetch_metabolites(self, technique_index=None):
+        if technique_index is None:
+            # In a new form, we don't have any metabolites to list
+            return []
+
+        techniques = self.submission.studyDesign['techniques']
+        metabolites = techniques[technique_index]['metabolites']
 
         return self.db_session.scalars(
             sql.select(Metabolite)
             .where(Metabolite.chebi_id.in_(metabolites))
         ).all()
-
-    def fetch_techniques(self):
-        return []
 
     def save(self):
         self.db_session.add(self.submission)

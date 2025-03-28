@@ -47,29 +47,42 @@ $(document).ready(function() {
       let $newForm = $(templateHtml);
 
       // Modify names:
-      $newForm.find('select[name=type]').
-        attr('name', `technique-${techniqueIndex}-type`);
-      $newForm.find('select[name=units]').
-        attr('name', `technique-${techniqueIndex}-units`);
-      $newForm.find('textarea[name=description]').
-        attr('name', `technique-${techniqueIndex}-description`);
-
-      // Specific types of measurements require specific units:
-      $newForm.on('change', '.js-type-select', function() {
-        let $typeSelect = $(this);
-        updateUnitSelect($newForm, $typeSelect);
+      $newForm.find('input,select,textarea').each(function() {
+        let $input = $(this);
+        let name = $input.attr('name');
+        $input.attr('name', `techniques-${techniqueIndex}-${name}`);
       });
 
-      updateUnitSelect($newForm, $newForm.find('.js-type-select'));
+      initializeTechniqueForm($newForm);
+
+      // Insert into DOM
+      $addButton.parents('.form-row').before($newForm);
+    }
+
+    // Initialize existing forms:
+    $('.js-technique-container').each(function() {
+      let $container = $(this);
+      let subjectType = $container.data('subjectType');
+
+      initializeTechniqueForm($(this), subjectType);
+    });
+
+    function initializeTechniqueForm($container, subjectType) {
+      // Specific types of measurements require specific units:
+      $container.on('change', '.js-type-select', function() {
+        let $typeSelect = $(this);
+        updateUnitSelect($container, $typeSelect);
+      });
+      updateUnitSelect($container, $container.find('.js-type-select'));
 
       // When the type or unit of measurement change, generate preview:
-      $newForm.on('change', '.js-type-select,.js-unit-select,.js-include-std', function() {
-        updatePreview($newForm, subjectType);
+      $container.on('change', '.js-type-select,.js-unit-select,.js-include-std', function() {
+        updatePreview($container, subjectType);
       });
+      updatePreview($container, subjectType);
 
-      updatePreview($newForm, subjectType);
-
-      $newForm.find('.js-metabolites-select').each(function() {
+      // If there is a metabolite dropdown, set up its behaviour
+      $container.find('.js-metabolites-select').each(function() {
         let $select = $(this);
 
         $select.select2({
@@ -88,13 +101,10 @@ $(document).ready(function() {
 
         $select.trigger('change');
       });
-
-      // Insert into DOM
-      $addButton.parents('.form-row').before($newForm);
     }
 
-    function updateUnitSelect($form, $typeSelect) {
-      let $unitsSelect = $form.find('.js-unit-select');
+    function updateUnitSelect($container, $typeSelect) {
+      let $unitsSelect = $container.find('.js-unit-select');
       let type = $typeSelect.val();
 
       if (type == 'ph') {
@@ -108,10 +118,10 @@ $(document).ready(function() {
       }
     }
 
-    function updatePreview($form, subjectType) {
-      let $typeSelect = $form.find('.js-type-select');
-      let $unitsSelect = $form.find('.js-unit-select');
-      let $stdCheckbox = $form.find('.js-include-std');
+    function updatePreview($container, subjectType) {
+      let $typeSelect = $container.find('.js-type-select');
+      let $unitsSelect = $container.find('.js-unit-select');
+      let $stdCheckbox = $container.find('.js-include-std');
 
       let type = $typeSelect.find('option:selected').data('shortName');
       let units = '(' + $unitsSelect.find('option:selected').text() + ')';
@@ -140,7 +150,8 @@ $(document).ready(function() {
 
       previewLines.push("</ul>");
 
-      $form.find('.js-preview').html(previewLines.join("\n"));
+      $container.find('.js-preview').html(previewLines.join("\n"));
     }
+
   });
 });

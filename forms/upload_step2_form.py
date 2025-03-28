@@ -1,6 +1,12 @@
 from flask_wtf import FlaskForm
-from wtforms import SelectField, SelectMultipleField, StringField, FormField, FieldList
-from wtforms.validators import DataRequired, Optional
+from wtforms import (
+    SelectField,
+    SelectMultipleField,
+    StringField,
+    FormField,
+    FieldList,
+)
+from wtforms.validators import DataRequired
 
 
 class NewStrainsForm(FlaskForm):
@@ -8,7 +14,7 @@ class NewStrainsForm(FlaskForm):
         csrf = False
 
     name        = StringField('name', validators=[DataRequired()])
-    description = StringField('description', validators=[Optional()])
+    description = StringField('description')
     species     = SelectField('species')
 
 

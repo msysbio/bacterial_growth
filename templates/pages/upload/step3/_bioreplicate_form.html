@@ -1,6 +1,6 @@
 {% macro render_bioreplicate_form(data, prefix) %}
 
-  <div class="technique-container js-technique-container">
+  <div class="technique-container js-technique-container" data-subject-type="bioreplicate">
     <h3>Bioreplicate-level measurement</h3>
 
     <p>
@@ -9,6 +9,8 @@
     </p>
 
     <hr>
+
+    <input type="hidden" name="{{ prefix }}subjectType" value="bioreplicate" />
 
     <div class="form-row">
       <label style="width: 50%;">
@@ -46,7 +48,6 @@
         <textarea
             name="{{ prefix }}description"
             class="form-input-full form-input-blue"
-            required
             placeholder="Example: We used the Foobar OD9000 machine with..."
             rows=2>{{ data['description'] if data }}</textarea>
       </label>
@@ -58,8 +59,8 @@
         <input
             type="checkbox"
             class="js-include-std"
-            name="{{ prefix }}include-std"
-            {{ "checked" if data and data['include-std'] }} />
+            name="{{ prefix }}includeStd"
+            {{ "checked" if data and data['includeStd'] }} />
         <div class="help">
           If you have multiple technical replicates, you can submit your point
           estimate as the measurement and add the standard deviation in a
