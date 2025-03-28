@@ -4,11 +4,11 @@ import sqlalchemy as sql
 def up(conn):
     query = """
         CREATE TABLE Measurements (
-            id                   int NOT NULL AUTO_INCREMENT PRIMARY KEY,
-            bioreplicateUniqueId int NOT NULL,
+            id                   INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+            bioreplicateUniqueId INT NOT NULL,
             studyId              VARCHAR(100) COLLATE utf8mb4_bin NOT NULL,
             position             VARCHAR(100) NOT NULL,
-            timeInSeconds        int NOT NULL,
+            timeInSeconds        INT NOT NULL,
             pH                   VARCHAR(100),
             unit                 VARCHAR(100),
             technique            VARCHAR(100) NOT NULL,

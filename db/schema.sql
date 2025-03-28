@@ -230,6 +230,30 @@ CREATE TABLE FC_Counts (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `MeasurementTechniques`
+--
+
+DROP TABLE IF EXISTS MeasurementTechniques;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE MeasurementTechniques (
+  id int NOT NULL AUTO_INCREMENT,
+  `type` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  subjectType varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  units varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  `description` text,
+  includeStd tinyint(1) NOT NULL DEFAULT '0',
+  studyId varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  metaboliteIds json DEFAULT (json_array()),
+  createdAt datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updatedAt datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (id),
+  KEY MeasurementTechniques_studyId (studyId),
+  CONSTRAINT MeasurementTechniques_studyId FOREIGN KEY (studyId) REFERENCES Study (studyId) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `Measurements`
 --
 
@@ -514,5 +538,6 @@ INSERT INTO MigrationVersions VALUES
 (17,'2025_02_17_161750_remove_duplicated_columns_from_metabolite_per_experiment','2025-03-09 11:09:49'),
 (23,'2025_03_11_113040_create_submissions_and_excel_files','2025-03-17 10:04:03'),
 (25,'2025_03_21_112110_create_project_and_study_user_join_tables','2025-03-21 10:31:34'),
-(26,'2025_03_25_133231_add_user_id_to_new_strains','2025-03-25 12:34:13');
+(26,'2025_03_25_133231_add_user_id_to_new_strains','2025-03-25 12:34:13'),
+(29,'2025_03_28_181930_create_measurement_techniques','2025-03-28 17:25:50');
 
