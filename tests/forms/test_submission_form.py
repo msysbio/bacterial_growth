@@ -112,18 +112,18 @@ class TestSubmissionForm(DatabaseTest):
         self.assertEqual(submission_form.fetch_taxa(), [])
 
         study_design = submission_form.submission.studyDesign
-        study_design['metabolites'] = [m1['chebi_id']]
+        study_design['techniques'] = [{'metabolites': [m1['chebi_id']]}]
         submission_form.update_study_design(study_design)
 
         self.assertEqual(
-            [m.metabo_name for m in submission_form.fetch_metabolites()],
+            [m.metabo_name for m in submission_form.fetch_metabolites(0)],
             ['glucose'],
         )
 
-        study_design['metabolites'] = [m1['chebi_id'], m2['chebi_id']]
+        study_design['techniques'] = [{'metabolites': [m1['chebi_id'], m2['chebi_id']]}]
         submission_form.update_study_design(study_design)
         self.assertEqual(
-            [m.metabo_name for m in submission_form.fetch_metabolites()],
+            [m.metabo_name for m in submission_form.fetch_metabolites(0)],
             ['glucose', 'trehalose'],
         )
 

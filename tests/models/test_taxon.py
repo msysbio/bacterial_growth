@@ -10,20 +10,20 @@ from tests.database_test import DatabaseTest
 
 class TestTaxon(DatabaseTest):
     def test_search_basic(self):
-        self.create_taxon(tax_names="Vibrio pelagius")
-        self.create_taxon(tax_names="Anaerovibrio")
-        self.create_taxon(tax_names="Brevibacterium linens")
+        self.create_taxon(tax_id="1", tax_names="Vibrio pelagius")
+        self.create_taxon(tax_id="2", tax_names="Anaerovibrio")
+        self.create_taxon(tax_id="3", tax_names="Brevibacterium linens")
 
         results, _ = Taxon.search_by_name(self.db_conn, 'pelagius')
         self.assertEqual(
-            ['Vibrio pelagius'],
+            ['Vibrio pelagius (NCBI:1)'],
             [r['text'] for r in results]
         )
 
         # Matches are case-insensitive:
         results, _ = Taxon.search_by_name(self.db_conn, 'vib')
         self.assertEqual(
-            sorted(['Vibrio pelagius', 'Anaerovibrio', 'Brevibacterium linens']),
+            sorted(['Vibrio pelagius (NCBI:1)', 'Anaerovibrio (NCBI:2)', 'Brevibacterium linens (NCBI:3)']),
             sorted([r['text'] for r in results])
         )
 
@@ -34,32 +34,32 @@ class TestTaxon(DatabaseTest):
         self.assertEqual([], [r['text'] for r in results])
 
     def test_search_ordering_by_prefix_match(self):
-        self.create_taxon(tax_names="Vibrio pelagius")
-        self.create_taxon(tax_names="Vibrio anguillarum")
-        self.create_taxon(tax_names="Anaerovibrio")
-        self.create_taxon(tax_names="Panaeolus")
+        self.create_taxon(tax_id="1", tax_names="Vibrio pelagius")
+        self.create_taxon(tax_id="2", tax_names="Vibrio anguillarum")
+        self.create_taxon(tax_id="3", tax_names="Anaerovibrio")
+        self.create_taxon(tax_id="4", tax_names="Panaeolus")
 
         # Matches at the beginning of the word are first:
         results, _ = Taxon.search_by_name(self.db_conn, 'vib')
         self.assertEqual(
-            ['Vibrio anguillarum', 'Vibrio pelagius', 'Anaerovibrio'],
+            ['Vibrio anguillarum (NCBI:2)', 'Vibrio pelagius (NCBI:1)', 'Anaerovibrio (NCBI:3)'],
             [r['text'] for r in results]
         )
 
         results, _ = Taxon.search_by_name(self.db_conn, 'anae')
         self.assertEqual(
-            ['Anaerovibrio', 'Panaeolus'],
+            ['Anaerovibrio (NCBI:3)', 'Panaeolus (NCBI:4)'],
             [r['text'] for r in results]
         )
 
     def test_search_by_multiple_words(self):
-        self.create_taxon(tax_names="Salmonella enterica serovar Infantis")
-        self.create_taxon(tax_names="Salmonella enterica serovar Moscow")
+        self.create_taxon(tax_id="1", tax_names="Salmonella enterica serovar Infantis")
+        self.create_taxon(tax_id="2", tax_names="Salmonella enterica serovar Moscow")
 
         # Words are searched separately:
         results, _ = Taxon.search_by_name(self.db_conn, 'salmonella infantis')
         self.assertEqual(
-            ['Salmonella enterica serovar Infantis'],
+            ['Salmonella enterica serovar Infantis (NCBI:1)'],
             [r['text'] for r in results]
         )
 
