@@ -13,19 +13,19 @@ from wtforms.validators import DataRequired
 # TODO (2024-09-30) Extract types of vessels etc into enums in the database for easy model lookup
 
 
-class TechniqueForm(FlaskForm):
-    class Meta:
-        csrf = False
-
-    type        = StringField('type', validators=[DataRequired()])
-    subjectType = StringField('subjectType', validators=[DataRequired()])
-    units       = StringField('units', validators=[DataRequired()])
-    description = StringField('description')
-    includeStd  = BooleanField('includeStd')
-    metabolites = SelectMultipleField('metabolites')
-
-
 class UploadStep3Form(FlaskForm):
+
+    class TechniqueForm(FlaskForm):
+        class Meta:
+            csrf = False
+
+        type        = StringField('type', validators=[DataRequired()])
+        subjectType = StringField('subjectType', validators=[DataRequired()])
+        units       = StringField('units', validators=[DataRequired()])
+        description = StringField('description')
+        includeStd  = BooleanField('includeStd')
+        metabolites = SelectMultipleField('metabolites')
+
     vessel_type = SelectField('vessel_type', choices=[
         ('bottles',     "Bottles"),
         ('agar_plates', "Agar plates"),
