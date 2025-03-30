@@ -27,7 +27,7 @@
             class="form-input-blue form-input-full js-metabolites-select">
           {% for metabolite in submission_form.fetch_metabolites(technique_index): %}
             <option value="{{ metabolite.chebi_id }}" selected>
-              {{ metabolite.metabo_name }}
+              {{ metabolite.metabo_name }} ({{ metabolite.chebi_id }})
             </option>
           {% endfor %}
         </select>

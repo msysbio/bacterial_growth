@@ -41,7 +41,7 @@ class Metabolite(OrmBase):
         query = """
             SELECT
                 chebi_id AS id,
-                metabo_name AS text
+                CONCAT(metabo_name, ' (', chebi_id, ')') AS text
             FROM Metabolites
             WHERE LOWER(metabo_name) LIKE :term_pattern
             ORDER BY
