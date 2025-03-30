@@ -127,7 +127,7 @@ $(document).ready(function() {
       let $stdCheckbox = $container.find('.js-include-std');
 
       let type = $typeSelect.find('option:selected').data('shortName');
-      let units = '(' + $unitsSelect.find('option:selected').text() + ')';
+      let units = '(' + $unitsSelect.val() + ')';
       let includeStd = $stdCheckbox.is(':checked');
       let subject = null;
 
@@ -138,7 +138,7 @@ $(document).ready(function() {
         type = null;
       }
 
-      if (units == '(N/A)') {
+      if (units == '()') {
         units = null;
       }
 

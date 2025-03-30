@@ -33,6 +33,13 @@ class UploadStep3Form(FlaskForm):
         ('mini_react',  "Mini-bioreactors"),
     ], validators=[DataRequired()])
 
+    time_units = SelectField('time_units', choices=[
+        ('d', 'Days (d)'),
+        ('h', 'Hours (h)'),
+        ('m', 'Minutes (m)'),
+        ('s', 'Seconds (s)'),
+    ], default='h')
+
     bottle_count = IntegerField('bottle_count')
     plate_count  = IntegerField('plate_count')
     column_count = IntegerField('column_count')

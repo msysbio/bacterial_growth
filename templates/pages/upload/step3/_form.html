@@ -15,7 +15,7 @@
       action="{{ url_for('upload_step3_page') }}"
       method="POST">
 
-    <div class="form-row">
+    <div class="form-row full">
       <label>
         <div>Type of vessel used</div>
         {{ upload_form.vessel_type(class='form-input-blue') }}
@@ -50,6 +50,11 @@
       <label>
         <div>Number of measurement time-points</div>
         {{ upload_form.timepoint_count(class='form-input-blue form-input-full') }}
+      </label>
+
+      <label>
+        <div>Time units</div>
+        {{ upload_form.time_units(class='form-input-blue form-input-full') }}
       </label>
     </div>
 
