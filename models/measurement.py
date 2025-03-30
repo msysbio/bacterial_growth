@@ -37,7 +37,9 @@ class Measurement(OrmBase):
 
     id: Mapped[int] = mapped_column(primary_key=True)
 
-    bioreplicateUniqueId: Mapped[int] = mapped_column(ForeignKey('BioReplicatesPerExperiment.bioreplicateUniqueId'))
+    bioreplicateUniqueId: Mapped[int] = mapped_column(
+        ForeignKey('BioReplicatesPerExperiment.bioreplicateUniqueId'),
+    )
     bioreplicate: Mapped['Bioreplicate'] = relationship(back_populates='measurements')
 
     # Note: should be a ForeignKey + relationship. However, ORM model is not
@@ -49,14 +51,16 @@ class Measurement(OrmBase):
     pH:            Mapped[str] = mapped_column(String(100), nullable=False)
     unit:          Mapped[str] = mapped_column(String(100), nullable=False)
 
-    # TODO (2025-02-13) Consider an enum
     technique: Mapped[str] = mapped_column(String(100), nullable=False)
+
+    # TODO (2025-03-30) This should not be nullable, but we need to migrate the data first
+    techniqueId: Mapped[int] = mapped_column(ForeignKey("MeasurementTechniques.id"))
 
     value: Mapped[Decimal] = mapped_column(Numeric(20, 2), nullable=True)
     std:   Mapped[Decimal] = mapped_column(Numeric(20, 2), nullable=True)
 
-    subjectType: Mapped[str] = mapped_column(Enum(SubjectType), nullable=False)
-    subjectId:   Mapped[str] = mapped_column(String(100),       nullable=False)
+    subjectId:   Mapped[str]         = mapped_column(String(100),       nullable=False)
+    subjectType: Mapped[SubjectType] = mapped_column(Enum(SubjectType), nullable=False)
 
     @hybrid_property
     def timeInHours(self):

@@ -2,6 +2,7 @@ from .bioreplicate import Bioreplicate
 from .excel_file import ExcelFile
 from .experiment import Experiment
 from .measurement import Measurement
+from .measurement_technique import MeasurementTechnique
 from .metabolite import Metabolite
 from .project import Project
 from .project_user import ProjectUser

@@ -10,14 +10,15 @@ def up(conn):
           units         VARCHAR(100) COLLATE utf8mb4_bin NOT NULL,
           description   TEXT,
           includeStd    tinyint(1) NOT NULL DEFAULT '0',
-          studyId       VARCHAR(100) COLLATE utf8mb4_bin NOT NULL,
+          studyUniqueId VARCHAR(100) COLLATE utf8mb4_bin NOT NULL,
           metaboliteIds JSON DEFAULT (JSON_ARRAY()),
+          strainIds     JSON DEFAULT (JSON_ARRAY()),
 
           createdAt datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
           updatedAt datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
-          CONSTRAINT MeasurementTechniques_studyId FOREIGN KEY (studyId)
-              REFERENCES Study (studyId)
+          CONSTRAINT MeasurementTechniques_studyUniqueId FOREIGN KEY (studyUniqueId)
+              REFERENCES Study (studyUniqueId)
               ON DELETE CASCADE ON UPDATE CASCADE
         );
     """

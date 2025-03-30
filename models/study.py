@@ -34,3 +34,7 @@ class Study(OrmBase):
         back_populates='study',
         cascade="all, delete-orphan"
     )
+
+    measurementTechniques: Mapped[List['MeasurementTechnique']] = relationship(
+        back_populates="study"
+    )

@@ -243,13 +243,14 @@ CREATE TABLE MeasurementTechniques (
   units varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
   `description` text,
   includeStd tinyint(1) NOT NULL DEFAULT '0',
-  studyId varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  studyUniqueId varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
   metaboliteIds json DEFAULT (json_array()),
+  strainIds json DEFAULT (json_array()),
   createdAt datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updatedAt datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (id),
-  KEY MeasurementTechniques_studyId (studyId),
-  CONSTRAINT MeasurementTechniques_studyId FOREIGN KEY (studyId) REFERENCES Study (studyId) ON DELETE CASCADE ON UPDATE CASCADE
+  KEY MeasurementTechniques_studyUniqueId (studyUniqueId),
+  CONSTRAINT MeasurementTechniques_studyUniqueId FOREIGN KEY (studyUniqueId) REFERENCES Study (studyUniqueID) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -273,6 +274,7 @@ CREATE TABLE Measurements (
   std decimal(20,3) DEFAULT NULL,
   subjectType varchar(100) NOT NULL,
   subjectId varchar(100) NOT NULL,
+  techniqueId int DEFAULT NULL,
   PRIMARY KEY (id),
   KEY bioreplicateUniqueId (bioreplicateUniqueId),
   KEY studyId (studyId),
@@ -539,5 +541,6 @@ INSERT INTO MigrationVersions VALUES
 (23,'2025_03_11_113040_create_submissions_and_excel_files','2025-03-17 10:04:03'),
 (25,'2025_03_21_112110_create_project_and_study_user_join_tables','2025-03-21 10:31:34'),
 (26,'2025_03_25_133231_add_user_id_to_new_strains','2025-03-25 12:34:13'),
-(29,'2025_03_28_181930_create_measurement_techniques','2025-03-28 17:25:50');
+(33,'2025_03_28_181930_create_measurement_techniques','2025-03-30 14:26:17'),
+(34,'2025_03_30_160720_add_technique_id_to_measurements','2025-03-30 14:26:17');
 
