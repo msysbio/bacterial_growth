@@ -14,9 +14,10 @@ TIME_UNITS = {
 }
 
 TECHNIQUE_NAMES = {
+    'ph':     'pH',
     'fc':     'FC',
     'od':     'OD',
-    'plates': 'Plate counts',
+    'plates': 'PC',
     '16s':    '16S-rRNA reads',
 }
 
@@ -88,7 +89,11 @@ def create_excel(submission, metabolite_names, strain_names):
             technique_name = TECHNIQUE_NAMES[technique_type]
 
             for strain_name in strain_names:
-                title = ' '.join([strain_name, technique_name, f"({units})"])
+                if technique_type in ('16s', 'plates'):
+                    title = ' '.join([strain_name, units])
+                else:
+                    title = ' '.join([strain_name, technique_name, f"({units})"])
+
                 description = TECHNIQUE_DESCRIPTIONS[f"{technique_type}_ps"].format(
                     strain=strain_name,
                     units=units,

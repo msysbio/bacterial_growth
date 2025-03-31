@@ -19,13 +19,13 @@
         <select
             name="{{ prefix }}type"
             class="form-input-full form-input-blue js-type-select" />
-          <option value="fc" data-short-name="FC">
+          <option value="fc" data-short-name="FC" {{ "selected" if data['type'] == 'fc' }}>
             Flow Cytometry per species
           </option>
-          <option value="plates" data-short-name="PC">
+          <option value="plates" data-short-name="PC" {{ "selected" if data['type'] == 'plates' }}>
             Plate Counts per species
           </option>
-          <option value="16s">
+          <option value="16s" {{ "selected" if data['type'] == '16s' }}>
             16S rRNA-seq
           </option>
         </select>
@@ -36,9 +36,15 @@
         <select
             name="{{ prefix }}units"
             class="form-input-full form-input-blue js-unit-select" />
-          <option value="counts">Cells/mL</option>
-          <option value="reads">Reads</option>
-          <option value="">N/A</option>
+          <option value="Cells/mL" {{ "selected" if data['units'] == 'Cells/mL' }}>
+            Cells/mL
+          </option>
+          <option value="reads" {{ "selected" if data['units'] == 'reads' }}>
+            Reads
+          </option>
+          <option value="" {{ "selected" if data['units'] == '' }}>
+            N/A
+          </option>
         </select>
       </label>
     </div>

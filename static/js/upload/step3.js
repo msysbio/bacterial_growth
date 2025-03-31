@@ -112,12 +112,9 @@ $(document).ready(function() {
 
       if (type == 'ph') {
         $unitsSelect.val('');
-        $unitsSelect.prop('disabled', true);
       } else if (type == '16s') {
         $unitsSelect.val('reads');
-        $unitsSelect.prop('disabled', true);
       } else {
-        $unitsSelect.prop('disabled', false);
       }
     }
 
