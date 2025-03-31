@@ -32,6 +32,7 @@ class SubmissionForm:
             'column_count':    None,
             'row_count':       None,
             'timepoint_count': None,
+            'time_units':      None,
             'strains':         [],
             'new_strains':     [],
             'techniques':      [],
@@ -112,6 +113,7 @@ class SubmissionForm:
             study_design['vessel_count'] = data['plate_count']
 
         study_design['timepoint_count'] = data['timepoint_count']
+        study_design['time_units'] = data['time_units']
         study_design['techniques'] = data['techniques']
 
         self.submission.studyDesign = study_design
