@@ -171,18 +171,18 @@ def download_data_template_xlsx():
     submission_form = _init_submission_form(step=3)
     submission = submission_form.submission
 
-    metabolite_names = [m.metabo_name for m in submission_form.fetch_metabolites()]
-    taxa_names       = [t.tax_names for t in submission_form.fetch_taxa()]
+    metabolite_names = [
+        m.metabo_name
+        for index in range(len(submission.studyDesign['techniques']))
+        for m in submission_form.fetch_metabolites(index)
+    ]
+    strain_names = [t.tax_names for t in submission_form.fetch_taxa()]
+    strain_names += [s['name'] for s in submission_form.fetch_new_strains()]
 
     spreadsheet = data_spreadsheet.create_excel(
-        submission.studyDesign['technique_types'],
+        submission,
         metabolite_names,
-        submission.studyDesign['vessel_type'],
-        submission.studyDesign['vessel_count'],
-        submission.studyDesign['column_count'],
-        submission.studyDesign['row_count'],
-        submission.studyDesign['timepoint_count'],
-        taxa_names,
+        strain_names,
     )
 
     return send_file(

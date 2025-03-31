@@ -1,182 +1,167 @@
-from tempfile import NamedTemporaryFile
-
 from openpyxl import Workbook
 from openpyxl.styles import Font
 from openpyxl.comments import Comment
 from openpyxl.utils import get_column_letter
 from openpyxl.styles import PatternFill
 
+from lib.excel import export_to_xlsx
 
-def create_excel(
-        measure_options,
-        meta_options,
-        type_vessel,
-        number_vessels,
-        number_columns,
-        number_rows,
-        number_timepoints,
-        taxa
-):
-    # Create a new workbook
-    wb = Workbook()
+TIME_UNITS = {
+    'd': 'days',
+    'h': 'hours',
+    'm': 'minutes',
+    's': 'seconds',
+}
 
-    ws3 = wb.active
-    wb.active.title = "Replicate_metadata"
+TECHNIQUE_NAMES = {
+    'fc':     'FC',
+    'od':     'OD',
+    'plates': 'Plate counts',
+    '16s':    '16S-rRNA reads',
+}
 
-    headers3_constant = {
-        'Biological_Replicate_id': 'Unique IDs of individual samples: a bottle, a well in a well-plate or mini-bioreactor',
-        'Biosample_link': 'Provide the Biosample link if available.',
-        'Description': 'Provide an informative description for the Biological_Replicate_ids.',
+RED   = 'D02631'
+WHITE = 'FFFFFF'
+
+TECHNIQUE_DESCRIPTIONS = {
+    'fc':          "Flow-cytometry values per time-point in {units}, use a period (.) as the decimal separator",
+    'fc_ps':       "FC counts values per time-point for strain {strain} in {units}, use a period (.) as the decimal separator",
+    'od':          "Optical density values per time-point, use a period (.) as the decimal separator",
+    'plates':      "Plate count values per time-point, use a period (.) as the decimal separator",
+    'plates_ps':   "Plate count values per time-point for strain {strain}, use a period (.) as the decimal separator.",
+    '16s_ps':      "Abundances values per time-point for strain {strain}, use a period (.) as the decimal separator.",
+    'ph':          "pH values per time-point, use a period (.) as the decimal separator",
+    'metabolites': "Concentration values per time-point for metabolite {metabolite} in {units}, use a period (.) as the decimal separator",
+    'STD':         "Standard deviation if more than 1 technical replicate, use a period (.) as the decimal separator",
+}
+
+
+def create_excel(submission, metabolite_names, strain_names):
+    workbook = Workbook()
+
+    metadata_sheet = workbook.active
+    workbook.active.title = "Replicate_metadata"
+
+    headers_info = {
+        'Biological_Replicate_id': 'Pick unique identifiers of individual samples: a bottle, a well in a well-plate or mini-bioreactor',
+        'Biosample_link': 'Provide the biosample link if available.',
+        'Description': 'Provide an informative description for the biological replicate',
     }
 
-    for col_idx, (header, description) in enumerate(headers3_constant.items(), start=1):
-        cell = ws3.cell(row=1, column=col_idx, value=header)
-        cell.comment = Comment(description, author="ExcelBot")
-        cell.font = Font(bold=True)  # Make the header bold
-        cell.fill = PatternFill(start_color='FFFFFF', end_color='FFFFFF', fill_type="solid")
-
-        # Calculate column width based on the length of the header text
-        column_width = len(header)
-        column_letter = get_column_letter(col_idx)
-        ws3.column_dimensions[column_letter].width = column_width + 3 # Gives extra space
-
-    # Select the active worksheet
-    wb.create_sheet(title="Growth_Data_and_Metabolites")
-    ws = wb["Growth_Data_and_Metabolites"]
+    for index, (title, description) in enumerate(headers_info.items(), start=1):
+        _add_header(metadata_sheet, index, title, description, fill_color=RED)
 
     # Populate raw data template based on user's input
-    positions = generate_positions(type_vessel, number_vessels, number_columns, number_rows, number_timepoints)
+    positions = _generate_positions(
+        submission.studyDesign['vessel_type'],
+        submission.studyDesign['vessel_count'],
+        submission.studyDesign['column_count'],
+        submission.studyDesign['row_count'],
+        submission.studyDesign['timepoint_count'],
+    )
 
-    headers1_constant = {
-        'Position': 'Predetermine position based on the type of vessel specified before.',
-        'Biological_Replicate_id': 'Unique IDs of individual samples: a bottle, a well in a well-plate or mini-bioreactor',
-        'Time': 'Measurement time-points in the format: hh:mm:ss (hour, minutes and seconds)',
-        'pH': 'pH values per time-point, use a period (.) as the decimal separator'
+    short_time_units = submission.studyDesign['time_units']
+    long_time_units = TIME_UNITS[short_time_units]
+
+    headers_common = {
+        'Position':                'Predetermine position based on the type of vessel specified before.',
+        'Biological_Replicate_id': 'Unique IDs of individual samples: a bottle, a well in a well-plate or mini-bioreactor.',
+        'Time':                    f"Measurement time-points in {long_time_units} ({short_time_units}).",
     }
 
-    header1_OD = {
-        'OD': 'Optical density values per time-point, use a period (.) as the decimal separator',
-        'OD_std': 'Standard deviation if more than 1 technical replicate, use a period (.) as the decimal separator'
-    }
+    headers_bioreplicates = {**headers_common}
+    headers_strains       = {**headers_common}
+    headers_metabolites   = {**headers_common}
 
-    header1_plate_counts = {
-        'Plate_counts': 'Plate counts values per time-point, use a period (.) as the decimal separator',
-        'Plate_counts_std': 'Standard deviation if more than 1 technical replicate, use a period (.) as the decimal separator'
+    for technique in submission.studyDesign['techniques']:
+        subject_type   = technique['subjectType']
+        technique_type = technique['type']
+        units          = technique['units']
 
-    }
+        if subject_type == 'bioreplicate':
+            technique_name = TECHNIQUE_NAMES[technique_type]
+            description = TECHNIQUE_DESCRIPTIONS[technique_type].format(units=technique['units'])
 
-    header1_FC = {
-        'FC': 'Flow-cytometry values per time-point, use a period (.) as the decimal separator',
-        'FC_std': 'Standard deviation if more than 1 technical replicate, use a period (.) as the decimal separator'
+            headers_bioreplicates[technique_name] = description
 
-    }
+        elif subject_type == 'strain':
+            technique_name = TECHNIQUE_NAMES[technique_type]
 
-    header1_color_white = ['pH', 'OD_std', 'Plate_counts_std', 'Biosample_link']
+            for strain_name in strain_names:
+                title = ' '.join([strain_name, technique_name, f"({units})"])
+                description = TECHNIQUE_DESCRIPTIONS[f"{technique_type}_ps"].format(
+                    strain=strain_name,
+                    units=units,
+                )
+                headers_strains[title] = description
 
-    if 'od' in measure_options:
-        headers1_constant.update(header1_OD)
+                if technique['includeStd']:
+                    title = ' '.join([strain_name, technique_name, 'STD'])
+                    headers_strains[title] = TECHNIQUE_DESCRIPTIONS['STD']
 
-    if 'plates' in measure_options:
-        headers1_constant.update(header1_plate_counts)
+        elif subject_type == 'metabolite':
+            for metabolite in metabolite_names:
+                title = ' '.join([metabolite, f"({units})"])
+                description = TECHNIQUE_DESCRIPTIONS['metabolites'].format(
+                    metabolite=metabolite,
+                    units=units,
+                )
+                headers_metabolites[title] = description
 
-    if 'fc' in measure_options:
-        headers1_constant.update(header1_FC)
+                if technique['includeStd']:
+                    title = ' '.join([metabolite, 'STD'])
+                    headers_metabolites[title] = TECHNIQUE_DESCRIPTIONS['STD']
 
-    # Add metabolites measured as column names
-    for i in meta_options:
-        header1_metabolites = {
-            f'{i}': 'Concentration values per time-point, use a period (.) as the decimal separator',
-            f'{i}_std': 'Standard deviation if more than 1 technical replicate, use a period (.) as the decimal separator'
-        }
-        headers1_constant.update(header1_metabolites)
+        else:
+            raise ValueError(f"Invalid technique subject_type: {subject_type}")
+
+    # Create sheets for each category of measurement:
+    if len(headers_bioreplicates) > 3:
+        _fill_sheet(workbook, "Growth data per bioreplicate", headers_bioreplicates, positions)
+
+    if len(headers_strains) > 3:
+        _fill_sheet(workbook, "Growth data per strain", headers_strains, positions)
+
+    if len(headers_metabolites) > 3:
+        _fill_sheet(workbook, "Growth data per metabolite", headers_metabolites, positions)
+
+    return export_to_xlsx(workbook)
+
+
+def _add_header(sheet, index, title, description, fill_color):
+    cell         = sheet.cell(row=1, column=index, value=title)
+    cell.comment = Comment(description, author="μGrowthDB")
+    cell.font    = Font(bold=True)
+    cell.fill    = PatternFill(start_color=fill_color, end_color=fill_color, fill_type="solid")
+
+    # Calculate column width based on the length of the title text, plus some extra space
+    column_width = len(title)
+    column_letter = get_column_letter(index)
+    sheet.column_dimensions[column_letter].width = column_width + 1
+
+
+def _fill_sheet(workbook, sheet_title, headers, positions):
+    sheet = workbook.create_sheet(title=sheet_title)
 
     # Add headers and descriptions to the first row and modify the width of each columns
-    for col_idx, (header, description) in enumerate(headers1_constant.items(), start=1):
-        cell = ws.cell(row=1, column=col_idx, value=header)
-        cell.comment = Comment(description, author="ExcelBot")
-        cell.font = Font(bold=True)  # Make the header bold
-
-        if header in header1_color_white or header.endswith('std'):
-            cell.fill = PatternFill(start_color='FFFFFF', end_color='FFFFFF', fill_type="solid")
+    for index, (title, description) in enumerate(headers.items(), start=1):
+        if title.endswith(' STD'):
+            fill_color = WHITE
         else:
-            cell.fill = PatternFill(start_color='FF0000', end_color='FF0000', fill_type="solid")
+            fill_color = RED
 
-        # Calculate column width based on the length of the header text
-        column_width = len(header)
-        column_letter = get_column_letter(col_idx)
-        ws.column_dimensions[column_letter].width = column_width +  3 #Gives extra space
+        _add_header(sheet, index, title, description, fill_color=fill_color)
 
     # Fill the position column with generated positions
     for idx, position in enumerate(positions, start=2):
-        ws.cell(row=idx, column=1, value=position)
-
-    headers2_constant = {
-            'Position' : 'Predetermine position based on the type of vessel specified before.',
-            'Biological_Replicate_id': 'Unique IDs of individual samples: a bottle, a well in a well-plate or mini-bioreactor',
-            'Time' : 'Measurement time-points in the format: hh:mm:ss (hour, minutes and seconds)',
-        }
-
-    if 'rna' in measure_options:
-        for i in taxa:
-            header2_species = {
-                f'{i}_reads' : f'Abundances values per time-point for species {i}, use a period (.) as the decimal separator',
-                f'{i}_reads_std' : 'Standard deviation if more than 1 technical replicate, use a period (.) as the decimal separator'
-            }
-            headers2_constant.update(header2_species)
-
-    if 'fc_ps' in measure_options:
-        for i in taxa:
-            header2_species_fc = {
-                f'{i}_counts' : f'FC counts values per time-point for species {i}, use a period (.) as the decimal separator',
-                f'{i}_counts_std' : 'Standard deviation if more than 1 technical replicate, use a period (.) as the decimal separator'
-
-            }
-            headers2_constant.update(header2_species_fc)
-
-    if 'plates_ps' in measure_options:
-        for i in taxa:
-            header2_species_pc = {
-                f'{i}_Plate_counts' : f'FC counts values per time-point for species {i}, use a period (.) as the decimal separator',
-                f'{i}_Plate_counts_std' : 'Standard deviation if more than 1 technical replicate, use a period (.) as the decimal separator'
-
-            }
-            headers2_constant.update(header2_species_pc)
-
-    if 'rna' or 'fc_ps' or 'plates_ps' in measure_options:
-        wb.create_sheet(title="growth_per_species")
-        ws2 = wb["growth_per_species"]
-
-        for col_idx, (header, description) in enumerate(headers2_constant.items(), start=1):
-            cell = ws2.cell(row=1, column=col_idx, value=header)
-            cell.comment = Comment(description, author="ExcelBot")
-            cell.font = Font(bold=True)  # Make the header bold
-
-            if header.endswith('std'):
-                cell.fill = PatternFill(start_color='FFFFFF', end_color='FFFFFF', fill_type="solid")
-            else:
-                cell.fill = PatternFill(start_color='FF0000', end_color='FF0000', fill_type="solid")
-
-            # Calculate column width based on the length of the header text
-            column_width = len(header)
-            column_letter = get_column_letter(col_idx)
-            ws2.column_dimensions[column_letter].width = column_width +  3 #Gives extra space
-
-        for idx, position in enumerate(positions, start=2):
-            ws2.cell(row=idx, column=1, value=position)
-
-    temp_file = NamedTemporaryFile(delete=False, suffix='.xlsx')
-    wb.save(temp_file.name)
-    temp_file.close()
-    with open(temp_file.name, 'rb') as f:
-        data_excel = f.read()
-    return data_excel
+        sheet.cell(row=idx, column=1, value=position)
 
 
-def generate_positions(type_vessel, number_vessels, number_columns, number_rows, number_timepoints):
+def _generate_positions(type_vessel, number_vessels, number_columns, number_rows, number_timepoints):
     positions = []
     if type_vessel == 'bottles' or type_vessel == 'agar_plates':
         if number_vessels and number_timepoints:
-            for vessel_num in range(1, int(number_vessels)+ 1):
+            for vessel_num in range(1, int(number_vessels) + 1):
                 for _ in range(int(number_timepoints)):
                     positions.append(f"{type_vessel}{vessel_num}")
 
@@ -185,6 +170,6 @@ def generate_positions(type_vessel, number_vessels, number_columns, number_rows,
             for row in range(1, int(number_rows) + 1):
                 for col in range(1, int(number_columns) + 1):
                     for _ in range(int(number_timepoints)):
-                            positions.append(f"{get_column_letter(col)}{row}")
+                        positions.append(f"{get_column_letter(col)}{row}")
 
     return positions
