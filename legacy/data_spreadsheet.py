@@ -5,20 +5,13 @@ from openpyxl.utils import get_column_letter
 from openpyxl.styles import PatternFill
 
 from lib.excel import export_to_xlsx
+from models.measurement_technique import TECHNIQUE_NAMES
 
 TIME_UNITS = {
     'd': 'days',
     'h': 'hours',
     'm': 'minutes',
     's': 'seconds',
-}
-
-TECHNIQUE_NAMES = {
-    'ph':     'pH',
-    'fc':     'FC',
-    'od':     'OD',
-    'plates': 'PC',
-    '16s':    '16S-rRNA reads',
 }
 
 RED   = 'D02631'

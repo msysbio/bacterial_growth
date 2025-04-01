@@ -16,6 +16,9 @@ from legacy.parse_raw_data import (
     get_replicate_metadata,
 )
 
+# Validate that project ids correspond between submission and spreadsheet
+# Rewrite project and study creation/update to use ORM style, update from submission only
+
 
 def save_measurements_to_database(conn, yml_dir, submission_form, data_template):
     """

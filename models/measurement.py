@@ -1,11 +1,9 @@
 from io import StringIO
 import csv
-import enum
 import functools
 from decimal import Decimal
 
 from sqlalchemy import (
-    Enum,
     Integer,
     String,
     Numeric,
@@ -18,22 +16,20 @@ from sqlalchemy.orm import (
     aliased,
 )
 from sqlalchemy.ext.hybrid import hybrid_property
+import sqlalchemy as sql
 
 from models.orm_base import OrmBase
 from models.bioreplicate import Bioreplicate
 from models.strain import Strain
 from models.metabolite import Metabolite
+from models.measurement_technique import TECHNIQUE_NAMES
 from db import get_session
 from lib.db import execute_text
+from lib.conversion import convert_time
 
 
 class Measurement(OrmBase):
     __tablename__ = "Measurements"
-
-    class SubjectType(enum.Enum):
-        metabolite   = 'metabolite'
-        strain       = 'strain'
-        bioreplicate = 'bioreplicate'
 
     id: Mapped[int] = mapped_column(primary_key=True)
 
@@ -51,16 +47,14 @@ class Measurement(OrmBase):
     pH:            Mapped[str] = mapped_column(String(100), nullable=False)
     unit:          Mapped[str] = mapped_column(String(100), nullable=False)
 
-    technique: Mapped[str] = mapped_column(String(100), nullable=False)
-
     # TODO (2025-03-30) This should not be nullable, but we need to migrate the data first
     techniqueId: Mapped[int] = mapped_column(ForeignKey("MeasurementTechniques.id"))
 
     value: Mapped[Decimal] = mapped_column(Numeric(20, 2), nullable=True)
     std:   Mapped[Decimal] = mapped_column(Numeric(20, 2), nullable=True)
 
-    subjectId:   Mapped[str]         = mapped_column(String(100),       nullable=False)
-    subjectType: Mapped[SubjectType] = mapped_column(Enum(SubjectType), nullable=False)
+    subjectId:   Mapped[str] = mapped_column(String(100), nullable=False)
+    subjectType: Mapped[str] = mapped_column(String(100), nullable=False)
 
     @hybrid_property
     def timeInHours(self):
@@ -79,7 +73,7 @@ class Measurement(OrmBase):
     def subject_join(subject_type):
         if subject_type == 'metabolite':
             name = Metabolite.metabo_name.label("subjectName")
-            join = (Metabolite, Measurement.subjectId == Metabolite.chebi_id)
+            join = (Metabolite, Measurement.subjectId == Metabolite.id)
         elif subject_type == 'strain':
             name = Strain.memberName.label("subjectName")
             join = (Strain, Measurement.subjectId == Strain.strainId)
@@ -91,27 +85,9 @@ class Measurement(OrmBase):
         return (name, join)
 
     @classmethod
-    def insert_from_growth_csv(Self, db_session, study_id, csv_string):
+    def insert_from_bioreplicates_csv(Self, db_session, study_id, time_units, techniques, csv_string):
         measurements = []
         reader = csv.DictReader(StringIO(csv_string), dialect='unix')
-
-        techniques = []
-        metabolites = {}
-
-        for column in reader.fieldnames:
-            if column in {'Position', 'Biological_Replicate_id', 'Time'}:
-                continue
-            elif column in {'FC', 'OD', 'pH'}:
-                techniques.append(column)
-            else:
-                # Metabolite, fetch chebi id
-                # TODO (2025-02-18) Fetch them from MetaboliteForExperiment, get chebi_id through there
-                chebi_id = execute_text(db_session, """
-                    SELECT chebi_id
-                    FROM Metabolites
-                    WHERE metabo_name = :name
-                """, name=column).scalar()
-                metabolites[column] = chebi_id
 
         find_bioreplicate_uuid = functools.cache(Bioreplicate.find_for_study)
 
@@ -123,53 +99,23 @@ class Measurement(OrmBase):
                 # Missing bioreplicate, skip
                 continue
 
-            # Global measurement from the FC/OD/pH column:
             for technique in techniques:
-                value = row[technique]
+                technique_name = TECHNIQUE_NAMES[technique.type]
+                value = row[technique_name]
+                units = technique.units
 
-                if row[technique] == '':
-                    # Missing measurement:
-                    value = None
-
-                # TODO: units need to be configurable
-                if technique == 'pH':
-                    unit = None
-                else:
-                    unit = 'Cells/mL'
+                time_in_seconds = convert_time(row['Time'], source=time_units, target='s')
 
                 measurements.append(Self(
                     studyId=study_id,
                     bioreplicateUniqueId=bioreplicate_uuid,
                     position=row['Position'],
-                    timeInSeconds=round(float(row['Time']) * 3600),
-                    pH=row.get('pH', None),
-                    unit=unit,
-                    technique=technique,
+                    timeInSeconds=time_in_seconds,
+                    unit=units,
+                    techniqueId=technique.id,
                     value=value,
                     subjectType='bioreplicate',
                     subjectId=bioreplicate_uuid,
-                ))
-
-            for (name, chebi_id) in metabolites.items():
-                value = row[name]
-
-                if value == '':
-                    # Missing measurement:
-                    value = None
-
-                measurements.append(Self(
-                    studyId=study_id,
-                    bioreplicateUniqueId=bioreplicate_uuid,
-                    position=row['Position'],
-                    timeInSeconds=round(float(row['Time']) * 3600),
-                    pH=row.get('pH', None),
-                    # TODO: units are not configurable
-                    unit='mM',
-                    # TODO (2025-03-03) What is the actual technique?
-                    technique='Metabolites',
-                    value=value,
-                    subjectType='metabolite',
-                    subjectId=chebi_id,
                 ))
 
         db_session.add_all(measurements)
@@ -178,28 +124,9 @@ class Measurement(OrmBase):
         return measurements
 
     @classmethod
-    def insert_from_reads_csv(Self, db_session, study_id, csv_string):
+    def insert_from_metabolites_csv(Self, db_session, study_id, time_units, techniques, csv_string):
         measurements = []
-
         reader = csv.DictReader(StringIO(csv_string), dialect='unix')
-        strains = {}
-
-        technique_mapping = {
-            'reads': '16S rRNA-seq',
-            'counts': 'FC counts per species',
-            'Plate_counts': 'plates',
-        }
-        available_technique_mapping = {}
-
-        strain_names = set()
-        for suffix in ('reads', 'counts', 'Plate_counts'):
-            for c in reader.fieldnames:
-                if c.endswith(f'_{suffix}'):
-                    strain_names.add(c.removesuffix(f'_{suffix}'))
-                    available_technique_mapping[suffix] = technique_mapping[suffix]
-
-        for strain_name in strain_names:
-            strains[strain_name] = Strain.find_for_study(db_session, study_id, strain_name)
 
         find_bioreplicate_uuid = functools.cache(Bioreplicate.find_for_study)
 
@@ -207,34 +134,85 @@ class Measurement(OrmBase):
             bioreplicate_id = row['Biological_Replicate_id']
             bioreplicate_uuid = find_bioreplicate_uuid(db_session, study_id, bioreplicate_id)
 
-            for strain_name, strain_id in strains.items():
-                for measurement_type, technique in available_technique_mapping.items():
-                    column_name = f"{strain_name}_{measurement_type}"
-                    value = row.get(column_name, '')
+            if bioreplicate_uuid is None:
+                # Missing bioreplicate, skip
+                continue
 
-                    # TODO (2025-03-05) Class that translates spreadsheet terminology to code terminology (reads, std, etc)
+            for technique in techniques:
+                subjects = db_session.scalars(
+                    sql.select(Metabolite)
+                    .where(Metabolite.id.in_(technique.metaboliteIds))
+                )
 
+                for subject in subjects:
+                    value = row[f"{subject.name} ({technique.units})"]
                     if value == '':
-                        # Missing measurement:
                         value = None
+                    units = technique.units
 
-                    valueStd = row.get(f"{column_name}_std")
-                    if valueStd == '':
-                        valueStd = None
+                    time_in_seconds = convert_time(row['Time'], source=time_units, target='s')
 
                     measurements.append(Self(
-                        position=row['Position'],
-                        timeInSeconds=round(float(row['Time']) * 3600),
                         studyId=study_id,
                         bioreplicateUniqueId=bioreplicate_uuid,
-                        pH=row.get('pH', None),
-                        # TODO: units are not configurable
-                        unit='Cells/mL',
-                        technique=technique,
+                        position=row['Position'],
+                        timeInSeconds=time_in_seconds,
+                        unit=units,
+                        techniqueId=technique.id,
                         value=value,
-                        std=valueStd,
+                        subjectId=subject.id,
+                        subjectType='metabolite',
+                    ))
+
+        db_session.add_all(measurements)
+        db_session.commit()
+
+        return measurements
+
+    @classmethod
+    def insert_from_strain_csv(Self, db_session, study_id, time_units, techniques, csv_string):
+        measurements = []
+        reader = csv.DictReader(StringIO(csv_string), dialect='unix')
+
+        find_bioreplicate_uuid = functools.cache(Bioreplicate.find_for_study)
+
+        for row in reader:
+            bioreplicate_id = row['Biological_Replicate_id']
+            bioreplicate_uuid = find_bioreplicate_uuid(db_session, study_id, bioreplicate_id)
+
+            if bioreplicate_uuid is None:
+                # Missing bioreplicate, skip
+                continue
+
+            for technique in techniques:
+                if technique.type == '16s':
+                    suffix = 'reads'
+                else:
+                    suffix = f"{TECHNIQUE_NAMES[technique.type]} ({technique.units})"
+
+                subjects = db_session.scalars(
+                    sql.select(Strain)
+                    .where(Strain.id.in_(technique.strainIds))
+                )
+
+                for subject in subjects:
+                    value = row[f"{subject.name} {suffix}"]
+                    if value == '':
+                        value = None
+                    units = technique.units
+
+                    time_in_seconds = convert_time(row['Time'], source=time_units, target='s')
+
+                    measurements.append(Self(
+                        studyId=study_id,
+                        bioreplicateUniqueId=bioreplicate_uuid,
+                        position=row['Position'],
+                        timeInSeconds=time_in_seconds,
+                        unit=units,
+                        techniqueId=technique.id,
+                        value=value,
+                        subjectId=subject.id,
                         subjectType='strain',
-                        subjectId=strain_id,
                     ))
 
         db_session.add_all(measurements)

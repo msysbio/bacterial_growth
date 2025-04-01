@@ -269,7 +269,6 @@ CREATE TABLE Measurements (
   timeInSeconds int NOT NULL,
   pH varchar(100) DEFAULT NULL,
   unit varchar(100) DEFAULT NULL,
-  technique varchar(100) NOT NULL,
   `value` decimal(20,3) DEFAULT NULL,
   std decimal(20,3) DEFAULT NULL,
   subjectType varchar(100) NOT NULL,
@@ -542,5 +541,5 @@ INSERT INTO MigrationVersions VALUES
 (25,'2025_03_21_112110_create_project_and_study_user_join_tables','2025-03-21 10:31:34'),
 (26,'2025_03_25_133231_add_user_id_to_new_strains','2025-03-25 12:34:13'),
 (33,'2025_03_28_181930_create_measurement_techniques','2025-03-30 14:26:17'),
-(34,'2025_03_30_160720_add_technique_id_to_measurements','2025-03-30 14:26:17');
+(36,'2025_03_30_160720_add_technique_id_to_measurements','2025-04-01 08:52:53');
 

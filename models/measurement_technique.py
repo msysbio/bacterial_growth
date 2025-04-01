@@ -1,5 +1,4 @@
 from datetime import datetime
-import enum
 
 from sqlalchemy import (
     String,
@@ -7,7 +6,6 @@ from sqlalchemy import (
     ForeignKey,
     JSON,
     DateTime,
-    Enum,
 )
 from sqlalchemy.orm import (
     Mapped,
@@ -18,21 +16,24 @@ from sqlalchemy.schema import FetchedValue
 
 from models.orm_base import OrmBase
 
+TECHNIQUE_NAMES = {
+    'ph':     'pH',
+    'fc':     'FC',
+    'od':     'OD',
+    'plates': 'PC',
+    '16s':    '16S-rRNA reads',
+}
+
 
 class MeasurementTechnique(OrmBase):
     __tablename__ = "MeasurementTechniques"
-
-    class SubjectType(enum.Enum):
-        metabolite   = 'metabolite'
-        strain       = 'strain'
-        bioreplicate = 'bioreplicate'
 
     id: Mapped[int] = mapped_column(primary_key=True)
 
     type:  Mapped[str] = mapped_column(String(100), nullable=False)
     units: Mapped[str] = mapped_column(String(100), nullable=False)
 
-    subjectType: Mapped[SubjectType] = mapped_column(Enum(SubjectType), nullable=False)
+    subjectType: Mapped[str] = mapped_column(String(100), nullable=False)
 
     description: Mapped[str]  = mapped_column(String)
     includeStd:  Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)

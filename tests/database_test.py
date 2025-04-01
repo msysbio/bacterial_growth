@@ -8,6 +8,9 @@ from lib.db import (
     get_primary_key_names,
     execute_text
 )
+from models import (
+    MeasurementTechnique
+)
 
 class DatabaseTest(unittest.TestCase):
     def setUp(self):
@@ -161,6 +164,7 @@ class DatabaseTest(unittest.TestCase):
     def create_measurement(self, **params):
         study_id          = self._get_or_create_dependency(params, 'studyId', 'study')
         bioreplicate_uuid = self._get_or_create_dependency(params, 'bioreplicateUniqueId', 'bioreplicate')
+        technique_id      = self._get_or_create_dependency(params, 'id', 'technique')
 
         subject_id   = params['subjectId']
         subject_type = params['subjectType']
@@ -168,10 +172,10 @@ class DatabaseTest(unittest.TestCase):
         params = {
             'studyId':              study_id,
             'bioreplicateUniqueId': bioreplicate_uuid,
+            'techniqueId':          technique_id,
             'position':             'A1',
             'timeInSeconds':        3600,
             'unit':                 'unknown',
-            'technique':            'FC',
             'value':                Decimal('100.000'),
             'subjectId':            subject_id,
             'subjectType':          subject_type,
@@ -179,6 +183,21 @@ class DatabaseTest(unittest.TestCase):
         }
 
         return self._create_record('Measurements', params)
+
+    def create_measurement_technique(self, **params):
+        study_uuid = self._get_or_create_dependency(params, 'studyUniqueID', 'study')
+
+        params = {
+            'units': '',
+            'studyUniqueID': study_uuid,
+            **params,
+        }
+
+        record = MeasurementTechnique(**params)
+        self.db_session.add(record)
+        self.db_session.commit()
+
+        return record
 
     def _create_record(self, table_name, params):
         column_list = ', '.join(params.keys())
