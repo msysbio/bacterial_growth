@@ -9,7 +9,9 @@ from lib.db import execute_into_df
 from models import (
     Experiment,
     Measurement,
+    MeasurementTechnique,
     Bioreplicate,
+    Study,
 )
 
 PLOTLY_TEMPLATE = 'plotly_white'
@@ -20,13 +22,24 @@ class ExperimentChartForm:
         self.experiment = experiment
 
         with get_connection() as db_conn:
-            self.available_techniques = db_conn.execute(
-                sql.select(Measurement.technique)
-                .join(Bioreplicate)
+            technique_types = db_conn.execute(
+                sql.select(
+                    MeasurementTechnique.type,
+                    MeasurementTechnique.subjectType,
+                )
                 .distinct()
-                .where(Bioreplicate.experimentUniqueId == self.experiment.experimentUniqueId)
-                .order_by(Measurement.technique)
-            ).scalars()
+                .join(Study)
+                .where(Study.studyId == self.experiment.studyId)
+                .order_by(
+                    MeasurementTechnique.type,
+                    MeasurementTechnique.subjectType,
+                )
+            ).all()
+
+            self.available_techniques = [
+                f"{t}_ps" if st == 'strain' else t
+                for t, st in technique_types
+            ]
 
     def generate_growth_figures(self, technique, args):
         selected_bioreplicates, include_average, _ = self._extract_args(args)
@@ -152,7 +165,7 @@ class ExperimentChartForm:
 
         return selected_bioreplicates, include_average, apply_log
 
-    def get_df(self, bioreplicate_uuids, technique, subject_type):
+    def get_df(self, bioreplicate_uuids, technique_type, subject_type):
         subjectName, subjectJoin = Measurement.subject_join(subject_type)
 
         query = (
@@ -163,11 +176,12 @@ class ExperimentChartForm:
                 subjectName,
             )
             .join(Bioreplicate)
+            .join(MeasurementTechnique)
             .join(*subjectJoin)
             .where(
                 Measurement.bioreplicateUniqueId.in_(bioreplicate_uuids),
-                Measurement.technique == technique,
                 Measurement.subjectType == subject_type,
+                MeasurementTechnique.type == technique_type,
             )
             .order_by('subjectName', Measurement.timeInSeconds)
         )
@@ -175,7 +189,7 @@ class ExperimentChartForm:
         with get_connection() as db_conn:
             return execute_into_df(db_conn, query)
 
-    def get_average_df(self, technique, subject_type):
+    def get_average_df(self, technique_type, subject_type):
         if subject_type == 'bioreplicate':
             subjectName = literal_column('CONCAT("Average ", Experiments.experimentId)').label('subjectName')
             subjectJoin = None
@@ -190,11 +204,12 @@ class ExperimentChartForm:
                 subjectName,
             )
             .join(Bioreplicate)
+            .join(MeasurementTechnique)
             .join(Experiment)
             .where(
-                Measurement.technique == technique,
                 Measurement.subjectType == subject_type,
                 Experiment.experimentUniqueId == self.experiment.experimentUniqueId,
+                MeasurementTechnique.type == technique_type,
             )
             .group_by(Measurement.timeInSeconds, subjectName)
             .order_by(sql.text('subjectName'), Measurement.timeInSeconds)

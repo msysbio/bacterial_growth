@@ -164,7 +164,7 @@ class DatabaseTest(unittest.TestCase):
     def create_measurement(self, **params):
         study_id          = self._get_or_create_dependency(params, 'studyId', 'study')
         bioreplicate_uuid = self._get_or_create_dependency(params, 'bioreplicateUniqueId', 'bioreplicate')
-        technique_id      = self._get_or_create_dependency(params, 'id', 'technique')
+        technique_id      = self._get_or_create_dependency(params, 'id', 'measurement_technique')
 
         subject_id   = params['subjectId']
         subject_type = params['subjectType']
@@ -188,6 +188,8 @@ class DatabaseTest(unittest.TestCase):
         study_uuid = self._get_or_create_dependency(params, 'studyUniqueID', 'study')
 
         params = {
+            'type': 'fc',
+            'subjectType': 'bioreplicate',
             'units': '',
             'studyUniqueID': study_uuid,
             **params,
@@ -229,6 +231,10 @@ class DatabaseTest(unittest.TestCase):
             }
 
             object = creator_func(**dependency_params)
-            key_value = object[key_name]
+
+            if isinstance(object, dict):
+                key_value = object[key_name]
+            else:
+                key_value = getattr(object, key_name)
 
         return key_value

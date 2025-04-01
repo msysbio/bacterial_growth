@@ -114,8 +114,8 @@ class Measurement(OrmBase):
                     unit=units,
                     techniqueId=technique.id,
                     value=value,
-                    subjectType='bioreplicate',
                     subjectId=bioreplicate_uuid,
+                    subjectType='bioreplicate',
                 ))
 
         db_session.add_all(measurements)

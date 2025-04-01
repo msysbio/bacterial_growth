@@ -13,6 +13,7 @@ from sqlalchemy.orm import (
     relationship,
 )
 from sqlalchemy.schema import FetchedValue
+from sqlalchemy.ext.hybrid import hybrid_property
 
 from models.orm_base import OrmBase
 
