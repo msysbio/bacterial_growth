@@ -116,6 +116,7 @@ class Measurement(OrmBase):
                     timeInSeconds=time_in_seconds,
                     unit=units,
                     techniqueId=technique.id,
+                    technique=_generate_technique_name(technique.type, technique.subjectType),
                     value=value,
                     subjectId=bioreplicate_uuid,
                     subjectType='bioreplicate',
@@ -212,6 +213,7 @@ class Measurement(OrmBase):
                         position=row['Position'],
                         timeInSeconds=time_in_seconds,
                         unit=units,
+                        technique=_generate_technique_name(technique.type, technique.subjectType),
                         techniqueId=technique.id,
                         value=value,
                         subjectId=subject.id,
@@ -222,3 +224,21 @@ class Measurement(OrmBase):
         db_session.commit()
 
         return measurements
+
+
+def _generate_technique_name(technique_type, subject_type):
+    match (technique_type.lower(), subject_type):
+        case ('fc', 'bioreplicate'):
+            return 'FC'
+        case ('fc', 'strain'):
+            return 'FC counts per species'
+        case ('metabolites', _):
+            return 'Metabolites'
+        case ('16s', _):
+            return '16S rRNA-seq'
+        case ('ph', _):
+            return 'pH'
+        case ('od', _):
+            return 'OD'
+        case _:
+            raise ValueError(f"Unknown technique name for type {technique_type}, subject {subject_type}")
