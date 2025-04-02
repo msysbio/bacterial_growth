@@ -6,6 +6,7 @@ from .measurement_technique import MeasurementTechnique
 from .metabolite import Metabolite
 from .project import Project
 from .project_user import ProjectUser
+from .strain import Strain
 from .study import Study
 from .study_user import StudyUser
 from .submission import Submission

@@ -2,13 +2,12 @@ import sqlalchemy as sql
 
 
 def up(conn):
-    conn.execute(sql.text("ALTER TABLE Measurements ADD COLUMN techniqueId INT"))
-    conn.execute(sql.text("ALTER TABLE Measurements DROP COLUMN technique"))
+    conn.execute(sql.text("ALTER TABLE Measurements ADD techniqueId INT"))
+    conn.execute(sql.text("ALTER TABLE Measurements MODIFY technique varchar(100) DEFAULT NULL"))
 
 
 def down(conn):
     conn.execute(sql.text("ALTER TABLE Measurements DROP COLUMN techniqueId"))
-    conn.execute(sql.text(f"ALTER TABLE Measurements ADD COLUMN technique VARCHAR(100)"))
 
 
 if __name__ == "__main__":

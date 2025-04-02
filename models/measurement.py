@@ -47,6 +47,9 @@ class Measurement(OrmBase):
     pH:            Mapped[str] = mapped_column(String(100), nullable=False)
     unit:          Mapped[str] = mapped_column(String(100), nullable=False)
 
+    # Should be removed at some point
+    technique: Mapped[str] = mapped_column(String(100))
+
     # TODO (2025-03-30) This should not be nullable, but we need to migrate the data first
     techniqueId: Mapped[int] = mapped_column(ForeignKey("MeasurementTechniques.id"))
 
