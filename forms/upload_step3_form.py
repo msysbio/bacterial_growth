@@ -19,12 +19,12 @@ class UploadStep3Form(FlaskForm):
         class Meta:
             csrf = False
 
-        type        = StringField('type', validators=[DataRequired()])
-        subjectType = StringField('subjectType', validators=[DataRequired()])
-        units       = StringField('units', validators=[DataRequired()])
-        description = StringField('description')
-        includeStd  = BooleanField('includeStd')
-        metabolites = SelectMultipleField('metabolites')
+        type          = StringField('type', validators=[DataRequired()])
+        subjectType   = StringField('subjectType', validators=[DataRequired()])
+        units         = StringField('units', validators=[DataRequired()])
+        description   = StringField('description')
+        includeStd    = BooleanField('includeStd')
+        metaboliteIds = SelectMultipleField('metaboliteIds')
 
     vessel_type = SelectField('vessel_type', choices=[
         ('bottles',     "Bottles"),

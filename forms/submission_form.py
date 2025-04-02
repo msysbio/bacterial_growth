@@ -150,7 +150,7 @@ class SubmissionForm:
             return []
 
         techniques = self.submission.studyDesign['techniques']
-        metabolites = techniques[technique_index]['metabolites']
+        metabolites = techniques[technique_index]['metaboliteIds']
 
         return self.db_session.scalars(
             sql.select(Metabolite)

@@ -5,7 +5,6 @@ from openpyxl.utils import get_column_letter
 from openpyxl.styles import PatternFill
 
 from lib.excel import export_to_xlsx
-from models.measurement_technique import TECHNIQUE_NAMES
 
 TIME_UNITS = {
     'd': 'days',
@@ -67,25 +66,21 @@ def create_excel(submission, metabolite_names, strain_names):
     headers_strains       = {**headers_common}
     headers_metabolites   = {**headers_common}
 
-    for technique in submission.studyDesign['techniques']:
-        subject_type   = technique['subjectType']
-        technique_type = technique['type']
-        units          = technique['units']
+    for technique in submission.techniques:
+        subject_type   = technique.subjectType
+        technique_type = technique.type
+        units          = technique.units
 
         if subject_type == 'bioreplicate':
-            technique_name = TECHNIQUE_NAMES[technique_type]
-            description = TECHNIQUE_DESCRIPTIONS[technique_type].format(units=technique['units'])
+            technique_name = technique.csv_column_name()
+            description = TECHNIQUE_DESCRIPTIONS[technique_type].format(units=technique.units)
 
             headers_bioreplicates[technique_name] = description
 
         elif subject_type == 'strain':
-            technique_name = TECHNIQUE_NAMES[technique_type]
-
             for strain_name in strain_names:
-                if technique_type in ('16s', 'plates'):
-                    title = ' '.join([strain_name, units])
-                else:
-                    title = ' '.join([strain_name, technique_name, f"({units})"])
+                # TODO (2025-04-02) Move to MeasurementTechnique, copy in javascript
+                title = technique.csv_column_name(strain_name)
 
                 description = TECHNIQUE_DESCRIPTIONS[f"{technique_type}_ps"].format(
                     strain=strain_name,
@@ -93,20 +88,20 @@ def create_excel(submission, metabolite_names, strain_names):
                 )
                 headers_strains[title] = description
 
-                if technique['includeStd']:
+                if technique.includeStd:
                     title = ' '.join([strain_name, technique_name, 'STD'])
                     headers_strains[title] = TECHNIQUE_DESCRIPTIONS['STD']
 
         elif subject_type == 'metabolite':
             for metabolite in metabolite_names:
-                title = ' '.join([metabolite, f"({units})"])
+                title = technique.csv_column_name(metabolite)
                 description = TECHNIQUE_DESCRIPTIONS['metabolites'].format(
                     metabolite=metabolite,
                     units=units,
                 )
                 headers_metabolites[title] = description
 
-                if technique['includeStd']:
+                if technique.includeStd:
                     title = ' '.join([metabolite, 'STD'])
                     headers_metabolites[title] = TECHNIQUE_DESCRIPTIONS['STD']
 

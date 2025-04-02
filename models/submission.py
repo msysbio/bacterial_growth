@@ -64,3 +64,8 @@ class Submission(OrmBase):
             1 if self.studyFileId and self.dataFileId else 0,
             0, # final step
         ])
+
+    @property
+    def techniques(self):
+        from models import MeasurementTechnique
+        return [MeasurementTechnique(**m) for m in self.studyDesign['techniques']]

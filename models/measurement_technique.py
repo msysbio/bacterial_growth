@@ -47,3 +47,22 @@ class MeasurementTechnique(OrmBase):
 
     createdAt: Mapped[datetime] = mapped_column(DateTime, server_default=FetchedValue())
     updatedAt: Mapped[datetime] = mapped_column(DateTime, server_default=FetchedValue())
+
+    def csv_column_name(self, subject_name=None):
+        if self.subjectType == 'bioreplicate':
+            return TECHNIQUE_NAMES[self.type]
+
+        elif self.subjectType == 'metabolite':
+            return subject_name
+
+        elif self.subjectType == 'strain':
+            if self.type == '16s':
+                suffix = 'rRNA reads'
+            elif self.type == 'fc':
+                suffix = 'FC counts'
+            elif self.type == 'plates':
+                suffix = 'plate counts'
+            else:
+                raise ValueError(f"Incompatible type and subjectType: {self.type}, {self.subjectType}")
+
+            return f"{subject_name} {suffix}"
