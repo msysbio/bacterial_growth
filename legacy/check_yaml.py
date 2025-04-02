@@ -26,14 +26,18 @@ def test_study_yaml(submission, data):
     required_columns.discard('Study_PublicationURL')
 
     for column in required_columns:
-        if column == 'Study_UniqueID' and df[column].tolist() != [submission.studyUniqueID]:
+        csv_id = 'N/A'
+        for value in df[column].tolist():
+            csv_id = value.strip()
+
+        if column == 'Study_UniqueID' and csv_id != submission.studyUniqueID:
             errors.append(
-                "The study ID in the Study file does not match the one in the form. "
+                f"The study ID in the Study file ({csv_id}) does not match the one in the form ({submission.studyUniqueID}). "
                 "Check that the spreadsheet you're uploading is for the study you intended."
             )
-        elif column == 'Project_UniqueID' and df[column].tolist() != [submission.projectUniqueID]:
+        elif column == 'Project_UniqueID' and csv_id != submission.projectUniqueID:
             errors.append(
-                "The project ID in the Study file does not match the one in the form. "
+                f"The project ID in the Study file ({csv_id}) does not match the one in the form ({submission.studyUniqueID}). "
                 "Check that the spreadsheet you're uploading is for the project you intended."
             )
         else:
