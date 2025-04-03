@@ -205,6 +205,7 @@ def upload_step4_page():
             errors = validate_upload(yml_dir, submission)
 
             if len(errors) == 0:
+                # TODO (2025-04-03) instead of returning all that, return updated submission_form
                 (study_id, errors, errors_logic, studyUniqueID, projectUniqueID, project_id) = \
                     save_measurements_to_database(g.db_session, yml_dir, submission_form, submission.dataFile.content)
                 g.db_session.commit()
@@ -253,9 +254,7 @@ def _init_submission_form(step):
 
 
 def _save_chart_data_to_database(db_session, study, submission):
-    time_units = submission.studyDesign['time_units']
-    techniques = submission.techniques
-    data_xls   = submission.dataFile.content
+    data_xls = submission.dataFile.content
 
     df_bioreps = _read_excel_sheet(data_xls, sheet_name='Growth data per bioreplicate')
     Measurement.insert_from_bioreplicates_csv(db_session, study, df_bioreps.to_csv(index=False))
@@ -268,11 +267,4 @@ def _save_chart_data_to_database(db_session, study, submission):
 
 
 def _read_excel_sheet(data_xls, sheet_name):
-    df = pd.read_excel(io.BytesIO(data_xls), sheet_name=sheet_name)
-
-    # # Drop columns with NaN values
-    # df = df.dropna(axis=1, how='all')
-    # # Drop rows where all values are NaN
-    # df = df.dropna(axis=0, how='all')
-
-    return df
+    return pd.read_excel(io.BytesIO(data_xls), sheet_name=sheet_name)
