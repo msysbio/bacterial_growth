@@ -227,7 +227,6 @@ class SubmissionForm:
         self.errors = {}
 
         project_name = self.submission.studyDesign['project']['name']
-        # study_name   = self.submission.studyDesign['study']['name']
 
         if len(project_name) > 0:
             project_exists = self.db_session.query(
@@ -240,19 +239,5 @@ class SubmissionForm:
 
             if project_exists:
                 self.errors['project_name'] = ["Project name is taken"]
-
-        # TODO (2025-03-24) Discuss whether study names should be unique
-        #
-        # if len(study_name) > 0:
-        #     study_exists = self.db_session.query(
-        #         sql.exists()
-        #         .where(
-        #             Study.studyName == study_name,
-        #             Study.studyUniqueID != self.submission.studyUniqueID
-        #         )
-        #     ).scalar()
-        #
-        #     if study_exists:
-        #         self.errors['study_name'] = ["Study name is taken"]
 
         return len(self.errors) == 0

@@ -102,18 +102,16 @@ class Measurement(OrmBase):
             if technique.subjectType != 'bioreplicate':
                 continue
 
-            technique_name = TECHNIQUE_NAMES[technique.type]
-            value = row[technique_name]
+            value = row[technique.csv_column_name()]
             if value == '':
                 value = None
-            units = technique.units
 
             measurement = Self(
                 studyId=study.studyId,
                 bioreplicateUniqueId=bioreplicate_uuid,
                 position=row['Position'],
                 timeInSeconds=time,
-                unit=units,
+                unit=technique.units,
                 techniqueId=technique.id,
                 technique=_generate_technique_name(technique.type, technique.subjectType),
                 value=value,
@@ -135,27 +133,18 @@ class Measurement(OrmBase):
             if technique.subjectType != 'strain':
                 continue
 
-            if technique.type == '16s':
-                suffix = 'rRNA reads'
-            elif technique.type == 'fc':
-                suffix = 'FC counts'
-            elif technique.type == 'plates':
-                suffix = 'plate counts'
-            else:
-                raise ValueError(f"Unexpected technique type: {technique.type}")
-
             for subject in study.strains:
-                value = row[f"{subject.name} {suffix}"]
+                value = row[technique.csv_column_name(subject.name)]
+
                 if value == '':
                     value = None
-                units = technique.units
 
                 measurement = Self(
                     studyId=study.studyId,
                     bioreplicateUniqueId=bioreplicate_uuid,
                     position=row['Position'],
                     timeInSeconds=time,
-                    unit=units,
+                    unit=technique.units,
                     technique=_generate_technique_name(technique.type, technique.subjectType),
                     techniqueId=technique.id,
                     value=value,
@@ -191,17 +180,16 @@ class Measurement(OrmBase):
                 continue
 
             for subject in metabolites:
-                value = row[subject.name]
+                value = row[technique.csv_column_name(subject.name)]
                 if value == '':
                     value = None
-                units = technique.units
 
                 measurement = Self(
                     studyId=study.studyId,
                     bioreplicateUniqueId=bioreplicate_uuid,
                     position=row['Position'],
                     timeInSeconds=time,
-                    unit=units,
+                    unit=technique.units,
                     techniqueId=technique.id,
                     technique=_generate_technique_name(technique.type, technique.subjectType),
                     value=value,
