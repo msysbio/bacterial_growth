@@ -14,6 +14,30 @@ from models import (
     Submission,
 )
 
+# The structure of a Submission's `studyDesign` field. Any parameters given to
+# the form will be merged with this as a default. Changing the structure here
+# will allow stored submissions to be reused and made compatible with the new
+# structure.
+#
+# When the `submission.studyDesign` is modified, we need to use `flag_modified`
+# to tell the ORM to persist the field.
+#
+DEFAULT_STUDY_DESIGN = {
+    'project': {'name': None, 'description': None},
+    'study':   {'name': None, 'description': None},
+
+    'vessel_type':     None,
+    'bottle_count':    None,
+    'plate_count':     None,
+    'vessel_count':    None,
+    'column_count':    None,
+    'row_count':       None,
+    'timepoint_count': None,
+    'time_units':      None,
+    'strains':         [],
+    'new_strains':     [],
+    'techniques':      [],
+}
 
 class SubmissionForm:
     def __init__(self, submission_id=None, step=0, db_session=None, user_uuid=None):
@@ -21,29 +45,12 @@ class SubmissionForm:
         self.db_session = db_session
         self.errors     = []
 
-        defaultStudyDesign = {
-            'project': {'name': None, 'description': None},
-            'study':   {'name': None, 'description': None},
-
-            'vessel_type':     None,
-            'bottle_count':    None,
-            'plate_count':     None,
-            'vessel_count':    None,
-            'column_count':    None,
-            'row_count':       None,
-            'timepoint_count': None,
-            'time_units':      None,
-            'strains':         [],
-            'new_strains':     [],
-            'techniques':      [],
-        }
-
         # Load submission object
         self.submission = None
         if submission_id is not None:
             self.submission = self.db_session.get(Submission, submission_id)
             self.submission.studyDesign = {
-                **defaultStudyDesign,
+                **DEFAULT_STUDY_DESIGN,
                 **self.submission.studyDesign,
             }
 
@@ -52,7 +59,7 @@ class SubmissionForm:
                 projectUniqueID=None,
                 studyUniqueID=None,
                 userUniqueID=user_uuid,
-                studyDesign=defaultStudyDesign,
+                studyDesign=DEFAULT_STUDY_DESIGN,
             )
 
         # Check for an existing project/study and set the submission "type" accordingly:
