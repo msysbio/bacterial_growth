@@ -3,7 +3,10 @@ import tests.init  # noqa: F401
 import unittest
 from decimal import Decimal
 
-from models import Measurement
+from models import (
+    Measurement,
+    Study
+)
 from models.measurement_technique import TECHNIQUE_NAMES
 
 from tests.database_test import DatabaseTest
@@ -12,18 +15,19 @@ import lib.util as util
 
 class TestMeasurement(DatabaseTest):
     def test_successful_creation(self):
-        study             = self.create_study()
-        study_id          = study['studyId']
+        study_data = self.create_study()
+        study = self.db_session.get(Study, study_data['studyUniqueID'])
+        study_id = study_data['studyId']
+
         bioreplicate_uuid = self.create_bioreplicate(studyId=study_id)['bioreplicateUniqueId']
         strain_id         = self.create_strain(studyId=study_id)['NCBId']
-        technique         = self.create_measurement_technique(type='fc', subjectType='bioreplicate', studyUniqueID=study['studyUniqueID'])
+        technique         = self.create_measurement_technique(type='fc', subjectType='bioreplicate', studyUniqueID=study.studyUniqueID)
 
         measurement = Measurement(
-            studyId=study['studyId'],
+            studyId=study.studyId,
             bioreplicateUniqueId=bioreplicate_uuid,
             position='A1',
             timeInSeconds=60 * 3600,
-            pH=Decimal('7.4'),
             unit=technique.units,
             techniqueId=technique.id,
             value=Decimal('100_000.0'),
@@ -33,15 +37,17 @@ class TestMeasurement(DatabaseTest):
 
         self.assertTrue(measurement.id is None)
 
-        self.db_session.add_all([measurement])
+        self.db_session.add(measurement)
         self.db_session.commit()
 
         self.assertTrue(measurement.id is not None)
 
     def test_import_bioreplicate_csv(self):
-        study = self.create_study()
-        study_id = study['studyId']
-        study_uuid = study['studyUniqueID']
+        study_data = self.create_study(timeUnits='h')
+        study = self.db_session.get(Study, study_data['studyUniqueID'])
+
+        study_id = study.studyId
+        study_uuid = study.studyUniqueID
 
         b1 = self.create_bioreplicate(studyId=study_id, bioreplicateId='b1')
         b2 = self.create_bioreplicate(studyId=study_id, bioreplicateId='b2')
@@ -58,12 +64,9 @@ class TestMeasurement(DatabaseTest):
             p1,b2,4,4567890.0,0.7,7.6
         """)
 
-        techniques = [t_fc, t_od, t_ph]
         measurements = Measurement.insert_from_bioreplicates_csv(
             self.db_session,
-            study_id,
-            'h',
-            techniques,
+            study,
             growth_data
         )
 
@@ -96,9 +99,11 @@ class TestMeasurement(DatabaseTest):
         )
 
     def test_import_metabolite_csv(self):
-        study = self.create_study()
-        study_id = study['studyId']
-        study_uuid = study['studyUniqueID']
+        study_data = self.create_study(timeUnits='m')
+        study = self.db_session.get(Study, study_data['studyUniqueID'])
+
+        study_id = study.studyId
+        study_uuid = study.studyUniqueID
 
         b1 = self.create_bioreplicate(studyId=study_id, bioreplicateId='b1')
 
@@ -123,7 +128,7 @@ class TestMeasurement(DatabaseTest):
 
         # Note: missing trehalose measurement at t=75
         metabolite_data = util.trim_lines("""
-            Position,Biological_Replicate_id,Time,glucose (mM),trehalose (mM)
+            Position,Biological_Replicate_id,Time,glucose,trehalose
             p1,b1,60,50.0,70.0
             p1,b1,75,30.0,
             p1,b1,90,10.0,10.0
@@ -131,10 +136,8 @@ class TestMeasurement(DatabaseTest):
 
         measurements = Measurement.insert_from_metabolites_csv(
             self.db_session,
-            study_id,
-            'm',
-            techniques=[t],
-            csv_string=metabolite_data
+            study,
+            metabolite_data
         )
 
         # Metabolite measurements
@@ -148,9 +151,11 @@ class TestMeasurement(DatabaseTest):
         )
 
     def test_import_strain_csv(self):
-        study = self.create_study()
-        study_id = study['studyId']
-        study_uuid = study['studyUniqueID']
+        study_data = self.create_study()
+        study = self.db_session.get(Study, study_data['studyUniqueID'])
+
+        study_id = study.studyId
+        study_uuid = study.studyUniqueID
 
         bioreplicate = self.create_bioreplicate(
             studyId=study_id,
@@ -181,12 +186,12 @@ class TestMeasurement(DatabaseTest):
             'Position',
             'Biological_Replicate_id',
             'Time',
-            'B. thetaiotaomicron FC (Cells/mL)',
-            'R. intestinalis FC (Cells/mL)',
-            'B. thetaiotaomicron reads',
-            'B. thetaiotaomicron reads STD',
-            'R. intestinalis reads',
-            'R. intestinalis reads STD',
+            'B. thetaiotaomicron FC counts',
+            'R. intestinalis FC counts',
+            'B. thetaiotaomicron rRNA reads',
+            'B. thetaiotaomicron rRNA reads STD',
+            'R. intestinalis rRNA reads',
+            'R. intestinalis rRNA reads STD',
         ])
 
         # Note: missing B. thetaiotaomicron reads and std at t=75
@@ -200,13 +205,9 @@ class TestMeasurement(DatabaseTest):
 
         measurements = Measurement.insert_from_strain_csv(
             self.db_session,
-            study_id,
-            's',
-            techniques=[t_fc, t_16s],
-            csv_string=strain_data,
+            study,
+            strain_data
         )
-
-        print([repr(m) for m in measurements])
 
         # 16s reads
         self.assertEqual(

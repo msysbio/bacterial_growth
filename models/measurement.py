@@ -256,6 +256,8 @@ class Measurement(OrmBase):
         db_session.add_all(measurements)
         db_session.commit()
 
+        return measurements
+
 
 def _generate_technique_name(technique_type, subject_type):
     match (technique_type.lower(), subject_type):

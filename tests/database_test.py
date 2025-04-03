@@ -84,6 +84,7 @@ class DatabaseTest(unittest.TestCase):
             'studyDescription': f"Study {self.study_id}",
             'studyURL': None,
             'studyUniqueID': study_uuid,
+            'timeUnits': 's',
             **params,
         }
 
@@ -197,7 +198,6 @@ class DatabaseTest(unittest.TestCase):
 
         record = MeasurementTechnique(**params)
         self.db_session.add(record)
-        self.db_session.commit()
 
         return record
 

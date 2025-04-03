@@ -151,7 +151,7 @@ class SubmissionForm:
 
         return new_strains
 
-    def fetch_metabolites(self, technique_index=None):
+    def fetch_metabolites_for_technique(self, technique_index=None):
         if technique_index is None:
             # In a new form, we don't have any metabolites to list
             return []

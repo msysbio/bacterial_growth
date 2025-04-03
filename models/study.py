@@ -21,6 +21,7 @@ class Study(OrmBase):
     studyId:          Mapped[str] = mapped_column(String(100), nullable=False)
     studyName:        Mapped[str] = mapped_column(String(100), nullable=False)
     studyDescription: Mapped[str] = mapped_column(String,      nullable=False)
+    studyURL:         Mapped[str] = mapped_column(String,      nullable=False)
     timeUnits:        Mapped[str] = mapped_column(String(100), nullable=False)
 
     projectUniqueID: Mapped[str] = mapped_column(ForeignKey('Project.projectUniqueID'), nullable=False)
