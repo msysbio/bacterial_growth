@@ -1,4 +1,5 @@
 from flask import render_template, send_file, request
+import sqlalchemy as sql
 
 from db import get_connection, get_session
 import models.study_dfs as study_dfs
@@ -25,7 +26,11 @@ def study_show_page(studyId):
 
 def study_export_page(studyId):
     with get_session() as db_session:
-        study = db_session.get(Study, studyId)
+        study = db_session.scalars(
+            sql.select(Study)
+            .where(Study.studyId == studyId)
+            .limit(1)
+        ).one()
 
         return render_template(
             "pages/studies/export.html",

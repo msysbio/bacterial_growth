@@ -57,7 +57,7 @@ The simplest way to fetch a record by primary key is by using the `get` method:
 ```python
 from models import Study
 
-study = g.db_session.get(Study, 'SMGDB00000001')
+study = g.db_session.get(Study, '<unique ID>')
 
 print(study.name)
 # "Synthetic human gut bacterial community using an automated fermentation system"
