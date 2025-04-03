@@ -1,4 +1,4 @@
-# Contributing
+# Introduction
 
 Thank you for your interest in contributing to μGrowthDB! :)
 

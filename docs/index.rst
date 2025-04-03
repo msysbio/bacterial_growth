@@ -18,7 +18,7 @@
 
 
 .. toctree::
-   :numbered: 
+   :numbered:
    :maxdepth: 3
    :caption: Data Submission
 
@@ -26,14 +26,14 @@
 
 
 .. toctree::
-   :numbered: 
+   :numbered:
    :maxdepth: 3
    :caption: Data Discovery and Retrieval
 
    retrieval/discover
 
 .. toctree::
-   :numbered: 
+   :numbered:
    :maxdepth: 3
    :caption: Tips and hints
 
@@ -44,4 +44,5 @@
    :maxdepth: 3
    :caption: Developer Guide
 
-   CONTRIBUTING
+   contributing/intro
+   contributing/models
