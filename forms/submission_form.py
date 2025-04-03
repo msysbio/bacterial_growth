@@ -157,6 +157,18 @@ class SubmissionForm:
             .where(Metabolite.chebi_id.in_(metabolites))
         ).all()
 
+    def fetch_all_metabolites(self):
+        ids = [
+            m_id
+            for t in self.submission.studyDesign['techniques']
+            for m_id in t['metaboliteIds']
+        ]
+
+        return self.db_session.scalars(
+            sql.select(Metabolite)
+            .where(Metabolite.chebi_id.in_(ids))
+        ).all()
+
     def save(self):
         self.db_session.add(self.submission)
         self.db_session.commit()

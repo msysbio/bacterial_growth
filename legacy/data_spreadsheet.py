@@ -33,7 +33,7 @@ def create_excel(submission, metabolite_names, strain_names):
     workbook = Workbook()
 
     metadata_sheet = workbook.active
-    workbook.active.title = "Replicate_metadata"
+    workbook.active.title = "Replicate metadata"
 
     headers_info = {
         'Biological_Replicate_id': 'Pick unique identifiers of individual samples: a bottle, a well in a well-plate or mini-bioreactor',
@@ -42,7 +42,10 @@ def create_excel(submission, metabolite_names, strain_names):
     }
 
     for index, (title, description) in enumerate(headers_info.items(), start=1):
-        _add_header(metadata_sheet, index, title, description, fill_color=RED)
+        if index == 1:
+            _add_header(metadata_sheet, index, title, description, fill_color=RED)
+        else:
+            _add_header(metadata_sheet, index, title, description, fill_color=WHITE)
 
     # Populate raw data template based on user's input
     positions = _generate_positions(

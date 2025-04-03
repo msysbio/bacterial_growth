@@ -1,8 +1,11 @@
+from typing import List
+
 import sqlalchemy as sql
 from sqlalchemy import String
 from sqlalchemy.orm import (
     Mapped,
     mapped_column,
+    relationship,
 )
 from sqlalchemy.ext.hybrid import hybrid_property
 
@@ -14,6 +17,10 @@ class Metabolite(OrmBase):
 
     chebi_id:    Mapped[str] = mapped_column(primary_key=True)
     metabo_name: Mapped[str] = mapped_column(String(100), nullable=False)
+
+    studyMetabolites: Mapped[List['StudyMetabolite']] = relationship(
+        back_populates="metabolite"
+    )
 
     def __lt__(self, other):
         return self.metabo_name < other.metabo_name

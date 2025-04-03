@@ -376,6 +376,8 @@ CREATE TABLE Project (
   projectName varchar(100) COLLATE utf8mb4_bin DEFAULT NULL,
   projectDescription text COLLATE utf8mb4_bin,
   projectUniqueID varchar(100) COLLATE utf8mb4_bin DEFAULT NULL,
+  createdAt datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updatedAt datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (projectId),
   UNIQUE KEY projectName (projectName),
   UNIQUE KEY projectUniqueID (projectUniqueID)
@@ -437,6 +439,9 @@ CREATE TABLE Study (
   studyDescription text COLLATE utf8mb4_bin,
   studyURL varchar(100) COLLATE utf8mb4_bin DEFAULT NULL,
   studyUniqueID varchar(100) COLLATE utf8mb4_bin DEFAULT NULL,
+  timeUnits varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  createdAt datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updatedAt datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (studyId),
   UNIQUE KEY studyUniqueID (studyUniqueID)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
@@ -542,5 +547,7 @@ INSERT INTO MigrationVersions VALUES
 (25,'2025_03_21_112110_create_project_and_study_user_join_tables','2025-03-21 10:31:34'),
 (26,'2025_03_25_133231_add_user_id_to_new_strains','2025-03-25 12:34:13'),
 (33,'2025_03_28_181930_create_measurement_techniques','2025-03-30 14:26:17'),
-(38,'2025_03_30_160720_add_technique_id_to_measurements','2025-04-02 08:11:06');
+(38,'2025_03_30_160720_add_technique_id_to_measurements','2025-04-02 08:11:06'),
+(40,'2025_04_03_121425_add_time_units_to_study','2025-04-03 10:18:23'),
+(42,'2025_04_03_125243_add_timestamps_to_study_and_project','2025-04-03 10:55:38');
 

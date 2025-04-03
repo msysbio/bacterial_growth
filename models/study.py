@@ -21,20 +21,19 @@ class Study(OrmBase):
     studyId:          Mapped[str] = mapped_column(String(100), nullable=False)
     studyName:        Mapped[str] = mapped_column(String(100), nullable=False)
     studyDescription: Mapped[str] = mapped_column(String,      nullable=False)
+    timeUnits:        Mapped[str] = mapped_column(String(100), nullable=False)
 
     projectUniqueID: Mapped[str] = mapped_column(ForeignKey('Project.projectUniqueID'), nullable=False)
 
-    studyUsers: Mapped[List['StudyUser']] = relationship(
-        back_populates="study"
-    )
-
     project: Mapped['Project'] = relationship(back_populates="studies")
 
-    experiments: Mapped[List['Experiment']] = relationship(
-        back_populates='study',
-        cascade="all, delete-orphan"
-    )
+    studyUsers:  Mapped[List['StudyUser']]  = relationship(back_populates="study")
+    experiments: Mapped[List['Experiment']] = relationship(back_populates='study')
+    strains:     Mapped[List['Strain']]     = relationship(back_populates='study')
 
     measurementTechniques: Mapped[List['MeasurementTechnique']] = relationship(
+        back_populates="study"
+    )
+    studyMetabolites: Mapped[List['StudyMetabolite']] = relationship(
         back_populates="study"
     )

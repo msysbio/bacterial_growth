@@ -171,11 +171,7 @@ def download_data_template_xlsx():
     submission_form = _init_submission_form(step=3)
     submission = submission_form.submission
 
-    metabolite_names = [
-        m.metabo_name
-        for index in range(len(submission.studyDesign['techniques']))
-        for m in submission_form.fetch_metabolites(index)
-    ]
+    metabolite_names = [m.metabo_name for m in submission_form.fetch_all_metabolites()]
     strain_names = [t.tax_names for t in submission_form.fetch_taxa()]
     strain_names += [s['name'] for s in submission_form.fetch_new_strains()]
 
@@ -211,18 +207,11 @@ def upload_step4_page():
             if len(errors) == 0:
                 (study_id, errors, errors_logic, studyUniqueID, projectUniqueID, project_id) = \
                     save_measurements_to_database(g.db_session, yml_dir, submission_form, submission.dataFile.content)
+                g.db_session.commit()
 
                 if len(errors) == 0:
-                    # TODO (2025-01-30) Message that data was successfully
-                    # stored, reset submission. (Later, store submission as
-                    # draft?)
-                    #
-                    # st.success(f"""Thank you! your study has been successfully uploaded into our database,
-                    #         **Private Study ID**: {studyUniqueID} and **Study ID**: {study_id},
-                    #         **Private Project Id**: {projectUniqueID} and **Project ID**: {project_id}""")
-
-                    save_chart_data_to_files(study_id, submission.dataFile.content)
-                    _save_chart_data_to_database(g.db_session, study_id, submission.dataFile.content)
+                    study = g.db_session.get(Study, studyUniqueID)
+                    _save_chart_data_to_database(g.db_session, study, submission)
                     submission_form.save()
 
                     return redirect(url_for('upload_step5_page'))
@@ -263,22 +252,27 @@ def _init_submission_form(step):
     )
 
 
-def _save_chart_data_to_database(db_session, study_id, data_xls):
-    df_excel_growth = pd.read_excel(data_xls, sheet_name='Growth_Data_and_Metabolites')
-    # Drop columns with NaN values
-    df_excel_growth = df_excel_growth.dropna(axis=1, how='all')
-    # Drop rows where all values are NaN
-    df_excel_growth = df_excel_growth.dropna(axis=0, how='all')
+def _save_chart_data_to_database(db_session, study, submission):
+    time_units = submission.studyDesign['time_units']
+    techniques = submission.techniques
+    data_xls   = submission.dataFile.content
 
-    if not df_excel_growth.empty:
-        Measurement.insert_from_growth_csv(db_session, study_id, df_excel_growth.to_csv(index=False))
+    df_bioreps = _read_excel_sheet(data_xls, sheet_name='Growth data per bioreplicate')
+    Measurement.insert_from_bioreplicates_csv(db_session, study, df_bioreps.to_csv(index=False))
 
-    df_excel_reads = pd.read_excel(data_xls, sheet_name='growth_per_species')
-    # Drop columns with NaN values
-    df_excel_reads = df_excel_reads.dropna(axis=1, how='all')
-    subset_columns = df_excel_reads.columns.drop('Position')
-    # Drop rows where all values are NaN
-    df_excel_reads = df_excel_reads.dropna(subset=subset_columns, how='all')
+    df_strains = _read_excel_sheet(data_xls, sheet_name='Growth data per strain')
+    Measurement.insert_from_strain_csv(db_session, study, df_strains.to_csv(index=False))
 
-    if not df_excel_reads.empty:
-        Measurement.insert_from_reads_csv(db_session, study_id, df_excel_reads.to_csv(index=False))
+    df_metabolites = _read_excel_sheet(data_xls, sheet_name='Growth data per metabolite')
+    Measurement.insert_from_metabolites_csv(db_session, study, df_metabolites.to_csv(index=False))
+
+
+def _read_excel_sheet(data_xls, sheet_name):
+    df = pd.read_excel(io.BytesIO(data_xls), sheet_name=sheet_name)
+
+    # # Drop columns with NaN values
+    # df = df.dropna(axis=1, how='all')
+    # # Drop rows where all values are NaN
+    # df = df.dropna(axis=0, how='all')
+
+    return df

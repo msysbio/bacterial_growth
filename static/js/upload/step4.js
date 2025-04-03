@@ -27,7 +27,7 @@ $(document).ready(function() {
 
     $step4.on('change', '.js-preview select', function() {
       let $select       = $(this);
-      let selectedSheet = $select.val();
+      let selectedSheet = $select.val().replaceAll(' ', '-');
 
       $sheets = $(this).parents('.js-preview').find('.js-sheet');
       $sheets.addClass('hidden');
