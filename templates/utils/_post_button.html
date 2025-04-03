@@ -1,0 +1,13 @@
+{% macro post_button(text, url, confirm=None, class='') %}
+  <form
+    action="{{ url }}"
+    class="simple-form {{ class }}"
+    style="display: inline-block; {{ style }}"
+    {% if confirm: %}
+      onSubmit="return confirm('{{ confirm | replace("'", "\\'") }}')"
+    {% endif %}
+    method="POST">
+    <input type="submit" value="{{ text }}" />
+  </form>
+
+{% endmacro %}

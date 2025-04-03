@@ -1,4 +1,4 @@
-{% macro render_step3_form(submission, form) %}
+{% macro render_step3_form(submission_form, upload_form) %}
   <div class="columns">
     <div class="column" style="width: 50%;">
       {% include 'pages/upload/step3/_info1.html' %}
@@ -11,32 +11,32 @@
         <div class="form-row">
           <label>
             <span>Type of vessel used</span>
-            {{ form.vessel_type(class='form-input-blue') }}
+            {{ upload_form.vessel_type(class='form-input-blue') }}
           </label>
 
           <div class="vessel-count vessel-bottles">
             <label>
               <span>Number of bottles</span>
-              {{ form.bottle_count(class='form-input-blue') }}
+              {{ upload_form.bottle_count(class='form-input-blue') }}
             </label>
           </div>
 
           <div class="vessel-count vessel-agar_plates hidden">
             <label>
               <span>Number of plates</span>
-              {{ form.plate_count(class='form-input-blue') }}
+              {{ upload_form.plate_count(class='form-input-blue') }}
             </label>
           </div>
 
           <div class="vessel-count vessel-well_plates vessel-mini_react hidden">
             <label>
               <span>Number of columns</span>
-              {{ form.column_count(class='form-input-blue') }}
+              {{ upload_form.column_count(class='form-input-blue') }}
             </label>
 
             <label>
               <span>Number of rows</span>
-              {{ form.row_count(class='form-input-blue') }}
+              {{ upload_form.row_count(class='form-input-blue') }}
             </label>
           </div>
         </div>
@@ -44,14 +44,14 @@
         <div class="form-row">
           <label>
             <span>Number of measurement time-points</span>
-            {{ form.timepoint_count(class='form-input-blue form-input-full') }}
+            {{ upload_form.timepoint_count(class='form-input-blue form-input-full') }}
           </label>
         </div>
 
         <div class="form-row">
           <label>
             <span>Techniques used to measure growth</span>
-            {{ form.technique_types(class='form-input-blue form-input-full') }}
+            {{ upload_form.technique_types(class='form-input-blue form-input-full') }}
           </label>
         </div>
 
@@ -62,8 +62,8 @@
                 multiple="multiple"
                 name="metabolites"
                 class="form-input-blue form-input-full js-metabolites-select">
-              {% for (chebi_id, name) in submission.fetch_metabolites() %}
-                <option value="{{ chebi_id }}" selected>{{ name }}</option>
+              {% for metabolite in submission_form.fetch_metabolites() %}
+                <option value="{{ metabolite.chebi_id }}" selected>{{ metabolite.metabo_name }}</option>
               {% endfor %}
             </select>
           </label>

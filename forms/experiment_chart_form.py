@@ -6,9 +6,11 @@ from sqlalchemy.sql.expression import literal_column
 
 from db import get_connection, get_session
 from lib.db import execute_into_df
-from models.experiment import Experiment
-from models.measurement import Measurement
-from models.bioreplicate import Bioreplicate
+from models import (
+    Experiment,
+    Measurement,
+    Bioreplicate,
+)
 
 PLOTLY_TEMPLATE = 'plotly_white'
 

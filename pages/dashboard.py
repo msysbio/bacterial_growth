@@ -3,8 +3,10 @@ import sqlalchemy as sql
 
 from db import get_session
 from forms.experiment_chart_form import ExperimentChartForm
-from models.study import Study
-from models.experiment import Experiment
+from models import (
+    Study,
+    Experiment,
+)
 
 
 def dashboard_index_page():

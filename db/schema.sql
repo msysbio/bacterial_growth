@@ -168,6 +168,23 @@ CREATE TABLE CompartmentsPerExperiment (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `ExcelFiles`
+--
+
+DROP TABLE IF EXISTS ExcelFiles;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE ExcelFiles (
+  id int NOT NULL AUTO_INCREMENT,
+  filename varchar(255) DEFAULT NULL,
+  size int NOT NULL,
+  content longblob NOT NULL,
+  createdAt datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `Experiments`
 --
 
@@ -381,6 +398,27 @@ CREATE TABLE Study (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `Submissions`
+--
+
+DROP TABLE IF EXISTS Submissions;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE Submissions (
+  id int NOT NULL AUTO_INCREMENT,
+  projectUniqueID varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  studyUniqueID varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  userUniqueID varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  studyDesign json DEFAULT (json_object()),
+  studyFileId int DEFAULT NULL,
+  dataFileId int DEFAULT NULL,
+  createdAt datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updatedAt datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `Taxa`
 --
 
@@ -436,5 +474,6 @@ INSERT INTO MigrationVersions VALUES
 (10,'2025_02_13_120609_rename_comunity_to_community','2025-03-03 12:20:13'),
 (11,'2025_02_13_121409_rename_comunity_to_community_2','2025-03-03 12:20:13'),
 (16,'2025_02_13_163206_create_measurements','2025-03-09 11:09:49'),
-(17,'2025_02_17_161750_remove_duplicated_columns_from_metabolite_per_experiment','2025-03-09 11:09:49');
+(17,'2025_02_17_161750_remove_duplicated_columns_from_metabolite_per_experiment','2025-03-09 11:09:49'),
+(23,'2025_03_11_113040_create_submissions_and_excel_files','2025-03-17 10:04:03');
 

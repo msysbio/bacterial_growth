@@ -1,6 +1,6 @@
 {% from 'pages/upload/step2/_new_strain_form.html' import render_new_strain_form %}
 
-{% macro render_step2_form(submission) %}
+{% macro render_step2_form(submission_form, submission) %}
 
   {% include 'pages/upload/step2/_info.html' %}
 
@@ -16,8 +16,8 @@
               name="strains"
               multiple="multiple"
               class="strain-select js-multiple-strain-select">
-            {% for (id, name) in submission.fetch_strains(): %}
-              <option value={{ id }} selected="selected">{{ name }}</option>
+            {% for taxon in submission_form.fetch_taxa(): %}
+              <option value={{ taxon.tax_id }} selected="selected">{{ taxon.tax_names }}</option>
             {% endfor %}
           </select>
         </label>
@@ -29,15 +29,15 @@
         </ul>
       </div>
 
-      {% for newStrain in submission.fetch_new_strains(): %}
-        {{ render_new_strain_form(data=newStrain, prefix='new_strains-{}-'.format(loop.index0)) }}
+      {% for new_strain in submission_form.fetch_new_strains(): %}
+        {{ render_new_strain_form(data=new_strain, prefix='new_strains-{}-'.format(loop.index0)) }}
       {% endfor %}
 
       <div class="form-row">
         <a href="#" class="green-button js-add-strain">Add new strain</a>
 
         <div class="flex-right">
-          <input type="submit" class="green-button" value="Save" />
+          <input type="submit" class="green-button" value="Next" />
         </div>
       </div>
 
@@ -48,7 +48,9 @@
         </li>
       </template>
 
-      <template class="new-strain" data-initial='{{ submission.new_strains|tojson }}'>
+      <template
+        class="new-strain"
+        data-initial='{{ submission['studyDesign'].new_strains|tojson }}'>
         {{ render_new_strain_form(data=None, prefix='') }}
       </template>
     </form>

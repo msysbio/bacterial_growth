@@ -1,0 +1,7 @@
+{% macro time_tag(timestamp) %}
+
+  <time datetime="{{ timestamp.isoformat() }}">
+    {{ timestamp.strftime("%c") }}
+  </time>
+
+{% endmacro %}

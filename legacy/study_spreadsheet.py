@@ -45,7 +45,9 @@ def create_excel(
             sheet.cell(row=k+i+2, column=2, value=0)
             sheet.cell(row=k+i+2, column=3, value=name)
             sheet.cell(row=k+i+2, column=4, value=parent_ncbi_tax_id)
-            sheet.cell(row=k+i+2, column=5, value=description)
+            # TODO (2025-03-12) Assembly ID in "new strain" form:
+            sheet.cell(row=k+i+2, column=5, value='')
+            sheet.cell(row=k+i+2, column=6, value=description)
 
     sheet_study = wb['STUDY']
     if create_private_project_id is not None:

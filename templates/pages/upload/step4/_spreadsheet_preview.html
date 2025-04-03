@@ -1,0 +1,27 @@
+{% from 'utils/_dataframe.html' import render_dataframe %}
+
+{% macro render_spreadsheet_preview(excel_file) %}
+
+  <div class="form-row">
+    <span class="icon">📄 </span>
+    {{ excel_file.filename }}
+    {{ excel_file.humanized_size }}
+  </div>
+
+  {% set sheets = excel_file.extract_sheets() %}
+
+  <div class="form-row">
+    <select class="form-input-blue form-input-full">
+      {% for name in sheets.keys(): %}
+        <option>{{ name }}</option>
+      {% endfor %}
+    </select>
+  </div>
+
+  {% for (name, sheet) in sheets.items() %}
+    <div class="form-row hidden dataframe-container js-sheet js-sheet-{{ name }}">
+      {{ render_dataframe(sheet) }}
+    </div>
+  {% endfor %}
+
+{% endmacro %}

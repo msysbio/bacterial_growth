@@ -4,9 +4,11 @@ import sqlalchemy as sql
 from sqlalchemy.sql.expression import literal_column
 import pandas as pd
 
-from models.experiment import Experiment
-from models.bioreplicate import Bioreplicate
-from models.measurement import Measurement
+from models import(
+    Experiment,
+    Bioreplicate,
+    Measurement,
+)
 from lib.db import execute_into_df
 
 # TODO (2025-03-08) Tests

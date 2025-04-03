@@ -1,0 +1,52 @@
+{% from 'utils/_time_tag.html' import time_tag %}
+{% from 'utils/_post_button.html' import post_button %}
+
+{% macro render_user_submissions(user_submissions, current_submission) %}
+
+  <div class="user-submissions">
+    <ul>
+      {% for user_submission in user_submissions %}
+        <li class="{{ "current" if user_submission.id == current_submission.id }}">
+          <h4>
+            {% if not user_submission.project %}
+              📚 New project:
+            {% elif not user_submission.study %}
+              📋 New study for project:
+            {% else %}
+              🔃 Study update for project:
+            {% endif %}
+
+            {{ user_submission.studyDesign.get('project', {}).get('name', '<Unknown project>') }}
+            {{ "(currently editing)" if user_submission.id == current_submission.id }}
+          </h4>
+          <table>
+            <tr>
+              <td>Last update:</td>
+              <td>{{ time_tag(user_submission.updatedAt) }}</td>
+            </tr>
+            <tr>
+              <td>Started:</td>
+              <td>{{ time_tag(user_submission.createdAt) }}</td>
+            </tr>
+            <tr>
+              <td>Completion status:</td>
+              <td>{{ user_submission.completed_step_count }}/5</td>
+            </tr>
+            <tr>
+              <td>Actions:</td>
+              <td>
+                {{ post_button("Edit", url_for('edit_submission_action', id=user_submission.id)) }}
+                {{ post_button(
+                  "Delete",
+                  url_for('delete_submission_action', id=user_submission.id),
+                  confirm="This will discard the data in this submission, are you sure?"
+                ) }}
+              </td>
+            </tr>
+          </table>
+        </li>
+      {% endfor %}
+    </li>
+  </div>
+
+{% endmacro %}

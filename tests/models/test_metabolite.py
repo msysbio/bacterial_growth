@@ -4,7 +4,7 @@ import unittest
 
 import sqlalchemy as sql
 
-from models.metabolite import Metabolite
+from models import Metabolite
 from tests.database_test import DatabaseTest
 
 

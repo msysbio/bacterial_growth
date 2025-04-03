@@ -3,8 +3,7 @@ import tests.init  # noqa: F401
 import unittest
 from decimal import Decimal
 
-from models.experiment import Experiment
-from models.measurement import Measurement
+from models import Measurement
 from tests.database_test import DatabaseTest
 import lib.util as util
 
