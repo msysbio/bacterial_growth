@@ -397,6 +397,7 @@ def save_measurements_to_database(conn, yml_dir, submission_form, data_template)
 
             metabolites = submission_form.fetch_all_metabolites()
 
+            # TODO (2025-04-03) This doesn't need to be per bioreplicate, not even per experiment, it's a study-level record
             for j in range(len(biorep_names)):
                 for metabolite in metabolites:
                     chebi_id = metabolite.chebi_id

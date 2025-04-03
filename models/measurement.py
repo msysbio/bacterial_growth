@@ -181,6 +181,7 @@ class Measurement(OrmBase):
         # TODO (2025-04-03) Figure out how to make a many-to-many relationship
         metabolites = db_session.scalars(
             sql.select(Metabolite)
+            .distinct()
             .join(StudyMetabolite)
             .where(StudyMetabolite.studyId == study.studyId)
         ).all()
