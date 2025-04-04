@@ -23,6 +23,9 @@ static/.webassets-cache/*
 # Micromamba environment
 .micromamba/*
 
+# Test coverage data
+.coverage
+
 # Streamlit ignores:
 # ==================
 

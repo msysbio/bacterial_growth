@@ -1,0 +1,8 @@
+[run]
+omit =
+  tests/*
+  streamlit/*
+  .micromamba/*
+
+[html]
+directory = docs/test_coverage

@@ -6,6 +6,7 @@ pandas
 plotly
 pytest
 pytest-env
+pytest-cov
 openpyxl
 humanize
 
