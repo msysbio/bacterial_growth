@@ -12,8 +12,12 @@ $(document).ready(function() {
       let $vesselTypeInput = $step3.find('select[name=vessel_type]');
       let vesselType = $vesselTypeInput.val();
 
-      $step3.find('.vessel-count').addClass('hidden');
-      $step3.find(`.vessel-${vesselType}`).removeClass('hidden');
+      $step3.find('.vessel-count').
+        addClass('hidden').
+        find('input').prop('required', false);
+      $step3.find(`.vessel-${vesselType}`).
+        removeClass('hidden').
+        find('input').prop('required', true);
     }
 
     $step3.on('click', '.js-add', function(e) {

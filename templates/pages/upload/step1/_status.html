@@ -6,10 +6,21 @@
     {% if complete %}
 
       <li class="complete">
-        <span class="icon"></span> Project UUID: {{ submission.projectUniqueID }}
+        <span class="icon"></span>
+        Project name:
+        <strong>{{ submission.studyDesign['project']['name'] }}</strong>
       </li>
       <li class="complete">
-        <span class="icon"></span> Study UUID: {{ submission.studyUniqueID }}
+        <span class="icon"></span>
+        <span>Project unique ID:</span>
+        <code class="inline">{{ submission.projectUniqueID }}</code>
+      </li>
+      <li class="complete">
+        <span class="icon"></span> Study name: <strong>{{ submission.studyDesign['study']['name'] }}</strong>
+      </li>
+      <li class="complete">
+        <span class="icon"></span>
+        Study unique ID: <code class="inline">{{ submission.studyUniqueID }}</code>
       </li>
 
     {% else %}

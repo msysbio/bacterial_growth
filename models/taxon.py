@@ -1,3 +1,5 @@
+import re
+
 import sqlalchemy as sql
 from sqlalchemy import String
 from sqlalchemy.orm import (
@@ -12,6 +14,10 @@ class Taxon(OrmBase):
 
     tax_id:    Mapped[str] = mapped_column(String(512), primary_key=True)
     tax_names: Mapped[str] = mapped_column(String(512))
+
+    @property
+    def short_name(self):
+        return re.sub(r'^([A-Z])[A-Za-z]+ ', r'\1. ', self.tax_names)
 
     @staticmethod
     def search_by_name(db_conn, term, page=1, per_page=10):

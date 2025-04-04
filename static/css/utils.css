@@ -32,6 +32,13 @@
   margin-left: auto;
 }
 
+code.inline {
+  font-family: monospace;
+  font-size: 16px;
+  background-color: var(--light-blue);
+  padding: 0 6px;
+}
+
 hr {
   height: 2px;
   background-color: var(--border-color);

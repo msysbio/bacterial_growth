@@ -105,23 +105,12 @@ class SubmissionForm:
         flag_modified(self.submission, 'studyDesign')
 
     def update_study_design(self, data):
-        study_design = self.submission.studyDesign
-
-        study_design['vessel_type'] = data.get('vessel_type', None)
-
-        study_design['bottle_count'] = data['bottle_count']
-        study_design['plate_count']  = data['plate_count']
-        study_design['column_count'] = data['column_count']
-        study_design['row_count']    = data['row_count']
+        study_design = {**self.submission.studyDesign, **data}
 
         if study_design['vessel_type'] == 'bottles':
             study_design['vessel_count'] = data['bottle_count']
-        elif study_design['vessel_type'] == 'plates':
+        elif study_design['vessel_type'] == 'agar_plates':
             study_design['vessel_count'] = data['plate_count']
-
-        study_design['timepoint_count'] = data['timepoint_count']
-        study_design['time_units'] = data['time_units']
-        study_design['techniques'] = data['techniques']
 
         self.submission.studyDesign = study_design
         flag_modified(self.submission, 'studyDesign')
@@ -188,6 +177,59 @@ class SubmissionForm:
     def error_messages(self):
         # Flatten messages per property:
         return list(itertools.chain.from_iterable(self.errors.values()))
+
+    def vessel_description(self):
+        study_design = self.submission.studyDesign
+
+        dimensions = None
+        if study_design['vessel_type'] in ('bottles', 'agar_plates'):
+            # one-dimensional, just return the single count:
+            dimensions = study_design['vessel_count']
+        elif study_design['vessel_type'] in ('well_plates', 'mini_react'):
+            # row x column
+            if study_design['row_count'] and study_design['column_count']:
+                dimensions = f"{study_design['row_count']}x{study_design['column_count']}"
+
+        vessel_name = None
+        match study_design['vessel_type']:
+            case 'bottles':     vessel_name = 'bottles'
+            case 'agar_plates': vessel_name = 'agar plates'
+            case 'well_plates': vessel_name = 'well-plates'
+            case 'mini_react':  vessel_name = 'mini-bioreactors'
+
+        if dimensions is None or vessel_name is None:
+            return ''
+        else:
+            return f"{dimensions} {vessel_name}"
+
+    def timepoint_description(self):
+        timepoint_count = int(self.submission.studyDesign['timepoint_count'])
+        if timepoint_count < 1:
+            return ''
+
+        long_time_units = None
+        match self.submission.studyDesign['time_units']:
+            case 'd': long_time_units = 'days'
+            case 'h': long_time_units = 'hours'
+            case 'm': long_time_units = 'minutes'
+            case 's': long_time_units = 'seconds'
+
+        if long_time_units is None:
+            return ''
+        else:
+            return f"{timepoint_count} time points measured in {long_time_units}"
+
+    def technique_descriptions(self):
+        ordering = ('bioreplicate', 'strain', 'metabolite')
+        techniques = sorted(self.submission.techniques, key=lambda t: ordering.index(t.subjectType))
+
+        for (subject_type, techniques) in itertools.groupby(techniques, lambda t: t.subjectType):
+            match subject_type:
+                case 'bioreplicate': type = 'Sample-level'
+                case 'strain':       type = 'Strain-level'
+                case 'metabolite':   type = 'Metabolite'
+
+            yield (type, list(techniques))
 
     def html_step_classes(self, target_step):
         if self.step < target_step:

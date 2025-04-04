@@ -1,14 +1,32 @@
-{% macro render_step2_status(submission) %}
+{% macro render_step2_status(submission_form, submission) %}
 
-  {% set complete = submission.studyDesign['strains']|length > 0 %}
+  {% set strain_count     = submission.studyDesign['strains']|length %}
+  {% set new_strain_count = submission.studyDesign['new_strains']|length %}
 
   <ul class="upload-status">
-    {% if complete %}
+    {% if strain_count > 0 or new_strain_count > 0 %}
       <li class="complete">
-        <span class="icon"></span> {{ submission.studyDesign['strains']|length }} strain(s) selected
+        <span class="icon"></span>
+
+        {% if strain_count > 0: %}
+          <span>{{ strain_count }} strain(s) selected:</span>
+          <span class="truncate">
+            <strong>{{ submission_form.fetch_taxa()|map(attribute='short_name')|join('</strong>, <strong>')|safe }}</strong>
+          </span>
+        {% else: %}
+          <span>No existing strain(s) selected</span>
+        {% endif %}
       </li>
       <li class="complete">
-        <span class="icon"></span> {{ submission.studyDesign['new_strains']|length }} new strain(s) added
+        {% if new_strain_count > 0: %}
+          <span class="icon"></span>
+          {{ new_strain_count }} new strain(s) added:
+          <span class="truncate">
+            <strong>{{ submission_form.fetch_new_strains()|map(attribute='name')|join('</strong>, <strong>')|safe }}</strong>
+          </span>
+        {% else: %}
+          <span class="icon"></span> No new strain(s) added
+        {% endif %}
       </li>
 
     {% else %}

@@ -65,13 +65,6 @@ class TestSubmissionForm(DatabaseTest):
         self.assertEqual(submission_form.errors.get('project_name'), ["Project name is taken"])
         self.assertEqual(submission_form.error_messages(), ["Project name is taken"])
 
-        # TODO (2025-03-24) Discuss whether study names should be unique
-        #
-        # submission_form.update_project({**valid_params, 'study_name': 'Study 1'})
-        # self.assertTrue(submission_form.has_error('study_name'))
-        # self.assertEqual(submission_form.errors['study_name'], ["Study name is taken"])
-        # self.assertEqual(submission_form.error_messages(), ["Study name is taken"])
-
     def test_strains(self):
         t1 = self.create_taxon(tax_names="R. intestinalis")
         t2 = self.create_taxon(tax_names="B. thetaiotaomicron")
@@ -126,6 +119,98 @@ class TestSubmissionForm(DatabaseTest):
             [m.metabo_name for m in submission_form.fetch_metabolites_for_technique(0)],
             ['glucose', 'trehalose'],
         )
+
+    def test_vessel_description(self):
+        submission_form = SubmissionForm(db_session=self.db_session)
+
+        submission_form.update_study_design({'vessel_type': 'bottles', 'bottle_count': 3})
+        self.assertEqual(submission_form.vessel_description(), "3 bottles")
+
+        submission_form.update_study_design({'vessel_type': 'agar_plates', 'plate_count': 5})
+        self.assertEqual(submission_form.vessel_description(), "5 agar plates")
+
+        submission_form.update_study_design({'vessel_type': 'well_plates', 'row_count': 5, 'column_count': 10})
+        self.assertEqual(submission_form.vessel_description(), "5x10 well-plates")
+
+        submission_form.update_study_design({'vessel_type': 'mini_react', 'row_count': 10, 'column_count': 12})
+        self.assertEqual(submission_form.vessel_description(), "10x12 mini-bioreactors")
+
+        # Invalid inputs:
+        submission_form.update_study_design({'vessel_type': 'incorrect', 'row_count': 10, 'column_count': 12})
+        self.assertEqual(submission_form.vessel_description(), "")
+        submission_form.update_study_design({'vessel_type': 'bottles', 'bottle_count': None})
+        self.assertEqual(submission_form.vessel_description(), "")
+        submission_form.update_study_design({'vessel_type': 'well_plates', 'row_count': None})
+        self.assertEqual(submission_form.vessel_description(), "")
+
+    def test_timepoint_description(self):
+        submission_form = SubmissionForm(db_session=self.db_session)
+
+        submission_form.update_study_design({'timepoint_count': 7, 'time_units': 'h'})
+        self.assertEqual(submission_form.timepoint_description(), "7 time points measured in hours")
+
+        submission_form.update_study_design({'timepoint_count': 3, 'time_units': 'd'})
+        self.assertEqual(submission_form.timepoint_description(), "3 time points measured in days")
+
+        submission_form.update_study_design({'timepoint_count': 13, 'time_units': 'm'})
+        self.assertEqual(submission_form.timepoint_description(), "13 time points measured in minutes")
+
+        submission_form.update_study_design({'timepoint_count': 80, 'time_units': 's'})
+        self.assertEqual(submission_form.timepoint_description(), "80 time points measured in seconds")
+
+        # Invalid inputs:
+        submission_form.update_study_design({'timepoint_count': 0, 'time_units': 's'})
+        self.assertEqual(submission_form.timepoint_description(), "")
+        submission_form.update_study_design({'timepoint_count': 10, 'time_units': 'unknown'})
+        self.assertEqual(submission_form.timepoint_description(), "")
+
+    def test_technique_descriptions(self):
+        submission_form = SubmissionForm(db_session=self.db_session)
+
+        submission_form.update_study_design({
+            'techniques': [
+                {'type': 'fc',         'subjectType': 'bioreplicate'},
+                {'type': 'od',         'subjectType': 'bioreplicate'},
+                {'type': 'fc',         'subjectType': 'strain'},
+                {'type': 'metabolite', 'subjectType': 'metabolite'},
+            ]
+        })
+        self.assertEqual(
+            [
+                (subject_type, [t.type for t in techniques])
+                for subject_type, techniques in submission_form.technique_descriptions()
+            ],
+            [
+                ('Sample-level', ['fc', 'od']),
+                ('Strain-level', ['fc']),
+                ('Metabolite',   ['metabolite']),
+            ]
+        )
+
+        # Sort them differently:
+        submission_form.update_study_design({
+            'techniques': [
+                {'type': 'metabolite', 'subjectType': 'metabolite'},
+                {'type': 'fc',         'subjectType': 'bioreplicate'},
+                {'type': 'fc',         'subjectType': 'strain'},
+                {'type': 'od',         'subjectType': 'bioreplicate'},
+            ]
+        })
+        self.assertEqual(
+            [
+                (subject_type, [t.type for t in techniques])
+                for subject_type, techniques in submission_form.technique_descriptions()
+            ],
+            [
+                ('Sample-level', ['fc', 'od']),
+                ('Strain-level', ['fc']),
+                ('Metabolite',   ['metabolite']),
+            ]
+        )
+
+        # Empty list results in empty description:
+        submission_form.update_study_design({'techniques': []})
+        self.assertEqual(list(submission_form.technique_descriptions()), [])
 
 
 if __name__ == '__main__':

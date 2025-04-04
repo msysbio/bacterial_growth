@@ -18,11 +18,12 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from models.orm_base import OrmBase
 
 TECHNIQUE_NAMES = {
-    'ph':     'pH',
-    'fc':     'FC',
-    'od':     'OD',
-    'plates': 'PC',
-    '16s':    '16S-rRNA reads',
+    'ph':         'pH',
+    'fc':         'FC',
+    'od':         'OD',
+    'plates':     'PC',
+    '16s':        '16S-rRNA reads',
+    'metabolite': 'Metabolite',
 }
 
 
@@ -47,6 +48,10 @@ class MeasurementTechnique(OrmBase):
 
     createdAt: Mapped[datetime] = mapped_column(DateTime, server_default=FetchedValue())
     updatedAt: Mapped[datetime] = mapped_column(DateTime, server_default=FetchedValue())
+
+    @property
+    def short_name(self):
+        return TECHNIQUE_NAMES[self.type]
 
     def csv_column_name(self, subject_name=None):
         if self.subjectType == 'bioreplicate':
