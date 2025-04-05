@@ -38,10 +38,15 @@
         <select
             name="{{ prefix }}units"
             class="form-input-full form-input-blue js-unit-select" />
-          <option value="mM">Milimolars (mM)</option>
-          <option value="μM">Micromolars (μM)</option>
-          <option value="nM">Nanomolars (nM)</option>
-          <option value="pM">Picomolars (pM)</option>
+          <optgroup label="Molar concentration">
+            <option value="mM">Milimolars (mM)</option>
+            <option value="μM">Micromolars (μM)</option>
+            <option value="nM">Nanomolars (nM)</option>
+            <option value="pM">Picomolars (pM)</option>
+          </optgroup>
+          <optgroup label="Mass concentration">
+            <option value="g/L">Grams per Liter (g/L)</option>
+          </optgroup>
         </select>
       </label>
     </div>
