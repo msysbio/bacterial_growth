@@ -124,11 +124,9 @@ $(document).ready(function() {
 
     function updatePreview($container, subjectType) {
       let $typeSelect = $container.find('.js-type-select');
-      let $unitsSelect = $container.find('.js-unit-select');
       let $stdCheckbox = $container.find('.js-include-std');
 
-      let type = $typeSelect.find('option:selected').data('shortName');
-      let units = '(' + $unitsSelect.val() + ')';
+      let columnName = $typeSelect.find('option:selected').data('columnName');
       let includeStd = $stdCheckbox.is(':checked');
       let subject = null;
 
@@ -138,19 +136,15 @@ $(document).ready(function() {
         subject = '&lt;strain name&gt;';
       } else if (subjectType == 'metabolite') {
         subject = '&lt;metabolite name&gt;';
-        type = null;
+        columnName = null;
       }
 
-      if (units == '()') {
-        units = null;
-      }
-
-      let columnName = [subject, type, units].filter(Boolean).join(' ');
+      columnName = [subject, columnName].filter(Boolean).join(' ');
       let previewLines = ["Column name(s) in spreadsheet:", "<ul>"]
       previewLines.push(`<li><strong>${columnName}</strong></li>`);
 
       if (includeStd) {
-        let columnName = [subject, type, 'STD'].filter(Boolean).join(' ');
+        columnName = [subject, columnName, 'STD'].filter(Boolean).join(' ');
         previewLines.push(`<li><strong>${columnName}</strong></li>`)
       }
 

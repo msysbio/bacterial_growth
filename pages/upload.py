@@ -69,7 +69,6 @@ def upload_step1_page():
     if g.current_user:
         projects = g.db_session.scalars(
             sql.select(Project)
-            .join(Study)
             .join(ProjectUser)
             .where(ProjectUser.userUniqueID == g.current_user.uuid)
             .order_by(Project.projectId.asc())

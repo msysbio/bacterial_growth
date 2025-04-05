@@ -19,13 +19,13 @@
         <select
             name="{{ prefix }}type"
             class="form-input-full form-input-blue js-type-select" />
-          <option value="fc" data-short-name="FC" {{ "selected" if data['type'] == 'fc' }}>
+          <option value="fc" data-column-name="FC reads" {{ "selected" if data['type'] == 'fc' }}>
             Flow Cytometry per species
           </option>
-          <option value="plates" data-short-name="PC" {{ "selected" if data['type'] == 'plates' }}>
+          <option value="plates" data-column-name="plate counts" {{ "selected" if data['type'] == 'plates' }}>
             Plate Counts per species
           </option>
-          <option value="16s" {{ "selected" if data['type'] == '16s' }}>
+          <option value="16s" data-column-name="rRNA reads" {{ "selected" if data['type'] == '16s' }}>
             16S rRNA-seq
           </option>
         </select>

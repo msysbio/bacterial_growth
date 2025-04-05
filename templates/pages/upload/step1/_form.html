@@ -47,7 +47,7 @@
                   {{ "selected" if project.projectUniqueID == submission.projectUniqueID }}
                   data-name="{{ project.projectName }}"
                   data-description="{{ project.projectDescription }}"
-                  data-study-uuids="{{ project.studyUuids|tojson }}">
+                  data-study-uuids='{{ project.studyUuids|tojson }}'>
                 [{{ project.projectId }}] {{ project.projectName }}
               </option>
             {% endfor %}
@@ -133,7 +133,6 @@
             <input
                 type="url"
                 name="study_url"
-                required
                 value="{{ submission.studyDesign['study']['url'] or '' }}"
                 class="form-input-full form-input-blue {{ "error" if submission_form.has_error('study_name') }}"
                 placeholder="Example: https://doi.org/10.1000/182" />
