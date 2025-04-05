@@ -37,10 +37,6 @@ def save_measurements_to_database(conn, yml_dir, submission_form, data_template)
     """
     submission = submission_form.submission
 
-    # TODO (2024-10-20) Taken directly from streamlit app, so we just rename the fields for now:
-    list_growth = submission.studyDesign['technique_types']
-    list_metabolites = [m.metabo_name for m in submission_form.fetch_all_metabolites()]
-
     list_microbial_strains = [t.tax_names for t in submission_form.fetch_taxa()]
     list_microbial_strains += [strain['name'] for strain in submission_form.fetch_new_strains()]
 
@@ -52,6 +48,9 @@ def save_measurements_to_database(conn, yml_dir, submission_form, data_template)
     info_pert_file        = os.path.join(yml_dir, 'PERTURBATIONS.yaml')
 
     # TODO (2025-04-03) Apply validation
+    #
+    # list_growth = submission.studyDesign['technique_types']
+    # list_metabolites = [m.metabo_name for m in submission_form.fetch_all_metabolites()]
     #
     # checks that all the options selected by the user in the interface match the uploaded raw data template
     # errors = get_techniques_metabolites(list_growth, list_metabolites, list_microbial_strains, data_template)
@@ -113,8 +112,7 @@ def save_measurements_to_database(conn, yml_dir, submission_form, data_template)
         'studyId':          submission_form.study_id,
         'studyName':        submission.studyDesign['study']['name'],
         'studyDescription': submission.studyDesign['study']['description'],
-        # TODO (2025-04-03) Move to submission
-        'studyURL':         str(info_study['Study_PublicationURL'][0]),
+        'studyURL':         submission.studyDesign['study']['url'],
         'studyUniqueID':    submission.studyUniqueID,
         'projectUniqueID':  submission.projectUniqueID,
         'timeUnits':        submission.studyDesign['time_units'],
@@ -129,7 +127,7 @@ def save_measurements_to_database(conn, yml_dir, submission_form, data_template)
             study_id = db.getStudyID(conn)
             study_filtered['studyId'] = study_id
             db.addRecord(conn, 'Study', study_filtered)
-            db.addRecord(conn, 'StudyUser', {
+            db.addRecord(conn, 'StudyUsers', {
                 'studyUniqueID': submission.studyUniqueID,
                 'userUniqueID': submission.userUniqueID,
             })
@@ -150,7 +148,7 @@ def save_measurements_to_database(conn, yml_dir, submission_form, data_template)
             project_id = db.getProjectID(conn)
             project_filtered['projectId'] = project_id
             db.addRecord(conn, 'Project', project_filtered)
-            db.addRecord(conn, 'ProjectUser', {
+            db.addRecord(conn, 'ProjectUsers', {
                 'projectUniqueID': submission.projectUniqueID,
                 'userUniqueID': submission.userUniqueID,
             })

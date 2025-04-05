@@ -122,7 +122,7 @@
           {% endcall %}
 
           {% if submission_form.step == 5 %}
-            {{ render_step5_form(submission_form) }}
+            {{ render_step5_form(submission_form, submission) }}
           {% else %}
             {{ render_step5_status(submission_form) }}
           {% endif %}

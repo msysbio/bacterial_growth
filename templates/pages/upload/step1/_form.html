@@ -63,7 +63,7 @@
                 required
                 value="{{ submission.studyDesign['project']['name'] or '' }}"
                 class="form-input-full form-input-blue {{ "error" if submission_form.has_error('project_name') }}"
-                placeholder="Example: Gut microbiome growth studies" />
+                placeholder="Example: A flexible Pipeline for Environmental DNA Metabarcoding Analysis..." />
         </div>
 
         <div class="form-row">
@@ -115,7 +115,7 @@
                 required
                 value="{{ submission.studyDesign['study']['name'] or '' }}"
                 class="form-input-full form-input-blue {{ "error" if submission_form.has_error('study_name') }}"
-                placeholder="Example: The Growth of Bacterial Cultures (Monod, 1949)" />
+                placeholder="Example: Cultivation of Bacterial Strains A, B and C" />
         </div>
 
         <div class="form-row">
@@ -123,7 +123,7 @@
             <span>Study description:</span>
             <textarea
                 name="study_description"
-                placeholder="Short description of this study."
+                placeholder="Bacterial strains A, B, and C were growth in conditions D and E. Co-cultures and monocultures of each strains were studied. Growth, pH, metabolites were measured with F, G and H methods."
                 class="form-input-full form-input-blue">{{ submission.studyDesign['study']['description'] or '' }}</textarea>
         </div>
 

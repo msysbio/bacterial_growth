@@ -255,16 +255,16 @@ def _init_submission_form(step):
 
 def _save_chart_data_to_database(db_session, study, submission):
     data_xls = submission.dataFile.content
+    sheets = pd.read_excel(io.BytesIO(data_xls))
 
-    df_bioreps = _read_excel_sheet(data_xls, sheet_name='Growth data per bioreplicate')
-    Measurement.insert_from_bioreplicates_csv(db_session, study, df_bioreps.to_csv(index=False))
+    if 'Growth data per bioreplicate' in sheets:
+        df = sheets['Growth data per bioreplicate']
+        Measurement.insert_from_bioreplicates_csv(db_session, study, df.to_csv(index=False))
 
-    df_strains = _read_excel_sheet(data_xls, sheet_name='Growth data per strain')
-    Measurement.insert_from_strain_csv(db_session, study, df_strains.to_csv(index=False))
+    if 'Growth data per strain' in sheets:
+        df = sheets['Growth data per strain']
+        Measurement.insert_from_strain_csv(db_session, study, df.to_csv(index=False))
 
-    df_metabolites = _read_excel_sheet(data_xls, sheet_name='Growth data per metabolite')
-    Measurement.insert_from_metabolites_csv(db_session, study, df_metabolites.to_csv(index=False))
-
-
-def _read_excel_sheet(data_xls, sheet_name):
-    return pd.read_excel(io.BytesIO(data_xls), sheet_name=sheet_name)
+    if 'Growth data per metabolite' in sheets:
+        df = sheets['Growth data per metabolite']
+        Measurement.insert_from_metabolites_csv(db_session, study, df.to_csv(index=False))

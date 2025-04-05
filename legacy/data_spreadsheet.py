@@ -80,6 +80,10 @@ def create_excel(submission, metabolite_names, strain_names):
 
             headers_bioreplicates[technique_name] = description
 
+            if technique.includeStd:
+                title = ' '.join([technique_name, 'STD'])
+                headers_bioreplicates[title] = TECHNIQUE_DESCRIPTIONS['STD']
+
         elif subject_type == 'strain':
             for strain_name in strain_names:
                 # TODO (2025-04-02) Move to MeasurementTechnique, copy in javascript
@@ -133,7 +137,7 @@ def _add_header(sheet, index, title, description, fill_color):
     # Calculate column width based on the length of the title text, plus some extra space
     column_width = len(title)
     column_letter = get_column_letter(index)
-    sheet.column_dimensions[column_letter].width = column_width + 1
+    sheet.column_dimensions[column_letter].width = column_width + 3
 
 
 def _fill_sheet(workbook, sheet_title, headers, positions):

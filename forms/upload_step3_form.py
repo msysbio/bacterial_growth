@@ -38,7 +38,7 @@ class UploadStep3Form(FlaskForm):
         ('h', 'Hours (h)'),
         ('m', 'Minutes (m)'),
         ('s', 'Seconds (s)'),
-    ], default='h')
+    ])
 
     bottle_count = IntegerField('bottle_count')
     plate_count  = IntegerField('plate_count')
@@ -47,4 +47,4 @@ class UploadStep3Form(FlaskForm):
 
     timepoint_count = IntegerField('timepoint_count', validators=[DataRequired()])
 
-    techniques = FieldList(FormField(TechniqueForm), min_entries=1)
+    techniques = FieldList(FormField(TechniqueForm))

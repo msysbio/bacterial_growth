@@ -37,7 +37,7 @@ def test_study_yaml(submission, data):
             )
         elif column == 'Project_UniqueID' and csv_id != submission.projectUniqueID:
             errors.append(
-                f"The project ID in the Study file ({csv_id}) does not match the one in the form ({submission.studyUniqueID}). "
+                f"The project ID in the Study file ({csv_id}) does not match the one in the form ({submission.projectUniqueID}). "
                 "Check that the spreadsheet you're uploading is for the project you intended."
             )
         else:

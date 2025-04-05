@@ -63,7 +63,7 @@ $(document).ready(function() {
       // Insert into DOM
       $addButton.parents('.form-row').before($newForm);
 
-      initializeTechniqueForm($newForm);
+      initializeTechniqueForm($newForm, subjectType);
     }
 
     // Initialize existing forms:
@@ -132,7 +132,9 @@ $(document).ready(function() {
       let includeStd = $stdCheckbox.is(':checked');
       let subject = null;
 
-      if (subjectType == 'strain') {
+      if (subjectType == 'bioreplicate') {
+        subject = 'Sample';
+      } else if (subjectType == 'strain') {
         subject = '&lt;strain name&gt;';
       } else if (subjectType == 'metabolite') {
         subject = '&lt;metabolite name&gt;';

@@ -31,7 +31,7 @@
         {% else: %}
           <li class="complete">
             <span class="icon"></span>
-            <span>{{ techniques|length }} {{ type }} techniques:</span>
+            <span>{{ techniques|length }} {{ type }} measurements:</span>
             <span class="truncate">
               <strong>{{ techniques|map(attribute="short_name")|join('</strong>, <strong>')|safe }}</strong>
             </span>

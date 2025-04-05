@@ -24,7 +24,7 @@ from models import (
 #
 DEFAULT_STUDY_DESIGN = {
     'project': {'name': None, 'description': None},
-    'study':   {'name': None, 'description': None},
+    'study':   {'name': None, 'description': None, 'url': None},
 
     'vessel_type':     None,
     'bottle_count':    None,
@@ -49,12 +49,13 @@ class SubmissionForm:
         self.submission = None
         if submission_id is not None:
             self.submission = self.db_session.get(Submission, submission_id)
+
+        if self.submission is not None:
             self.submission.studyDesign = {
                 **DEFAULT_STUDY_DESIGN,
                 **self.submission.studyDesign,
             }
-
-        if self.submission is None:
+        else:
             self.submission = Submission(
                 projectUniqueID=None,
                 studyUniqueID=None,
@@ -87,6 +88,7 @@ class SubmissionForm:
         self.submission.studyDesign['study'] = {
             'name':        data['study_name'],
             'description': data.get('study_description', ''),
+            'url':         data.get('study_url', ''),
         }
         flag_modified(self.submission, 'studyDesign')
 
