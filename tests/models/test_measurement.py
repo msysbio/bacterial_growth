@@ -57,7 +57,7 @@ class TestMeasurement(DatabaseTest):
         t_ph = self.create_measurement_technique(studyUniqueID=study_uuid, subjectType='bioreplicate', type='ph')
 
         growth_data = util.trim_lines("""
-            Position,Biological_Replicate_id,Time,Sample FC,Sample OD,Sample pH
+            Position,Biological_Replicate_id,Time,Community FC,Community OD,Community pH
             p1,b1,2,1234567890.0,0.9,7.4
             p1,b1,4,234567890.0,0.8,7.5
             p1,b2,2,4567890.0,0.7,7.6

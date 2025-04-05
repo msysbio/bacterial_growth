@@ -256,8 +256,8 @@ def _save_chart_data_to_database(db_session, study, submission):
     data_xls = submission.dataFile.content
     sheets = pd.read_excel(io.BytesIO(data_xls))
 
-    if 'Growth data per bioreplicate' in sheets:
-        df = sheets['Growth data per bioreplicate']
+    if 'Growth data per community' in sheets:
+        df = sheets['Growth data per community']
         Measurement.insert_from_bioreplicates_csv(db_session, study, df.to_csv(index=False))
 
     if 'Growth data per strain' in sheets:

@@ -181,9 +181,9 @@ class TestSubmissionForm(DatabaseTest):
                 for subject_type, techniques in submission_form.technique_descriptions()
             ],
             [
-                ('Sample-level', ['fc', 'od']),
-                ('Strain-level', ['fc']),
-                ('Metabolite',   ['metabolite']),
+                ('Community-level', ['fc', 'od']),
+                ('Strain-level',    ['fc']),
+                ('Metabolite',      ['metabolite']),
             ]
         )
 
@@ -202,9 +202,9 @@ class TestSubmissionForm(DatabaseTest):
                 for subject_type, techniques in submission_form.technique_descriptions()
             ],
             [
-                ('Sample-level', ['fc', 'od']),
-                ('Strain-level', ['fc']),
-                ('Metabolite',   ['metabolite']),
+                ('Community-level', ['fc', 'od']),
+                ('Strain-level',    ['fc']),
+                ('Metabolite',      ['metabolite']),
             ]
         )
 

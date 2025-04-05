@@ -227,7 +227,7 @@ class SubmissionForm:
 
         for (subject_type, techniques) in itertools.groupby(techniques, lambda t: t.subjectType):
             match subject_type:
-                case 'bioreplicate': type = 'Sample-level'
+                case 'bioreplicate': type = 'Community-level'
                 case 'strain':       type = 'Strain-level'
                 case 'metabolite':   type = 'Metabolite'
 

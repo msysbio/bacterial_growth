@@ -131,7 +131,7 @@ $(document).ready(function() {
       let subject = null;
 
       if (subjectType == 'bioreplicate') {
-        subject = 'Sample';
+        subject = 'Community';
       } else if (subjectType == 'strain') {
         subject = '&lt;strain name&gt;';
       } else if (subjectType == 'metabolite') {

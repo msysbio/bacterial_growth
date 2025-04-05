@@ -55,7 +55,7 @@ class MeasurementTechnique(OrmBase):
 
     def csv_column_name(self, subject_name=None):
         if self.subjectType == 'bioreplicate':
-            return f"Sample {TECHNIQUE_NAMES[self.type]}"
+            return f"Community {TECHNIQUE_NAMES[self.type]}"
 
         elif self.subjectType == 'metabolite':
             return subject_name

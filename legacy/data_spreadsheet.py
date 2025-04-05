@@ -86,7 +86,6 @@ def create_excel(submission, metabolite_names, strain_names):
 
         elif subject_type == 'strain':
             for strain_name in strain_names:
-                # TODO (2025-04-02) Move to MeasurementTechnique, copy in javascript
                 title = technique.csv_column_name(strain_name)
 
                 description = TECHNIQUE_DESCRIPTIONS[f"{technique_type}_ps"].format(
@@ -117,7 +116,7 @@ def create_excel(submission, metabolite_names, strain_names):
 
     # Create sheets for each category of measurement:
     if len(headers_bioreplicates) > 3:
-        _fill_sheet(workbook, "Growth data per bioreplicate", headers_bioreplicates, positions)
+        _fill_sheet(workbook, "Growth data per community", headers_bioreplicates, positions)
 
     if len(headers_strains) > 3:
         _fill_sheet(workbook, "Growth data per strain", headers_strains, positions)
