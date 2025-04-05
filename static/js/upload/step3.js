@@ -144,8 +144,8 @@ $(document).ready(function() {
       previewLines.push(`<li><strong>${columnName}</strong></li>`);
 
       if (includeStd) {
-        columnName = [subject, columnName, 'STD'].filter(Boolean).join(' ');
-        previewLines.push(`<li><strong>${columnName}</strong></li>`)
+        let stdColumnName = [columnName, 'STD'].filter(Boolean).join(' ');
+        previewLines.push(`<li><strong>${stdColumnName}</strong></li>`)
       }
 
       previewLines.push("</ul>");
