@@ -84,6 +84,15 @@
     }
   }
 
+  .step-2 {
+    .new-strain-container {
+      border: 2px solid var(--border-color);
+      &.new {
+        border-style: dashed;
+      }
+    }
+  }
+
   .step-3 {
     .technique-container {
       h3 {

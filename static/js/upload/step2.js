@@ -63,12 +63,14 @@ $(document).ready(function() {
       let $newForm = $(templateHtml);
 
       // Modify names:
-      $newForm.find('input[name=name]').
-        attr('name', `new_strains-${newStrainIndex}-name`);
-      $newForm.find('textarea[name=description]').
-        attr('name', `new_strains-${newStrainIndex}-description`);
-      $newForm.find('select[name=species]').
-        attr('name', `new_strains-${newStrainIndex}-species`);
+      $newForm.find('input,select,textarea').each(function() {
+        let $input = $(this);
+        let name = $input.attr('name');
+        $input.attr('name', `new_strains-${newStrainIndex}-${name}`);
+      });
+
+      // Give it a different style:
+      $newForm.addClass('new');
 
       // Insert into DOM
       $addStrainButton.parents('.form-row').before($newForm);
