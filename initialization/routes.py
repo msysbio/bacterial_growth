@@ -9,6 +9,7 @@ import pages.studies as study_pages
 import pages.upload as upload_pages
 import pages.submissions as submission_pages
 import pages.users as user_pages
+import pages.projects as project_pages
 
 
 def init_routes(app):
@@ -55,6 +56,8 @@ def init_routes(app):
     app.add_url_rule("/study/<string:studyId>.zip",            view_func=study_pages.study_download_zip)
     app.add_url_rule("/study/<string:studyId>/export",         view_func=study_pages.study_export_page)
     app.add_url_rule("/study/<string:studyId>/export/preview", view_func=study_pages.study_export_preview_fragment)
+
+    app.add_url_rule("/project/<string:projectId>", view_func=project_pages.project_show_page)
 
     app.add_url_rule("/strain/<int:id>",    view_func=strain_pages.strain_show_page)
     app.add_url_rule("/strains/completion", view_func=strain_pages.taxa_completion_json)

@@ -47,6 +47,12 @@ hr {
   margin: 16px 0;
 }
 
+.box {
+  border: 2px solid var(--border-color);
+  border-radius: var(--border-radius);
+  padding: 10px;
+}
+
 .error-message {
   display: block;
   background: pink;

@@ -38,6 +38,7 @@ def init_assets(app):
         'css/upload.css',
         'css/export.css',
         'css/profile.css',
+        'css/study.css',
         filters='cssmin',
         output='build/app.css'
     ))

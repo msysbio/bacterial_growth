@@ -59,7 +59,7 @@ class ExperimentExportForm:
                         measurement.unit,
                     ))
                 else:
-                    subject = get_subject(measurement.subjectId, measurement.subjectType)
+                    subject = get_subject(self.db_session, measurement.subjectId, measurement.subjectType)
                     measurement_targets[measurement.subjectType].add((
                         subject,
                         measurement.technique,

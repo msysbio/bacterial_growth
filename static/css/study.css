@@ -1,0 +1,31 @@
+.study-page {
+  .small {
+    font-size: 14px;
+  }
+
+  h1 {
+    color: var(--dark-blue);
+  }
+
+  h2 {
+    border-bottom: 2px solid var(--light-blue);
+    padding-bottom: 4px;
+  }
+
+  h3 {
+    margin-top: 0;
+  }
+
+  .measurement-techniques {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin-top: 20px;
+  }
+
+  table.measurements-table {
+    td {
+      vertical-align: middle;
+    }
+  }
+}

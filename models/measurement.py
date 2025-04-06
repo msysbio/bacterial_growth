@@ -19,7 +19,6 @@ from sqlalchemy.ext.hybrid import hybrid_property
 import sqlalchemy as sql
 
 from models.orm_base import OrmBase
-from models.measurement_technique import TECHNIQUE_NAMES
 from db import get_session
 from lib.conversion import convert_time
 
@@ -48,6 +47,11 @@ class Measurement(OrmBase):
     # TODO (2025-03-30) This should not be nullable, but we need to migrate the data first
     techniqueId: Mapped[int] = mapped_column(ForeignKey("MeasurementTechniques.id"))
 
+    # TODO (2025-04-06) Remove the string `technique` or rename to `technique_name`
+    techniqueRecord: Mapped['MeasurementTechnique'] = relationship(
+        back_populates="measurements"
+    )
+
     value: Mapped[Decimal] = mapped_column(Numeric(20, 2), nullable=True)
     std:   Mapped[Decimal] = mapped_column(Numeric(20, 2), nullable=True)
 
@@ -59,20 +63,19 @@ class Measurement(OrmBase):
         return self.timeInSeconds / 3600
 
     @classmethod
-    def get_subject(Self, subject_id, subject_type):
+    def get_subject(Self, db_session, subject_id, subject_type):
         from models import (
             Metabolite,
             Strain,
             Bioreplicate,
         )
 
-        with get_session() as db_session:
-            if subject_type == 'metabolite':
-                return db_session.get(Metabolite, subject_id)
-            elif subject_type == 'strain':
-                return db_session.get(Strain, subject_id)
-            elif subject_type == 'bioreplicate':
-                return db_session.get(Bioreplicate, subject_id)
+        if subject_type == 'metabolite':
+            return db_session.get(Metabolite, subject_id)
+        elif subject_type == 'strain':
+            return db_session.get(Strain, subject_id)
+        elif subject_type == 'bioreplicate':
+            return db_session.get(Bioreplicate, subject_id)
 
     def subject_join(subject_type):
         from models import (

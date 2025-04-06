@@ -21,13 +21,14 @@ with get_session() as db_session:
             .where(MeasurementTechnique.studyUniqueID == study_uuid),
         )
 
-        study_techniques = db_session.scalars(
-            sql.select(Measurement.technique)
-            .distinct()
+        measurements = db_session.scalars(
+            sql.select(Measurement)
             .where(Measurement.studyId == study_id)
         ).all()
 
-        print(f"Techniques: {study_techniques}")
+        technique_names = {m.technique for m in measurements}
+
+        print(f"Techniques: {technique_names}")
 
         (metabolite_ids, strain_ids) = (
             db_session.scalars(
@@ -41,24 +42,24 @@ with get_session() as db_session:
             for subjectType in ('metabolite', 'strain')
         )
 
-        for technique_name in study_techniques:
+        for technique_name in technique_names:
             if technique_name == 'pH':
                 mt = MeasurementTechnique(
-                    type='pH',
+                    type='ph',
                     subjectType='bioreplicate',
                     units='',
                     studyUniqueID=study_uuid,
                 )
             elif technique_name in ('OD', 'FC'):
                 mt = MeasurementTechnique(
-                    type=technique_name,
+                    type=technique_name.lower(),
                     subjectType='bioreplicate',
                     units='Cells/mL',
                     studyUniqueID=study_uuid,
                 )
             elif technique_name == 'FC counts per species':
                 mt = MeasurementTechnique(
-                    type='FC',
+                    type='fc',
                     subjectType='strain',
                     units='Cells/mL',
                     studyUniqueID=study_uuid,
@@ -74,7 +75,7 @@ with get_session() as db_session:
                 )
             elif technique_name == 'Metabolites':
                 mt = MeasurementTechnique(
-                    type='Metabolites',
+                    type='metabolite',
                     subjectType='metabolite',
                     units='mM',
                     studyUniqueID=study_uuid,
@@ -84,14 +85,10 @@ with get_session() as db_session:
                 raise ValueError(f"Unexpected technique name: {technique_name}")
 
             db_session.add(mt)
+            for m in measurements:
+                if m.technique == technique_name:
+                    m.techniqueRecord = mt
+                    db_session.add(m)
 
-            measurements = db_session.scalars(
-                sql.select(Measurement)
-                .where(Measurement.technique == technique_name)
-            ).all()
-
-            for measurement in measurements:
-                measurement.techniqueId = mt.id
-                db_session.add(measurement)
 
         db_session.commit()
