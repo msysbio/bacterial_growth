@@ -16,6 +16,7 @@ def init_assets(app):
         'js/search.js',
         'js/dashboard.js',
         'js/export.js',
+        'js/study.js',
         filters='rjsmin',
         output='build/app.js'
     ))

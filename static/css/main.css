@@ -143,3 +143,16 @@ header img {
     font-weight: 600;
   }
 }
+
+.compare-box {
+  position: fixed;
+  top: 0;
+  right: 0;
+  background-color: white;
+  padding: 10px;
+  border: 4px solid var(--border-color);
+  border-right: 0;
+  border-top: 0;
+  border-radius: 0 0 0 var(--border-radius);
+  font-size: 14px;
+}

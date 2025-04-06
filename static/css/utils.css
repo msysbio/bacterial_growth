@@ -104,6 +104,10 @@ table.dataframe-table {
     text-overflow: ellipsis;
   }
 
+  tr.highlight {
+    background-color: var(--light-blue);
+  }
+
   /* Border-collapse + rounded borders doesn't seem to work well. Might end up
    * doing something different */
   tr:first-child th:first-child {
@@ -209,6 +213,10 @@ form.simple-form {
     background-color: rgb(7, 110, 126);
     color: white;
   }
+
+  &.small-button {
+    padding: 0.3rem;
+  }
 }
 
 .white-button {
@@ -229,6 +237,10 @@ form.simple-form {
 
   &:visited {
     color: inherit;
+  }
+
+  &.small-button {
+    padding: 0.3rem;
   }
 }
 

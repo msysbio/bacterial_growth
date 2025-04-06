@@ -10,6 +10,7 @@ import pages.upload as upload_pages
 import pages.submissions as submission_pages
 import pages.users as user_pages
 import pages.projects as project_pages
+import pages.comparison as comparison_pages
 
 
 def init_routes(app):
@@ -64,6 +65,8 @@ def init_routes(app):
 
     app.add_url_rule("/metabolite/<string:chebi_id>", view_func=metabolite_pages.metabolite_show_page)
     app.add_url_rule("/metabolites/completion",      view_func=metabolite_pages.metabolites_completion_json)
+
+    app.add_url_rule("/comparison", view_func=comparison_pages.comparison_show_page)
 
     app.add_url_rule(
         "/search",

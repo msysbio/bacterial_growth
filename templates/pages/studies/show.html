@@ -29,7 +29,6 @@
         </a>
       </p>
 
-
       <p>
         {% if study.studyURL: %}
           <strong>URL</strong>: {{ study.studyURL|urlize(target="_blank") }}
@@ -54,10 +53,14 @@
           <div class="technique-container">
             <h3>
               {{ technique.long_name }}
+
               {% if technique.type != 'metabolite': %}
                 per {{ technique.subject_short_name }}
               {% endif %}
-              measured in {{ technique.units }}
+
+              {% if technique.units != '': %}
+                measured in {{ technique.units }}
+              {% endif %}
 
               ({{ technique.measurements|length }} measurements)
             </h3>
@@ -73,9 +76,29 @@
               </tr>
 
               {% for subject, measurements in technique.measurements_by_subject(g.db_session): %}
-                <tr>
+                <tr class="js-table-row">
                   <td>
-                    <a href="#" class="js-compare white-button">Compare</a>
+                    {% set subjectClass = subject.__class__.__name__ %}
+                    {% set targetIdentifier = "{}:{}:{}".format(technique.id, subjectClass|lower, subject.id) %}
+
+                    <div class="js-compare-container" data-target-identifier="{{ targetIdentifier }}">
+                      <span class="js-compare">
+                        <a
+                            href="#"
+                            class="white-button small-button">
+                          ↔ Compare
+                        </a>
+                      </span>
+
+                      <span class="js-uncompare hidden">
+                        ✅ Comparing
+                        <a
+                            href="#"
+                            class="white-button small-button">
+                          ➖
+                        </a>
+                      </span>
+                    </div>
                   </td>
                   <td>
                     {% if technique.subjectType == 'bioreplicate': %}
