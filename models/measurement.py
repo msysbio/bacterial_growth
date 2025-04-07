@@ -76,6 +76,8 @@ class Measurement(OrmBase):
             return db_session.get(Strain, subject_id)
         elif subject_type == 'bioreplicate':
             return db_session.get(Bioreplicate, subject_id)
+        else:
+            raise ValueError(f"Unknown subject type: {subject_type}")
 
     def subject_join(subject_type):
         from models import (

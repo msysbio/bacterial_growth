@@ -17,6 +17,7 @@ def init_assets(app):
         'js/dashboard.js',
         'js/export.js',
         'js/study.js',
+        'js/comparison.js',
         filters='rjsmin',
         output='build/app.js'
     ))
@@ -40,6 +41,7 @@ def init_assets(app):
         'css/export.css',
         'css/profile.css',
         'css/study.css',
+        'css/comparison.css',
         filters='cssmin',
         output='build/app.css'
     ))

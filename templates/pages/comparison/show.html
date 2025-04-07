@@ -1,0 +1,57 @@
+{% extends '_layout.html' %}
+
+{% block title %}: Comparison view{% endblock %}
+
+{% block content %}
+  <div class="container comparison-page">
+    <article>
+      <h2>Comparison view</h2>
+
+      <p>
+        Collect measurements from one or multiple studies by using the
+        "Compare" button. From this table, use the checkbox to add them to the
+        chart and compare values.
+      </p>
+
+      <br>
+
+      <div class="data-container">
+        <form action="{{ url_for('comparison_chart_fragment') }}" method="POST">
+          <table class="dataframe-table targets-table">
+            <tr>
+              <th></th>
+              <th>Study</th>
+              <th>Bioreplicate</th>
+              <th>Subject name</th>
+              <th>Technique name</th>
+              <th>Units</th>
+            </tr>
+
+            {% for (identifier, bioreplicate, technique, subject, measurements) in targets: %}
+              <tr data-identifier="{{ identifier }}">
+                <td>
+                  <input type="checkbox" class="js-target" name="{{ identifier }}" />
+                </td>
+                <td>[{{ technique.study.studyId }}] {{ technique.study.studyName }}</td>
+                <td>{{ bioreplicate.bioreplicateId }}</td>
+                <td>{{ technique.subjectType }}: {{ subject.name }}</td>
+                <td>{{ technique.long_name }}</td>
+                <td>{{ technique.units }}</td>
+              </tr>
+            {% endfor %}
+          </table>
+        </form>
+
+        <div class="chart-row chart">
+          <div class="chart-placeholder">
+            📊
+          </div>
+        </div>
+      </div>
+    </article>
+  </div>
+
+  {% assets "plotly_js" %}
+  <script src="{{ ASSET_URL }}" type="text/javascript"></script>
+  {% endassets %}
+{% endblock %}

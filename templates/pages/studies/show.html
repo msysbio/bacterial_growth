@@ -79,7 +79,12 @@
                 <tr class="js-table-row">
                   <td>
                     {% set subjectClass = subject.__class__.__name__ %}
-                    {% set targetIdentifier = "{}:{}:{}".format(technique.id, subjectClass|lower, subject.id) %}
+                    {% set targetIdentifier = "{}:{}:{}:{}".format(
+                      measurements[0].bioreplicateUniqueId,
+                      technique.id,
+                      subjectClass|lower,
+                      subject.id
+                    ) %}
 
                     <div class="js-compare-container" data-target-identifier="{{ targetIdentifier }}">
                       <span class="js-compare">
