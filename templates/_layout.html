@@ -85,10 +85,19 @@
 
       {% block content %}{% endblock %}
 
-      <div class="hidden compare-box js-compare-box">
-        <span class="js-target-count">0</span> comparison targets
+      {% set compareData = session['compareData'] or {'targets': []} %}
 
-        <a class="green-button small-button" href="{{ url_for('comparison_show_page') }}">Compare</a>
+      <div
+          class="hidden compare-box js-compare-box"
+          data-value='{{ compareData|tojson }}'>
+        <span class="js-target-count">
+          {{ compareData['targets']|length }}
+        </span>
+        comparison targets
+
+        <a class="green-button small-button" href="{{ url_for('comparison_show_page') }}">
+          Compare
+        </a>
       </div>
     </main>
   </body>

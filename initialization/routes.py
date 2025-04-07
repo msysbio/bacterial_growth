@@ -66,7 +66,8 @@ def init_routes(app):
     app.add_url_rule("/metabolite/<string:chebi_id>", view_func=metabolite_pages.metabolite_show_page)
     app.add_url_rule("/metabolites/completion",      view_func=metabolite_pages.metabolites_completion_json)
 
-    app.add_url_rule("/comparison", view_func=comparison_pages.comparison_show_page)
+    app.add_url_rule("/comparison",             view_func=comparison_pages.comparison_show_page)
+    app.add_url_rule("/comparison/update.json", view_func=comparison_pages.comparison_update_json, methods=["POST"])
 
     app.add_url_rule(
         "/search",
