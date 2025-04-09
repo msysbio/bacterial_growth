@@ -4,8 +4,13 @@
     display: flex;
     flex-direction: column;
     gap: 20px;
+
     .targets-table {
       width: 100%;
+    }
+
+    .table-container {
+      overflow: scroll;
     }
 
     .chart-row {

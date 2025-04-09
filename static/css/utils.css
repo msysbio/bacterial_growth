@@ -88,6 +88,7 @@ table.simple-table {
 
 table.dataframe-table {
   border-spacing: 0;
+  border-collapse: collapse;
   font-size: 13px;
 
   th {
