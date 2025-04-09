@@ -7,10 +7,21 @@ $(document).ready(function() {
     $page.on('change', '.js-target', function() {
       let scrollPosition = $(document).scrollTop();
 
-      let $target = $(this);
+      let $target    = $(this);
       let $container = $target.parents('.data-container');
+      let target     = $target.prop('name');
 
-      update_chart($container);
+      if ($target.is(':checked')) {
+        // uncheck all others with the same name
+        $page.find(`input[name="${target}"]`).each(function() {
+          let $otherInput = $(this);
+          if (!$target.is($otherInput)) {
+            $otherInput.prop('checked', false);
+          }
+        });
+      }
+
+      update_chart($container, scrollPosition);
     });
 
     $(document).on('x-sidebar-resize', function() {
@@ -22,7 +33,7 @@ $(document).ready(function() {
       });
     });
 
-    function update_chart($container) {
+    function update_chart($container, scrollPosition) {
       let $form  = $container.find('form');
       let $chart = $container.find('.chart');
       let width  = Math.floor($chart.width());
@@ -33,7 +44,10 @@ $(document).ready(function() {
         data: $form.serializeArray(),
         success: function(response) {
           $chart.html(response);
-          $(document).scrollTop(scrollPosition);
+
+          if (scrollPosition) {
+            $(document).scrollTop(scrollPosition);
+          }
         }
       })
     }
