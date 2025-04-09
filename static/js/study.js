@@ -35,13 +35,9 @@ $(document).ready(function() {
 
       let targetIdentifier = $container.data('targetIdentifier');
 
-      compareData['targets'].push(targetIdentifier);
-      $compareBox.data('value', compareData);
-
-      saveCompareBox(compareData, function(response) {
-        let targetCount = response.targetCount;
-
-        $compareBox.find('.js-target-count').text(targetCount);
+      updateCompareBox('add', targetIdentifier, function(compareData) {
+        $compareBox.data('value', compareData);
+        $compareBox.find('.js-target-count').text(compareData.targetCount);
         $compareBox.removeClass('hidden');
 
         // Hide "compare" button, show "uncompare" button
@@ -62,11 +58,10 @@ $(document).ready(function() {
 
       let targetIdentifier = $container.data('targetIdentifier');
 
-      compareData['targets'] = compareData['targets'].filter(t => t !== targetIdentifier);
-      $compareBox.data(compareData);
 
-      saveCompareBox(compareData, function(response) {
-        let targetCount = response.targetCount;
+      updateCompareBox('remove', targetIdentifier, function(compareData) {
+        $compareBox.data(compareData);
+        let targetCount = compareData.targetCount;
 
         if (targetCount == 0) {
           $compareBox.addClass('hidden');
@@ -83,11 +78,11 @@ $(document).ready(function() {
       });
     });
 
-    function saveCompareBox(data, successCallback) {
+    function updateCompareBox(action, target, successCallback) {
       $.ajax({
         type: 'POST',
-        url: '/comparison/update.json',
-        data: JSON.stringify(data),
+        url: `/comparison/update/${action}.json`,
+        data: JSON.stringify({'target': target}),
         cache: false,
         contentType: 'application/json',
         processData: true,
