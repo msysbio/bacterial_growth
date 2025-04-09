@@ -70,17 +70,19 @@
             <table class="dataframe-table measurements-table">
               <tr>
                 <th>Actions</th>
+                <th>Bioreplicate</th>
                 <th>Subject</th>
                 <th>Time period</th>
                 <th>Measurement count</th>
               </tr>
 
-              {% for subject, measurements in technique.measurements_by_subject(g.db_session): %}
+              {% for bioreplicate, subject, measurements in technique.grouped_measurements(g.db_session): %}
+                {% set subjectClass = subject.__class__.__name__ %}
+
                 <tr class="js-table-row">
                   <td>
-                    {% set subjectClass = subject.__class__.__name__ %}
-                    {% set targetIdentifier = "{}:{}:{}:{}".format(
-                      measurements[0].bioreplicateUniqueId,
+                    {% set targetIdentifier = "{}|{}|{}|{}".format(
+                      bioreplicate.bioreplicateUniqueId,
                       technique.id,
                       subjectClass|lower,
                       subject.id
@@ -104,6 +106,9 @@
                         </a>
                       </span>
                     </div>
+                  </td>
+                  <td>
+                    {{ bioreplicate.bioreplicateId }}
                   </td>
                   <td>
                     {% if technique.subjectType == 'bioreplicate': %}

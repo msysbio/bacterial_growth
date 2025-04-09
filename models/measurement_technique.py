@@ -98,13 +98,19 @@ class MeasurementTechnique(OrmBase):
 
             return f"{subject_name} {suffix}"
 
-    def measurements_by_subject(self, db_session):
-        from models import Measurement
+    def grouped_measurements(self, db_session):
+        from models import Bioreplicate, Measurement
 
-        grouper = lambda m: (m.subjectType, m.subjectId)
+        grouper = lambda m: (m.bioreplicateUniqueId, m.subjectType, m.subjectId)
 
         ordered_measurements = sorted(self.measurements, key=grouper)
-        for ((subject_type, subject_id), group) in itertools.groupby(ordered_measurements, grouper):
+        for ((bioreplicate_uuid, subject_type, subject_id), group) in itertools.groupby(ordered_measurements, grouper):
+            measurements = list(group)
+
+            if len([m for m in measurements if m.value is not None]) == 0:
+                continue
+
+            bioreplicate = db_session.get(Bioreplicate, bioreplicate_uuid)
             subject = Measurement.get_subject(db_session, subject_id, subject_type)
 
-            yield (subject, list(group))
+            yield (bioreplicate, subject, measurements)

@@ -1,3 +1,5 @@
+{% from 'utils/_post_button.html' import post_button %}
+
 {% extends '_layout.html' %}
 
 {% block title %}: Comparison view{% endblock %}
@@ -25,19 +27,25 @@
               <th>Subject name</th>
               <th>Technique name</th>
               <th>Units</th>
+              <th></th>
             </tr>
 
             {% for (identifier, bioreplicate, technique, subject, measurements) in targets: %}
-              <tr data-identifier="{{ identifier }}">
-                <td>
-                  <input type="checkbox" class="js-target" name="{{ identifier }}" />
-                </td>
-                <td>[{{ technique.study.studyId }}] {{ technique.study.studyName }}</td>
-                <td>{{ bioreplicate.bioreplicateId }}</td>
-                <td>{{ technique.subjectType }}: {{ subject.name }}</td>
-                <td>{{ technique.long_name }}</td>
-                <td>{{ technique.units }}</td>
-              </tr>
+              {% if technique.study: %}
+                <tr data-identifier="{{ identifier }}">
+                  <td>
+                    <input type="checkbox" class="js-target" name="{{ identifier }}" value="left" />
+                  </td>
+                  <td>[{{ technique.study.studyId }}] {{ technique.study.studyName }}</td>
+                  <td>{{ bioreplicate.bioreplicateId }}</td>
+                  <td>{{ technique.subjectType }}: {{ subject.name }}</td>
+                  <td>{{ technique.long_name }}</td>
+                  <td>{{ technique.units }}</td>
+                  <td>
+                    <input type="checkbox" class="js-target" name="{{ identifier }}" value="right" />
+                  </td>
+                </tr>
+              {% endif %}
             {% endfor %}
           </table>
         </form>
@@ -48,6 +56,11 @@
           </div>
         </div>
       </div>
+
+      <div style="float: right;">
+        {{ post_button("Clear", url_for("comparison_clear_action")) }}
+      </div>
+      <div style="clear: both;"></div>
     </article>
   </div>
 

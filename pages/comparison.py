@@ -3,6 +3,7 @@ import json
 from flask import (
     g,
     render_template,
+    redirect,
     request,
     session,
 )
@@ -18,13 +19,15 @@ from models import (
 )
 from lib.db import execute_into_df
 
+PLOTLY_TEMPLATE = 'plotly_white'
+
 
 def comparison_show_page():
     compare_data = session.get('compareData', {'targets': []})
 
     targets = []
-    for target_identifier in compare_data['targets']:
-        (biorep_uuid, technique_id, subject_type, subject_id) = target_identifier.split(':')
+    for target_identifier in sorted(compare_data['targets']):
+        (biorep_uuid, technique_id, subject_type, subject_id) = target_identifier.split('|')
 
         technique    = g.db_session.get(MeasurementTechnique, technique_id)
         bioreplicate = g.db_session.get(Bioreplicate, biorep_uuid)
@@ -51,16 +54,22 @@ def comparison_update_json():
 
     return json.dumps({ 'targetCount': len(data['targets']) })
 
+def comparison_clear_action():
+    if 'compareData' in session:
+        del session['compareData']
+
+    return redirect(request.referrer)
+
 
 def comparison_chart_fragment():
     args = request.args.to_dict()
 
     width = args.pop('width')
     target_identifiers = args.keys()
-    target_dfs = []
+    target_data = []
 
-    for target_identifier in target_identifiers:
-        (biorep_uuid, technique_id, subject_type, subject_id) = target_identifier.split(':')
+    for (target_identifier, direction) in args.items():
+        (biorep_uuid, technique_id, subject_type, subject_id) = target_identifier.split('|')
 
         subject = Measurement.get_subject(g.db_session, subject_id, subject_type)
         measurement_query = (
@@ -77,10 +86,11 @@ def comparison_chart_fragment():
             )
         )
         df = execute_into_df(g.db_conn, measurement_query)
-        target_dfs.append(df)
+        target_data.append((direction, df))
 
-    fig = _render_figure(target_dfs)
+    fig = _render_figure(target_data)
     fig.update_layout(
+        template=PLOTLY_TEMPLATE,
         margin=dict(l=0, r=0, t=60, b=40),
         title=dict(x=0)
     )
@@ -95,21 +105,21 @@ def comparison_chart_fragment():
         fig_html=fig_html,
     )
 
-def _render_figure(dfs, **params):
-    PLOTLY_TEMPLATE = 'plotly_white'
-
+def _render_figure(data, **params):
     fig = make_subplots(specs=[[{"secondary_y": True}]])
 
-    for index, df in enumerate(dfs):
-        if index == 2:
+    for direction, df in data:
+        if direction == 'left':
+            fig.add_trace(
+                go.Scatter(x=df['time'], y=df['value'], name=df['subjectName'][0]),
+                secondary_y=False,
+            )
+        elif direction == 'right':
             fig.add_trace(
                 go.Scatter(x=df['time'], y=df['value'], name=df['subjectName'][0], line={'dash': 'dot'}),
                 secondary_y=True,
             )
         else:
-            fig.add_trace(
-                go.Scatter(x=df['time'], y=df['value'], name=df['subjectName'][0]),
-                secondary_y=False,
-            )
+            raise ValueError(f"Unexpected direction received: {direction}")
 
     return fig
