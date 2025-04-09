@@ -13,8 +13,14 @@ $(document).ready(function() {
       let $select = $form.find('.js-project-select');
       let $option = $select.find('option:selected');
 
-      $form.find('input[name=project_name]').val($option.data('name'));
-      $form.find('textarea[name=project_description]').val($option.data('description'));
+      let $name = $form.find('input[name=project_name]');
+      if ($name.val() == '') {
+        $name.val($option.data('name'));
+      }
+      let $description = $form.find('textarea[name=project_description]');
+      if ($description.val() == '') {
+        $description.val($option.data('description'));
+      }
 
       // If the selected study is not in this project, reset the study form
       if ($option.val() != '_new') {

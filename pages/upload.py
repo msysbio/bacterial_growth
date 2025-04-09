@@ -254,7 +254,7 @@ def _init_submission_form(step):
 
 def _save_chart_data_to_database(db_session, study, submission):
     data_xls = submission.dataFile.content
-    sheets = pd.read_excel(io.BytesIO(data_xls))
+    sheets = pd.read_excel(io.BytesIO(data_xls), sheet_name=None)
 
     if 'Growth data per community' in sheets:
         df = sheets['Growth data per community']
