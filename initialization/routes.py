@@ -14,14 +14,14 @@ import pages.comparison as comparison_pages
 
 
 def init_routes(app):
-    app.add_url_rule("/",      view_func=static_pages.static_home_page)
-    app.add_url_rule("/help",  view_func=static_pages.static_help_page)
-    app.add_url_rule("/about", view_func=static_pages.static_about_page)
+    app.add_url_rule("/",       view_func=static_pages.static_home_page)
+    app.add_url_rule("/help/",  view_func=static_pages.static_help_page)
+    app.add_url_rule("/about/", view_func=static_pages.static_about_page)
 
-    app.add_url_rule("/dashboard",       view_func=dashboard_pages.dashboard_index_page)
+    app.add_url_rule("/dashboard/",       view_func=dashboard_pages.dashboard_index_page)
     app.add_url_rule("/dashboard/chart", view_func=dashboard_pages.dashboard_chart_fragment)
 
-    app.add_url_rule("/upload", view_func=upload_pages.upload_status_page)
+    app.add_url_rule("/upload/", view_func=upload_pages.upload_status_page)
 
     app.add_url_rule("/upload/1", view_func=upload_pages.upload_step1_page, methods=["GET", "POST"])
     app.add_url_rule("/upload/2", view_func=upload_pages.upload_step2_page, methods=["GET", "POST"])
@@ -30,7 +30,7 @@ def init_routes(app):
     app.add_url_rule("/upload/5", view_func=upload_pages.upload_step5_page, methods=["GET", "POST"])
 
     app.add_url_rule(
-        "/upload/new_submission",
+        "/upload/new_submission/",
         view_func=submission_pages.new_submission_action,
         methods=["POST"],
     )
@@ -48,37 +48,37 @@ def init_routes(app):
     app.add_url_rule("/upload/study_template.xlsx", view_func=upload_pages.download_study_template_xlsx, methods=["POST"])
     app.add_url_rule("/upload/data_template.xlsx", view_func=upload_pages.download_data_template_xlsx, methods=["POST"])
     app.add_url_rule(
-        "/upload/spreadsheet_preview",
+        "/upload/spreadsheet_preview/",
         view_func=upload_pages.upload_spreadsheet_preview_fragment,
         methods=["POST"],
     )
 
-    app.add_url_rule("/study/<string:studyId>",                view_func=study_pages.study_show_page)
+    app.add_url_rule("/study/<string:studyId>/",               view_func=study_pages.study_show_page)
     app.add_url_rule("/study/<string:studyId>.zip",            view_func=study_pages.study_download_zip)
     app.add_url_rule("/study/<string:studyId>/export",         view_func=study_pages.study_export_page)
     app.add_url_rule("/study/<string:studyId>/export/preview", view_func=study_pages.study_export_preview_fragment)
 
     app.add_url_rule("/project/<string:projectId>", view_func=project_pages.project_show_page)
 
-    app.add_url_rule("/strain/<int:id>",    view_func=strain_pages.strain_show_page)
-    app.add_url_rule("/strains/completion", view_func=strain_pages.taxa_completion_json)
+    app.add_url_rule("/strain/<int:id>",     view_func=strain_pages.strain_show_page)
+    app.add_url_rule("/strains/completion/", view_func=strain_pages.taxa_completion_json)
 
     app.add_url_rule("/metabolite/<string:chebi_id>", view_func=metabolite_pages.metabolite_show_page)
-    app.add_url_rule("/metabolites/completion",      view_func=metabolite_pages.metabolites_completion_json)
+    app.add_url_rule("/metabolites/completion/",      view_func=metabolite_pages.metabolites_completion_json)
 
-    app.add_url_rule("/comparison",             view_func=comparison_pages.comparison_show_page)
+    app.add_url_rule("/comparison/",            view_func=comparison_pages.comparison_show_page)
     app.add_url_rule("/comparison/chart",       view_func=comparison_pages.comparison_chart_fragment)
-    app.add_url_rule("/comparison/update.json", view_func=comparison_pages.comparison_update_json, methods=["POST"])
+    app.add_url_rule("/comparison/update.json", view_func=comparison_pages.comparison_update_json,  methods=["POST"])
     app.add_url_rule("/comparison/clear",       view_func=comparison_pages.comparison_clear_action, methods=["POST"])
 
     app.add_url_rule(
-        "/search",
+        "/search/",
         view_func=search_pages.search_index_page,
         methods=["GET", "POST"],
     )
 
-    app.add_url_rule("/profile", view_func=user_pages.user_show_page)
-    app.add_url_rule("/login",   view_func=user_pages.user_login_action, methods=["POST"])
+    app.add_url_rule("/profile/", view_func=user_pages.user_show_page)
+    app.add_url_rule("/login/",   view_func=user_pages.user_login_action, methods=["POST"])
 
     return app
 
