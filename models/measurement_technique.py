@@ -98,19 +98,40 @@ class MeasurementTechnique(OrmBase):
 
             return f"{subject_name} {suffix}"
 
-    def grouped_measurements(self, db_session):
+    def measurements_by_bioreplicate(self, db_session, measurements=None):
         from models import Bioreplicate, Measurement
 
-        grouper = lambda m: (m.bioreplicateUniqueId, m.subjectType, m.subjectId)
+        if measurements is None:
+            measurements = self.measurements
+
+        grouper = lambda m: m.bioreplicateUniqueId
 
         ordered_measurements = sorted(self.measurements, key=grouper)
-        for ((bioreplicate_uuid, subject_type, subject_id), group) in itertools.groupby(ordered_measurements, grouper):
+        for (bioreplicate_uuid, group) in itertools.groupby(ordered_measurements, grouper):
             measurements = list(group)
 
             if len([m for m in measurements if m.value is not None]) == 0:
                 continue
 
             bioreplicate = db_session.get(Bioreplicate, bioreplicate_uuid)
+
+            yield (bioreplicate, measurements)
+
+    def measurements_by_subject(self, db_session, measurements=None):
+        from models import Bioreplicate, Measurement
+
+        if measurements is None:
+            measurements = self.measurements
+
+        grouper = lambda m: (m.subjectType, m.subjectId)
+
+        ordered_measurements = sorted(measurements, key=grouper)
+        for ((subject_type, subject_id), group) in itertools.groupby(ordered_measurements, grouper):
+            measurements = list(group)
+
+            if len([m for m in measurements if m.value is not None]) == 0:
+                continue
+
             subject = Measurement.get_subject(db_session, subject_id, subject_type)
 
-            yield (bioreplicate, subject, measurements)
+            yield (subject, measurements)

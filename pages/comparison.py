@@ -81,11 +81,13 @@ def comparison_chart_fragment():
         (biorep_uuid, technique_id, subject_type, subject_id) = target_identifier.split('|')
 
         subject = Measurement.get_subject(g.db_session, subject_id, subject_type)
+        technique = g.db_session.get(MeasurementTechnique, technique_id)
+
         measurement_query = (
             sql.select(
                 Measurement.timeInHours.label("time"),
                 Measurement.value.label("value"),
-                literal(subject.name).label("subjectName"),
+                (literal(subject.name) + ' ' + literal(technique.short_name)).label("name"),
             )
             .where(
                 Measurement.bioreplicateUniqueId == biorep_uuid,
@@ -124,12 +126,12 @@ def _render_figure(data, **params):
     for direction, df in data:
         if direction == 'left':
             fig.add_trace(
-                go.Scatter(x=df['time'], y=df['value'], name=df['subjectName'][0]),
+                go.Scatter(x=df['time'], y=df['value'], name=df['name'][0]),
                 secondary_y=False,
             )
         elif direction == 'right':
             fig.add_trace(
-                go.Scatter(x=df['time'], y=df['value'], name=df['subjectName'][0], line={'dash': 'dot'}),
+                go.Scatter(x=df['time'], y=df['value'], name=df['name'][0], line={'dash': 'dot'}),
                 secondary_y=True,
             )
         else:

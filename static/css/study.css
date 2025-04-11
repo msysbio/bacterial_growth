@@ -34,8 +34,14 @@
   }
 
   table.measurements-table {
+    width: 100%;
+
     td {
       vertical-align: middle;
+    }
+
+    .numeric {
+      font-variant-numeric: tabular-nums;
     }
   }
 }
