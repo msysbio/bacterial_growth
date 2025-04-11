@@ -1,4 +1,14 @@
 .study-page {
+  nav ul {
+    margin: 0;
+    padding-left: 12px;
+
+    li::marker {
+      font-weight: 900;
+      content: "> ";
+    }
+  }
+
   .small {
     font-size: 14px;
   }

@@ -6,8 +6,20 @@
 
 {% block content %}
   <div class="container study-page">
+    <nav>
+      {% set projectUrl = url_for('project_show_page', projectId=study.project.projectId) %}
+
+      <ul>
+        <li class="small">
+          Project
+          <a href="{{ projectUrl }}">{{ study.project.projectId }}</a>:
+          {{ study.project.projectName }}
+        </li>
+        <li class="small">Study {{ study.studyId }}</li>
+      </ul>
+    </nav>
+
     <article>
-      <span class="small">Study {{ study.studyId }}</span>
       <h1>{{ study.studyName }}</h1>
 
       <p>
@@ -23,15 +35,8 @@
       <h2>Basic information</h2>
 
       <p>
-        <strong>Project:</strong>
-        <a href="{{ url_for('project_show_page', projectId=study.project.projectId) }}">
-          [{{ study.project.projectId }}] {{ study.project.projectName }}
-        </a>
-      </p>
-
-      <p>
         {% if study.studyURL: %}
-          <strong>URL</strong>: {{ study.studyURL|urlize(target="_blank") }}
+          <strong>Publication URL</strong>: {{ study.studyURL|urlize(target="_blank") }}
           <br>
         {% endif %}
       </p>
