@@ -58,7 +58,6 @@ $(document).ready(function() {
 
       let targetIdentifier = $container.data('targetIdentifier');
 
-
       updateCompareBox('remove', targetIdentifier, function(compareData) {
         $compareBox.data(compareData);
         let targetCount = compareData.targetCount;
