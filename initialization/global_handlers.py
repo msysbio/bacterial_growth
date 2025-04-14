@@ -1,7 +1,11 @@
 import datetime
 from uuid import uuid4
 
-from flask import g, session
+from flask import (
+    g,
+    session,
+    render_template,
+)
 
 from db import get_connection, get_session
 
@@ -12,6 +16,10 @@ def init_global_handlers(app):
     app.before_request(_fetch_user)
 
     app.after_request(_close_db_connection)
+
+    app.errorhandler(404)(_not_found)
+    app.errorhandler(403)(_forbidden)
+    app.errorhandler(500)(_server_error)
 
     return app
 
@@ -46,6 +54,17 @@ def _close_db_connection(response):
         db_conn.close()
 
     return response
+
+def _not_found(_error):
+    return render_template('errors/404.html'), 404
+
+
+def _forbidden(_error):
+    return render_template('errors/403.html'), 403
+
+
+def _server_error(_error):
+    return render_template('errors/500.html'), 500
 
 
 # TODO (2025-03-12) Temporary, will eventually be fetched from a database

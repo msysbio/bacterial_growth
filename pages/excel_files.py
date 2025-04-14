@@ -5,7 +5,7 @@ from flask import (
     send_file,
 )
 import sqlalchemy as sql
-from werkzeug.exceptions import Forbidden
+from werkzeug.exceptions import Forbidden, NotFound
 
 from models import (
     ExcelFile,
@@ -15,6 +15,8 @@ from models import (
 
 def download_excel_file(id):
     file = g.db_session.get(ExcelFile, id)
+    if not file:
+        raise NotFound()
 
     if not g.current_user:
         raise Forbidden()
