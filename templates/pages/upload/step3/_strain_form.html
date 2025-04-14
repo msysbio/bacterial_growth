@@ -1,4 +1,9 @@
-{% macro render_strain_form(data, prefix) %}
+{% macro render_strain_form(data, index) %}
+  {% if index is none: %}
+    {% set prefix = '' %}
+  {% else: %}
+    {% set prefix = 'techniques-{}-'.format(index)  %}
+  {% endif %}
 
   <div class="technique-container js-technique-container" data-subject-type="strain">
     <img
@@ -7,7 +12,10 @@
         alt="Strain-level measurement"
         src="/static/images/large-icons/bacteria.png" />
 
-    <h3>Strain-level measurement</h3>
+    <h3>
+      <span class="js-index">{{ "{}.".format(index + 1) if index is not none }}</span>
+      Strain-level measurement
+    </h3>
 
     <p>
       Counts of specific strains within a vessel. Could be measured directly

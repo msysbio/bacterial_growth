@@ -1,4 +1,9 @@
-{% macro render_metabolite_form(submission_form, technique_index, data, prefix) %}
+{% macro render_metabolite_form(submission_form, data, index) %}
+  {% if index is none: %}
+    {% set prefix = '' %}
+  {% else: %}
+    {% set prefix = 'techniques-{}-'.format(index)  %}
+  {% endif %}
 
   <div class="technique-container js-technique-container" data-subject-type="metabolite">
     <img
@@ -7,7 +12,10 @@
         alt="Metabolite measurement"
         src="/static/images/large-icons/trehalose.png" />
 
-    <h3>Metabolite measurement</h3>
+    <h3>
+      <span class="js-index">{{ "{}.".format(index + 1) if index is not none }}</span>
+      Metabolite measurement
+    </h3>
 
     <p>
       Start typing the name of metabolites in the input field and pick the ones
@@ -31,7 +39,7 @@
             required
             placeholder="Example: glucose"
             class="form-input-blue form-input-full js-metabolites-select">
-          {% for metabolite in submission_form.fetch_metabolites_for_technique(technique_index): %}
+          {% for metabolite in submission_form.fetch_metabolites_for_technique(index): %}
             <option value="{{ metabolite.chebi_id }}" selected>
               {{ metabolite.metabo_name }} ({{ metabolite.chebi_id }})
             </option>
