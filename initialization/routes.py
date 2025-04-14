@@ -11,6 +11,7 @@ import pages.submissions as submission_pages
 import pages.users as user_pages
 import pages.projects as project_pages
 import pages.comparison as comparison_pages
+import pages.excel_files as excel_file_pages
 
 
 def init_routes(app):
@@ -83,6 +84,8 @@ def init_routes(app):
 
     app.add_url_rule("/profile/", view_func=user_pages.user_show_page)
     app.add_url_rule("/login/",   view_func=user_pages.user_login_action, methods=["POST"])
+
+    app.add_url_rule("/excel_files/<id>.xlsx", view_func=excel_file_pages.download_excel_file)
 
     return app
 

@@ -4,7 +4,9 @@
 
   <div class="form-row">
     <span class="icon">📄 </span>
-    {{ excel_file.filename }}
+    <a href="{{ url_for('download_excel_file', id=excel_file.id) }}">
+      {{ excel_file.filename }}
+    </a>
     {{ excel_file.humanized_size }}
   </div>
 
