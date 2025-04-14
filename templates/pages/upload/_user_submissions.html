@@ -2,6 +2,11 @@
 {% from 'utils/_post_button.html' import post_button %}
 
 {% macro render_user_submissions(user_submissions, current_submission) %}
+  <p>
+    Your ongoing submissions:
+  </p>
+
+  <br>
 
   <div class="user-submissions">
     <table class="dataframe-table full">
@@ -41,7 +46,9 @@
                    href="{{ url_for('project_show_page', projectId=user_submission.project.projectId) }}"
                    data-tippy-content="{{ project_name }}">{{ user_submission.project.projectId }}</a>]
             {% else: %}
-              [New] {{ project_name }}
+              <span data-tippy-content="{{ project_name }}">
+                [New] {{ project_name|truncate(20) }}
+              </span>
             {% endif %}
           </td>
           <td>
@@ -52,7 +59,9 @@
                    href="{{ url_for('study_show_page', studyId=user_submission.study.studyId) }}"
                    data-tippy-content="{{ study_name }}">{{ user_submission.study.studyId }}</a>]
             {% else: %}
-              [New] {{ study_name }}
+              <span data-tippy-content="{{ study_name }}">
+                [New] {{ study_name|truncate(20) }}
+              </span>
             {% endif %}
           </td>
           <td>{{ time_tag(user_submission.updatedAt, class="js-relative") }}</td>
