@@ -29,6 +29,7 @@ def init_assets(app):
 
     assets.register('app_css', flask_assets.Bundle(
         'css/vendor/select2-4.0.13.css',
+        'css/vendor/hint-2.7.0.css',
         'css/select2-custom.css',
         'css/reset.css',
         'css/utils.css',

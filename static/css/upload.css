@@ -58,18 +58,11 @@
       white-space: nowrap;
     }
 
-    .icon {
-      width: 18px;
-      height: 18px;
-      background-size: cover;
-      flex-shrink: 0;
-    }
-
     &.complete .icon {
-      background-image: url('/static/images/green-check.svg');
+      background-image: url('/static/images/icons/square-green-check.svg');
     }
     &.incomplete .icon {
-      background-image: url('/static/images/orange-minus.svg');
+      background-image: url('/static/images/icons/square-orange-minus.svg');
     }
 
     .truncate {

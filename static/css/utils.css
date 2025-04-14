@@ -32,6 +32,10 @@
   margin-left: auto;
 }
 
+.flex-gap-10 {
+  gap: 10px;
+}
+
 code.inline {
   font-family: monospace;
   font-size: 16px;
@@ -231,6 +235,11 @@ form.simple-form {
   color: black;
   white-space: nowrap;
 
+  &.flex-row {
+    display: flex;
+    gap: 6px;
+  }
+
   &:hover {
     background-color: #eee;
     color: inherit;
@@ -283,4 +292,18 @@ form.simple-form {
   input[type="text"] {
     border-radius: 0 var(--border-radius) var(--border-radius) 0;
   }
+}
+
+.icon {
+  width: 18px;
+  height: 18px;
+  background-size: cover;
+  flex-shrink: 0;
+}
+
+.icon.icon-remove {
+  background-image: url('/static/images/icons/red-minus.svg');
+}
+.icon.icon-add {
+  background-image: url('/static/images/icons/green-plus.svg');
 }
