@@ -1,4 +1,7 @@
 {
+  "initialization/*.py": {
+    "type": "init"
+  },
   "templates/*.html": {
     "type": "template"
   },
