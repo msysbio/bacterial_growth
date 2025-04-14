@@ -15,6 +15,9 @@ sqlalchemy
 pymysql
 cryptography
 
+# Admin panel
+flask-admin[sqlalchemy,export]
+
 # Deployment
 gunicorn
 
