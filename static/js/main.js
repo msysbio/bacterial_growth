@@ -85,4 +85,17 @@ $(document).ready(function() {
       $('.select2-container--open .select2-search__field').focus();
     }, 200);
   });
+
+  // Replace relative timestamps using moment.js
+  $(document).find('time.js-relative').each(function() {
+    let $time = $(this);
+    let time = moment($time.attr('datetime'));
+
+    $time.text(time.fromNow());
+  });
+
+  // Initialize tippy popups:
+  tippy('[data-tippy-content]', {
+    theme: 'light-border',
+  })
 });

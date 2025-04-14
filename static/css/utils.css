@@ -97,7 +97,6 @@ table.simple-table {
 
 table.dataframe-table {
   border-spacing: 0;
-  border-collapse: collapse;
   font-size: 13px;
 
   th {
@@ -177,6 +176,10 @@ form.simple-form {
     border-radius: var(--border-radius);
     background-color: rgb(8, 131, 149);
     color: white;
+
+    &.small-button {
+      padding: 0.3rem;
+    }
 
     &:hover {
       background-color: rgb(7, 110, 126);

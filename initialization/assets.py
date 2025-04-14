@@ -7,6 +7,9 @@ def init_assets(app):
     assets.register('app_js', flask_assets.Bundle(
         'js/vendor/jquery-3.7.1.js',
         'js/vendor/select2-4.0.13.js',
+        'js/vendor/moment-2.30.1.js',
+        'js/vendor/popper-core-2.11.8.js',
+        'js/vendor/tippy-6.3.7.js',
         'js/upload/step1.js',
         'js/upload/step2.js',
         'js/upload/step3.js',
@@ -29,7 +32,7 @@ def init_assets(app):
 
     assets.register('app_css', flask_assets.Bundle(
         'css/vendor/select2-4.0.13.css',
-        'css/vendor/hint-2.7.0.css',
+        'css/vendor/tippy-light-border-theme.css',
         'css/select2-custom.css',
         'css/reset.css',
         'css/utils.css',

@@ -60,6 +60,8 @@
       {% if user_submissions %}
         {{ render_user_submissions(user_submissions, submission) }}
 
+        <br>
+
         <div class="flex-row">
           {{ post_button("New submission", url_for('new_submission_action'), class="flex-right") }}
         </div>

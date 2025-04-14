@@ -1,6 +1,9 @@
-{% macro time_tag(timestamp) %}
+{% macro time_tag(timestamp, class='') %}
 
-  <time datetime="{{ timestamp.isoformat() }}">
+  <time
+      class="{{ class }}"
+      data-tippy-content="{{ timestamp.strftime("%c") }}"
+      datetime="{{ timestamp.isoformat() }}">
     {{ timestamp.strftime("%c") }}
   </time>
 
