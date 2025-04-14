@@ -10,6 +10,10 @@
     "type": "model",
     "alternate": "tests/models/test_{}.py"
   },
+  "lib/*.py": {
+    "type": "lib",
+    "alternate": "tests/lib/test_{}.py"
+  },
   "pages/*.py": {
     "type": "page"
   },
