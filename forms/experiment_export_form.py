@@ -53,14 +53,14 @@ class ExperimentExportForm:
 
             # Collect targets for each column of measurements:
             for measurement in experiment.measurements:
-                if measurement.subjectType.value == 'bioreplicate':
+                if measurement.subjectType == 'bioreplicate':
                     measurement_targets['bioreplicate'].add((
                         measurement.technique,
                         measurement.unit,
                     ))
                 else:
-                    subject = get_subject(measurement.subjectId, measurement.subjectType.value)
-                    measurement_targets[measurement.subjectType.value].add((
+                    subject = get_subject(measurement.subjectId, measurement.subjectType)
+                    measurement_targets[measurement.subjectType].add((
                         subject,
                         measurement.technique,
                         measurement.unit,

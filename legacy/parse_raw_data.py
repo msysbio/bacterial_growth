@@ -1,3 +1,5 @@
+import io
+
 import pandas as pd
 
 from legacy.constants import GrowthTechniques
@@ -164,7 +166,7 @@ def get_replicate_metadata(raw_data_template):
     Returns:
         - reads_per_replicate: a dictionary with the information completed in the Replicate_metadata sheet
     """
-    df_replicate_metadata = pd.read_excel(raw_data_template, sheet_name='Replicate_metadata')
+    df_replicate_metadata = pd.read_excel(io.BytesIO(raw_data_template), sheet_name='Replicate metadata')
     rep_metadata_dicts = {}
     rep_metadata_dicts = {col: df_replicate_metadata[col].tolist() for col in df_replicate_metadata.columns}
     return rep_metadata_dicts

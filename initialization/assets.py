@@ -7,11 +7,14 @@ def init_assets(app):
     assets.register('app_js', flask_assets.Bundle(
         'js/vendor/jquery-3.7.1.js',
         'js/vendor/select2-4.0.13.js',
+        'js/upload/step1.js',
+        'js/upload/step2.js',
+        'js/upload/step3.js',
+        'js/upload/step4.js',
         'js/util.js',
         'js/main.js',
         'js/search.js',
         'js/dashboard.js',
-        'js/upload.js',
         'js/export.js',
         filters='rjsmin',
         output='build/app.js'
@@ -34,6 +37,7 @@ def init_assets(app):
         'css/dashboard.css',
         'css/upload.css',
         'css/export.css',
+        'css/profile.css',
         filters='cssmin',
         output='build/app.css'
     ))

@@ -1,6 +1,13 @@
 {% macro render_new_strain_form(data, prefix) %}
 
   <div class="new-strain-container js-new-strain-container">
+    {% if g.current_user: %}
+      <input
+          name="{{ prefix }}userUniqueID"
+          type="hidden"
+          value="{{ g.current_user.uuid }}" />
+    {% endif %}
+
     <div class="form-row">
       <label style="width: 50%;">
         <span>Name of the microbial strain:</span>
@@ -13,13 +20,15 @@
       </label>
 
       <label style="width: 50%;">
-        <span>Species:</span>
+        <span class="species-text">Species:</span>
         <select
             name="{{ prefix }}species"
             class="form-input-full form-input-blue js-single-strain-select"
             required>
           {% if data %}
-            <option value="{{ data['species'] }}">{{ data['species_name'] }}</option>
+            <option value="{{ data['species'] }}">
+              {{ data['species_name'] }} (NCBI:{{ data['species'] }})
+            </option>
           {% endif %}
         </select>
       </label>
@@ -36,8 +45,11 @@
       </label>
 
       <div class="no-label">
-        <a href="#" class="green-button js-remove-new-strain">Remove</a>
+        <a href="#" class="white-button js-remove-new-strain">🗑 Remove</a>
       </div>
+    </div>
+
+    <div class="form-row js-parent-preview">
     </div>
   </div>
 

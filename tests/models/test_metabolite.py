@@ -10,20 +10,20 @@ from tests.database_test import DatabaseTest
 
 class TestMetabolite(DatabaseTest):
     def test_search_basic(self):
-        self.create_metabolite(metabo_name="Vibrio pelagius")
-        self.create_metabolite(metabo_name="Anaerovibrio")
-        self.create_metabolite(metabo_name="Brevibacterium linens")
+        self.create_metabolite(chebi_id="CHEBI:1", metabo_name="glucose")
+        self.create_metabolite(chebi_id="CHEBI:2", metabo_name="trehalose")
+        self.create_metabolite(chebi_id="CHEBI:3", metabo_name="lactate")
 
-        results, _ = Metabolite.search_by_name(self.db_conn, 'pelagius')
+        results, _ = Metabolite.search_by_name(self.db_conn, 'glucose')
         self.assertEqual(
-            ['Vibrio pelagius'],
+            ['glucose (CHEBI:1)'],
             [r['text'] for r in results]
         )
 
         # Matches are case-insensitive:
-        results, _ = Metabolite.search_by_name(self.db_conn, 'vib')
+        results, _ = Metabolite.search_by_name(self.db_conn, 'Ose')
         self.assertEqual(
-            sorted(['Vibrio pelagius', 'Anaerovibrio', 'Brevibacterium linens']),
+            sorted(['glucose (CHEBI:1)', 'trehalose (CHEBI:2)']),
             sorted([r['text'] for r in results])
         )
 
@@ -34,39 +34,13 @@ class TestMetabolite(DatabaseTest):
         self.assertEqual([], [r['text'] for r in results])
 
     def test_search_ordering_by_prefix_match(self):
-        self.create_metabolite(metabo_name="Vibrio pelagius")
-        self.create_metabolite(metabo_name="Vibrio anguillarum")
-        self.create_metabolite(metabo_name="Anaerovibrio")
-        self.create_metabolite(metabo_name="Panaeolus")
+        self.create_metabolite(chebi_id="CHEBI:1", metabo_name="glucose")
+        self.create_metabolite(chebi_id="CHEBI:2", metabo_name="d-gluconic acid")
 
         # Matches at the beginning of the word are first:
-        results, _ = Metabolite.search_by_name(self.db_conn, 'vib')
+        results, _ = Metabolite.search_by_name(self.db_conn, 'gluc')
         self.assertEqual(
-            ['Vibrio anguillarum', 'Vibrio pelagius', 'Anaerovibrio'],
-            [r['text'] for r in results]
-        )
-
-        results, _ = Metabolite.search_by_name(self.db_conn, 'anae')
-        self.assertEqual(
-            ['Anaerovibrio', 'Panaeolus'],
-            [r['text'] for r in results]
-        )
-
-    def test_search_by_multiple_words(self):
-        self.create_metabolite(metabo_name="Salmonella enterica serovar Infantis")
-        self.create_metabolite(metabo_name="Salmonella enterica serovar Moscow")
-
-        # Words are searched separately:
-        results, _ = Metabolite.search_by_name(self.db_conn, 'salmonella infantis')
-        self.assertEqual(
-            ['Salmonella enterica serovar Infantis'],
-            [r['text'] for r in results]
-        )
-
-        # Words are searched in order:
-        results, _ = Metabolite.search_by_name(self.db_conn, 'infantis salmonella')
-        self.assertEqual(
-            [],
+            ['glucose (CHEBI:1)', 'd-gluconic acid (CHEBI:2)'],
             [r['text'] for r in results]
         )
 

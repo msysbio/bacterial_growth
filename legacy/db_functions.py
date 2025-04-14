@@ -75,7 +75,7 @@ def updateRecord(conn, table, pk_value, args):
     pk = res[0][4]
 
     set_list = [f"{key} = :{key}" for key in args]
-    args['primary_key'] = pk
+    args['primary_key'] = args[pk]
 
     phrase = f"UPDATE {table} SET {','.join(set_list)} WHERE {pk} = :primary_key"
     res = conn.execute(sql.text(phrase), args)

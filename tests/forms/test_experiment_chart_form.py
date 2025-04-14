@@ -22,23 +22,21 @@ class TestExperimentChartForm(DatabaseTest):
         shared_params = {
             'studyId': study_id,
             'bioreplicateUniqueId': bioreplicate_uuid,
-            'technique': 'FC',
             'value': 200.0,
+            'technique': 'Metabolites',
+            'measurement_technique': {
+                'type': 'metabolite',
+                'subjectType': 'metabolite',
+            }
         }
         self.create_measurement(subjectId='1', subjectType='metabolite', timeInSeconds=3600, **shared_params)
         self.create_measurement(subjectId='1', subjectType='metabolite', timeInSeconds=7200, **shared_params)
         self.create_measurement(subjectId='2', subjectType='metabolite', timeInSeconds=3600, **shared_params)
         self.create_measurement(subjectId='2', subjectType='metabolite', timeInSeconds=7200, **shared_params)
 
-        # Not included:
-        other_params = {**shared_params, 'technique': 'OD'}
-        self.create_measurement(subjectId='2', subjectType='metabolite', timeInSeconds=3600, **other_params)
-        other_params = {**shared_params, 'subjectType': 'other'}
-        self.create_measurement(subjectId='2', timeInSeconds=3600, **other_params)
-
         self.db_session.commit()
 
-        chart_df = chart.get_df([bioreplicate_uuid], technique='FC', subject_type='metabolite')
+        chart_df = chart.get_df([bioreplicate_uuid], technique='Metabolites', subject_type='metabolite')
 
         self.assertEqual(chart_df['time'].tolist(), [1, 2, 1, 2])
         self.assertEqual(
@@ -62,23 +60,22 @@ class TestExperimentChartForm(DatabaseTest):
         shared_params = {
             'studyId': study_id,
             'bioreplicateUniqueId': bioreplicate_uuid,
-            'technique': '16S',
+            'subjectType': 'strain',
             'value': 200.0,
+            'technique': '16S rRNA-seq',
+            'measurement_technique': {
+                'type': '16s',
+                'subjectType': 'strain',
+            }
         }
-        self.create_measurement(subjectId='1', subjectType='strain', timeInSeconds=3600, **shared_params)
-        self.create_measurement(subjectId='1', subjectType='strain', timeInSeconds=7200, **shared_params)
-        self.create_measurement(subjectId='2', subjectType='strain', timeInSeconds=3600, **shared_params)
-        self.create_measurement(subjectId='2', subjectType='strain', timeInSeconds=7200, **shared_params)
-
-        # Not included:
-        other_params = {**shared_params, 'technique': 'OD'}
-        self.create_measurement(subjectId='2', subjectType='strain', timeInSeconds=3600, **other_params)
-        other_params = {**shared_params, 'subjectType': 'other'}
-        self.create_measurement(subjectId='2', timeInSeconds=3600, **other_params)
+        self.create_measurement(subjectId='1', timeInSeconds=3600, **shared_params)
+        self.create_measurement(subjectId='1', timeInSeconds=7200, **shared_params)
+        self.create_measurement(subjectId='2', timeInSeconds=3600, **shared_params)
+        self.create_measurement(subjectId='2', timeInSeconds=7200, **shared_params)
 
         self.db_session.commit()
 
-        chart_df = chart.get_df([bioreplicate_uuid], technique='16S', subject_type='strain')
+        chart_df = chart.get_df([bioreplicate_uuid], technique='16S rRNA-seq', subject_type='strain')
 
         self.assertEqual(chart_df['time'].tolist(), [1, 2, 1, 2])
         self.assertEqual(
@@ -108,7 +105,12 @@ class TestExperimentChartForm(DatabaseTest):
             'studyId': study_id,
             'subjectId': 1,
             'subjectType': 'strain',
-            'technique': '16S',
+            # TODO (2025-04-02) Remove technique, use id
+            'technique': '16S rRNA-seq',
+            'measurement_technique': {
+                'type': '16s',
+                'subjectType': 'strain',
+            }
         }
 
         # First time point:
@@ -141,7 +143,7 @@ class TestExperimentChartForm(DatabaseTest):
 
         self.db_session.commit()
 
-        chart_df = chart.get_average_df(technique='16S', subject_type='strain')
+        chart_df = chart.get_average_df(technique='16S rRNA-seq', subject_type='strain')
 
         self.assertEqual(chart_df['time'].tolist(), [1, 2])
         self.assertEqual(chart_df['value'].tolist(), [150.0, 225.0])
@@ -161,7 +163,11 @@ class TestExperimentChartForm(DatabaseTest):
 
         shared_params = {
             'studyId': study_id,
-            'technique': '16S',
+            'technique': '16S rRNA-seq',
+            'measurement_technique': {
+                'type': '16s',
+                'subjectType': 'bioreplicate',
+            }
         }
 
         # First time point:
@@ -202,7 +208,7 @@ class TestExperimentChartForm(DatabaseTest):
 
         self.db_session.commit()
 
-        chart_df = chart.get_average_df(technique='16S', subject_type='bioreplicate')
+        chart_df = chart.get_average_df(technique='16S rRNA-seq', subject_type='bioreplicate')
 
         self.assertEqual(chart_df['time'].tolist(), [1, 2])
         self.assertEqual(chart_df['value'].tolist(), [250.0, 225.0])

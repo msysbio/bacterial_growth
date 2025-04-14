@@ -1,13 +1,46 @@
-{% macro render_step3_status(submission) %}
+{% macro render_step3_status(submission_form, submission) %}
 
   <ul class="upload-status">
     {% if submission.studyDesign['vessel_type'] %}
       <li class="complete">
-        <span class="icon"></span> Study design filled in
+        <span class="icon"></span>
+        <span>Study design filled in:</span>
+        <span class="truncate">
+          <strong>{{ submission_form.vessel_description() }}</strong>,
+          <strong>{{ submission_form.timepoint_description() }}</strong>
+        </span>
       </li>
     {% else %}
       <li class="incomplete">
         <span class="icon"></span> Study design incomplete
+      </li>
+    {% endif %}
+
+    {% if submission.studyDesign['techniques']|length > 0: %}
+      {% for (type, techniques) in submission_form.technique_descriptions(): %}
+        {% if type == 'Metabolite': %}
+          <li class="complete">
+            <span class="icon"></span>
+            <span>{{ techniques[0].metaboliteIds|length }} Metabolites measured:</span>
+            <span class="truncate">
+              <strong>
+                {{ submission_form.fetch_all_metabolites()|map(attribute="name")|join('</strong>, <strong>')|safe }}
+              </strong>
+            </span>
+          </li>
+        {% else: %}
+          <li class="complete">
+            <span class="icon"></span>
+            <span>{{ techniques|length }} {{ type }} measurements:</span>
+            <span class="truncate">
+              <strong>{{ techniques|map(attribute="short_name")|join('</strong>, <strong>')|safe }}</strong>
+            </span>
+          </li>
+        {% endif %}
+      {% endfor %}
+    {% else %}
+      <li class="incomplete">
+        <span class="icon"></span> No measurement techniques added yet
       </li>
     {% endif %}
   </ul>

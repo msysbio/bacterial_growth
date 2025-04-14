@@ -9,7 +9,7 @@ def load_yaml(file_path):
         return yaml.safe_load(file)
 
 
-def test_study_yaml(data):
+def test_study_yaml(submission, data):
     """
     Function that test the study yaml dataframe, checking that all the mandatory columns are not .nan or in the right format
 
@@ -26,9 +26,20 @@ def test_study_yaml(data):
     required_columns.discard('Study_PublicationURL')
 
     for column in required_columns:
-        if column == 'Study_UniqueID':
-            if not (pd.api.types.is_float_dtype(df[column]) or pd.api.types.is_string_dtype(df[column])):
-                errors.append(f"Study: Column '{column}' must be of type string or blank.")
+        csv_id = 'N/A'
+        for value in df[column].tolist():
+            csv_id = value.strip()
+
+        if column == 'Study_UniqueID' and csv_id != submission.studyUniqueID:
+            errors.append(
+                f"The study ID in the Study file ({csv_id}) does not match the one in the form ({submission.studyUniqueID}). "
+                "Check that the spreadsheet you're uploading is for the study you intended."
+            )
+        elif column == 'Project_UniqueID' and csv_id != submission.projectUniqueID:
+            errors.append(
+                f"The project ID in the Study file ({csv_id}) does not match the one in the form ({submission.projectUniqueID}). "
+                "Check that the spreadsheet you're uploading is for the project you intended."
+            )
         else:
             if not (pd.api.types.is_string_dtype(df[column])):
                 errors.append(f"Study: Column '{column}' must be of type string. No blank cells allowed.")

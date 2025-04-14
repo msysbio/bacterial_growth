@@ -1,7 +1,45 @@
 {% from 'utils/_form_errors.html' import render_form_errors %}
+{% from 'utils/_post_button.html' import post_button %}
 {% from 'pages/upload/step4/_spreadsheet_preview.html' import render_spreadsheet_preview %}
 
 {% macro render_step4_form(submission_form, errors) %}
+
+  <div>
+    <h3>Download Templates</h3>
+
+    <div class="columns">
+      <div class="column" style="width: 50%;">
+        <p>
+          The <strong>study template</strong> is an Excel file that should be filled in with
+          additional information about your study. The first sheet of the file
+          labelled <strong>README</strong> contains instructions on how to describe
+          the experiments in your study. Some cells will be filled in automatically
+          based on the information you've entered so far.
+        </p>
+      </div>
+
+      <div class="column" style="width: 50%;">
+        <p>
+          The <strong>data template</strong> is where you'll share your actual
+          growth data. The columns are types of measurement (Flow Cytometry,
+          16S-rRNA reads, metabolite concentrations, etc) and each row represents a
+          single time point for a particular bioreplicate.
+        </p>
+      </div>
+    </div>
+
+    <div class="columns" style="margin-top: 10px;">
+      <div class="column" style="width: 50%;">
+        {{ post_button("⬇ Download Study Template", url_for('download_study_template_xlsx')) }}
+      </div>
+
+      <div class="column" style="width: 50%;">
+        {{ post_button("⬇ Download Data Template", url_for('download_data_template_xlsx')) }}
+      </div>
+    </div>
+  </div>
+
+  <br>
 
   <form
       class="simple-form"
@@ -9,88 +47,83 @@
       method="POST"
       action="{{ url_for('upload_step4_page') }}">
 
-    <div class="columns">
-      <div class="column js-upload-container" style="width: 50%;">
-        <h3>1. Upload Data Template</h3>
+    <div>
+      <h3>Upload Completed Spreadsheets</h3>
 
-        <p>
-          Upload below the Excel Data file once completed with all the data
-          measured in your study according to the instructions provided in
-          <strong>Step 3</strong>. Remember that no modifications are allowed
-          after you submit the data. Please double check below that all the
-          cells are correct.
-        </p>
+      <p>
+        You can drag and drop the spreadsheets onto the upload areas, or click
+        on "Browse" to open a file picker. Once you upload a file, you'll be
+        able to see a preview and inspect it for issues.
+      </p>
 
-        <div class="form-row full">
-          <div class="file-upload-container full js-file-upload">
-            <img
-                src="{{ url_for('static', filename='images/cloud-upload.svg') }}"
-                height="40"
-                title="Upload" />
+      <p>
+        When you click "Next", your files will be validated and your study will
+        be created. You will get a link to see the processed data and you'll be
+        able to publish it after a period of 24 hours.
+      </p>
 
-            <div class="instructions">
-              <strong>Drag and drop file here</strong>
-              <span class="hint">Limit 200MB per file</span>
+      {{ render_form_errors(errors) }}
+
+      <div class="columns" style="margin-top: 10px;">
+        <div class="column js-upload-container" style="width: 50%;">
+          <div class="form-row full">
+            <div class="file-upload-container full js-file-upload">
+              <img
+                  src="{{ url_for('static', filename='images/cloud-upload.svg') }}"
+                  height="40"
+                  title="Upload" />
+
+              <div class="instructions">
+                <span>Drag and drop <strong>Study</strong> file</span>
+                <span class="hint">Limit 200MB per file</span>
+              </div>
+
+              <label class="upload-button white-button">
+                Browse files
+                <input type="file" name="study-template" class="hidden" accept=".xls,.xlsx" />
+              </label>
             </div>
+          </div>
 
-            <label class="upload-button white-button">
-              Browse files
-              <input type="file" name="data-template" class="hidden" accept=".xls,.xlsx" />
-            </label>
+          <div class="preview js-preview">
+            {% if submission_form.submission.studyFileId: %}
+              {{ render_spreadsheet_preview(submission_form.submission.studyFile) }}
+            {% endif %}
           </div>
         </div>
 
-        <div class="preview js-preview">
-          {% if submission_form.submission.dataFileId: %}
-            {{ render_spreadsheet_preview(submission_form.submission.dataFile) }}
-          {% endif %}
-        </div>
-      </div>
+        <div class="column js-upload-container" style="width: 50%;">
+          <div class="form-row full">
+            <div class="file-upload-container full js-file-upload">
+              <img
+                  src="{{ url_for('static', filename='images/cloud-upload.svg') }}"
+                  height="40"
+                  title="Upload" />
 
-      <div class="column js-upload-container" style="width: 50%;">
-        <h3>2. Upload Study Template</h3>
+              <div class="instructions">
+                <span>Drag and drop <strong>Data</strong> file</span>
+                <span class="hint">Limit 200MB per file</span>
+              </div>
 
-        <p>
-          Upload below the Excel Study file once completed with all the data
-          measured in your study according to the instructions provided in the
-          <strong>Step 3</strong>. Remember that no modifications are allowed
-          after you submit the data. Please double check below that all the
-          cells are correct.
-        </p>
-
-        <div class="form-row full">
-          <div class="file-upload-container full js-file-upload">
-            <img
-                src="{{ url_for('static', filename='images/cloud-upload.svg') }}"
-                height="40"
-                title="Upload" />
-
-            <div class="instructions">
-              <strong>Drag and drop file here</strong>
-              <span class="hint">Limit 200MB per file</span>
+              <label class="upload-button white-button">
+                Browse files
+                <input type="file" name="data-template" class="hidden" accept=".xls,.xlsx" />
+              </label>
             </div>
-
-            <label class="upload-button white-button">
-              Browse files
-              <input type="file" name="study-template" class="hidden" accept=".xls,.xlsx" />
-            </label>
           </div>
-        </div>
 
-        <div class="preview js-preview">
-          {% if submission_form.submission.studyFileId: %}
-            {{ render_spreadsheet_preview(submission_form.submission.studyFile) }}
-          {% endif %}
+          <div class="preview js-preview">
+            {% if submission_form.submission.dataFileId: %}
+              {{ render_spreadsheet_preview(submission_form.submission.dataFile) }}
+            {% endif %}
+          </div>
         </div>
       </div>
     </div>
 
-    {{ render_form_errors(errors) }}
-
-    <input
-        type="submit"
-        class="form-input-full"
-        value="Save uploaded files" />
+    <div class="form-row">
+      <input type="submit" value="Next" />
+    </div>
   </form>
 
 {% endmacro %}

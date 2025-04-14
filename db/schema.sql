@@ -230,6 +230,31 @@ CREATE TABLE FC_Counts (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `MeasurementTechniques`
+--
+
+DROP TABLE IF EXISTS MeasurementTechniques;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE MeasurementTechniques (
+  id int NOT NULL AUTO_INCREMENT,
+  `type` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  subjectType varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  units varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  `description` text,
+  includeStd tinyint(1) NOT NULL DEFAULT '0',
+  studyUniqueId varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  metaboliteIds json DEFAULT (json_array()),
+  strainIds json DEFAULT (json_array()),
+  createdAt datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updatedAt datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (id),
+  KEY MeasurementTechniques_studyUniqueId (studyUniqueId),
+  CONSTRAINT MeasurementTechniques_studyUniqueId FOREIGN KEY (studyUniqueId) REFERENCES Study (studyUniqueID) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `Measurements`
 --
 
@@ -244,11 +269,12 @@ CREATE TABLE Measurements (
   timeInSeconds int NOT NULL,
   pH varchar(100) DEFAULT NULL,
   unit varchar(100) DEFAULT NULL,
-  technique varchar(100) NOT NULL,
   `value` decimal(20,3) DEFAULT NULL,
   std decimal(20,3) DEFAULT NULL,
   subjectType varchar(100) NOT NULL,
   subjectId varchar(100) NOT NULL,
+  technique varchar(100) DEFAULT NULL,
+  techniqueId int DEFAULT NULL,
   PRIMARY KEY (id),
   KEY bioreplicateUniqueId (bioreplicateUniqueId),
   KEY studyId (studyId),
@@ -350,10 +376,30 @@ CREATE TABLE Project (
   projectName varchar(100) COLLATE utf8mb4_bin DEFAULT NULL,
   projectDescription text COLLATE utf8mb4_bin,
   projectUniqueID varchar(100) COLLATE utf8mb4_bin DEFAULT NULL,
+  createdAt datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updatedAt datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (projectId),
   UNIQUE KEY projectName (projectName),
   UNIQUE KEY projectUniqueID (projectUniqueID)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `ProjectUsers`
+--
+
+DROP TABLE IF EXISTS ProjectUsers;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE ProjectUsers (
+  id int NOT NULL AUTO_INCREMENT,
+  projectUniqueID varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  userUniqueID varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  createdAt datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (id),
+  KEY projectUniqueID (projectUniqueID),
+  CONSTRAINT projectUniqueID FOREIGN KEY (projectUniqueID) REFERENCES Project (projectUniqueID) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -372,6 +418,7 @@ CREATE TABLE Strains (
   NCBId int DEFAULT NULL,
   descriptionMember text COLLATE utf8mb4_bin,
   assemblyGenBankId varchar(50) COLLATE utf8mb4_bin DEFAULT NULL,
+  userUniqueID varchar(100) COLLATE utf8mb4_bin DEFAULT NULL,
   PRIMARY KEY (strainId),
   KEY fk_1 (studyId),
   CONSTRAINT Strains_fk_1 FOREIGN KEY (studyId) REFERENCES Study (studyId) ON DELETE CASCADE ON UPDATE CASCADE
@@ -392,9 +439,30 @@ CREATE TABLE Study (
   studyDescription text COLLATE utf8mb4_bin,
   studyURL varchar(100) COLLATE utf8mb4_bin DEFAULT NULL,
   studyUniqueID varchar(100) COLLATE utf8mb4_bin DEFAULT NULL,
+  timeUnits varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  createdAt datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updatedAt datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (studyId),
   UNIQUE KEY studyUniqueID (studyUniqueID)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `StudyUsers`
+--
+
+DROP TABLE IF EXISTS StudyUsers;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE StudyUsers (
+  id int NOT NULL AUTO_INCREMENT,
+  studyUniqueID varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  userUniqueID varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  createdAt datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (id),
+  KEY studyUniqueID (studyUniqueID),
+  CONSTRAINT studyUniqueID FOREIGN KEY (studyUniqueID) REFERENCES Study (studyUniqueID) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -475,5 +543,11 @@ INSERT INTO MigrationVersions VALUES
 (11,'2025_02_13_121409_rename_comunity_to_community_2','2025-03-03 12:20:13'),
 (16,'2025_02_13_163206_create_measurements','2025-03-09 11:09:49'),
 (17,'2025_02_17_161750_remove_duplicated_columns_from_metabolite_per_experiment','2025-03-09 11:09:49'),
-(23,'2025_03_11_113040_create_submissions_and_excel_files','2025-03-17 10:04:03');
+(23,'2025_03_11_113040_create_submissions_and_excel_files','2025-03-17 10:04:03'),
+(25,'2025_03_21_112110_create_project_and_study_user_join_tables','2025-03-21 10:31:34'),
+(26,'2025_03_25_133231_add_user_id_to_new_strains','2025-03-25 12:34:13'),
+(33,'2025_03_28_181930_create_measurement_techniques','2025-03-30 14:26:17'),
+(38,'2025_03_30_160720_add_technique_id_to_measurements','2025-04-02 08:11:06'),
+(40,'2025_04_03_121425_add_time_units_to_study','2025-04-03 10:18:23'),
+(42,'2025_04_03_125243_add_timestamps_to_study_and_project','2025-04-03 10:55:38');
 

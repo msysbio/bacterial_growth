@@ -14,7 +14,10 @@ from legacy.check_yaml import (
 )
 
 
-def validate_upload(yml_dir, study_template, data_template):
+def validate_upload(yml_dir, submission):
+    study_template = submission.studyFile.content
+    data_template = submission.dataFile.content
+
     errors = []
 
     if len(study_template) == 0:
@@ -38,7 +41,7 @@ def validate_upload(yml_dir, study_template, data_template):
 
     # Do the test to the yaml files according to the sheet
     data_study_yaml = load_yaml(info_file_study)
-    errors = test_study_yaml(data_study_yaml)
+    errors = test_study_yaml(submission, data_study_yaml)
 
     data_experiment_yaml = load_yaml(info_file_experiments)
     errors.extend(test_experiments_yaml(data_experiment_yaml))

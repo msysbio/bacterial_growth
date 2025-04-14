@@ -2,7 +2,15 @@
 
 {% macro render_step2_form(submission_form, submission) %}
 
-  {% include 'pages/upload/step2/_info.html' %}
+  <p>
+    Select all the microbial strains used in the study across all experiments.
+    Start typing and pick taxa from the automatic completion list.
+  </p>
+
+  <p>
+    If you do not find your microbial strains, define your own by clicking "Add
+    new strain" and specifying its name and parent strain species.
+  </p>
 
   <p>
     <form
@@ -15,9 +23,12 @@
           <select
               name="strains"
               multiple="multiple"
+              data-placeholder="Example: Roseburia intestinalis"
               class="strain-select js-multiple-strain-select">
             {% for taxon in submission_form.fetch_taxa(): %}
-              <option value={{ taxon.tax_id }} selected="selected">{{ taxon.tax_names }}</option>
+              <option value={{ taxon.tax_id }} selected="selected">
+              {{ taxon.tax_names }} (NCBI:{{ taxon.tax_id }})
+              </option>
             {% endfor %}
           </select>
         </label>
@@ -34,23 +45,28 @@
       {% endfor %}
 
       <div class="form-row">
-        <a href="#" class="green-button js-add-strain">Add new strain</a>
+        <input type="submit" class="green-button" value="Next" />
 
         <div class="flex-right">
-          <input type="submit" class="green-button" value="Next" />
+          <a href="#" class="white-button js-add-strain">+ Add new strain</a>
         </div>
       </div>
 
       <template class="strain-list-item">
         <li>
-          <strong>${name}</strong>:
-          <a href="https://www.ncbi.nlm.nih.gov/datasets/taxonomy/${id}/" target="_blank">NCBI:${id}</a>
+          <strong>${name}</strong>
+          (<a href="https://www.ncbi.nlm.nih.gov/datasets/taxonomy/${id}/" target="_blank">NCBI:${id}</a>)
         </li>
       </template>
 
-      <template
-        class="new-strain"
-        data-initial='{{ submission['studyDesign'].new_strains|tojson }}'>
+      <template class="new-strain-parent-preview">
+        <div>
+          Parent strain: <strong>${name}</strong>
+          (<a href="https://www.ncbi.nlm.nih.gov/datasets/taxonomy/${id}/" target="_blank">NCBI:${id}</a>)
+        </div>
+      </template>
+
+      <template class="new-strain">
         {{ render_new_strain_form(data=None, prefix='') }}
       </template>
     </form>

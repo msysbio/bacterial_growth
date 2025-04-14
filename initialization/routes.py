@@ -7,6 +7,8 @@ import pages.static as static_pages
 import pages.strains as strain_pages
 import pages.studies as study_pages
 import pages.upload as upload_pages
+import pages.submissions as submission_pages
+import pages.users as user_pages
 
 
 def init_routes(app):
@@ -25,11 +27,24 @@ def init_routes(app):
     app.add_url_rule("/upload/4", view_func=upload_pages.upload_step4_page, methods=["GET", "POST"])
     app.add_url_rule("/upload/5", view_func=upload_pages.upload_step5_page, methods=["GET", "POST"])
 
-    app.add_url_rule("/upload/new_submission",         view_func=upload_pages.new_submission_action,    methods=["POST"])
-    app.add_url_rule("/upload/edit_submission/<id>",   view_func=upload_pages.edit_submission_action,   methods=["POST"])
-    app.add_url_rule("/upload/delete_submission/<id>", view_func=upload_pages.delete_submission_action, methods=["POST"])
+    app.add_url_rule(
+        "/upload/new_submission",
+        view_func=submission_pages.new_submission_action,
+        methods=["POST"],
+    )
+    app.add_url_rule(
+        "/upload/edit_submission/<id>",
+        view_func=submission_pages.edit_submission_action,
+        methods=["POST"],
+    )
+    app.add_url_rule(
+        "/upload/delete_submission/<id>",
+        view_func=submission_pages.delete_submission_action,
+        methods=["POST"],
+    )
 
-    app.add_url_rule("/upload/study_template.xlsx", view_func=upload_pages.upload_study_template_xlsx)
+    app.add_url_rule("/upload/study_template.xlsx", view_func=upload_pages.download_study_template_xlsx, methods=["POST"])
+    app.add_url_rule("/upload/data_template.xlsx", view_func=upload_pages.download_data_template_xlsx, methods=["POST"])
     app.add_url_rule(
         "/upload/spreadsheet_preview",
         view_func=upload_pages.upload_spreadsheet_preview_fragment,
@@ -52,6 +67,9 @@ def init_routes(app):
         view_func=search_pages.search_index_page,
         methods=["GET", "POST"],
     )
+
+    app.add_url_rule("/profile", view_func=user_pages.user_show_page)
+    app.add_url_rule("/login",   view_func=user_pages.user_login_action, methods=["POST"])
 
     return app
 

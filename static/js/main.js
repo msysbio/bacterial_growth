@@ -53,4 +53,36 @@ $(document).ready(function() {
     $bodies.removeClass('active');
     $($bodies[clickedIndex]).addClass('active');
   });
+
+  if (navigator.clipboard) {
+    $(document).on('click', '.js-copy-button', function(e) {
+      e.preventDefault();
+
+      let $button = $(this);
+      let input = $button.next('input');
+
+      navigator.clipboard.writeText(input.val());
+
+      $button.text('Copied ✅');
+      $button.prop('disabled', true);
+
+      setTimeout(function () {
+        $button.text('Copy 📋');
+        $button.prop('disabled', false);
+      }, 2000);
+    });
+  } else {
+    // TODO Hide button and just show an input?
+  }
+
+  // Open single select2 dropdowns on focus
+  // Reference: https://stackoverflow.com/a/49261426
+  $(document).on('focus', '.select2-selection.select2-selection--single', function (e) {
+    $(this).closest('.select2-container').siblings('select:enabled').select2('open');
+
+    // Note: Hacky, but it doesn't seem like the search input focuses reliably otherwise
+    setTimeout(function() {
+      $('.select2-container--open .select2-search__field').focus();
+    }, 200);
+  });
 });

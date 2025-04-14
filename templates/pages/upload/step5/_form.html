@@ -1,41 +1,33 @@
-{% macro render_step5_form(_submission_form) %}
+{% macro render_step5_form(submission_form, submission) %}
 
   <form
       class="simple-form"
       method="POST"
       action="{{ url_for('upload_step5_page') }}">
 
-    <h3>Data visibility</h3>
-
     <p>
-      By default your data will be visible and public in the database. Do you
-      want to make your data visible now?
+      Your study will be publishable in <strong>24 hours</strong>. At that
+      time, the button below will be enabled and will allow you to make your
+      data visible to other people. You can find the study on the following
+      page, which for the moment is visible only to you:
     </p>
 
-    <div class="form-row">
-      <input type="radio" name="visibility" value="yes" id="visibility-yes" checked>
-      <label for="visibility-yes">Yes, make my data visible now!</label>
-    </div>
-
-    <div class="form-row">
-      <input type="radio" name="visibility" value="no" id="visibility-no">
-      <label for="visibility-no">No, make my data public later</label>
-    </div>
-
     <p>
-      After submitting your data, a report with the results will be sent to
-      your e-mail.
+      <a href="{{ url_for('study_show_page', studyId=submission_form.study_id) }}">
+        [{{ submission_form.study_id }}] {{ submission.studyDesign['study']['name'] }}
+      </a>
     </p>
 
-    <label>
-      Provide your e-mail address:
-      <input type="email" name="email" class="form-input-blue form-input-full" />
-    </label>
+    <p>
+      You are free to explore the data and validate that it matches your
+      expectations. If you see any issues, you can update the study using this
+      form.
+    </p>
 
     <input
         type="submit"
         class="form-input-full"
-        value="Finish submission" />
+        value="Publish (TODO timer)" />
   </form>
 
 {% endmacro %}

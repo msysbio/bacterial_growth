@@ -1,0 +1,91 @@
+{% macro render_strain_form(data, prefix) %}
+
+  <div class="technique-container js-technique-container" data-subject-type="strain">
+    <h3>Strain-level measurement</h3>
+
+    <p>
+      Counts of specific strains within a vessel. Could be measured directly
+      (e.g. via fluorescence), or it could be calculated based on relative
+      measurements multiplied by total counts.
+    </p>
+
+    <hr>
+
+    <input type="hidden" name="{{ prefix }}subjectType" value="strain" />
+
+    <div class="form-row">
+      <label style="width: 50%;">
+        <div>Type of measurement technique</div>
+        <select
+            name="{{ prefix }}type"
+            class="form-input-full form-input-blue js-type-select" />
+          <option value="fc" data-column-name="FC reads" {{ "selected" if data['type'] == 'fc' }}>
+            Flow Cytometry per species
+          </option>
+          <option value="plates" data-column-name="plate counts" {{ "selected" if data['type'] == 'plates' }}>
+            Plate Counts per species
+          </option>
+          <option value="16s" data-column-name="rRNA reads" {{ "selected" if data['type'] == '16s' }}>
+            16S rRNA-seq
+          </option>
+        </select>
+      </label>
+
+      <label style="width: 50%;">
+        <span>Units:</span>
+        <select
+            name="{{ prefix }}units"
+            class="form-input-full form-input-blue js-unit-select" />
+          <option value="Cells/mL" {{ "selected" if data['units'] == 'Cells/mL' }}>
+            Cells/mL
+          </option>
+          <option value="reads" {{ "selected" if data['units'] == 'reads' }}>
+            Reads
+          </option>
+          <option value="" {{ "selected" if data['units'] == '' }}>
+            N/A
+          </option>
+        </select>
+      </label>
+    </div>
+
+    <div class="form-row">
+      <label class="full">
+        <div>Description of methodology</div>
+        <textarea
+            name="{{ prefix }}description"
+            class="form-input-full form-input-blue"
+            placeholder="Example: We measured total FC and multiplied it by the relative bacterial density..."
+            rows=2>{{ data['description'] if data }}</textarea>
+      </label>
+    </div>
+
+    <div class="form-row" style="margin-top: 10px">
+      <label class="full" style="align-content: center;">
+        Include STD:
+        <input
+            type="checkbox"
+            class="js-include-std"
+            name="{{ prefix }}includeStd"
+            {{ "checked" if data and data['includeStd'] }} />
+        <div class="help">
+          If you have multiple technical replicates, you can submit your point
+          estimate as the measurement and add the standard deviation in a
+          separate column.
+        </div>
+      </label>
+    </div>
+
+    <hr>
+
+    <div class="form-row">
+      <div class="js-preview">
+      </div>
+
+      <div class="no-label flex-right">
+        <a href="#" class="white-button js-remove">🗑 Remove</a>
+      </div>
+    </div>
+  </div>
+
+{% endmacro %}

@@ -19,7 +19,7 @@
   </div>
 
   {% for (name, sheet) in sheets.items() %}
-    <div class="form-row hidden dataframe-container js-sheet js-sheet-{{ name }}">
+    <div class="form-row hidden dataframe-container js-sheet js-sheet-{{ name|replace(' ', '-') }}">
       {{ render_dataframe(sheet) }}
     </div>
   {% endfor %}

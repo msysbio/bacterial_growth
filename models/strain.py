@@ -1,7 +1,11 @@
-from sqlalchemy import String
+from sqlalchemy import (
+    String,
+    ForeignKey,
+)
 from sqlalchemy.orm import (
     Mapped,
     mapped_column,
+    relationship,
 )
 from sqlalchemy.ext.hybrid import hybrid_property
 
@@ -14,6 +18,9 @@ class Strain(OrmBase):
 
     strainId: Mapped[int] = mapped_column(primary_key=True)
     memberName: Mapped[str] = mapped_column(String)
+
+    studyId: Mapped[str] = mapped_column(ForeignKey('Study.studyId'), nullable=False)
+    study: Mapped['Study'] = relationship(back_populates="strains")
 
     def __lt__(self, other):
         return self.memberName < other.memberName

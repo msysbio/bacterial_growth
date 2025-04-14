@@ -1,0 +1,39 @@
+{% extends '_layout.html' %}
+
+{% block title %}: Profile{% endblock %}
+
+{% block content %}
+  <div class="container profile-page">
+    <h2>Profile page</h2>
+
+    {% if g.current_user %}
+      <h3>Your current user UUID:</h3>
+
+      <p>
+        <div class="copy-button-wrapper flex-row flex-grow">
+          <button type="button" class="js-copy-button copy-button green-button">Copy 📋</button>
+          <input
+              type="text"
+              value="{{ g.current_user.uuid }}"
+              class="form-input-blue"
+              readonly />
+        </div>
+      </p>
+    {% endif %}
+
+    <h3>Log in (change your user UUID):</h3>
+
+    <p>
+      <form action="{{ url_for('user_login_action') }}" class="simple-form login-form" method="POST">
+        <div class="form-row">
+          <label class="uuid">
+            <span>UUID:</span>
+            <input name="user_uuid" class="form-input-full form-input-blue" type="text" required />
+          </label>
+
+          <input type="submit" value="Log in" />
+        </div>
+      </form>
+    </p>
+  </div>
+{% endblock %}

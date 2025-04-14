@@ -52,12 +52,17 @@
     list-style: none;
     display: flex;
     align-items: center;
+    gap: 4px;
+
+    span {
+      white-space: nowrap;
+    }
 
     .icon {
       width: 18px;
       height: 18px;
-      margin-right: 4px;
       background-size: cover;
+      flex-shrink: 0;
     }
 
     &.complete .icon {
@@ -66,10 +71,51 @@
     &.incomplete .icon {
       background-image: url('/static/images/orange-minus.svg');
     }
+
+    .truncate {
+      overflow-x: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+
+  .step-1 {
+    .column {
+      width: 50%;
+    }
+  }
+
+  .step-2 {
+    .new-strain-container {
+      border: 2px solid var(--border-color);
+      &.new {
+        border-style: dashed;
+      }
+    }
+  }
+
+  .step-3 {
+    .technique-container {
+      h3 {
+        margin-top: 0;
+      }
+
+      border: 2px solid var(--border-color);
+      &.new {
+        border-style: dashed;
+      }
+
+      border-radius: var(--border-radius);
+      padding: 10px;
+    }
   }
 
   .submission-forms {
     margin-top: 20px;
+  }
+
+  .submission-type-row {
+    align-items: flex-start;
+    gap: 10px;
   }
 
   .columns {

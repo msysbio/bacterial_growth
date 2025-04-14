@@ -1,90 +1,117 @@
+{% from 'pages/upload/step3/_bioreplicate_form.html' import render_bioreplicate_form %}
+{% from 'pages/upload/step3/_strain_form.html' import render_strain_form %}
+{% from 'pages/upload/step3/_metabolite_form.html' import render_metabolite_form %}
+
 {% macro render_step3_form(submission_form, upload_form) %}
-  <div class="columns">
-    <div class="column" style="width: 50%;">
-      {% include 'pages/upload/step3/_info1.html' %}
+  <p>
+    Please describe the vessels (biological replicates) that you use in the
+    study and how many time points you measured.
+  </p>
 
-      <form
-          class="simple-form"
-          action="{{ url_for('upload_step3_page') }}"
-          method="POST">
+  <br>
 
-        <div class="form-row">
-          <label>
-            <span>Type of vessel used</span>
-            {{ upload_form.vessel_type(class='form-input-blue') }}
-          </label>
+  <form
+      class="simple-form"
+      action="{{ url_for('upload_step3_page') }}"
+      method="POST">
 
-          <div class="vessel-count vessel-bottles">
-            <label>
-              <span>Number of bottles</span>
-              {{ upload_form.bottle_count(class='form-input-blue') }}
-            </label>
-          </div>
+    <div class="form-row full">
+      <label>
+        <div>Type of vessel used</div>
+        {{ upload_form.vessel_type(class='form-input-blue') }}
+      </label>
 
-          <div class="vessel-count vessel-agar_plates hidden">
-            <label>
-              <span>Number of plates</span>
-              {{ upload_form.plate_count(class='form-input-blue') }}
-            </label>
-          </div>
+      <div class="vessel-count vessel-bottles">
+        <label>
+          <div>Number of bottles</div>
+          {{ upload_form.bottle_count(class='form-input-blue') }}
+        </label>
+      </div>
 
-          <div class="vessel-count vessel-well_plates vessel-mini_react hidden">
-            <label>
-              <span>Number of columns</span>
-              {{ upload_form.column_count(class='form-input-blue') }}
-            </label>
+      <div class="vessel-count vessel-agar_plates hidden">
+        <label>
+          <div>Number of plates</div>
+          {{ upload_form.plate_count(class='form-input-blue') }}
+        </label>
+      </div>
 
-            <label>
-              <span>Number of rows</span>
-              {{ upload_form.row_count(class='form-input-blue') }}
-            </label>
-          </div>
-        </div>
+      <div class="vessel-count vessel-well_plates vessel-mini_react hidden">
+        <label>
+          <div>Number of columns</div>
+          {{ upload_form.column_count(class='form-input-blue') }}
+        </label>
 
-        <div class="form-row">
-          <label>
-            <span>Number of measurement time-points</span>
-            {{ upload_form.timepoint_count(class='form-input-blue form-input-full') }}
-          </label>
-        </div>
+        <label>
+          <div>Number of rows</div>
+          {{ upload_form.row_count(class='form-input-blue') }}
+        </label>
+      </div>
 
-        <div class="form-row">
-          <label>
-            <span>Techniques used to measure growth</span>
-            {{ upload_form.technique_types(class='form-input-blue form-input-full') }}
-          </label>
-        </div>
+      <label>
+        <div>Number of measurement time-points</div>
+        {{ upload_form.timepoint_count(class='form-input-blue form-input-full') }}
+      </label>
 
-        <div class="form-row">
-          <label class="full">
-            <span>If metabolites were measured, select which ones:</span>
-            <select
-                multiple="multiple"
-                name="metabolites"
-                class="form-input-blue form-input-full js-metabolites-select">
-              {% for metabolite in submission_form.fetch_metabolites() %}
-                <option value="{{ metabolite.chebi_id }}" selected>{{ metabolite.metabo_name }}</option>
-              {% endfor %}
-            </select>
-          </label>
-        </div>
-
-        <div class="form-row">
-          <input
-              type="submit"
-              class="form-input-full"
-              value="Click here to Download the Data Template" />
-        </div>
-      </form>
+      <label>
+        <div>Time units</div>
+        {{ upload_form.time_units(class='form-input-blue form-input-full') }}
+      </label>
     </div>
 
-    <div class="column" style="width: 50%;">
-      {% include 'pages/upload/step3/_info2.html' %}
+    <p>
+      For every type of growth measurement you performed, please add a new
+      entry by using the buttons below. In the next step, you'll download a
+      data template where the rows will each represent a biological replicate
+      and a time point, and the columns will match the measurements from these
+      techniques.
+    </p>
 
-      <a href="{{ url_for('upload_study_template_xlsx') }}" class="green-button full text-center">
-        Click here to download the study template
-      </a>
+    <br>
+
+    {% for technique in submission_form.submission['studyDesign']['techniques']: %}
+      {% set prefix = 'techniques-{}-'.format(loop.index0)  %}
+
+      {% if technique['subjectType'] == 'bioreplicate': %}
+        {{ render_bioreplicate_form(data=technique, prefix=prefix) }}
+      {% elif technique['subjectType'] == 'strain': %}
+        {{ render_strain_form(data=technique, prefix=prefix) }}
+      {% elif technique['subjectType'] == 'metabolite': %}
+        {{ render_metabolite_form(submission_form, technique_index=loop.index0, data=technique, prefix=prefix) }}
+      {% else: %}
+        {{ technique|tojson }}
+      {% endif %}
+    {% endfor %}
+
+    <div class="form-row">
+      <p style="margin-top: 0; align-content: center;">
+        Add a type of measurement included in the study:
+      </p>
+
+      <div class="flex-right">
+        <a href="#" class="white-button js-add js-add-bioreplicate">+ Community</a>
+        <a href="#" class="white-button js-add js-add-strains">+ Strains</a>
+        <a href="#" class="white-button js-add js-add-metabolites">+ Metabolites</a>
+      </div>
     </div>
-  </div>
+
+    <template class="bioreplicate-form">
+      {{ render_bioreplicate_form(data=None, prefix='') }}
+    </template>
+
+    <template class="strain-form">
+      {{ render_strain_form(data=None, prefix='') }}
+    </template>
+
+    <template class="metabolite-form">
+      {{ render_metabolite_form(submission_form, technique_index=None, data=None, prefix='') }}
+    </template>
+
+    <div class="form-row">
+      <input
+          type="submit"
+          class="form-input-blue"
+          value="Next" />
+    </div>
+  </form>
 
 {% endmacro %}

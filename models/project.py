@@ -15,5 +15,13 @@ class Project(OrmBase):
 
     projectUniqueID: Mapped[str] = mapped_column(String(100), primary_key=True)
 
-    projectId:   Mapped[str] = mapped_column(String(100), nullable=False)
-    projectName: Mapped[str] = mapped_column(String(100), nullable=False)
+    projectId:          Mapped[str] = mapped_column(String(100), nullable=False)
+    projectName:        Mapped[str] = mapped_column(String(100), nullable=False)
+    projectDescription: Mapped[str] = mapped_column(String,      nullable=False)
+
+    projectUsers: Mapped[List['ProjectUser']] = relationship(back_populates="project")
+    studies:      Mapped[List['Study']]       = relationship(back_populates="project")
+
+    @property
+    def studyUuids(self):
+        return [s.studyUniqueID for s in self.studies]

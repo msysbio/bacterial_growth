@@ -68,29 +68,19 @@
       <br>
 
       <div class="upload-steps">
-        {% set step1_classes = [
-          'active' if submission_form.step == 1,
-          'disabled' if submission_form.step < 1,
-        ]|join(' ') %}
-
-        <div class="step-content step-1 {{ step1_classes }}">
+        <div class="step-content step-1 {{ submission_form.html_step_classes(1) }}">
           {% call section_link(submission_form.step, 1, 'upload_step1_page') %}
             Step 1: Enter project and study information
           {% endcall %}
 
           {% if submission_form.step == 1 %}
-            {{ render_step1_form(submission_form, submission, error) }}
+            {{ render_step1_form(submission_form, submission, projects, studies) }}
           {% else %}
             {{ render_step1_status(submission) }}
           {% endif %}
         </div>
 
-        {% set step2_classes = [
-          'active' if submission_form.step == 2,
-          'disabled' if submission_form.step < 2,
-        ]|join(' ') %}
-
-        <div class="step-content step-2 {{ step2_classes }}">
+        <div class="step-content step-2 {{ submission_form.html_step_classes(2) }}">
           {% call section_link(submission_form.step, 2, 'upload_step2_page') %}
             Step 2: Pick microbial strains
           {% endcall %}
@@ -98,33 +88,23 @@
           {% if submission_form.step == 2 %}
             {{ render_step2_form(submission_form, submission) }}
           {% else %}
-            {{ render_step2_status(submission) }}
+            {{ render_step2_status(submission_form, submission) }}
           {% endif %}
         </div>
 
-        {% set step3_classes = [
-          'active' if submission_form.step == 3,
-          'disabled' if submission_form.step < 3,
-        ]|join(' ') %}
-
-        <div class="step-content step-3 {{ step3_classes }}">
+        <div class="step-content step-3 {{ submission_form.html_step_classes(3) }}">
           {% call section_link(submission_form.step, 3, 'upload_step3_page') %}
-            Step 3: Download templates
+            Step 3: Describe measurement methods
           {% endcall %}
 
           {% if submission_form.step == 3 %}
             {{ render_step3_form(submission_form, upload_form) }}
           {% else %}
-            {{ render_step3_status(submission) }}
+            {{ render_step3_status(submission_form, submission) }}
           {% endif %}
         </div>
 
-        {% set step4_classes = [
-          'active' if submission_form.step == 4,
-          'disabled' if submission_form.step < 4,
-        ]|join(' ') %}
-
-        <div class="step-content step-4 {{ step4_classes }}">
+        <div class="step-content step-4 {{ submission_form.html_step_classes(4) }}">
           {% call section_link(submission_form.step, 4, 'upload_step4_page') %}
             Step 4: Upload data
           {% endcall %}
@@ -136,18 +116,13 @@
           {% endif %}
         </div>
 
-        {% set step5_classes = [
-          'active' if submission_form.step == 5,
-          'disabled' if submission_form.step < 5,
-        ]|join(' ') %}
-
-        <div class="step-content step-5 {{ step5_classes }}">
+        <div class="step-content step-5 {{ submission_form.html_step_classes(5) }}">
           {% call section_link(submission_form.step, 5, 'upload_step5_page') %}
             Step 5: Publish data
           {% endcall %}
 
           {% if submission_form.step == 5 %}
-            {{ render_step5_form(submission_form) }}
+            {{ render_step5_form(submission_form, submission) }}
           {% else %}
             {{ render_step5_status(submission_form) }}
           {% endif %}

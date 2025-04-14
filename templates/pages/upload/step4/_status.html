@@ -3,7 +3,9 @@
   <ul class="upload-status">
     {% if submission.studyFileId: %}
       <li class="complete">
-        <span class="icon"></span> Study design uploaded
+        <span class="icon"></span>
+        Study design uploaded:
+        <code class="inline">{{ submission.studyFile.filename }}</code>
       </li>
     {% else %}
       <li class="incomplete">
@@ -13,7 +15,9 @@
 
     {% if submission.dataFileId: %}
       <li class="complete">
-        <span class="icon"></span> Experimental data uploaded
+        <span class="icon"></span>
+        Experimental data uploaded:
+        <code class="inline">{{ submission.dataFile.filename }}</code>
       </li>
     {% else %}
       <li class="incomplete">
