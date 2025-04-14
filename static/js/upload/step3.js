@@ -114,7 +114,7 @@ $(document).ready(function() {
       let $unitsSelect = $container.find('.js-unit-select');
       let type = $typeSelect.val();
 
-      if (type == 'ph') {
+      if (type == 'ph' || type == 'od') {
         $unitsSelect.val('');
       } else if (type == '16s') {
         $unitsSelect.val('reads');

@@ -1,8 +1,11 @@
 from typing import List
+import datetime
 
 from sqlalchemy import (
     String,
     ForeignKey,
+    DateTime,
+    FetchedValue,
 )
 from sqlalchemy.orm import (
     Mapped,
@@ -38,3 +41,6 @@ class Study(OrmBase):
     studyMetabolites: Mapped[List['StudyMetabolite']] = relationship(
         back_populates="study"
     )
+
+    createdAt: Mapped[datetime] = mapped_column(DateTime, server_default=FetchedValue())
+    updatedAt: Mapped[datetime] = mapped_column(DateTime, server_default=FetchedValue())

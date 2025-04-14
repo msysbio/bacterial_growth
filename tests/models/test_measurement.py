@@ -7,7 +7,6 @@ from models import (
     Measurement,
     Study
 )
-from models.measurement_technique import TECHNIQUE_NAMES
 
 from tests.database_test import DatabaseTest
 import lib.util as util

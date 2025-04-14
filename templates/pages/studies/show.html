@@ -2,21 +2,25 @@
 
 {% extends '_layout.html' %}
 
-{% block title %}: Study {{ study['studyId'] }}{% endblock %}
+{% block title %}: Study {{ study.studyId }}{% endblock %}
 
 {% block content %}
-  <div class="container">
+  <div class="container study-page">
+    <nav>
+      {% set projectUrl = url_for('project_show_page', projectId=study.project.projectId) %}
+
+      <ul>
+        <li class="small">
+          Project
+          <a href="{{ projectUrl }}">{{ study.project.projectId }}</a>:
+          {{ study.project.projectName }}
+        </li>
+        <li class="small">Study {{ study.studyId }}</li>
+      </ul>
+    </nav>
+
     <article>
-      <h2>{{ study['studyName'] }}</h2>
-
-      <p>{{ study['studyDescription'] }}</p>
-
-      <p>
-        {% if study['studyURL']: %}
-          <strong>URL</strong>: <a href="{{ study['studyURL'] }}">{{ study['studyURL'] }}</a>
-          <br>
-        {% endif %}
-      </p>
+      <h1>{{ study.studyName }}</h1>
 
       <p>
         <a href="{{ url_for('dashboard_index_page', studyId=study['studyId']) }}" class="white-button">
@@ -28,98 +32,136 @@
         </a>
       </p>
 
-      <br>
-
-      <div>
-        <table class="simple-table">
-          <tr>
-            <th>Techniques</th>
-            <th>Species</th>
-            <th>Metabolites</th>
-          </tr>
-
-          <tr>
-            <td>
-              <ul>
-                {% for name in study['techniques']: %}
-                  <li>{{ name }}</li>
-                {% endfor %}
-              </ul>
-            </td>
-
-            <td>
-              <ul>
-                {% for (name, id) in study['members']: %}
-                  <li>
-                    <a href="{{ url_for('strain_show_page', id=id) }}">{{ name }}</a>
-                  </li>
-                {% endfor %}
-              </ul>
-            </td>
-
-            <td>
-              <ul>
-                {% for (name, chebi_id) in study['metabolites']: %}
-                  <li>
-                    <a href="{{ url_for('metabolite_show_page', chebi_id=chebi_id) }}">{{ name }}</a>
-                  </li>
-                {% endfor %}
-              </ul>
-            </td>
-          </tr>
-        </table>
-      </div>
+      <h2>Basic information</h2>
 
       <p>
-        <h3>Experiments</h3>
-        <div class="dataframe-container">
-          {{ render_dataframe(study['experiments']) }}
-        </div>
+        {% if study.studyURL: %}
+          <strong>Publication URL</strong>: {{ study.studyURL|urlize(target="_blank") }}
+          <br>
+        {% endif %}
       </p>
 
       <p>
-        <h3>Compartments</h3>
-        <div class="dataframe-container">
-          {{ render_dataframe(study['compartments']) }}
-        </div>
+        {{ study.studyDescription }}
       </p>
 
-      <div>
-        <h3>Communities information</h3>
-        <div class="dataframe-container">
-          {{ render_dataframe(study['communities']) }}
-        </div>
+      <h2>Measurement techniques</h2>
 
-        <h3>Community members information</h3>
-        <div class="dataframe-container">
-          {{ render_dataframe(study['microbial_strains']) }}
-        </div>
-      </div>
+      <p>
+        To explore the data in graphical form, click "Compare" on the
+        measurements you're interested in and visit the "Comparison" page from
+        the panel in the upper-right corner.
+      </p>
 
-      <div>
-        <h3>Biological replicates metadata</h3>
-        <div class="dataframe-container">
-          {{ render_dataframe(study['biological_replicates']) }}
-        </div>
+      <div class="measurement-techniques">
+        {% for technique in study.measurementTechniques: %}
+          <div class="technique-container">
+            <h3>
+              {{ technique.long_name }}
 
-        {% if study['abundances'].size > 0: %}
-          <h3>Abundance data per Biological Replicates and microbial species</h3>
-          <div class="dataframe-container">
-            {{ render_dataframe(study['abundances']) }}
+              {% if technique.subjectType != 'metabolite': %}
+                per {{ technique.subject_short_name }}
+              {% endif %}
+
+              {% if technique.units != '': %}
+                measured in {{ technique.units }}
+              {% endif %}
+
+              ({{ technique.measurements|length }} measurements)
+            </h3>
+
+            <br>
+
+            <table class="dataframe-table measurements-table">
+              <tr>
+                <th>Actions</th>
+                <th>Subject</th>
+                <th>Time period</th>
+                <th colspan="3">Measurements</th>
+              </tr>
+
+              {% if technique.subjectType == 'bioreplicate': %}
+                <tr class="js-table-row">
+                  <th colspan="3"></th>
+                  <th>Count</th>
+                  <th>Mean</th>
+                  <th>STD</th>
+                </tr>
+              {% endif %}
+
+              {% for bioreplicate, bioreplicate_measurements in technique.measurements_by_bioreplicate(g.db_session): %}
+                {% if technique.subjectType != 'bioreplicate': %}
+                  <tr class="js-table-row">
+                    <th colspan="3" align="center">
+                      Bioreplicate: {{ bioreplicate.bioreplicateId }}
+                    </th>
+                    <th>Count</th>
+                    <th>Mean</th>
+                    <th>STD</th>
+                  </tr>
+                {% endif %}
+
+                {% for subject, measurements in technique.measurements_by_subject(g.db_session, bioreplicate_measurements): %}
+                  {% set subjectClass = subject.__class__.__name__ %}
+
+                  <tr class="js-table-row">
+                    <td>
+                      {% set targetIdentifier = "{}|{}|{}|{}".format(
+                        bioreplicate.bioreplicateUniqueId,
+                        technique.id,
+                        subjectClass|lower,
+                        subject.id
+                      ) %}
+
+                      <div class="js-compare-container" data-target-identifier="{{ targetIdentifier }}">
+                        <span class="js-compare">
+                          <a
+                              href="#"
+                              class="white-button small-button">
+                            ↔ Compare
+                          </a>
+                        </span>
+
+                        <span class="js-uncompare hidden">
+                          ✅ Comparing
+                          <a
+                              href="#"
+                              class="white-button small-button">
+                            ➖
+                          </a>
+                        </span>
+                      </div>
+                    </td>
+                    <td>
+                      {% if technique.subjectType == 'bioreplicate': %}
+                        {{ subject.name }}
+                      {% elif technique.subjectType == 'strain': %}
+                        <a href="{{ url_for('strain_show_page', id=subject.id) }}">
+                          {{ subject.name }}
+                        </a>
+                      {% elif technique.subjectType == 'metabolite': %}
+                        <a href="{{ url_for('metabolite_show_page', chebi_id=subject.id) }}">
+                          {{ subject.name }}
+                        </a>
+                      {% endif %}
+                    </td>
+                    <td>{{ measurements[0].timeInHours }}h - {{ measurements[-1].timeInHours }}h</td>
+
+                    <td class="numeric">
+                      {{ measurements|length }}
+                    </td>
+                    <td class="numeric">
+                      {{ "{:.2E}".format(measurements|mean('value')) }}
+                    </td>
+                    <td class="numeric">
+                      {{ "{:.2E}".format(measurements|std('value')) }}
+                    </td>
+                  </tr>
+                {% endfor %}
+              {% endfor %}
+            </table>
           </div>
-        {% endif %}
-
-        {% if study['fc_counts'].size > 0: %}
-          <h3>Flow Cytometry Counts data per Biological Replicates and microbial species</h3>
-          <div class="dataframe-container">
-            {{ render_dataframe(study['fc_counts']) }}
-          </div>
-        {% endif %}
-
-        <h3>Metabolites measured per Biological Replicates</h3>
-        <div class="dataframe-container">
-          {{ render_dataframe(study['metabolites_per_replicate']) }}
-        </div>
+        {% endfor %}
       </div>
     </article>
   </div>

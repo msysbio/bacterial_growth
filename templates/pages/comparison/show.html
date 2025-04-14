@@ -1,0 +1,68 @@
+{% from 'utils/_post_button.html' import post_button %}
+
+{% extends '_layout.html' %}
+
+{% block title %}: Comparison view{% endblock %}
+
+{% block content %}
+  <div class="container comparison-page">
+    <article>
+      <h2>Comparison view</h2>
+
+      <p>
+        Collect measurements from one or multiple studies by using the
+        "Compare" button. From this table, use the checkbox to add them to the
+        chart and compare values.
+      </p>
+
+      <br>
+
+      <div class="data-container">
+        <form action="{{ url_for('comparison_chart_fragment') }}" method="POST">
+          <div class="table-container">
+            <table class="dataframe-table targets-table">
+              <tr>
+                <th>⬅</th>
+                <th>➡</th>
+                <th>Study</th>
+                <th>Bioreplicate</th>
+                <th>Subject name</th>
+                <th>Technique name</th>
+                <th>Units</th>
+              </tr>
+
+              {% for (identifier, bioreplicate, technique, subject, measurements) in targets: %}
+                {% if technique.study: %}
+                  <tr data-identifier="{{ identifier }}">
+                    <td><input type="checkbox" class="js-target" name="{{ identifier }}" value="left" /></td>
+                    <td><input type="checkbox" class="js-target" name="{{ identifier }}" value="right" /></td>
+                    <td>[{{ technique.study.studyId }}] {{ technique.study.studyName }}</td>
+                    <td>{{ bioreplicate.bioreplicateId }}</td>
+                    <td>{{ technique.subjectType }}: {{ subject.name }}</td>
+                    <td>{{ technique.long_name }}</td>
+                    <td>{{ technique.units }}</td>
+                  </tr>
+                {% endif %}
+              {% endfor %}
+            </table>
+          </div>
+        </form>
+
+        <div class="chart-row chart">
+          <div class="chart-placeholder">
+            📊
+          </div>
+        </div>
+      </div>
+
+      <div style="float: right;">
+        {{ post_button("Clear", url_for("comparison_clear_action")) }}
+      </div>
+      <div style="clear: both;"></div>
+    </article>
+  </div>
+
+  {% assets "plotly_js" %}
+  <script src="{{ ASSET_URL }}" type="text/javascript"></script>
+  {% endassets %}
+{% endblock %}

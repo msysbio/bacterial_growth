@@ -22,7 +22,7 @@
             Flow Cytometry
           </option>
           <option value="od" data-column-name="OD" {{ "selected" if data['type'] == 'od' }}>
-            Optical Density
+            Optical Density (absorbance)
           </option>
           <option value="ph" data-column-name="pH" {{ "selected" if data['type'] == 'ph' }}>
             pH
@@ -35,15 +35,20 @@
         <select
             name="{{ prefix }}units"
             class="form-input-full form-input-blue js-unit-select" />
-          <option value="Cells/mL" {{ "selected" if data['units'] == 'Cells/mL' }}>
-            Cells/mL
-          </option>
-          <option value="CFUs" {{ "selected" if data['units'] == 'CFUs' }}>
-            CFUs
-          </option>
-          <option value="" {{ "selected" if data['units'] == '' }}>
-            N/A
-          </option>
+          <optgroup label="Cells per volume">
+            <option value="Cells/mL" {{ "selected" if data['units'] == 'Cells/mL' }}>
+              Cells/mL
+            </option>
+            <option value="Cells/μL" {{ "selected" if data['units'] == 'Cells/μL' }}>
+              Cells/μL
+            </option>
+          </optgroup>
+
+          <optgroup label="Unitless/unknown">
+            <option value="" {{ "selected" if data['units'] == '' }}>
+              N/A
+            </option>
+          </optgroup>
         </select>
       </label>
     </div>

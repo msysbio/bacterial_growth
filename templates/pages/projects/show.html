@@ -1,0 +1,31 @@
+{% extends '_layout.html' %}
+
+{% block title %}: Project {{ project.projectId }}{% endblock %}
+
+{% block content %}
+  <div class="container">
+    <article>
+      <h2>{{ project.projectName }}</h2>
+
+      <p>
+        {{ project.projectDescription }}
+      </p>
+
+      <h3>List of studies</h3>
+
+      <ul>
+        {% for study in project.studies: %}
+          <li>
+            <a href="{{ url_for('study_show_page', studyId=study.studyId) }}">
+              [{{ study.studyId }}] {{ study.studyName }}
+            </a>
+
+            <p>
+              {{ study.studyDescription }}
+            </p>
+          </li>
+        {% endfor %}
+      </ul>
+    </article>
+  </div>
+{% endblock %}

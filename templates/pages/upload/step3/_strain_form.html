@@ -36,15 +36,26 @@
         <select
             name="{{ prefix }}units"
             class="form-input-full form-input-blue js-unit-select" />
-          <option value="Cells/mL" {{ "selected" if data['units'] == 'Cells/mL' }}>
-            Cells/mL
-          </option>
-          <option value="reads" {{ "selected" if data['units'] == 'reads' }}>
-            Reads
-          </option>
-          <option value="" {{ "selected" if data['units'] == '' }}>
-            N/A
-          </option>
+          <optgroup label="Cells per volume">
+            <option value="Cells/mL" {{ "selected" if data['units'] == 'Cells/mL' }}>
+              Cells/mL
+            </option>
+            <option value="Cells/μL" {{ "selected" if data['units'] == 'Cells/μL' }}>
+              Cells/μL
+            </option>
+          </optgroup>
+
+          <optgroup label="Indirect measurements">
+            <option value="reads" {{ "selected" if data['units'] == 'reads' }}>
+              Reads
+            </option>
+          </optgroup>
+
+          <optgroup label="Unitless/unknown">
+            <option value="" {{ "selected" if data['units'] == '' }}>
+              N/A
+            </option>
+          </optgroup>
         </select>
       </label>
     </div>

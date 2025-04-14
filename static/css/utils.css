@@ -47,6 +47,12 @@ hr {
   margin: 16px 0;
 }
 
+.box {
+  border: 2px solid var(--border-color);
+  border-radius: var(--border-radius);
+  padding: 10px;
+}
+
 .error-message {
   display: block;
   background: pink;
@@ -82,6 +88,7 @@ table.simple-table {
 
 table.dataframe-table {
   border-spacing: 0;
+  border-collapse: collapse;
   font-size: 13px;
 
   th {
@@ -96,6 +103,10 @@ table.dataframe-table {
     white-space: nowrap;
     overflow-x: hidden;
     text-overflow: ellipsis;
+  }
+
+  tr.highlight {
+    background-color: var(--light-blue);
   }
 
   /* Border-collapse + rounded borders doesn't seem to work well. Might end up
@@ -203,6 +214,10 @@ form.simple-form {
     background-color: rgb(7, 110, 126);
     color: white;
   }
+
+  &.small-button {
+    padding: 0.3rem;
+  }
 }
 
 .white-button {
@@ -223,6 +238,10 @@ form.simple-form {
 
   &:visited {
     color: inherit;
+  }
+
+  &.small-button {
+    padding: 0.3rem;
   }
 }
 
