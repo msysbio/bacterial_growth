@@ -1,5 +1,5 @@
 {% from 'utils/_time_tag.html' import time_tag %}
-{% from 'utils/_post_button.html' import post_button %}
+{% from 'utils/_post_icon_button.html' import post_icon_button %}
 
 {% macro render_user_submissions(user_submissions, current_submission) %}
   <p>
@@ -22,7 +22,7 @@
 
       {% for user_submission in user_submissions %}
         <tr class="{{ "highlight" if user_submission.id == current_submission.id }}">
-          <td>
+          <td align="center">
             {% if user_submission.project is none: %}
               <span data-tippy-content="New study in a new project">
                 📚
@@ -66,19 +66,24 @@
           </td>
           <td>{{ time_tag(user_submission.updatedAt, class="js-relative") }}</td>
           <td>{{ time_tag(user_submission.createdAt, class="js-relative") }}</td>
-          <td>{{ user_submission.completed_step_count }}/5</td>
-          <td>
-            {{ post_button(
-              "Edit",
-              url_for('edit_submission_action', id=user_submission.id),
-              button_class='small-button'
-            ) }}
-            {{ post_button(
-              "Delete",
-              url_for('delete_submission_action', id=user_submission.id),
-              confirm="This will discard the data in this submission, are you sure?",
-              button_class='small-button'
-            ) }}
+          <td align="center">
+            {{ user_submission.completed_step_count }}/5
+          </td>
+          <td align="center">
+            <span data-tippy-content="Edit">
+              {{ post_icon_button(
+              "edit",
+              url_for('edit_submission_action', id=user_submission.id)
+              ) }}
+            </span>
+            |
+            <span data-tippy-content="Delete">
+              {{ post_icon_button(
+                "delete",
+                url_for('delete_submission_action', id=user_submission.id),
+                confirm="This will discard the data in this submission, are you sure?"
+              ) }}
+            </span>
           </td>
         </tr>
       {% endfor %}

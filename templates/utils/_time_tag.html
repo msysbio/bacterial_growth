@@ -4,7 +4,7 @@
       class="{{ class }}"
       data-tippy-content="{{ timestamp.strftime("%c") }}"
       datetime="{{ timestamp.isoformat() }}">
-    {{ timestamp.strftime("%c") }}
+    {{ timestamp.strftime("%Y-%m-%d %H:%M") }}
   </time>
 
 {% endmacro %}

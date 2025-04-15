@@ -188,6 +188,13 @@ form.simple-form {
     span {
       color: white;
     }
+
+    &.icon {
+      border: none !important;
+      background-color: transparent !important;
+      margin: 0 !important;
+      padding: 0 !important;
+    }
   }
 
   .help {
@@ -314,8 +321,14 @@ form.simple-form {
   flex-shrink: 0;
 }
 
+.icon.icon-edit {
+  background-image: url('/static/images/icons/edit.svg');
+}
 .icon.icon-remove {
   background-image: url('/static/images/icons/red-minus.svg');
+}
+.icon.icon-delete {
+  background-image: url('/static/images/icons/square-red-minus.svg');
 }
 .icon.icon-add {
   background-image: url('/static/images/icons/green-plus.svg');

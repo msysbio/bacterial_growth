@@ -1,0 +1,14 @@
+{% macro post_icon_button(icon_name, url, confirm=None, class='', button_class='') %}
+
+  <form
+    action="{{ url }}"
+    class="simple-form {{ class }}"
+    style="display: inline-block; {{ style }}"
+    {% if confirm: %}
+      onSubmit="return confirm('{{ confirm | replace("'", "\\'") }}')"
+    {% endif %}
+    method="POST">
+    <input type="submit" value="" class="icon icon-{{ icon_name }} {{ button_class }}" />
+  </form>
+
+{% endmacro %}
