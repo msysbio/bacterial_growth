@@ -12,3 +12,8 @@ class OrmBase(DeclarativeBase):
 
     def __str__(self):
         return f"<{type(self).__name__} {self._asdict()}>"
+
+    def update(self, **kwargs):
+        for key, value in kwargs.items():
+            if hasattr(self, key):
+                setattr(self, key, value)

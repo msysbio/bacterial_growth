@@ -213,18 +213,18 @@ def upload_step4_page():
 
             with tempfile.TemporaryDirectory() as yml_dir:
                 with get_transaction() as db_transaction:
-                    new_db_session = get_session(db_transaction)
+                    db_trans_session = get_session(db_transaction)
                     errors = validate_upload(yml_dir, submission)
 
                     if not errors:
-                        study   = _save_study(new_db_session, submission_form)
-                        project = _save_project(new_db_session, submission_form)
+                        study   = _save_study(db_trans_session, submission_form)
+                        project = _save_project(db_trans_session, submission_form)
 
-                        new_db_session.flush()
+                        db_trans_session.flush()
 
                     if not errors:
                         (errors, errors_logic) = save_measurements_to_database(
-                            new_db_session,
+                            db_trans_session,
                             yml_dir,
                             submission_form,
                             submission.dataFile.content,
@@ -232,13 +232,13 @@ def upload_step4_page():
                             project,
                         )
                     else:
-                        new_db_session.rollback()
+                        db_trans_session.rollback()
 
                     if not errors:
-                        _save_chart_data_to_database(new_db_session, study, submission)
+                        _save_chart_data_to_database(db_trans_session, study, submission)
                         submission_form.save()
 
-                        new_db_session.commit()
+                        db_trans_session.commit()
 
                         return redirect(url_for('upload_step5_page'))
 
@@ -281,23 +281,29 @@ def _init_submission_form(step):
 def _save_study(db_session, submission_form):
     submission = submission_form.submission
 
-    study = Study(
-        studyId=submission_form.study_id,
-        studyName=submission.studyDesign['study']['name'],
-        studyDescription=submission.studyDesign['study']['description'],
-        studyURL=submission.studyDesign['study']['url'],
-        studyUniqueID=submission.studyUniqueID,
-        projectUniqueID=submission.projectUniqueID,
-        timeUnits=submission.studyDesign['time_units'],
-        publishableAt=datetime.datetime.now() + datetime.timedelta(hours=24),
-    )
+    params = {
+        'studyId':          submission_form.study_id,
+        'studyName':        submission.studyDesign['study']['name'],
+        'studyDescription': submission.studyDesign['study']['description'],
+        'studyURL':         submission.studyDesign['study']['url'],
+        'studyUniqueID':    submission.studyUniqueID,
+        'projectUniqueID':  submission.projectUniqueID,
+        'timeUnits':        submission.studyDesign['time_units'],
+    }
 
     if submission_form.type != 'update_study':
+        study = Study(**params)
+
         study.studyId = Study.find_available_id(db_session)
+        study.publishableAt = datetime.datetime.now() + datetime.timedelta(hours=24)
+
         db_session.add(StudyUser(
             studyUniqueID=submission.studyUniqueID,
             userUniqueID=submission.userUniqueID,
         ))
+    else:
+        study = db_session.get(Study, submission.studyUniqueID)
+        study.update(**params)
 
     db_session.add(study)
 
@@ -307,19 +313,23 @@ def _save_study(db_session, submission_form):
 def _save_project(db_session, submission_form):
     submission = submission_form.submission
 
-    project = Project(
-        projectId=submission_form.project_id,
-        projectName=submission.studyDesign['project']['name'],
-        projectDescription=submission.studyDesign['project']['description'],
-        projectUniqueID=submission.projectUniqueID,
-    )
+    params = {
+        'projectId':          submission_form.project_id,
+        'projectName':        submission.studyDesign['project']['name'],
+        'projectDescription': submission.studyDesign['project']['description'],
+        'projectUniqueID':    submission.projectUniqueID,
+    }
 
     if submission_form.type == 'new_project':
+        project = Project(**params)
         project.projectId = Project.find_available_id(db_session)
         db_session.add(ProjectUser(
             projectUniqueID=submission.projectUniqueID,
             userUniqueID=submission.userUniqueID,
         ))
+    else:
+        project = db_session.get(Project, submission.projectUniqueID)
+        project.update(**params)
 
     db_session.add(project)
 
