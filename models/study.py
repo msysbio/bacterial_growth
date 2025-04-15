@@ -1,6 +1,7 @@
 from typing import List
 import datetime
 
+import sqlalchemy as sql
 from sqlalchemy import (
     String,
     ForeignKey,
@@ -51,4 +52,17 @@ class Study(OrmBase):
 
     @hybrid_property
     def isPublished(self):
-        return self.publishedAt is None or self.publishedAt < datetime.datetime.now()
+        return self.publishedAt is not None and self.publishedAt < datetime.datetime.now()
+
+    @hybrid_property
+    def isPublishable(self):
+        return self.publishableAt is not None and self.publishableAt < datetime.datetime.now()
+
+    @staticmethod
+    def find_available_id(db_conn):
+        query           = "SELECT IFNULL(COUNT(*), 0) FROM Study;"
+        number_projects = db_conn.execute(sql.text(query)).scalar()
+        next_number     = int(number_projects) + 1
+        next_id         = "SMGDB{:08d}".format(next_number)
+
+        return next_id

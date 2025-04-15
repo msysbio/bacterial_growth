@@ -1,5 +1,6 @@
 from typing import List
 
+import sqlalchemy as sql
 from sqlalchemy import String
 from sqlalchemy.orm import (
     Mapped,
@@ -25,3 +26,12 @@ class Project(OrmBase):
     @property
     def studyUuids(self):
         return [s.studyUniqueID for s in self.studies]
+
+    @staticmethod
+    def find_available_id(db_conn):
+        query           = "SELECT IFNULL(COUNT(*), 0) FROM Project;"
+        number_projects = db_conn.execute(sql.text(query)).scalar()
+        next_number     = int(number_projects) + 1
+        next_id         = "PMGDB{:06d}".format(next_number)
+
+        return next_id

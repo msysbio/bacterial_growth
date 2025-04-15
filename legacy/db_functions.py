@@ -11,14 +11,6 @@ sys.path.append(current_dir)
 APP_ENV = os.getenv('APP_ENV', 'development')
 
 
-def getStudyID(conn):
-    query = "SELECT IFNULL(COUNT(*), 0) FROM Study;"
-    number_projects = conn.execute(sql.text(query)).scalar()
-    next_number = int(number_projects) + 1
-    Study_ID = "SMGDB{:08d}".format(next_number)
-    return Study_ID
-
-
 def getChebiId(conn, metabolite):
     phrase = f"SELECT chebi_id FROM Metabolites WHERE metabo_name = '{metabolite}';"
     res = conn.execute(sql.text(phrase)).all()
@@ -130,10 +122,3 @@ def getWhereClause(args):
         clause = clause[:-5] + ')'
 
     return clause
-
-def getProjectID(conn):
-    query = "SELECT IFNULL(COUNT(*), 0) FROM Project;"
-    number_projects = conn.execute(sql.text(query)).scalar()
-    next_number = int(number_projects) + 1
-    Project_ID = "PMGDB{:06d}".format(next_number)
-    return Project_ID
