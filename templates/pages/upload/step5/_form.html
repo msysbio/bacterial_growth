@@ -16,8 +16,12 @@
     {% elif submission.study.isPublished: %}
 
       <p>
-        Your study has been published on
-        <strong>{{ time_tag(submission.study.publishedAt, format="%A, %B %d at %H:%M:%S") }}</strong>
+        Your study has been published
+        {% if submission.study.publishedAt: %}
+          on <strong>{{ time_tag(submission.study.publishedAt, format="%A, %B %d at %H:%M:%S") }}</strong>
+        {% else: %}
+          TODO missing publishedAt
+        {% endif %}
       </p>
 
       <p>

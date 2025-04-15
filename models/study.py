@@ -51,4 +51,4 @@ class Study(OrmBase):
 
     @hybrid_property
     def isPublished(self):
-        return self.publishedAt < datetime.datetime.now()
+        return self.publishedAt is None or self.publishedAt < datetime.datetime.now()
