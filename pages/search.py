@@ -12,7 +12,10 @@ import sqlalchemy as sql
 from db import get_connection
 from forms.search_form import SearchForm, SearchFormClause
 import models.study_dfs as study_dfs
-from models import Study
+from models import (
+    Study,
+    StudyUser,
+)
 
 
 def search_index_page():
@@ -30,8 +33,14 @@ def search_index_page():
             message = "Couldn't find a study with these parameters."
             return render_template("pages/search/index.html", form=form, error=message, template_clause=template_clause)
     else:
+        # TODO (2025-04-15) Extract, test with multiple users
         studyIds = g.db_session.scalars(
             sql.select(Study.studyId)
+            .join(StudyUser)
+            .where(sql.or_(
+                Study.isPublished,
+                StudyUser.userUniqueID == g.current_user.uuid
+            ))
             .order_by(Study.updatedAt.desc())
             .limit(5)
         ).all()

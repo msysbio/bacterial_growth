@@ -1,3 +1,5 @@
+{% from 'utils/_time_tag.html' import time_tag %}
+
 {% macro render_step5_form(submission_form, submission) %}
 
   <form
@@ -5,29 +7,58 @@
       method="POST"
       action="{{ url_for('upload_step5_page') }}">
 
-    <p>
-      Your study will be publishable in <strong>24 hours</strong>. At that
-      time, the button below will be enabled and will allow you to make your
-      data visible to other people. You can find the study on the following
-      page, which for the moment is visible only to you:
-    </p>
+    {% if not submission.study: %}
 
-    <p>
-      <a href="{{ url_for('study_show_page', studyId=submission_form.study_id) }}">
-        [{{ submission_form.study_id }}] {{ submission.studyDesign['study']['name'] }}
-      </a>
-    </p>
+      <p>
+        Your study information has not been filled in. Please go back to the previous steps.
+      </p>
 
-    <p>
-      You are free to explore the data and validate that it matches your
-      expectations. If you see any issues, you can update the study using this
-      form.
-    </p>
+    {% elif submission.study.isPublished: %}
 
-    <input
-        type="submit"
-        class="form-input-full"
-        value="Publish (TODO timer)" />
+      <p>
+        Your study has been published on
+        <strong>{{ time_tag(submission.study.publishedAt, format="%A, %B %d at %H:%M:%S") }}</strong>
+      </p>
+
+      <p>
+        You can click the "Update" button to apply your current submission to
+        it, for example if you have discovered issues you need to fix. The
+        study will show a timestamp of the last update that was applied to it.
+      </p>
+
+    {% else: %}
+
+      <p>
+        Your study will be publishable in <strong>24 hours</strong>. At that
+        time, the button below will be enabled and will allow you to make your
+        data visible to other people. You can find the study on the following
+        page, which for the moment is visible only to you:
+      </p>
+
+      <p>
+        <a href="{{ url_for('study_show_page', studyId=submission_form.study_id) }}">
+          [{{ submission_form.study_id }}] {{ submission.studyDesign['study']['name'] }}
+        </a>
+      </p>
+
+      <p>
+        You are free to explore the data and validate that it matches your
+        expectations. If you see any issues, you can update the study using this
+        form.
+
+      </p>
+
+    {% endif %}
+
+    <br>
+
+    <button type="submit" class="form-input-full" {{ "disabled" if submission.study is none }}>
+      {% if submission.study and submission.study.isPublished: %}
+        Update
+      {% else: %}
+        Publish
+      {% endif %}
+    </button>
   </form>
 
 {% endmacro %}

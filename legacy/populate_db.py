@@ -116,6 +116,7 @@ def save_measurements_to_database(conn, yml_dir, submission_form, data_template)
         'studyUniqueID':    submission.studyUniqueID,
         'projectUniqueID':  submission.projectUniqueID,
         'timeUnits':        submission.studyDesign['time_units'],
+        'publishableAt':    datetime.datetime.now() + datetime.timedelta(hours=24),
     }
     study_filtered = {k: v for k, v in study.items() if v is not None}
 

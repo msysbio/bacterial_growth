@@ -442,6 +442,9 @@ CREATE TABLE Study (
   timeUnits varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
   createdAt datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updatedAt datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  publishableAt datetime DEFAULT NULL,
+  publishedAt datetime DEFAULT NULL,
+  embargoExpiresAt datetime DEFAULT NULL,
   PRIMARY KEY (studyId),
   UNIQUE KEY studyUniqueID (studyUniqueID)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
@@ -549,5 +552,6 @@ INSERT INTO MigrationVersions VALUES
 (33,'2025_03_28_181930_create_measurement_techniques','2025-03-30 14:26:17'),
 (38,'2025_03_30_160720_add_technique_id_to_measurements','2025-04-02 08:11:06'),
 (40,'2025_04_03_121425_add_time_units_to_study','2025-04-03 10:18:23'),
-(42,'2025_04_03_125243_add_timestamps_to_study_and_project','2025-04-03 10:55:38');
+(44,'2025_04_03_125243_add_timestamps_to_study_and_project','2025-04-15 10:06:31'),
+(46,'2025_04_15_112546_add_publishing_related_states_to_studies','2025-04-15 10:06:58');
 

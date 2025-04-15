@@ -214,6 +214,13 @@ form.simple-form {
   {
     color: gray;
   }
+
+  button[disabled] {
+    background-color: gray;
+    &:hover {
+      background-color: gray;
+    }
+  }
 }
 
 .form-input-blue {

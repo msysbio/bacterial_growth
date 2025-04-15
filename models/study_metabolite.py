@@ -1,16 +1,9 @@
-from typing import List
-
-import sqlalchemy as sql
-from sqlalchemy import (
-    String,
-    ForeignKey,
-)
+from sqlalchemy import ForeignKey
 from sqlalchemy.orm import (
     Mapped,
     mapped_column,
     relationship,
 )
-from sqlalchemy.ext.hybrid import hybrid_property
 
 from models.orm_base import OrmBase
 

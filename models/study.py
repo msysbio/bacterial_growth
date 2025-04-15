@@ -12,6 +12,7 @@ from sqlalchemy.orm import (
     mapped_column,
     relationship,
 )
+from sqlalchemy.ext.hybrid import hybrid_property
 
 from models.orm_base import OrmBase
 
@@ -42,5 +43,12 @@ class Study(OrmBase):
         back_populates="study"
     )
 
-    createdAt: Mapped[datetime] = mapped_column(DateTime, server_default=FetchedValue())
-    updatedAt: Mapped[datetime] = mapped_column(DateTime, server_default=FetchedValue())
+    createdAt:        Mapped[datetime] = mapped_column(DateTime, server_default=FetchedValue())
+    updatedAt:        Mapped[datetime] = mapped_column(DateTime, server_default=FetchedValue())
+    publishableAt:    Mapped[datetime] = mapped_column(DateTime)
+    publishedAt:      Mapped[datetime] = mapped_column(DateTime)
+    embargoExpiresAt: Mapped[datetime] = mapped_column(DateTime)
+
+    @hybrid_property
+    def isPublished(self):
+        return self.publishedAt < datetime.datetime.now()
