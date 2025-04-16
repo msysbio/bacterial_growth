@@ -9,7 +9,8 @@ from lib.db import (
     execute_text
 )
 from models import (
-    MeasurementTechnique
+    MeasurementTechnique,
+    Submission,
 )
 
 class DatabaseTest(unittest.TestCase):
@@ -197,6 +198,34 @@ class DatabaseTest(unittest.TestCase):
         }
 
         record = MeasurementTechnique(**params)
+        self.db_session.add(record)
+
+        return record
+
+    def create_submission(self, **params):
+        """
+        A special case of a model factory: We do not create dependencies,
+        because a submission is supposed to be initialized with UUIDs that the
+        Project and Study are created from.
+        """
+        params = {
+            'studyUniqueID': str(uuid4()),
+            'projectUniqueID': str(uuid4()),
+            'userUniqueID': str(uuid4()),
+            'studyDesign': {
+                'time_units': 'h',
+                'project': {
+                    'name': 'Test project',
+                },
+                'study': {
+                    'name': 'Test study',
+                },
+                **params.get('studyDesign', {})
+            },
+            **params,
+        }
+
+        record = Submission(**params)
         self.db_session.add(record)
 
         return record

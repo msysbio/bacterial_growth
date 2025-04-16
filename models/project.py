@@ -7,6 +7,7 @@ from sqlalchemy.orm import (
     mapped_column,
     relationship,
 )
+from sqlalchemy.ext.hybrid import hybrid_property
 
 from models.orm_base import OrmBase
 
@@ -22,6 +23,10 @@ class Project(OrmBase):
 
     projectUsers: Mapped[List['ProjectUser']] = relationship(back_populates="project")
     studies:      Mapped[List['Study']]       = relationship(back_populates="project")
+
+    @hybrid_property
+    def name(self):
+        return self.projectName
 
     @property
     def studyUuids(self):

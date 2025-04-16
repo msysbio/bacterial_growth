@@ -4,9 +4,6 @@ Flask-WTF
 cssmin
 pandas
 plotly
-pytest
-pytest-env
-pytest-cov
 openpyxl
 humanize
 
@@ -20,6 +17,12 @@ flask-admin[sqlalchemy,export]
 
 # Deployment
 gunicorn
+
+# Testing
+pytest
+pytest-env
+pytest-cov
+freezegun
 
 # Streamlit app:
 matplotlib

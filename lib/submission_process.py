@@ -16,7 +16,7 @@ from models import (
 )
 
 
-def save_study(submission_form):
+def persist_submission_to_database(submission_form):
     submission = submission_form.submission
     errors = []
 
@@ -73,8 +73,8 @@ def _save_study(db_session, submission_form):
     params = {
         'studyId':          submission_form.study_id,
         'studyName':        submission.studyDesign['study']['name'],
-        'studyDescription': submission.studyDesign['study']['description'],
-        'studyURL':         submission.studyDesign['study']['url'],
+        'studyDescription': submission.studyDesign['study'].get('description', ''),
+        'studyURL':         submission.studyDesign['study'].get('url', ''),
         'studyUniqueID':    submission.studyUniqueID,
         'projectUniqueID':  submission.projectUniqueID,
         'timeUnits':        submission.studyDesign['time_units'],
@@ -105,7 +105,7 @@ def _save_project(db_session, submission_form):
     params = {
         'projectId':          submission_form.project_id,
         'projectName':        submission.studyDesign['project']['name'],
-        'projectDescription': submission.studyDesign['project']['description'],
+        'projectDescription': submission.studyDesign['project'].get('description', ''),
         'projectUniqueID':    submission.projectUniqueID,
     }
 

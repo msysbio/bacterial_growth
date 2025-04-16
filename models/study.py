@@ -51,12 +51,23 @@ class Study(OrmBase):
     embargoExpiresAt: Mapped[datetime] = mapped_column(DateTime)
 
     @hybrid_property
+    def name(self):
+        return self.studyName
+
+    @hybrid_property
     def isPublished(self):
-        return self.publishedAt is not None and self.publishedAt < datetime.datetime.now()
+        return self.publishedAt is not None
 
     @hybrid_property
     def isPublishable(self):
-        return self.publishableAt is not None and self.publishableAt < datetime.datetime.now()
+        return self.publishableAt is not None and self.publishableAt <= datetime.datetime.now()
+
+    def publish(self):
+        if not self.isPublishable:
+            return False
+        else:
+            self.publishedAt = datetime.datetime.now()
+            return True
 
     @staticmethod
     def find_available_id(db_conn):

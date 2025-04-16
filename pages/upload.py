@@ -22,7 +22,7 @@ from models import (
 from forms.submission_form import SubmissionForm
 from forms.upload_step2_form import UploadStep2Form
 from forms.upload_step3_form import UploadStep3Form
-from lib.submission_process import save_study
+from lib.submission_process import persist_submission_to_database
 
 import legacy.study_spreadsheet as study_spreadsheet
 import legacy.data_spreadsheet as data_spreadsheet
@@ -192,7 +192,7 @@ def upload_step4_page():
 
         submission_form.save()
 
-        errors = save_study(submission_form)
+        errors = persist_submission_to_database(submission_form)
 
         if not errors:
             return redirect(url_for('upload_step5_page'))
