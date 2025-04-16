@@ -65,6 +65,35 @@ class TestSubmissionForm(DatabaseTest):
         self.assertEqual(submission_form.errors.get('project_name'), ["Project name is taken"])
         self.assertEqual(submission_form.error_messages(), ["Project name is taken"])
 
+    def test_study_reuse(self):
+        s1 = self.create_study()
+
+        # First submission, creates project and study:
+        submission = self.create_submission(
+            studyUniqueID=s1.uuid,
+            studyDesign={
+                "vessel_type": "bottles",
+                "vessel_count": 6,
+                "timepoint_count": 6,
+                "bottle_count": 6,
+            },
+        )
+        self.db_session.add(submission)
+        self.db_session.flush()
+
+        submission_form = SubmissionForm(db_session=self.db_session)
+        submission_form.update_project({
+            'project_uuid':     '_new',
+            'project_name':     'Project 2',
+            'study_uuid':       '_new',
+            'study_name':       'Study 2',
+            'reuse_study_uuid': s1.uuid,
+        })
+
+        s2_study_design = submission_form.submission.studyDesign
+        self.assertEqual(s2_study_design['bottle_count'], 6)
+        self.assertEqual(s2_study_design['timepoint_count'], 6)
+
     def test_strains(self):
         t1 = self.create_taxon(tax_names="R. intestinalis")
         t2 = self.create_taxon(tax_names="B. thetaiotaomicron")

@@ -80,6 +80,19 @@ class SubmissionForm:
         else:
             self.submission.studyUniqueID = data['study_uuid']
 
+        # If study to reuse has been given, copy its last submission's study
+        # design:
+        if data.get('reuse_study_uuid', '') != '':
+            previous_submission = self.db_session.scalars(
+                sql.select(Submission)
+                .where(Submission.studyUniqueID == data['reuse_study_uuid'])
+                .order_by(Submission.updatedAt.desc())
+                .limit(1)
+            ).one_or_none()
+
+            if previous_submission:
+                self.submission.studyDesign = previous_submission.studyDesign
+
         # Update text fields:
         self.submission.studyDesign['project'] = {
             'name':        data['project_name'],
@@ -99,6 +112,7 @@ class SubmissionForm:
         self.project_id = self._find_project_id()
         self.study_id   = self._find_study_id()
         self.type       = self._determine_project_type()
+
 
     def update_strains(self, data):
         self.submission.studyDesign['strains']     = data['strains']

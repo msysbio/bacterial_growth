@@ -141,6 +141,31 @@
     </div>
 
     <div class="form-row">
+      <label>
+        <span>Reuse study design from a previous study:</span>
+
+        <select
+            name="reuse_study_uuid"
+            id="reuse_study_uuid"
+            class="form-input-blue form-input-full">
+          <option value="">
+          </option>
+          {% for study in studies: %}
+            <option value="{{ study.studyUniqueID }}">
+              [{{ study.studyId }}] {{ study.studyName }}
+            </option>
+          {% endfor %}
+        </select>
+
+        <div class="help">
+          If you choose a previous study, the following steps will be
+          pre-populated with the same strains, metabolites, etc. You might be
+          able to save some time and avoid re-entering the same details.
+        </div>
+      </label>
+    </div>
+
+    <div class="form-row">
       <input type="submit" value="Next" />
     </div>
   </form>
