@@ -19,7 +19,7 @@ from legacy.parse_raw_data import (
 # Rewrite project and study creation/update to use ORM style, update from submission only
 
 
-def save_measurements_to_database(conn, yml_dir, submission_form, data_template, study, project):
+def save_study_design_to_database(conn, yml_dir, submission_form, data_template, study, project):
     submission = submission_form.submission
 
     list_microbial_strains = [t.tax_names for t in submission_form.fetch_taxa()]
