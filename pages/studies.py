@@ -20,7 +20,10 @@ def study_show_page(studyId):
         .limit(1)
     ).one()
 
-    return render_template("pages/studies/show.html", study=study)
+    if study.visibleToUser(g.current_user):
+        return render_template("pages/studies/show.html", study=study)
+    else:
+        return render_template("pages/studies/_show_unpublished.html", study=study)
 
 
 def study_export_page(studyId):

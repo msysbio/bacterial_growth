@@ -11,6 +11,8 @@ from lib.db import (
 from models import (
     MeasurementTechnique,
     Submission,
+    Study,
+    StudyUser,
 )
 
 class DatabaseTest(unittest.TestCase):
@@ -79,17 +81,29 @@ class DatabaseTest(unittest.TestCase):
         project_uuid = self._get_or_create_dependency(params, 'projectUniqueID', 'project')
 
         params = {
-            'studyId': f"SMGDB{self.study_id:07}",
-            'projectUniqueID': project_uuid,
-            'studyName': f"Study {self.study_id}",
+            'studyId':          f"SMGDB{self.study_id:07}",
+            'projectUniqueID':  project_uuid,
+            'studyName':        f"Study {self.study_id}",
             'studyDescription': f"Study {self.study_id}",
-            'studyURL': None,
-            'studyUniqueID': study_uuid,
-            'timeUnits': 's',
+            'studyURL':         None,
+            'studyUniqueID':    study_uuid,
+            'timeUnits':        's',
             **params,
         }
 
-        return self._create_record('Study', params)
+        return self._create_orm_record(Study, params)
+
+    def create_study_user(self, **params):
+        user_uuid = str(uuid4())
+        study_uuid = self._get_or_create_dependency(params, 'studyUniqueID', 'study')
+
+        params = {
+            'studyUniqueID': study_uuid,
+            'userUniqueID':  user_uuid,
+            **params,
+        }
+
+        return self._create_orm_record(StudyUser, params)
 
     def create_experiment(self, **params):
         # TODO The experiment id *should* be `experiment_id`, but that's
@@ -248,6 +262,13 @@ class DatabaseTest(unittest.TestCase):
             params[pk_names[0]] = last_id
 
         return params
+
+    def _create_orm_record(self, model_class, params):
+        instance = model_class(**params)
+        self.db_session.add(instance)
+        self.db_session.flush()
+
+        return instance
 
     def _get_or_create_dependency(self, params, key_name, object_name, **dependency_params):
         if key_name in params:

@@ -51,6 +51,10 @@ class Study(OrmBase):
     embargoExpiresAt: Mapped[datetime] = mapped_column(DateTime)
 
     @hybrid_property
+    def uuid(self):
+        return self.studyUniqueID
+
+    @hybrid_property
     def name(self):
         return self.studyName
 
@@ -61,6 +65,15 @@ class Study(OrmBase):
     @hybrid_property
     def isPublishable(self):
         return self.publishableAt is not None and self.publishableAt <= datetime.datetime.now()
+
+    def visibleToUser(self, user):
+        if self.isPublished:
+            return True
+        elif not user or not user.uuid:
+            return False
+        else:
+            linked_user_ids = {su.userUniqueID for su in self.studyUsers}
+            return user.uuid in linked_user_ids
 
     def publish(self):
         if not self.isPublishable:

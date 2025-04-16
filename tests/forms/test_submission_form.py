@@ -30,7 +30,7 @@ class TestSubmissionForm(DatabaseTest):
 
         submission_form.update_project({
             'project_uuid':        p2['projectUniqueID'],
-            'study_uuid':          s2['studyUniqueID'],
+            'study_uuid':          s2.uuid,
             'project_name':        'Project 2 (updated)',
             'study_name':          'Study 2 (updated)',
             'project_description': 'Test',
@@ -38,7 +38,7 @@ class TestSubmissionForm(DatabaseTest):
         })
 
         self.assertEqual(submission_form.project_id, p2['projectId'])
-        self.assertEqual(submission_form.study_id, s2['studyId'])
+        self.assertEqual(submission_form.study_id, s2.studyId)
         self.assertEqual(submission_form.type, 'update_study')
         self.assertEqual(submission_form.submission.studyDesign['project']['name'], 'Project 2 (updated)')
         self.assertEqual(submission_form.submission.studyDesign['study']['name'], 'Study 2 (updated)')

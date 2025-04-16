@@ -1,0 +1,30 @@
+{% from 'utils/_dataframe.html' import render_dataframe %}
+
+{% extends '_layout.html' %}
+
+{% block title %}: Study {{ study.studyId }}{% endblock %}
+
+{% block content %}
+  <div class="container study-page">
+    <nav>
+      {% set projectUrl = url_for('project_show_page', projectId=study.project.projectId) %}
+
+      <ul>
+        <li class="small">
+          Project
+          <a href="{{ projectUrl }}">{{ study.project.projectId }}</a>:
+          {{ study.project.projectName }}
+        </li>
+        <li class="small">Study {{ study.studyId }}</li>
+      </ul>
+    </nav>
+
+    <article>
+      <h1>{{ study.studyName }}</h1>
+
+      <p>
+        This study is not published yet. Check back later.
+      </p>
+    </article>
+  </div>
+{% endblock %}

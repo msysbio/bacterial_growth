@@ -14,9 +14,8 @@ import lib.util as util
 
 class TestMeasurement(DatabaseTest):
     def test_successful_creation(self):
-        study_data = self.create_study()
-        study = self.db_session.get(Study, study_data['studyUniqueID'])
-        study_id = study_data['studyId']
+        study = self.create_study()
+        study_id = study.studyId
 
         bioreplicate_uuid = self.create_bioreplicate(studyId=study_id)['bioreplicateUniqueId']
         strain_id         = self.create_strain(studyId=study_id)['NCBId']
@@ -42,8 +41,7 @@ class TestMeasurement(DatabaseTest):
         self.assertTrue(measurement.id is not None)
 
     def test_import_bioreplicate_csv(self):
-        study_data = self.create_study(timeUnits='h')
-        study = self.db_session.get(Study, study_data['studyUniqueID'])
+        study = self.create_study(timeUnits='h')
 
         study_id = study.studyId
         study_uuid = study.studyUniqueID
@@ -98,8 +96,7 @@ class TestMeasurement(DatabaseTest):
         )
 
     def test_import_metabolite_csv(self):
-        study_data = self.create_study(timeUnits='m')
-        study = self.db_session.get(Study, study_data['studyUniqueID'])
+        study = self.create_study(timeUnits='m')
 
         study_id = study.studyId
         study_uuid = study.studyUniqueID
@@ -150,8 +147,7 @@ class TestMeasurement(DatabaseTest):
         )
 
     def test_import_strain_csv(self):
-        study_data = self.create_study()
-        study = self.db_session.get(Study, study_data['studyUniqueID'])
+        study = self.create_study()
 
         study_id = study.studyId
         study_uuid = study.studyUniqueID
