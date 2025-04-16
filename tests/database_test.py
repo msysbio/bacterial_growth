@@ -65,12 +65,12 @@ class DatabaseTest(unittest.TestCase):
         return self._create_orm_record(Metabolite, params)
 
     def create_project(self, **params):
-        self.project_id = getattr(self, 'project_id', 0) + 1
+        project_id = Project.find_available_id(self.db_session)
         project_uuid = str(uuid4())
 
         params = {
-            'projectId':       project_uuid,
-            'projectName':     f"Project {self.project_id}",
+            'projectId':       project_id,
+            'projectName':     f"Project {project_id}",
             'projectUniqueID': project_uuid,
             **params,
         }
@@ -78,15 +78,15 @@ class DatabaseTest(unittest.TestCase):
         return self._create_orm_record(Project, params)
 
     def create_study(self, **params):
-        self.study_id = getattr(self, 'study_id', 0) + 1
+        study_id = Study.find_available_id(self.db_session)
         study_uuid = str(uuid4())
 
         project_uuid = self._get_or_create_dependency(params, 'projectUniqueID', 'project')
 
         params = {
-            'studyId':          f"SMGDB{self.study_id:07}",
+            'studyId':          study_id,
             'projectUniqueID':  project_uuid,
-            'studyName':        f"Study {self.study_id}",
+            'studyName':        f"Study {study_id}",
             'studyUniqueID':    study_uuid,
             'timeUnits':        's',
             **params,
@@ -107,41 +107,37 @@ class DatabaseTest(unittest.TestCase):
         return self._create_orm_record(StudyUser, params)
 
     def create_experiment(self, **params):
-        # TODO The experiment id *should* be `experiment_id`, but that's
-        # actually the non-unique name. Some renaming needs to be done, but for
-        # now, we'll call the primary key `experiment_id_key`
-        self.experiment_id_key = getattr(self, 'experiment_id_key', 0) + 1
+        self.experiment_sequence = getattr(self, 'experiment_sequence', 0) + 1
 
         study_id = self._get_or_create_dependency(params, 'studyId', 'study')
 
         params = {
             'studyId':      study_id,
-            'experimentId': f"Experiment {self.experiment_id_key}",
+            'experimentId': f"Experiment {self.experiment_sequence}",
             **params,
         }
 
         return self._create_orm_record(Experiment, params)
 
     def create_bioreplicate(self, **params):
+        # Note: this is just a sequential number
         self.bioreplicate_uuid = getattr(self, 'bioreplicate_uuid', 0) + 1
 
-        study_id          = self._get_or_create_dependency(params, 'studyId', 'study')
-        experiment_id_key = self._get_or_create_dependency(params, 'experimentUniqueId', 'experiment', studyId=study_id)
+        study_id        = self._get_or_create_dependency(params, 'studyId', 'study')
+        experiment_uuid = self._get_or_create_dependency(params, 'experimentUniqueId', 'experiment', studyId=study_id)
 
         params = {
             'studyId':              study_id,
-            'bioreplicateUniqueId': str(self.bioreplicate_uuid),
+            'bioreplicateUniqueId': self.bioreplicate_uuid,
             'bioreplicateId':       f"Bioreplicate {self.bioreplicate_uuid}",
-            'experimentUniqueId':   experiment_id_key,
-            'experimentId':         f"Experiment {experiment_id_key}",
+            'experimentUniqueId':   experiment_uuid,
+            'experimentId':         f"Experiment {experiment_uuid}",
             **params,
         }
 
         return self._create_orm_record(Bioreplicate, params)
 
     def create_strain(self, **params):
-        self.strain_id = getattr(self, 'strain_id', 0) + 1
-
         study_id = self._get_or_create_dependency(params, 'studyId', 'study')
 
         params = {
@@ -251,10 +247,6 @@ class DatabaseTest(unittest.TestCase):
             }
 
             object = creator_func(**dependency_params)
-
-            if isinstance(object, dict):
-                key_value = object[key_name]
-            else:
-                key_value = getattr(object, key_name)
+            key_value = getattr(object, key_name)
 
         return key_value
