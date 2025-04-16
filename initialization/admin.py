@@ -14,9 +14,10 @@ from models import (
 
 class AppView(ModelView):
     can_export = True
+    can_view_details = True
 
 def init_admin(app):
-    admin = Admin(app, name='μGrowthDB admin')
+    admin = Admin(app, name='μGrowthDB admin', template_mode='bootstrap4')
 
     db_session = get_session()
 
