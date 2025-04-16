@@ -1,4 +1,4 @@
-{% macro time_tag(timestamp, format="%Y-%m-%d %H:%M", class='') %}
+{%- macro time_tag(timestamp, format="%Y-%m-%d %H:%M", class='') -%}
 
   <time
       class="{{ class }}"
@@ -7,4 +7,4 @@
     {{ timestamp.strftime(format) }}
   </time>
 
-{% endmacro %}
+{%- endmacro -%}

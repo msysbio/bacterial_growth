@@ -16,8 +16,7 @@ from lib.db import execute_into_df
 
 
 class ExperimentExportForm:
-    def __init__(self, study_id, db_session, args):
-        self.study_id = study_id
+    def __init__(self, db_session, args):
         self.db_session = db_session
 
         self.bioreplicate_uuids = []

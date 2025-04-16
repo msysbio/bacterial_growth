@@ -60,11 +60,11 @@ class Study(OrmBase):
 
     @hybrid_property
     def isPublished(self):
-        return self.publishedAt is not None
+        return self.publishedAt
 
     @hybrid_property
     def isPublishable(self):
-        return self.publishableAt is not None and self.publishableAt <= datetime.datetime.now()
+        return self.publishableAt and self.publishableAt <= datetime.datetime.now()
 
     def visibleToUser(self, user):
         if self.isPublished:

@@ -29,20 +29,27 @@
     {% else: %}
 
       <p>
-        Your study will be publishable after <strong>24 hours</strong>,
-        approximately <u>{{ time_tag(submission.study.publishableAt, class='js-relative') }}</u>
+        Your study will be publishable <strong>24 hours</strong> after
+        submission, which is approximately
+        <u>{{ time_tag(submission.study.publishableAt, class='js-relative') }}</u>.
       </p>
 
       <p>
         At that time, the button below will be enabled and will allow you to
         make your data visible to other people. You can find the study on the
-        following page, which for the moment is visible only to you:
+        following page, whose data is only visible to you at this time:
       </p>
 
       <p>
         <a href="{{ url_for('study_show_page', studyId=submission_form.study_id) }}">
           [{{ submission_form.study_id }}] {{ submission.studyDesign['study']['name'] }}
         </a>
+      </p>
+
+      <p>
+        Before publishing, visitors will be able to see the study and project
+        title, but none of the data or experimental design. The study will also
+        not show up in search results.
       </p>
 
       <p>
