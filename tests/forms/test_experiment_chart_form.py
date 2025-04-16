@@ -10,10 +10,10 @@ class TestExperimentChartForm(DatabaseTest):
     def test_df_for_metabolite_chart(self):
         bioreplicate = self.create_bioreplicate()
 
-        study_id          = bioreplicate['studyId']
-        bioreplicate_uuid = bioreplicate['bioreplicateUniqueId']
+        study_id          = bioreplicate.studyId
+        bioreplicate_uuid = bioreplicate.bioreplicateUniqueId
 
-        experiment = self.db_session.get(Experiment, bioreplicate['experimentUniqueId'])
+        experiment = self.db_session.get(Experiment, bioreplicate.experimentUniqueId)
         chart = ExperimentChartForm(experiment)
 
         self.create_metabolite(chebi_id='1', metabo_name='glucose')
@@ -48,10 +48,10 @@ class TestExperimentChartForm(DatabaseTest):
     def test_df_for_strain_chart(self):
         bioreplicate = self.create_bioreplicate()
 
-        study_id          = bioreplicate['studyId']
-        bioreplicate_uuid = bioreplicate['bioreplicateUniqueId']
+        study_id          = bioreplicate.studyId
+        bioreplicate_uuid = bioreplicate.bioreplicateUniqueId
 
-        experiment = self.db_session.get(Experiment, bioreplicate['experimentUniqueId'])
+        experiment = self.db_session.get(Experiment, bioreplicate.experimentUniqueId)
         chart = ExperimentChartForm(experiment)
 
         self.create_strain(strainId=1, memberName='R. intestinalis',     studyId=study_id)
@@ -90,8 +90,8 @@ class TestExperimentChartForm(DatabaseTest):
 
     def test_average_df_for_strain_chart(self):
         experiment      = self.create_experiment()
-        study_id        = experiment['studyId']
-        experiment_uuid = experiment['experimentUniqueId']
+        study_id        = experiment.studyId
+        experiment_uuid = experiment.experimentUniqueId
 
         bioreplicate1 = self.create_bioreplicate(experimentUniqueId=experiment_uuid, studyId=study_id)
         bioreplicate2 = self.create_bioreplicate(experimentUniqueId=experiment_uuid, studyId=study_id)
@@ -115,13 +115,13 @@ class TestExperimentChartForm(DatabaseTest):
 
         # First time point:
         self.create_measurement(
-            bioreplicateUniqueId=bioreplicate1['bioreplicateUniqueId'],
+            bioreplicateUniqueId=bioreplicate1.bioreplicateUniqueId,
             timeInSeconds=3600,
             value=100.0,
             **shared_params,
         )
         self.create_measurement(
-            bioreplicateUniqueId=bioreplicate2['bioreplicateUniqueId'],
+            bioreplicateUniqueId=bioreplicate2.bioreplicateUniqueId,
             timeInSeconds=3600,
             value=200.0,
             **shared_params,
@@ -129,13 +129,13 @@ class TestExperimentChartForm(DatabaseTest):
 
         # Second time point:
         self.create_measurement(
-            bioreplicateUniqueId=bioreplicate1['bioreplicateUniqueId'],
+            bioreplicateUniqueId=bioreplicate1.bioreplicateUniqueId,
             timeInSeconds=7200,
             value=200.0,
             **shared_params,
         )
         self.create_measurement(
-            bioreplicateUniqueId=bioreplicate2['bioreplicateUniqueId'],
+            bioreplicateUniqueId=bioreplicate2.bioreplicateUniqueId,
             timeInSeconds=7200,
             value=250.0,
             **shared_params,
@@ -150,8 +150,8 @@ class TestExperimentChartForm(DatabaseTest):
 
     def test_average_df_for_bioreplicate_chart(self):
         experiment      = self.create_experiment()
-        study_id        = experiment['studyId']
-        experiment_uuid = experiment['experimentUniqueId']
+        study_id        = experiment.studyId
+        experiment_uuid = experiment.experimentUniqueId
 
         bioreplicate1 = self.create_bioreplicate(experimentUniqueId=experiment_uuid, studyId=study_id)
         bioreplicate2 = self.create_bioreplicate(experimentUniqueId=experiment_uuid, studyId=study_id)
@@ -172,16 +172,16 @@ class TestExperimentChartForm(DatabaseTest):
 
         # First time point:
         self.create_measurement(
-            bioreplicateUniqueId=bioreplicate1['bioreplicateUniqueId'],
-            subjectId=bioreplicate1['bioreplicateUniqueId'],
+            bioreplicateUniqueId=bioreplicate1.bioreplicateUniqueId,
+            subjectId=bioreplicate1.bioreplicateUniqueId,
             subjectType='bioreplicate',
             timeInSeconds=3600,
             value=200.0,
             **shared_params,
         )
         self.create_measurement(
-            bioreplicateUniqueId=bioreplicate2['bioreplicateUniqueId'],
-            subjectId=bioreplicate2['bioreplicateUniqueId'],
+            bioreplicateUniqueId=bioreplicate2.bioreplicateUniqueId,
+            subjectId=bioreplicate2.bioreplicateUniqueId,
             subjectType='bioreplicate',
             timeInSeconds=3600,
             value=300.0,
@@ -190,16 +190,16 @@ class TestExperimentChartForm(DatabaseTest):
 
         # Second time point:
         self.create_measurement(
-            bioreplicateUniqueId=bioreplicate1['bioreplicateUniqueId'],
-            subjectId=bioreplicate1['bioreplicateUniqueId'],
+            bioreplicateUniqueId=bioreplicate1.bioreplicateUniqueId,
+            subjectId=bioreplicate1.bioreplicateUniqueId,
             subjectType='bioreplicate',
             timeInSeconds=7200,
             value=100.0,
             **shared_params,
         )
         self.create_measurement(
-            bioreplicateUniqueId=bioreplicate2['bioreplicateUniqueId'],
-            subjectId=bioreplicate2['bioreplicateUniqueId'],
+            bioreplicateUniqueId=bioreplicate2.bioreplicateUniqueId,
+            subjectId=bioreplicate2.bioreplicateUniqueId,
             subjectType='bioreplicate',
             timeInSeconds=7200,
             value=350.0,

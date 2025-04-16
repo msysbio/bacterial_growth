@@ -17,8 +17,8 @@ class TestMeasurement(DatabaseTest):
         study = self.create_study()
         study_id = study.studyId
 
-        bioreplicate_uuid = self.create_bioreplicate(studyId=study_id)['bioreplicateUniqueId']
-        strain_id         = self.create_strain(studyId=study_id)['NCBId']
+        bioreplicate_uuid = self.create_bioreplicate(studyId=study_id).bioreplicateUniqueId
+        strain_id         = self.create_strain(studyId=study_id).NCBId
         technique         = self.create_measurement_technique(type='fc', subjectType='bioreplicate', studyUniqueID=study.studyUniqueID)
 
         measurement = Measurement(
@@ -71,10 +71,10 @@ class TestMeasurement(DatabaseTest):
         self.assertEqual(
             [(m.timeInHours, m.subjectId, m.value) for m in measurements if m.techniqueId == t_fc.id],
             [
-                (2.0, b1['bioreplicateUniqueId'], Decimal('1234567890.00')),
-                (4.0, b1['bioreplicateUniqueId'], Decimal('234567890.00')),
-                (2.0, b2['bioreplicateUniqueId'], Decimal('4567890.00')),
-                (4.0, b2['bioreplicateUniqueId'], Decimal('4567890.00')),
+                (2.0, str(b1.bioreplicateUniqueId), Decimal('1234567890.000')),
+                (4.0, str(b1.bioreplicateUniqueId), Decimal('234567890.000')),
+                (2.0, str(b2.bioreplicateUniqueId), Decimal('4567890.000')),
+                (4.0, str(b2.bioreplicateUniqueId), Decimal('4567890.000')),
             ]
         )
 
@@ -82,10 +82,10 @@ class TestMeasurement(DatabaseTest):
         self.assertEqual(
             [(m.timeInHours, m.subjectId, m.value) for m in measurements if m.techniqueId == t_od.id],
             [
-                (2.0, b1['bioreplicateUniqueId'], Decimal('0.900')),
-                (4.0, b1['bioreplicateUniqueId'], Decimal('0.800')),
-                (2.0, b2['bioreplicateUniqueId'], Decimal('0.700')),
-                (4.0, b2['bioreplicateUniqueId'], Decimal('0.700')),
+                (2.0, str(b1.bioreplicateUniqueId), Decimal('0.900')),
+                (4.0, str(b1.bioreplicateUniqueId), Decimal('0.800')),
+                (2.0, str(b2.bioreplicateUniqueId), Decimal('0.700')),
+                (4.0, str(b2.bioreplicateUniqueId), Decimal('0.700')),
             ]
         )
 
@@ -103,16 +103,16 @@ class TestMeasurement(DatabaseTest):
 
         b1 = self.create_bioreplicate(studyId=study_id, bioreplicateId='b1')
 
-        glucose_id = self.create_metabolite_per_experiment(
+        glucose_id = self.create_study_metabolite(
             studyId=study_id,
-            bioreplicateUniqueId=b1['bioreplicateUniqueId'],
+            bioreplicateUniqueId=b1.bioreplicateUniqueId,
             metabolite={'metabo_name': 'glucose'},
-        )['chebi_id']
-        trehalose_id = self.create_metabolite_per_experiment(
+        ).chebi_id
+        trehalose_id = self.create_study_metabolite(
             studyId=study_id,
-            bioreplicateUniqueId=b1['bioreplicateUniqueId'],
+            bioreplicateUniqueId=b1.bioreplicateUniqueId,
             metabolite={'metabo_name': 'trehalose'},
-        )['chebi_id']
+        ).chebi_id
 
         t = self.create_measurement_technique(
             studyUniqueID=study_uuid,
@@ -157,8 +157,8 @@ class TestMeasurement(DatabaseTest):
             bioreplicateId='b1',
         )
 
-        s1_id = self.create_strain(memberName='B. thetaiotaomicron', studyId=study_id)['strainId']
-        s2_id = self.create_strain(memberName='R. intestinalis', studyId=study_id)['strainId']
+        s1_id = self.create_strain(memberName='B. thetaiotaomicron', studyId=study_id).strainId
+        s2_id = self.create_strain(memberName='R. intestinalis', studyId=study_id).strainId
         strain_ids = [s1_id, s2_id]
 
         t_fc = self.create_measurement_technique(

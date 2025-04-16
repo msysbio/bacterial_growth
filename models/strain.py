@@ -1,6 +1,8 @@
 from sqlalchemy import (
     String,
     ForeignKey,
+    Boolean,
+    Integer,
 )
 from sqlalchemy.orm import (
     Mapped,
@@ -17,7 +19,13 @@ class Strain(OrmBase):
     __tablename__ = 'Strains'
 
     strainId: Mapped[int] = mapped_column(primary_key=True)
-    memberName: Mapped[str] = mapped_column(String)
+
+    memberId:          Mapped[str]  = mapped_column(String(50))
+    memberName:        Mapped[str]  = mapped_column(String)
+    descriptionMember: Mapped[str]  = mapped_column(String)
+
+    defined: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
+    NCBId:   Mapped[int]  = mapped_column(Integer)
 
     studyId: Mapped[str] = mapped_column(ForeignKey('Study.studyId'), nullable=False)
     study: Mapped['Study'] = relationship(back_populates="strains")

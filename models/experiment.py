@@ -31,6 +31,9 @@ class Experiment(OrmBase):
     studyId: Mapped[str] = mapped_column(ForeignKey('Study'), nullable=False)
     study: Mapped['Study'] = relationship(back_populates='experiments')
 
+    cultivationMode:    Mapped[str] = mapped_column(String(50))
+    controlDescription: Mapped[str] = mapped_column(String)
+
     @property
     def measurements(self):
         for bioreplicate in self.bioreplicates:

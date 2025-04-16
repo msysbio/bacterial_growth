@@ -10,7 +10,7 @@ class TestSubmissionForm(DatabaseTest):
     def test_project_and_studies(self):
         p1 = self.create_project(projectName="Project 1")
         p2 = self.create_project(projectName="Project 2")
-        s2 = self.create_study(projectUniqueID=p2['projectUniqueID'])
+        s2 = self.create_study(projectUniqueID=p2.projectUniqueID)
 
         submission_form = SubmissionForm(db_session=self.db_session)
         self.assertEqual(submission_form.project_id, None)
@@ -18,18 +18,18 @@ class TestSubmissionForm(DatabaseTest):
         self.assertEqual(submission_form.type, 'new_project')
 
         submission_form.update_project({
-            'project_uuid': p1['projectUniqueID'],
+            'project_uuid': p1.projectUniqueID,
             'project_name': 'Project 1 (updated)',
             'study_uuid':   '_new',
             'study_name':   'Study 1',
         })
 
-        self.assertEqual(submission_form.project_id, p1['projectId'])
+        self.assertEqual(submission_form.project_id, p1.projectId)
         self.assertEqual(submission_form.type, 'new_study')
         self.assertEqual(submission_form.submission.studyDesign['project']['name'], 'Project 1 (updated)')
 
         submission_form.update_project({
-            'project_uuid':        p2['projectUniqueID'],
+            'project_uuid':        p2.projectUniqueID,
             'study_uuid':          s2.uuid,
             'project_name':        'Project 2 (updated)',
             'study_name':          'Study 2 (updated)',
@@ -37,7 +37,7 @@ class TestSubmissionForm(DatabaseTest):
             'study_description':   'Test',
         })
 
-        self.assertEqual(submission_form.project_id, p2['projectId'])
+        self.assertEqual(submission_form.project_id, p2.projectId)
         self.assertEqual(submission_form.study_id, s2.studyId)
         self.assertEqual(submission_form.type, 'update_study')
         self.assertEqual(submission_form.submission.studyDesign['project']['name'], 'Project 2 (updated)')
@@ -47,7 +47,7 @@ class TestSubmissionForm(DatabaseTest):
 
     def test_project_and_study_uniqueness_validation(self):
         p1 = self.create_project(projectName="Project 1")
-        self.create_study(studyName="Study 1", projectUniqueID=p1['projectUniqueID'])
+        self.create_study(studyName="Study 1", projectUniqueID=p1.projectUniqueID)
 
         submission_form = SubmissionForm(db_session=self.db_session)
         valid_params = {
@@ -101,7 +101,7 @@ class TestSubmissionForm(DatabaseTest):
         submission_form = SubmissionForm(db_session=self.db_session)
         self.assertEqual(submission_form.fetch_taxa(), [])
 
-        submission_form.update_strains({'strains': [t1['tax_id']], 'new_strains': []})
+        submission_form.update_strains({'strains': [t1.tax_id], 'new_strains': []})
 
         self.assertEqual(
             [t.tax_names for t in submission_form.fetch_taxa()],
@@ -109,9 +109,9 @@ class TestSubmissionForm(DatabaseTest):
         )
 
         new_strains = [
-            {'name': 'R. intestinalis 2',     'species': t1['tax_id']},
-            {'name': 'B. thetaiotaomicron 2', 'species': t2['tax_id']},
-            {'name': 'R. intestinalis 3',     'species': t1['tax_id']},
+            {'name': 'R. intestinalis 2',     'species': t1.tax_id},
+            {'name': 'B. thetaiotaomicron 2', 'species': t2.tax_id},
+            {'name': 'R. intestinalis 3',     'species': t1.tax_id},
             {'name': 'Nonexistent',           'species': '999'},
         ]
         submission_form.update_strains({'strains': [], 'new_strains': new_strains})
@@ -134,7 +134,7 @@ class TestSubmissionForm(DatabaseTest):
         self.assertEqual(submission_form.fetch_taxa(), [])
 
         study_design = submission_form.submission.studyDesign
-        study_design['techniques'] = [{'metaboliteIds': [m1['chebi_id']]}]
+        study_design['techniques'] = [{'metaboliteIds': [m1.chebi_id]}]
         submission_form.update_study_design(study_design)
 
         self.assertEqual(
@@ -142,7 +142,7 @@ class TestSubmissionForm(DatabaseTest):
             ['glucose'],
         )
 
-        study_design['techniques'] = [{'metaboliteIds': [m1['chebi_id'], m2['chebi_id']]}]
+        study_design['techniques'] = [{'metaboliteIds': [m1.chebi_id, m2.chebi_id]}]
         submission_form.update_study_design(study_design)
         self.assertEqual(
             [m.metabo_name for m in submission_form.fetch_metabolites_for_technique(0)],
