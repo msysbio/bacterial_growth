@@ -127,6 +127,7 @@ def save_study_design_to_database(conn, yml_dir, submission_form, data_template,
                 'NCBId': info_mem['NCBI_ID'][i],
                 'assemblyGenBankId': info_mem['Assembly_GenBank_ID'][i],
                 'descriptionMember': info_mem['Description'][i],
+                'userUniqueID': submission.userUniqueID,
             }
             members_filtered = {k: v for k, v in members.items() if v is not None}
             if len(members_filtered)>0:

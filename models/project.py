@@ -25,12 +25,24 @@ class Project(OrmBase):
     studies:      Mapped[List['Study']]       = relationship(back_populates="project")
 
     @hybrid_property
+    def publicId(self):
+        return self.projectId
+
+    @hybrid_property
+    def uuid(self):
+        return self.projectUniqueID
+
+    @hybrid_property
     def name(self):
         return self.projectName
 
     @property
     def studyUuids(self):
         return [s.studyUniqueID for s in self.studies]
+
+    @property
+    def linkedUserUuids(self):
+        return {pu.userUniqueID for pu in self.projectUsers}
 
     @staticmethod
     def find_available_id(db_conn):

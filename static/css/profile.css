@@ -13,9 +13,5 @@
     .uuid {
       width: 100%;
     }
-
-    input[type="submit"] {
-      align-self: flex-end;
-    }
   }
 }

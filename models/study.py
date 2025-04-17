@@ -55,6 +55,10 @@ class Study(OrmBase):
         return self.studyUniqueID
 
     @hybrid_property
+    def publicId(self):
+        return self.studyId
+
+    @hybrid_property
     def name(self):
         return self.studyName
 
@@ -72,8 +76,11 @@ class Study(OrmBase):
         elif not user or not user.uuid:
             return False
         else:
-            linked_user_ids = {su.userUniqueID for su in self.studyUsers}
-            return user.uuid in linked_user_ids
+            return user.uuid in self.linkedUserUuids
+
+    @property
+    def linkedUserUuids(self):
+        return {su.userUniqueID for su in self.studyUsers}
 
     def publish(self):
         if not self.isPublishable:

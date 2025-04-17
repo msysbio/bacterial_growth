@@ -27,8 +27,10 @@ class Strain(OrmBase):
     defined: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
     NCBId:   Mapped[int]  = mapped_column(Integer)
 
-    studyId: Mapped[str] = mapped_column(ForeignKey('Study.studyId'), nullable=False)
+    studyId: Mapped[str] = mapped_column(ForeignKey('Study'), nullable=False)
     study: Mapped['Study'] = relationship(back_populates="strains")
+
+    userUniqueID: Mapped[str] = mapped_column(String(100))
 
     def __lt__(self, other):
         return self.memberName < other.memberName

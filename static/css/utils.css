@@ -32,6 +32,10 @@
   margin-left: auto;
 }
 
+.flex-end {
+  align-self: flex-end;
+}
+
 .flex-gap-10 {
   gap: 10px;
 }
@@ -62,11 +66,20 @@ hr {
   padding: 10px;
 }
 
-.error-message {
+.error-message,
+.flash-error {
   display: block;
   background: pink;
   padding: 10px;
   border-left: 4px solid #d02631;
+}
+
+.warning-message,
+.flash-warning {
+  display: block;
+  background: #fff3cd;
+  padding: 10px;
+  border-left: 4px solid #ffeeba;
 }
 
 .error-message-list {
@@ -197,11 +210,6 @@ form.simple-form {
     }
   }
 
-  .help {
-    font-style: italic;
-    opacity: 0.6;
-  }
-
   input.error,
   textarea.error {
     border: 1px solid red;
@@ -221,6 +229,11 @@ form.simple-form {
       background-color: gray;
     }
   }
+}
+
+.help {
+  font-style: italic;
+  opacity: 0.6;
 }
 
 .form-input-blue {
