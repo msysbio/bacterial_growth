@@ -10,6 +10,7 @@ from sqlalchemy.orm import (
     mapped_column,
     relationship,
 )
+from sqlalchemy.ext.hybrid import hybrid_property
 
 from models.orm_base import OrmBase
 
@@ -33,6 +34,18 @@ class Experiment(OrmBase):
 
     cultivationMode:    Mapped[str] = mapped_column(String(50))
     controlDescription: Mapped[str] = mapped_column(String)
+
+    @hybrid_property
+    def id(self):
+        return self.experimentUniqueId
+
+    @hybrid_property
+    def name(self):
+        return self.experimentId
+
+    @hybrid_property
+    def description(self):
+        return self.experimentDescription
 
     @property
     def measurements(self):

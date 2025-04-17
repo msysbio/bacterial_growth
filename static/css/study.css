@@ -26,6 +26,15 @@
     margin-top: 0;
   }
 
+  .navigation-buttons {
+    .icon {
+      display: inline-block;
+      width: 18px;
+      height: 18px;
+      vertical-align: bottom;
+    }
+  }
+
   .measurement-techniques {
     display: flex;
     flex-direction: column;

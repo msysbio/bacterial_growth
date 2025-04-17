@@ -2,8 +2,8 @@
 
   {% set experiment = form.experiment %}
 
-  <details class="experiment-container">
-    <summary>{{ experiment.experimentId }}</summary>
+  <div class="experiment-container">
+    <h3>{{ experiment.experimentId }}</h3>
 
     <form class="chart-form">
       <input type="hidden" name="experimentUniqueId" value="{{ experiment.experimentUniqueId }}" />
@@ -59,6 +59,6 @@
         </div>
       </div>
     </form>
-  </details>
+  </div>
 
 {% endmacro %}

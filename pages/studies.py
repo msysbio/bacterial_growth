@@ -9,8 +9,12 @@ import sqlalchemy as sql
 
 from db import get_connection, get_session
 import models.study_dfs as study_dfs
-from models import Study
+from models import (
+    Study,
+    Experiment,
+)
 from forms.experiment_export_form import ExperimentExportForm
+from forms.experiment_chart_form import ExperimentChartForm
 import lib.util as util
 
 
@@ -20,7 +24,13 @@ def study_show_page(studyId):
     if study.visibleToUser(g.current_user):
         return render_template("pages/studies/show.html", study=study)
     else:
-        return render_template("pages/studies/_show_unpublished.html", study=study)
+        return render_template("pages/studies/show_unpublished.html", study=study)
+
+
+def study_manage_page(studyId):
+    study = _fetch_study(studyId)
+
+    return render_template("pages/studies/manage.html", study=study)
 
 
 def study_export_page(studyId):
@@ -77,6 +87,58 @@ def study_download_zip(studyId):
         zip_file,
         as_attachment=True,
         download_name=f"{studyId}.zip",
+    )
+
+
+def study_visualize_page(studyId):
+    study = _fetch_study(studyId)
+    experiment_forms = [ExperimentChartForm(e) for e in study.experiments]
+
+    return render_template(
+        "pages/studies/visualize.html",
+        study=study,
+        experiment_forms=experiment_forms,
+    )
+
+
+def study_chart_fragment(studyId):
+    args = request.args.to_dict()
+
+    width = args.pop('width')
+    show_log_toggle = False
+
+    experimentUniqueId = args.pop('experimentUniqueId')
+    technique          = args.pop('technique')
+
+    experiment = g.db_session.get(Experiment, experimentUniqueId)
+    form       = ExperimentChartForm(experiment)
+
+    if technique in ('16S rRNA-seq', 'FC counts per species'):
+        show_log_toggle = True
+        figs = form.generate_reads_figures(technique, args)
+    elif technique == 'Metabolites':
+        # TODO (2025-03-02) Separate "technique" and "subject type"
+        figs = form.generate_metabolite_figures(technique, args)
+    else:
+        figs = form.generate_growth_figures(technique, args)
+
+    fig_htmls = []
+    for fig in figs:
+        fig.update_layout(
+            margin=dict(l=0, r=0, t=60, b=40),
+            title=dict(x=0)
+        )
+
+        fig_htmls.append(fig.to_html(
+            full_html=False,
+            include_plotlyjs=False,
+            default_width=f"{width}px",
+        ))
+
+    return render_template(
+        'pages/studies/_figs.html',
+        fig_htmls=fig_htmls,
+        show_log_toggle=show_log_toggle
     )
 
 def _fetch_study(studyId, check_user=True):

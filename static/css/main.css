@@ -100,15 +100,6 @@ header img {
   padding-bottom: 100px;
 }
 
-.dashboard-page {
-  h1 {
-    text-align: center;
-    color: #078294;
-    font-weight: 700;
-    font-size: 42px;
-  }
-}
-
 .about-page .address {
   display: flex;
   padding-top: 40px;

@@ -6,44 +6,12 @@
 
 {% block content %}
   <div class="container study-page">
-    <nav>
-      {% set projectUrl = url_for('project_show_page', projectId=study.project.projectId) %}
-
-      <ul>
-        <li class="small">
-          Project
-          <a href="{{ projectUrl }}">{{ study.project.projectId }}</a>:
-          {{ study.project.projectName }}
-        </li>
-        <li class="small">Study {{ study.studyId }}</li>
-      </ul>
-    </nav>
+    {% include 'pages/studies/_header.html' %}
 
     <article>
       <h1>{{ study.studyName }}</h1>
 
-      {% if g.current_user and g.current_user.uuid in study.managerUuids: %}
-        <br>
-        <div class="warning-message">
-          Private UUID: <code class="inline">{{ study.uuid }}</code>
-
-          <div class="help">
-            This private ID can be used to gain access to the study for
-            editing purposes. Only share it with other users that need that
-            access.
-          </div>
-        </div>
-      {% endif %}
-
-      <p>
-        <a href="{{ url_for('dashboard_index_page', studyId=study['studyId']) }}" class="white-button">
-          📊 Visualize
-        </a>
-
-        <a href="{{ url_for('study_export_page', studyId=study['studyId']) }}" class="white-button">
-          ⬇ Export data
-        </a>
-      </p>
+      {% include 'pages/studies/_navigation_buttons.html' %}
 
       <h2>Basic information</h2>
 

@@ -1,6 +1,5 @@
 import json
 
-import pages.dashboard as dashboard_pages
 import pages.metabolites as metabolite_pages
 import pages.search as search_pages
 import pages.static as static_pages
@@ -18,9 +17,6 @@ def init_routes(app):
     app.add_url_rule("/",       view_func=static_pages.static_home_page)
     app.add_url_rule("/help/",  view_func=static_pages.static_help_page)
     app.add_url_rule("/about/", view_func=static_pages.static_about_page)
-
-    app.add_url_rule("/dashboard/",       view_func=dashboard_pages.dashboard_index_page)
-    app.add_url_rule("/dashboard/chart", view_func=dashboard_pages.dashboard_chart_fragment)
 
     app.add_url_rule("/upload/", view_func=upload_pages.upload_status_page)
 
@@ -54,10 +50,14 @@ def init_routes(app):
         methods=["POST"],
     )
 
-    app.add_url_rule("/study/<string:studyId>/",               view_func=study_pages.study_show_page)
-    app.add_url_rule("/study/<string:studyId>.zip",            view_func=study_pages.study_download_zip)
-    app.add_url_rule("/study/<string:studyId>/export",         view_func=study_pages.study_export_page)
-    app.add_url_rule("/study/<string:studyId>/export/preview", view_func=study_pages.study_export_preview_fragment)
+    app.add_url_rule("/study/<string:studyId>/",                view_func=study_pages.study_show_page)
+    app.add_url_rule("/study/<string:studyId>.zip",             view_func=study_pages.study_download_zip)
+    app.add_url_rule("/study/<string:studyId>/export",          view_func=study_pages.study_export_page)
+    app.add_url_rule("/study/<string:studyId>/export/preview",  view_func=study_pages.study_export_preview_fragment)
+    app.add_url_rule("/study/<string:studyId>/manage",          view_func=study_pages.study_manage_page)
+    app.add_url_rule("/study/<string:studyId>/visualize",       view_func=study_pages.study_visualize_page)
+    app.add_url_rule("/study/<string:studyId>/visualize/chart", view_func=study_pages.study_chart_fragment)
+
 
     app.add_url_rule("/project/<string:projectId>", view_func=project_pages.project_show_page)
 

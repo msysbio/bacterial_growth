@@ -17,9 +17,9 @@ def init_assets(app):
         'js/util.js',
         'js/main.js',
         'js/search.js',
-        'js/dashboard.js',
         'js/export.js',
         'js/study.js',
+        'js/study_visualize.js',
         'js/comparison.js',
         filters='rjsmin',
         output='build/app.js'
@@ -40,11 +40,11 @@ def init_assets(app):
         'css/main.css',
         'css/sidebar.css',
         'css/search.css',
-        'css/dashboard.css',
         'css/upload.css',
         'css/export.css',
         'css/profile.css',
         'css/study.css',
+        'css/study-visualize.css',
         'css/comparison.css',
         filters='cssmin',
         output='build/app.css'

@@ -1,16 +1,14 @@
 $(document).ready(function() {
-  $('.dashboard-page').each(function() {
+  $('.study-visualize-page').each(function() {
     let $page = $(this);
+    let studyId = $page.data('studyId')
 
-    let urlParams = new URLSearchParams(window.location.search);
-    let studyId = urlParams.get('studyId');
+    $page.find('.experiment-container').each(function(e) {
+      let $container = $(this);
 
-    $page.find('details.experiment-container').each(function(e) {
-      $details = $(this);
-
-      if ($details.find('input[type=checkbox]:checked').length > 0) {
-        $details.prop('open', true);
-        let $form = $details.find('form');
+      if ($container.find('input[type=checkbox]:checked').length > 0) {
+        $container.prop('open', true);
+        let $form = $container.find('form');
         update_chart($form);
       }
     });
@@ -33,9 +31,10 @@ $(document).ready(function() {
       e.preventDefault();
 
       let $link = $(e.currentTarget);
-      let $details = $link.parents('details.experiment-container');
-      $details.find('input[type=checkbox]').prop('checked', false);
-      $details.prop('open', false);
+      let $container = $link.parents('.experiment-container');
+      $container.find('input[type=checkbox]').prop('checked', false);
+
+      update_chart($container.find('form'))
     });
 
     function update_chart($form) {
@@ -46,7 +45,7 @@ $(document).ready(function() {
       let scrollPosition = $(document).scrollTop();
 
       $.ajax({
-        url: `/dashboard/chart?studyId=${studyId || ''}&width=${width}`,
+        url: `/study/${studyId}/visualize/chart?width=${width}`,
         dataType: 'html',
         data: $form.serializeArray(),
         success: function(response) {

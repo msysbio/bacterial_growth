@@ -1,0 +1,36 @@
+{% extends '_layout.html' %}
+
+{% block title %}: Manage study {{ study.studyId }}{% endblock %}
+
+{% block content %}
+  <div class="container study-page">
+    {% include 'pages/studies/_header.html' %}
+
+    <article>
+      <h1>{{ study.studyName }}</h1>
+
+      {% include 'pages/studies/_navigation_buttons.html' %}
+
+      <h2>Private Unique Identifier</h2>
+
+      <p>
+        <div class="copy-button-wrapper flex-row flex-grow">
+          <button type="button" class="js-copy-button copy-button green-button">
+            Copy 📋
+          </button>
+          <input
+              type="text"
+              value="{{ study.uuid }}"
+              class="js-export-url export-url form-input-blue full"
+              readonly />
+        </div>
+
+        <div class="help">
+          This private ID can be used to gain access to the study for
+          editing purposes. Only share it with other users that need that
+          access.
+        </div>
+      </p>
+    </article>
+  </div>
+{% endblock %}
