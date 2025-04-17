@@ -1,3 +1,4 @@
+import re
 from typing import List
 
 import sqlalchemy as sql
@@ -45,10 +46,16 @@ class Project(OrmBase):
         return {pu.userUniqueID for pu in self.projectUsers}
 
     @staticmethod
-    def find_available_id(db_conn):
-        query           = "SELECT IFNULL(COUNT(*), 0) FROM Project;"
-        number_projects = db_conn.execute(sql.text(query)).scalar()
-        next_number     = int(number_projects) + 1
-        next_id         = "PMGDB{:06d}".format(next_number)
+    def find_available_id(db_session):
+        last_string_id = db_session.scalars(
+            sql.select(Project.publicId)
+            .order_by(Project.publicId.desc())
+            .limit(1)
+        ).one_or_none()
 
-        return next_id
+        if last_string_id:
+            last_numeric_id = int(re.sub(r'PMGDB0*', '', last_string_id))
+        else:
+            last_numeric_id = 0
+
+        return "PMGDB{:06d}".format(last_numeric_id + 1)

@@ -1,3 +1,4 @@
+import re
 from typing import List
 import datetime
 
@@ -90,10 +91,16 @@ class Study(OrmBase):
             return True
 
     @staticmethod
-    def find_available_id(db_conn):
-        query           = "SELECT IFNULL(COUNT(*), 0) FROM Study;"
-        number_projects = db_conn.execute(sql.text(query)).scalar()
-        next_number     = int(number_projects) + 1
-        next_id         = "SMGDB{:08d}".format(next_number)
+    def find_available_id(db_session):
+        last_string_id = db_session.scalars(
+            sql.select(Study.publicId)
+            .order_by(Study.publicId.desc())
+            .limit(1)
+        ).one_or_none()
 
-        return next_id
+        if last_string_id:
+            last_numeric_id = int(re.sub(r'SMGDB0*', '', last_string_id))
+        else:
+            last_numeric_id = 0
+
+        return "SMGDB{:08d}".format(last_numeric_id + 1)
