@@ -83,7 +83,7 @@ def _save_study(db_session, submission_form):
     if submission_form.type != 'update_study':
         study = Study(**params)
 
-        study.studyId = Study.find_available_id(db_session)
+        study.studyId = Study.generate_public_id(db_session)
         study.publishableAt = datetime.datetime.now() + datetime.timedelta(hours=24)
 
         db_session.add(StudyUser(
@@ -111,7 +111,7 @@ def _save_project(db_session, submission_form):
 
     if submission_form.type == 'new_project':
         project = Project(**params)
-        project.projectId = Project.find_available_id(db_session)
+        project.projectId = Project.generate_public_id(db_session)
         db_session.add(ProjectUser(
             projectUniqueID=submission.projectUniqueID,
             userUniqueID=submission.userUniqueID,

@@ -65,7 +65,7 @@ class DatabaseTest(unittest.TestCase):
         return self._create_orm_record(Metabolite, params)
 
     def create_project(self, **params):
-        project_id = Project.find_available_id(self.db_session)
+        project_id = Project.generate_public_id(self.db_session)
         project_uuid = str(uuid4())
 
         params = {
@@ -78,7 +78,7 @@ class DatabaseTest(unittest.TestCase):
         return self._create_orm_record(Project, params)
 
     def create_study(self, **params):
-        study_id = Study.find_available_id(self.db_session)
+        study_id = Study.generate_public_id(self.db_session)
         study_uuid = str(uuid4())
 
         project_uuid = self._get_or_create_dependency(params, 'projectUniqueID', 'project')

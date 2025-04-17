@@ -9,12 +9,12 @@ from tests.database_test import DatabaseTest
 class TestProject(DatabaseTest):
     def test_generating_available_id(self):
         # The first ID in an empty database should be 001:
-        public_id = Project.find_available_id(self.db_session)
+        public_id = Project.generate_public_id(self.db_session)
         self.assertEqual(public_id, "PMGDB000001")
 
         self.create_project(projectId="PMGDB000001")
 
-        public_id = Project.find_available_id(self.db_session)
+        public_id = Project.generate_public_id(self.db_session)
         self.assertEqual(public_id, "PMGDB000002")
 
         self.create_project(projectId="PMGDB000002")
@@ -26,5 +26,5 @@ class TestProject(DatabaseTest):
             .where(Project.publicId == "PMGDB000002")
         )
 
-        public_id = Project.find_available_id(self.db_session)
+        public_id = Project.generate_public_id(self.db_session)
         self.assertEqual(public_id, "PMGDB000004")

@@ -34,12 +34,12 @@ class TestStudy(DatabaseTest):
 
     def test_generating_available_id(self):
         # The first ID in an empty database should be 001:
-        public_id = Study.find_available_id(self.db_session)
+        public_id = Study.generate_public_id(self.db_session)
         self.assertEqual(public_id, "SMGDB00000001")
 
         self.create_study(studyId="SMGDB00000001")
 
-        public_id = Study.find_available_id(self.db_session)
+        public_id = Study.generate_public_id(self.db_session)
         self.assertEqual(public_id, "SMGDB00000002")
 
         self.create_study(studyId="SMGDB00000002")
@@ -51,7 +51,7 @@ class TestStudy(DatabaseTest):
             .where(Study.publicId == "SMGDB00000002")
         )
 
-        public_id = Study.find_available_id(self.db_session)
+        public_id = Study.generate_public_id(self.db_session)
         self.assertEqual(public_id, "SMGDB00000004")
 
 

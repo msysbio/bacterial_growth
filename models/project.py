@@ -46,7 +46,7 @@ class Project(OrmBase):
         return {pu.userUniqueID for pu in self.projectUsers}
 
     @staticmethod
-    def find_available_id(db_session):
+    def generate_public_id(db_session):
         last_string_id = db_session.scalars(
             sql.select(Project.publicId)
             .order_by(Project.publicId.desc())

@@ -91,7 +91,7 @@ class Study(OrmBase):
             return True
 
     @staticmethod
-    def find_available_id(db_session):
+    def generate_public_id(db_session):
         last_string_id = db_session.scalars(
             sql.select(Study.publicId)
             .order_by(Study.publicId.desc())
