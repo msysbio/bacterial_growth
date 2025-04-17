@@ -76,10 +76,10 @@ class Study(OrmBase):
         elif not user or not user.uuid:
             return False
         else:
-            return user.uuid in self.linkedUserUuids
+            return user.uuid in self.managerUuids
 
     @property
-    def linkedUserUuids(self):
+    def managerUuids(self):
         return {su.userUniqueID for su in self.studyUsers}
 
     def publish(self):

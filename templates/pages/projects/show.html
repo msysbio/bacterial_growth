@@ -7,7 +7,7 @@
     <article>
       <h2>{{ project.projectName }}</h2>
 
-      {% if g.current_user and g.current_user.uuid in project.linkedUserUuids: %}
+      {% if g.current_user and g.current_user.uuid in project.managerUuids: %}
         <br>
         <div class="warning-message">
           Private UUID: <code class="inline">{{ project.uuid }}</code>

@@ -41,7 +41,7 @@ class Project(OrmBase):
         return [s.studyUniqueID for s in self.studies]
 
     @property
-    def linkedUserUuids(self):
+    def managerUuids(self):
         return {pu.userUniqueID for pu in self.projectUsers}
 
     @staticmethod
