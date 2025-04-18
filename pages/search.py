@@ -48,15 +48,6 @@ def search_index_page():
     for studyId in studyIds:
         result = study_dfs.get_general_info(studyId, g.db_conn)
 
-        result['experiments']               = study_dfs.get_experiments(studyId, g.db_conn)
-        result['compartments']              = study_dfs.get_compartments(studyId, g.db_conn)
-        result['communities']               = study_dfs.get_communities(studyId, g.db_conn)
-        result['microbial_strains']         = study_dfs.get_microbial_strains(studyId, g.db_conn)
-        result['biological_replicates']     = study_dfs.get_biological_replicates(studyId, g.db_conn)
-        result['abundances']                = study_dfs.get_abundances(studyId, g.db_conn)
-        result['fc_counts']                 = study_dfs.get_fc_counts(studyId, g.db_conn)
-        result['metabolites_per_replicate'] = study_dfs.get_metabolites_per_replicate(studyId, g.db_conn)
-
         results.append(result)
 
     return render_template(
