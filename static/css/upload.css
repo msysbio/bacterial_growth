@@ -64,11 +64,6 @@
     &.incomplete .icon {
       background-image: url('/static/images/icons/square-orange-minus.svg');
     }
-
-    .truncate {
-      overflow-x: hidden;
-      text-overflow: ellipsis;
-    }
   }
 
   .step-1 {

@@ -51,6 +51,11 @@ code.inline {
   padding: 0 6px;
 }
 
+.truncate {
+  overflow-x: hidden;
+  text-overflow: ellipsis;
+}
+
 hr {
   clear: both;
   height: 2px;

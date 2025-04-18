@@ -38,18 +38,24 @@
         {% for technique in study.measurementTechniques: %}
           <div class="technique-container">
             <h3>
-              {{ technique.long_name }}
+              {{ loop.index }}) {{ technique.long_name }}
 
               {% if technique.subjectType != 'metabolite': %}
                 per {{ technique.subject_short_name }}
               {% endif %}
+            </h3>
+
+            <p>
+              <strong>{{ technique.measurements|length }}</strong> total measurements
 
               {% if technique.units != '': %}
-                measured in {{ technique.units }}
+                recorded in <strong>{{ technique.units }}</strong>.
               {% endif %}
+            </p>
 
-              ({{ technique.measurements|length }} measurements)
-            </h3>
+            {% if technique.description: %}
+              <p>{{ technique.description }}</p>
+            {% endif %}
 
             <br>
 
@@ -116,8 +122,10 @@
                     </td>
                     <td>{{ measurements[0].timeInHours }}h - {{ measurements[-1].timeInHours }}h</td>
 
-                    <td class="numeric truncate">
-                      {{ measurements|map(attribute='value')|map_scientific|join(', ') }}
+                    <td class="numeric">
+                      <div class="truncate">
+                        {{ measurements|map(attribute='value')|map_scientific|join(', ') }}
+                      </div>
                     </td>
                   </tr>
                 {% endfor %}
