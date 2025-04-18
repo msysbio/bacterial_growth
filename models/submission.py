@@ -62,7 +62,7 @@ class Submission(OrmBase):
             1 if len(self.studyDesign.get('strains', [])) + len(self.studyDesign.get('new_strains', [])) > 0 else 0,
             1 if len(self.studyDesign.get('techniques', [])) > 0 and self.studyDesign.get('timepoint_count', 0) else 0,
             1 if self.studyFileId and self.dataFileId else 0,
-            0, # final step
+            1 if self.study and self.study.isPublished else 0,
         ])
 
     @property

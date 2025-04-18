@@ -21,9 +21,16 @@
       </tr>
 
       {% for user_submission in user_submissions %}
-        <tr class="{{ "highlight" if user_submission.id == current_submission.id }}">
+        {% set isPublished = user_submission.study and user_submission.study.isPublished %}
+        {% set isCurrent = user_submission.id == current_submission.id %}
+
+        <tr class="{{ "current" if isCurrent }} {{ "published" if isPublished }}">
           <td align="center">
-            {% if user_submission.project is none: %}
+            {% if isPublished: %}
+              <span data-tippy-content="Published submission">
+                ✅
+              </span>
+            {% elif user_submission.project is none: %}
               <span data-tippy-content="New study in a new project">
                 📚
               </span>

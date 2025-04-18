@@ -24,13 +24,13 @@ class Study(OrmBase):
 
     studyUniqueID: Mapped[str] = mapped_column(String(100), primary_key=True)
 
-    studyId:          Mapped[str] = mapped_column(String(100), nullable=False)
-    studyName:        Mapped[str] = mapped_column(String(100), nullable=False)
-    studyDescription: Mapped[str] = mapped_column(String,      nullable=False)
-    studyURL:         Mapped[str] = mapped_column(String,      nullable=False)
-    timeUnits:        Mapped[str] = mapped_column(String(100), nullable=False)
+    studyId:          Mapped[str] = mapped_column(String(100))
+    studyName:        Mapped[str] = mapped_column(String(100))
+    studyDescription: Mapped[str] = mapped_column(String, nullable=True)
+    studyURL:         Mapped[str] = mapped_column(String, nullable=True)
+    timeUnits:        Mapped[str] = mapped_column(String(100))
 
-    projectUniqueID: Mapped[str] = mapped_column(ForeignKey('Project.projectUniqueID'), nullable=False)
+    projectUniqueID: Mapped[str] = mapped_column(ForeignKey('Project.projectUniqueID'))
 
     project: Mapped['Project'] = relationship(back_populates="studies")
 
@@ -47,9 +47,9 @@ class Study(OrmBase):
 
     createdAt:        Mapped[datetime] = mapped_column(DateTime, server_default=FetchedValue())
     updatedAt:        Mapped[datetime] = mapped_column(DateTime, server_default=FetchedValue())
-    publishableAt:    Mapped[datetime] = mapped_column(DateTime)
-    publishedAt:      Mapped[datetime] = mapped_column(DateTime)
-    embargoExpiresAt: Mapped[datetime] = mapped_column(DateTime)
+    publishableAt:    Mapped[datetime] = mapped_column(DateTime, nullable=True)
+    publishedAt:      Mapped[datetime] = mapped_column(DateTime, nullable=True)
+    embargoExpiresAt: Mapped[datetime] = mapped_column(DateTime, nullable=True)
 
     @hybrid_property
     def uuid(self):

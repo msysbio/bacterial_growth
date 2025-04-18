@@ -14,8 +14,11 @@
         margin: 0;
       }
     }
-    li.current {
-      border: 2px solid green;
+    tr.published {
+      background-color: #eee;
+    }
+    tr.current {
+      background-color: var(--light-blue);
     }
   }
 

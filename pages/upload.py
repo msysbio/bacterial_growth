@@ -217,6 +217,16 @@ def upload_spreadsheet_preview_fragment():
 def upload_step5_page():
     submission_form = _init_submission_form(step=5)
 
+    if request.method == 'POST':
+        study = submission_form.submission.study
+
+        if study and study.isPublishable:
+            study.publish()
+            g.db_session.add(study)
+            g.db_session.commit()
+
+            return redirect(url_for('study_show_page', studyId=study.publicId))
+
     return render_template(
         "pages/upload/index.html",
         submission_form=submission_form,
