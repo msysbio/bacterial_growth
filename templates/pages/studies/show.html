@@ -58,27 +58,15 @@
                 <th>Actions</th>
                 <th>Subject</th>
                 <th>Time period</th>
-                <th colspan="3">Measurements</th>
+                <th>Measurements</th>
               </tr>
-
-              {% if technique.subjectType == 'bioreplicate': %}
-                <tr class="js-table-row">
-                  <th colspan="3"></th>
-                  <th>Count</th>
-                  <th>Mean</th>
-                  <th>STD</th>
-                </tr>
-              {% endif %}
 
               {% for bioreplicate, bioreplicate_measurements in technique.measurements_by_bioreplicate(g.db_session): %}
                 {% if technique.subjectType != 'bioreplicate': %}
                   <tr class="js-table-row">
-                    <th colspan="3" align="center">
+                    <th colspan="4" align="center">
                       Bioreplicate: {{ bioreplicate.bioreplicateId }}
                     </th>
-                    <th>Count</th>
-                    <th>Mean</th>
-                    <th>STD</th>
                   </tr>
                 {% endif %}
 
@@ -128,14 +116,8 @@
                     </td>
                     <td>{{ measurements[0].timeInHours }}h - {{ measurements[-1].timeInHours }}h</td>
 
-                    <td class="numeric">
-                      {{ measurements|length }}
-                    </td>
-                    <td class="numeric">
-                      {{ "{:.2E}".format(measurements|mean('value')) }}
-                    </td>
-                    <td class="numeric">
-                      {{ "{:.2E}".format(measurements|std('value')) }}
+                    <td class="numeric truncate">
+                      {{ measurements|map(attribute='value')|map_scientific|join(', ') }}
                     </td>
                   </tr>
                 {% endfor %}
