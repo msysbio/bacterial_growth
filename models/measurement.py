@@ -19,7 +19,6 @@ from sqlalchemy.ext.hybrid import hybrid_property
 import sqlalchemy as sql
 
 from models.orm_base import OrmBase
-from db import get_session
 from lib.conversion import convert_time
 
 

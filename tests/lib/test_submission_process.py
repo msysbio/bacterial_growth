@@ -3,7 +3,6 @@ from datetime import datetime, timedelta, UTC
 from freezegun import freeze_time
 
 from models import (
-    Submission,
     Study,
     Project,
 )
@@ -13,6 +12,7 @@ from lib.submission_process import (
     _save_study,
 )
 from tests.database_test import DatabaseTest
+
 
 class TestSubmissionProcess(DatabaseTest):
     def test_project_and_study_creation(self):
@@ -78,8 +78,7 @@ class TestSubmissionProcess(DatabaseTest):
             _save_study(self.db_session, submission_form)
             self.db_session.flush()
 
-            project = self.db_session.get(Project, submission.projectUniqueID)
-            study   = self.db_session.get(Study,   submission.studyUniqueID)
+            study = self.db_session.get(Study, submission.studyUniqueID)
 
             # Initial study state: not published, can't be published
             self.assertFalse(study.isPublishable)

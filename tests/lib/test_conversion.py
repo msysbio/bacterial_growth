@@ -2,12 +2,12 @@ import unittest
 
 from lib.conversion import convert_time
 
+
 class TestConversion(unittest.TestCase):
     def test_time_conversion_to_the_same_unit(self):
         for t in (1, 0.3, 100.0, 0.5):
             for unit in ('d', 'h', 'm', 's'):
                 self.assertEqual(convert_time(t, source=unit, target=unit), t)
-
 
     def test_time_conversion_to_seconds(self):
         for t in (1, 13, 100.0, 0.5):
@@ -36,6 +36,7 @@ class TestConversion(unittest.TestCase):
     def test_time_conversion_unknown_units(self):
         with self.assertRaises(ValueError): convert_time(1, source='s', target='unknown')
         with self.assertRaises(ValueError): convert_time(1, target='s', source='unknown')
+
 
 if __name__ == '__main__':
     unittest.main()

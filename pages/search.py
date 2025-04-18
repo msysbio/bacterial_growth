@@ -9,7 +9,6 @@ from flask import (
 )
 import sqlalchemy as sql
 
-from db import get_connection
 from forms.search_form import SearchForm, SearchFormClause
 import models.study_dfs as study_dfs
 from models import (

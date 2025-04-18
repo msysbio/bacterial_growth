@@ -14,7 +14,6 @@ from sqlalchemy.orm import (
     relationship,
 )
 from sqlalchemy.schema import FetchedValue
-from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy_utc.sqltypes import UtcDateTime
 
 from models.orm_base import OrmBase
@@ -99,12 +98,13 @@ class MeasurementTechnique(OrmBase):
             return f"{subject_name} {suffix}"
 
     def measurements_by_bioreplicate(self, db_session, measurements=None):
-        from models import Bioreplicate, Measurement
+        from models import Bioreplicate
 
         if measurements is None:
             measurements = self.measurements
 
-        grouper = lambda m: m.bioreplicateUniqueId
+        def grouper(m):
+            return m.bioreplicateUniqueId
 
         ordered_measurements = sorted(self.measurements, key=grouper)
         for (bioreplicate_uuid, group) in itertools.groupby(ordered_measurements, grouper):
@@ -118,12 +118,13 @@ class MeasurementTechnique(OrmBase):
             yield (bioreplicate, measurements)
 
     def measurements_by_subject(self, db_session, measurements=None):
-        from models import Bioreplicate, Measurement
+        from models import Measurement
 
         if measurements is None:
             measurements = self.measurements
 
-        grouper = lambda m: (m.subjectType, m.subjectId)
+        def grouper(m):
+            return m.bioreplicateUniqueId
 
         ordered_measurements = sorted(measurements, key=grouper)
         for ((subject_type, subject_id), group) in itertools.groupby(ordered_measurements, grouper):

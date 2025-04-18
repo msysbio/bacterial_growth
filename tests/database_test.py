@@ -4,10 +4,7 @@ from uuid import uuid4
 from decimal import Decimal
 
 import db
-from lib.db import (
-    get_primary_key_names,
-    execute_text
-)
+from lib.db import execute_text
 from models import (
     Bioreplicate,
     Experiment,
@@ -22,6 +19,7 @@ from models import (
     Submission,
     Taxon,
 )
+
 
 class DatabaseTest(unittest.TestCase):
     def setUp(self):

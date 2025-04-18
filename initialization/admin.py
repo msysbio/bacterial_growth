@@ -1,4 +1,3 @@
-from flask import g
 from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
 
@@ -12,9 +11,11 @@ from models import (
     Taxon,
 )
 
+
 class AppView(ModelView):
     can_export = True
     can_view_details = True
+
 
 def init_admin(app):
     admin = Admin(app, name='μGrowthDB admin', template_mode='bootstrap4')

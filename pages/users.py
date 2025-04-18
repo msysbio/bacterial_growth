@@ -16,10 +16,11 @@ from models import (
     Strain,
 )
 
+
 def user_show_page():
     projects = []
     studies = []
-    strains = []
+    custom_strains = []
 
     if g.current_user:
         projects = g.db_session.scalars(
@@ -40,7 +41,7 @@ def user_show_page():
             sql.select(Strain)
             .where(
                 Strain.userUniqueID == g.current_user.uuid,
-                Strain.defined == False,
+                Strain.defined.is_(False),
             )
             .order_by(Strain.memberName.desc())
         ).all()

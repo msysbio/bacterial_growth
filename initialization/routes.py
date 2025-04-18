@@ -58,7 +58,6 @@ def init_routes(app):
     app.add_url_rule("/study/<string:studyId>/visualize",       view_func=study_pages.study_visualize_page)
     app.add_url_rule("/study/<string:studyId>/visualize/chart", view_func=study_pages.study_chart_fragment)
 
-
     app.add_url_rule("/project/<string:projectId>", view_func=project_pages.project_show_page)
 
     app.add_url_rule("/strain/<int:id>",     view_func=strain_pages.strain_show_page)

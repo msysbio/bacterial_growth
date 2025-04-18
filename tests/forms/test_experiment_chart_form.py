@@ -1,10 +1,11 @@
-import tests.init
+import tests.init  # noqa: F401
 
 import unittest
 
 from tests.database_test import DatabaseTest
 from forms.experiment_chart_form import ExperimentChartForm
 from models import Experiment
+
 
 class TestExperimentChartForm(DatabaseTest):
     def test_df_for_metabolite_chart(self):

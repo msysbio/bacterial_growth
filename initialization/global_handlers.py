@@ -1,4 +1,3 @@
-import datetime
 from uuid import uuid4
 
 from flask import (
@@ -57,6 +56,7 @@ def _close_db_connection(response):
         db_conn.close()
 
     return response
+
 
 def _not_found(_error):
     return render_template('errors/404.html'), 404

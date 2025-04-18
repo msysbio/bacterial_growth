@@ -2,8 +2,6 @@ import tests.init  # noqa: F401
 
 import unittest
 
-import sqlalchemy as sql
-
 from models import Taxon
 from tests.database_test import DatabaseTest
 
@@ -103,6 +101,7 @@ class TestTaxon(DatabaseTest):
         results, has_more = Taxon.search_by_name(self.db_conn, 'Test foo', page=1, per_page=1)
         self.assertEqual(len(results), 1)
         self.assertTrue(has_more)
+
 
 if __name__ == '__main__':
     unittest.main()

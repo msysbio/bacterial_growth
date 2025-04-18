@@ -59,9 +59,9 @@ class TestStudy(DatabaseTest):
 
         self.assertIsNone(study.find_last_submission(self.db_session))
 
-        s1 = self.create_submission(studyUniqueID=study.uuid, updatedAt=(datetime.now(UTC) - timedelta(hours=24)))
-        s2 = self.create_submission(studyUniqueID=study.uuid, updatedAt=(datetime.now(UTC) - timedelta(hours=12)))
-        s3 = self.create_submission(studyUniqueID=study.uuid, updatedAt=(datetime.now(UTC) - timedelta(hours=48)))
+        _s1 = self.create_submission(studyUniqueID=study.uuid, updatedAt=(datetime.now(UTC) - timedelta(hours=24)))
+        s2  = self.create_submission(studyUniqueID=study.uuid, updatedAt=(datetime.now(UTC) - timedelta(hours=12)))
+        _s3 = self.create_submission(studyUniqueID=study.uuid, updatedAt=(datetime.now(UTC) - timedelta(hours=48)))
 
         self.assertEqual(study.find_last_submission(self.db_session), s2)
         s4 = self.create_submission(studyUniqueID=study.uuid, updatedAt=(datetime.now(UTC) - timedelta(hours=6)))

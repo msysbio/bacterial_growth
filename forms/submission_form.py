@@ -1,7 +1,6 @@
 import copy
 import itertools
 from uuid import uuid4
-from typing import List, Tuple
 
 import sqlalchemy as sql
 from sqlalchemy.orm.attributes import flag_modified
@@ -38,6 +37,7 @@ DEFAULT_STUDY_DESIGN = {
     'new_strains':     [],
     'techniques':      [],
 }
+
 
 class SubmissionForm:
     def __init__(self, submission_id=None, step=0, db_session=None, user_uuid=None):
@@ -112,7 +112,6 @@ class SubmissionForm:
         self.project_id = self._find_project_id()
         self.study_id   = self._find_study_id()
         self.type       = self._determine_project_type()
-
 
     def update_strains(self, data):
         self.submission.studyDesign['strains']     = data['strains']

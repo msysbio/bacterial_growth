@@ -7,7 +7,6 @@ from flask import (
 from werkzeug.exceptions import Forbidden
 import sqlalchemy as sql
 
-from db import get_connection, get_session
 import models.study_dfs as study_dfs
 from models import (
     Study,
@@ -140,6 +139,7 @@ def study_chart_fragment(studyId):
         fig_htmls=fig_htmls,
         show_log_toggle=show_log_toggle
     )
+
 
 def _fetch_study(studyId, check_user=True):
     study = g.db_session.scalars(

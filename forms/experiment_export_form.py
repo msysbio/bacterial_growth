@@ -4,7 +4,7 @@ import sqlalchemy as sql
 from sqlalchemy.sql.expression import literal_column
 import pandas as pd
 
-from models import(
+from models import (
     Experiment,
     Bioreplicate,
     Measurement,

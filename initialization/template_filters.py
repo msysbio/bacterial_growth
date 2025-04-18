@@ -1,5 +1,6 @@
 import statistics
 
+
 def init_template_filters(app):
     @app.template_filter('map_scientific')
     def _map_scientific(values):

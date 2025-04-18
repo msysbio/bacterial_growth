@@ -5,8 +5,18 @@ extend-ignore =
   # Multiple spaces before operator: want to keep it for aligning code
   E221,
   # Line too long: sometimes, it can't be avoided
-  E501
+  E501,
+  # Multiple statements on one line: more compact
+  E701
 exclude =
     .git,
-    __pycache__
+    .micromamba,
+    __pycache__,
+    docs,
+    legacy,
+    scripts,
+    streamlit
+per-file-ignores =
+    # imported but unused
+    models/__init__.py: F401
 max-complexity = 10

@@ -1,11 +1,8 @@
 import sys
-import subprocess
-import os
-import re
 from pathlib import Path
 import sqlalchemy as sql
 
-from db import get_connection, get_config
+from db import get_connection
 
 
 def run(file, up, down, direction=None):
@@ -26,7 +23,7 @@ def run(file, up, down, direction=None):
     with get_connection() as conn:
         migrated_at = conn.execute(
             sql.text('SELECT migratedAt FROM MigrationVersions WHERE name = :name'),
-            { 'name': migration_name },
+            {'name': migration_name},
         ).scalar()
 
         if direction == "up":

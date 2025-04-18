@@ -3,10 +3,7 @@ import tests.init  # noqa: F401
 import unittest
 from decimal import Decimal
 
-from models import (
-    Measurement,
-    Study
-)
+from models import Measurement
 
 from tests.database_test import DatabaseTest
 import lib.util as util
@@ -114,7 +111,7 @@ class TestMeasurement(DatabaseTest):
             metabolite={'metabo_name': 'trehalose'},
         ).chebi_id
 
-        t = self.create_measurement_technique(
+        self.create_measurement_technique(
             studyUniqueID=study_uuid,
             subjectType='metabolite',
             type='Metabolite',
@@ -152,7 +149,7 @@ class TestMeasurement(DatabaseTest):
         study_id = study.studyId
         study_uuid = study.studyUniqueID
 
-        bioreplicate = self.create_bioreplicate(
+        self.create_bioreplicate(
             studyId=study_id,
             bioreplicateId='b1',
         )
