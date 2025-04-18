@@ -19,7 +19,7 @@ def dynamical_query(all_advance_query):
         where_clause = ""
         if query_dict['option']:
             if query_dict['option'] == 'Project Name':
-                project_name = query_dict['value'].lower()
+                project_name = query_dict['value'].strip().lower()
                 if project_name != '':
                     where_clause = f"""
                     FROM Study
@@ -40,7 +40,7 @@ def dynamical_query(all_advance_query):
                 )
                 """
             elif query_dict['option'] == 'Study Name':
-                study_name = query_dict['value'].lower()
+                study_name = query_dict['value'].strip().lower()
                 where_clause = f"""
                     FROM Study
                     WHERE LOWER(studyName) LIKE '%{study_name}%'
@@ -52,7 +52,7 @@ def dynamical_query(all_advance_query):
                 WHERE studyId = '{study_id}'
                 """
             elif query_dict['option'] == 'Microbial Strain':
-                microb_strain = query_dict['value'].lower()
+                microb_strain = query_dict['value'].strip().lower()
                 where_clause = f"""
                 FROM Strains
                 WHERE LOWER(memberName) LIKE '%{microb_strain}%'
@@ -64,7 +64,7 @@ def dynamical_query(all_advance_query):
                 WHERE NCBId = '{microb_ID}'
                 """
             elif query_dict['option'] == 'Metabolites':
-                metabo = query_dict['value'].lower()
+                metabo = query_dict['value'].strip().lower()
                 where_clause = f"""
                 FROM MetabolitePerExperiment
                 WHERE LOWER(metabo_name) LIKE '%{metabo}%'
