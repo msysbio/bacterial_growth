@@ -79,6 +79,16 @@ class Study(OrmBase):
         else:
             return user.uuid in self.managerUuids
 
+    def find_last_submission(self, db_session):
+        from models import Submission
+
+        return db_session.scalars(
+            sql.select(Submission)
+            .where(Submission.studyUniqueID == self.uuid)
+            .order_by(Submission.updatedAt.desc())
+            .limit(1)
+        ).one_or_none()
+
     @property
     def managerUuids(self):
         return {su.userUniqueID for su in self.studyUsers}
