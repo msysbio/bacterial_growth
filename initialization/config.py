@@ -15,7 +15,7 @@ def init_config(app):
     if app_env == 'development':
         app.config.update(
             DEBUG=True,
-            ASSETS_DEBUG=True,
+            ASSETS_DEBUG=False,
             TEMPLATES_AUTO_RELOAD=True,
             EXPLAIN_TEMPLATE_LOADING=False,
             SECRET_KEY='development_key',
@@ -23,7 +23,7 @@ def init_config(app):
     elif app_env == 'test':
         app.config.update(
             DEBUG=False,
-            ASSETS_DEBUG=True,
+            ASSETS_DEBUG=False,
             TEMPLATES_AUTO_RELOAD=False,
             EXPLAIN_TEMPLATE_LOADING=False,
             SECRET_KEY='testing_key',
