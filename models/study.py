@@ -71,7 +71,7 @@ class Study(OrmBase):
     def isPublishable(self):
         return self.publishableAt and self.publishableAt <= datetime.datetime.now()
 
-    def visibleToUser(self, user):
+    def visible_to_user(self, user):
         if self.isPublished:
             return True
         elif not user or not user.uuid:

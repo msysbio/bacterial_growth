@@ -21,7 +21,7 @@ import lib.util as util
 def study_show_page(studyId):
     study = _fetch_study(studyId, check_user=False)
 
-    if study.visibleToUser(g.current_user):
+    if study.visible_to_user(g.current_user):
         return render_template("pages/studies/show.html", study=study)
     else:
         return render_template("pages/studies/show_unpublished.html", study=study)
@@ -148,7 +148,7 @@ def _fetch_study(studyId, check_user=True):
         .limit(1)
     ).one()
 
-    if not study.visibleToUser(g.current_user):
+    if not study.visible_to_user(g.current_user):
         raise Forbidden()
 
     return study
