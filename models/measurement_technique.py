@@ -103,8 +103,7 @@ class MeasurementTechnique(OrmBase):
         if measurements is None:
             measurements = self.measurements
 
-        def grouper(m):
-            return m.bioreplicateUniqueId
+        grouper = lambda m: m.bioreplicateUniqueId
 
         ordered_measurements = sorted(self.measurements, key=grouper)
         for (bioreplicate_uuid, group) in itertools.groupby(ordered_measurements, grouper):
@@ -123,8 +122,7 @@ class MeasurementTechnique(OrmBase):
         if measurements is None:
             measurements = self.measurements
 
-        def grouper(m):
-            return m.bioreplicateUniqueId
+        grouper = lambda m: (m.subjectType, m.subjectId)
 
         ordered_measurements = sorted(measurements, key=grouper)
         for ((subject_type, subject_id), group) in itertools.groupby(ordered_measurements, grouper):

@@ -22,9 +22,9 @@
         {% endif %}
       </p>
 
-      <p>
-        {{ study.studyDescription }}
-      </p>
+      {% if study.studyDescription: %}
+        <p>{{ study.studyDescription }}</p>
+      {% endif %}
 
       <h2>Measurement techniques</h2>
 

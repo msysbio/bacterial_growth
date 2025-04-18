@@ -7,7 +7,9 @@ extend-ignore =
   # Line too long: sometimes, it can't be avoided
   E501,
   # Multiple statements on one line: more compact
-  E701
+  E701,
+  # Do not use a lambda: it's clearer in some contexts
+  E731
 exclude =
     .git,
     .micromamba,

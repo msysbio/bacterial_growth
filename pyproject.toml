@@ -3,3 +3,13 @@ pythonpath = ["."]
 
 [tool.pytest_env]
 APP_ENV = "test"
+
+[tool.coverage.run]
+omit = [
+  "legacy/*",
+  "tests/*",
+  "streamlit/*",
+  ".micromamba/*",
+]
+[tool.coverage.html]
+directory = "docs/test_coverage"
