@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime, UTC
 
 import sqlalchemy as sql
 
@@ -21,7 +21,7 @@ def up(conn):
             publishedAt = :time
     """
     conn.execute(sql.text(query), {
-        'time': datetime.datetime.now(),
+        'time': datetime.now(UTC),
     })
 
 

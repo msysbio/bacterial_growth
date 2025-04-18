@@ -10,8 +10,8 @@ from sqlalchemy.orm import (
     Mapped,
     mapped_column,
 )
-from sqlalchemy.types import DateTime
 from sqlalchemy.schema import FetchedValue
+from sqlalchemy_utc.sqltypes import UtcDateTime
 import humanize
 import pandas as pd
 
@@ -27,7 +27,7 @@ class ExcelFile(OrmBase):
     size:     Mapped[int]   = mapped_column(Integer)
     content:  Mapped[bytes] = mapped_column(LargeBinary)
 
-    createdAt: Mapped[datetime] = mapped_column(DateTime, server_default=FetchedValue())
+    createdAt: Mapped[datetime] = mapped_column(UtcDateTime, server_default=FetchedValue())
 
     @classmethod
     def from_upload(Self, uploaded_file):

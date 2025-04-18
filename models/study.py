@@ -1,12 +1,11 @@
 import re
 from typing import List
-import datetime
+from datetime import datetime, UTC
 
 import sqlalchemy as sql
 from sqlalchemy import (
     String,
     ForeignKey,
-    DateTime,
     FetchedValue,
 )
 from sqlalchemy.orm import (
@@ -15,6 +14,7 @@ from sqlalchemy.orm import (
     relationship,
 )
 from sqlalchemy.ext.hybrid import hybrid_property
+from sqlalchemy_utc.sqltypes import UtcDateTime
 
 from models.orm_base import OrmBase
 
@@ -45,11 +45,11 @@ class Study(OrmBase):
         back_populates="study"
     )
 
-    createdAt:        Mapped[datetime] = mapped_column(DateTime, server_default=FetchedValue())
-    updatedAt:        Mapped[datetime] = mapped_column(DateTime, server_default=FetchedValue())
-    publishableAt:    Mapped[datetime] = mapped_column(DateTime, nullable=True)
-    publishedAt:      Mapped[datetime] = mapped_column(DateTime, nullable=True)
-    embargoExpiresAt: Mapped[datetime] = mapped_column(DateTime, nullable=True)
+    createdAt:        Mapped[datetime] = mapped_column(UtcDateTime, server_default=FetchedValue())
+    updatedAt:        Mapped[datetime] = mapped_column(UtcDateTime, server_default=FetchedValue())
+    publishableAt:    Mapped[datetime] = mapped_column(UtcDateTime, nullable=True)
+    publishedAt:      Mapped[datetime] = mapped_column(UtcDateTime, nullable=True)
+    embargoExpiresAt: Mapped[datetime] = mapped_column(UtcDateTime, nullable=True)
 
     @hybrid_property
     def uuid(self):
@@ -69,7 +69,7 @@ class Study(OrmBase):
 
     @hybrid_property
     def isPublishable(self):
-        return self.publishableAt and self.publishableAt <= datetime.datetime.now()
+        return self.publishableAt and self.publishableAt <= datetime.now(UTC)
 
     def visible_to_user(self, user):
         if self.isPublished:
@@ -97,7 +97,7 @@ class Study(OrmBase):
         if not self.isPublishable:
             return False
         else:
-            self.publishedAt = datetime.datetime.now()
+            self.publishedAt = datetime.now(UTC)
             return True
 
     @staticmethod

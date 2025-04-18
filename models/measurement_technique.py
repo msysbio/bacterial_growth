@@ -7,7 +7,6 @@ from sqlalchemy import (
     Boolean,
     ForeignKey,
     JSON,
-    DateTime,
 )
 from sqlalchemy.orm import (
     Mapped,
@@ -16,6 +15,7 @@ from sqlalchemy.orm import (
 )
 from sqlalchemy.schema import FetchedValue
 from sqlalchemy.ext.hybrid import hybrid_property
+from sqlalchemy_utc.sqltypes import UtcDateTime
 
 from models.orm_base import OrmBase
 
@@ -57,8 +57,8 @@ class MeasurementTechnique(OrmBase):
     studyUniqueID: Mapped[str] = mapped_column(ForeignKey('Study.studyUniqueID'), nullable=False)
     study: Mapped['Study'] = relationship(back_populates="measurementTechniques")
 
-    createdAt: Mapped[datetime] = mapped_column(DateTime, server_default=FetchedValue())
-    updatedAt: Mapped[datetime] = mapped_column(DateTime, server_default=FetchedValue())
+    createdAt: Mapped[datetime] = mapped_column(UtcDateTime, server_default=FetchedValue())
+    updatedAt: Mapped[datetime] = mapped_column(UtcDateTime, server_default=FetchedValue())
 
     measurements: Mapped[List['Measurement']] = relationship(
         back_populates="techniqueRecord"

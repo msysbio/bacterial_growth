@@ -9,11 +9,12 @@ humanize
 
 # Database
 sqlalchemy
+SQLAlchemy-Utc
 pymysql
 cryptography
 
 # Admin panel
-flask-admin[sqlalchemy,export]
+flask-admin
 
 # Deployment
 gunicorn

@@ -1,7 +1,7 @@
 import tests.init  # noqa: F401
 
 import unittest
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, UTC
 from types import SimpleNamespace
 
 import sqlalchemy as sql
@@ -12,7 +12,7 @@ from tests.database_test import DatabaseTest
 
 class TestStudy(DatabaseTest):
     def test_user_visibility(self):
-        study = self.create_study(publishedAt=None, publishableAt=datetime.now())
+        study = self.create_study(publishedAt=None, publishableAt=datetime.now(UTC))
         self.create_study_user(studyUniqueID=study.uuid, userUniqueID='user1')
         self.create_study_user(studyUniqueID=study.uuid, userUniqueID='user2')
         self.db_session.flush()
@@ -59,12 +59,12 @@ class TestStudy(DatabaseTest):
 
         self.assertIsNone(study.find_last_submission(self.db_session))
 
-        s1 = self.create_submission(studyUniqueID=study.uuid, updatedAt=(datetime.now() - timedelta(hours=24)))
-        s2 = self.create_submission(studyUniqueID=study.uuid, updatedAt=(datetime.now() - timedelta(hours=12)))
-        s3 = self.create_submission(studyUniqueID=study.uuid, updatedAt=(datetime.now() - timedelta(hours=48)))
+        s1 = self.create_submission(studyUniqueID=study.uuid, updatedAt=(datetime.now(UTC) - timedelta(hours=24)))
+        s2 = self.create_submission(studyUniqueID=study.uuid, updatedAt=(datetime.now(UTC) - timedelta(hours=12)))
+        s3 = self.create_submission(studyUniqueID=study.uuid, updatedAt=(datetime.now(UTC) - timedelta(hours=48)))
 
         self.assertEqual(study.find_last_submission(self.db_session), s2)
-        s4 = self.create_submission(studyUniqueID=study.uuid, updatedAt=(datetime.now() - timedelta(hours=6)))
+        s4 = self.create_submission(studyUniqueID=study.uuid, updatedAt=(datetime.now(UTC) - timedelta(hours=6)))
 
         self.assertEqual(study.find_last_submission(self.db_session), s4)
 

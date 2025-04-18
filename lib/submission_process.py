@@ -1,6 +1,6 @@
 import io
 import tempfile
-import datetime
+from datetime import datetime, timedelta, UTC
 from db import get_session, get_transaction
 
 import pandas as pd
@@ -84,7 +84,7 @@ def _save_study(db_session, submission_form):
         study = Study(**params)
 
         study.studyId = Study.generate_public_id(db_session)
-        study.publishableAt = datetime.datetime.now() + datetime.timedelta(hours=24)
+        study.publishableAt = datetime.now(UTC) + timedelta(hours=24)
 
         db_session.add(StudyUser(
             studyUniqueID=submission.studyUniqueID,

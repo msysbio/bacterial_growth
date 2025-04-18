@@ -1,5 +1,5 @@
 import unittest
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, UTC
 from freezegun import freeze_time
 
 from models import (
@@ -73,7 +73,7 @@ class TestSubmissionProcess(DatabaseTest):
 
         submission_form = SubmissionForm(submission_id=submission.id, db_session=self.db_session)
 
-        with freeze_time(datetime.now()) as frozen_time:
+        with freeze_time(datetime.now(UTC)) as frozen_time:
             _save_project(self.db_session, submission_form)
             _save_study(self.db_session, submission_form)
             self.db_session.flush()
