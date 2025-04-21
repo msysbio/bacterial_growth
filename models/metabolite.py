@@ -22,6 +22,9 @@ class Metabolite(OrmBase):
         back_populates="metabolite"
     )
 
+    def __lt__(self, other):
+        return self.metabo_name < other.metabo_name
+
     @hybrid_property
     def id(self):
         return self.chebi_id
