@@ -6,25 +6,14 @@
 
 {% block content %}
   <div class="container study-page">
-    <nav>
-      {% set projectUrl = url_for('project_show_page', projectId=study.project.projectId) %}
-
-      <ul>
-        <li class="small">
-          Project
-          <a href="{{ projectUrl }}">{{ study.project.projectId }}</a>:
-          {{ study.project.projectName }}
-        </li>
-        <li class="small">Study {{ study.studyId }}</li>
-      </ul>
-    </nav>
+    {% include 'pages/studies/_header.html' %}
 
     <article>
       <h1>{{ study.studyName }}</h1>
 
-      <p>
-        {{ study.studyDescription }}
-      </p>
+      {% if study.studyDescription: %}
+        <p>{{ study.studyDescription }}</p>
+      {% endif %}
 
       <p>
         <em>This study is not published yet, so it's data is not available at this time.</em>

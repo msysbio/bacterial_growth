@@ -18,7 +18,7 @@ import lib.util as util
 
 
 def study_show_page(studyId):
-    study = _fetch_study(studyId, check_user=False)
+    study = _fetch_study(studyId, check_user_visibility=False)
 
     if study.visible_to_user(g.current_user):
         return render_template("pages/studies/show.html", study=study)
@@ -28,6 +28,8 @@ def study_show_page(studyId):
 
 def study_manage_page(studyId):
     study = _fetch_study(studyId)
+    if not study.manageable_by_user(g.current_user):
+        raise Forbidden()
 
     return render_template("pages/studies/manage.html", study=study)
 
@@ -141,14 +143,14 @@ def study_chart_fragment(studyId):
     )
 
 
-def _fetch_study(studyId, check_user=True):
+def _fetch_study(studyId, check_user_visibility=True):
     study = g.db_session.scalars(
         sql.select(Study)
         .where(Study.studyId == studyId)
         .limit(1)
     ).one()
 
-    if not study.visible_to_user(g.current_user):
+    if check_user_visibility and not study.visible_to_user(g.current_user):
         raise Forbidden()
 
     return study

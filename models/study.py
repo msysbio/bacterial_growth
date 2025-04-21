@@ -79,6 +79,12 @@ class Study(OrmBase):
         else:
             return user.uuid in self.managerUuids
 
+    def manageable_by_user(self, user):
+        if not user or not user.uuid:
+            return False
+        else:
+            return user.uuid in self.managerUuids
+
     def find_last_submission(self, db_session):
         from models import Submission
 
