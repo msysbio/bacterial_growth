@@ -141,4 +141,40 @@ If you forget to invoke that function, SQLAlchemy will happily "forget" to invok
 
 ### Hybrid properties
 
-TODO
+Flask documentation: [Hybrid Attributes](https://docs.sqlalchemy.org/en/20/orm/extensions/hybrid.html)
+
+These properties are a little bit weird. The idea is that a single method or property name can represent the same thing on both the *instance* level and on the *class* level.
+
+As an example, suppose we have a hybrid property `isPublishable`:
+
+```python
+class Study:
+    # ...
+
+    @hybrid_property
+    def isPublishable(self):
+        return self.publishableAt and self.publishableAt <= datetime.now(UTC)
+```
+
+If we have a particular study object, then within `study.isPublishable`, the value `self.publishedAt` will be a specific timestamp and the result of the function will be the comparison of the timestamp with `datetime.now(UTC)`. It'll return either `True` or `False` depending on the particular object that we have.
+
+However, if we access the class-level property `Study.isPublishable`, the value `self.publishedAt` will be a *column object* that represents this entire database column. The expression `self.publishableAt` will always be a truthy value, and `self.publishableAt <= datetime.now(UTC)` will get translated to an SQL query fragment:
+
+```python
+from models import Study
+import sqlalchemy as sql
+
+print(sql.select(Study).where(Study.isPublishable))
+```
+
+The query that gets printed is:
+
+```
+SELECT "Study"."studyUniqueID", "Study"."studyId", "Study"."studyName", "Study"."studyDescription", "Study"."studyURL", "Study"."timeUnits", "Study"."projectUniqueID", "Study"."createdAt", "Study"."updatedAt", "Study"."publishableAt", "Study"."publishedAt", "Study"."embargoExpiresAt"
+FROM "Study"
+WHERE "Study"."publishableAt" <= :publishableAt_1
+```
+
+The template `:publishableAt_1` is going to be interpolated with the value of `datetime.now(UTC)` at the time the function was invoked.
+
+This is convenient to give a simple name to a computed expression, valid on both individual objects and for database queries, but it might be impractical if the expression is too complicated. The full documentation describes how to define *different* behaviour at the class and instance level, but at this time, the codebase doesn't make use of that to avoid unnecessary complexity.
