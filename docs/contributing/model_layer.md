@@ -1,4 +1,4 @@
-# Models guide
+# Model layer: `models`, `lib`
 
 The application uses [SQLAlchemy](https://www.sqlalchemy.org/) for its ORM tools. Unfortunately, that's a large framework with a large amount of confusing documentation. In this guide, you can find an overview of how it's used in this project in particular.
 
