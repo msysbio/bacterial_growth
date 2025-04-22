@@ -79,6 +79,8 @@ return redirect(url_for('login_page'))
 
 If we wanted to show this message in the current template, we could just pass it along to `render_template`. However, the point of `flash` is to keep the message in the session for the *next* request after a redirect.
 
+The actual place that the message is shown is through the `shared/flashes.html` template. Currently, this needs to be added to the place we want to show flashes via `{% include 'shared/flashes.html' %}`. Ideally, it would live somewhere in the layout, but for now, their visual style is better inside the page container.
+
 ### `send_file`
 
 If we want to create a download link for a file, the request handler needs to send the binary data using the `send_file` function. For instance, we can generate a template Excel spreadsheet and stream it to the browser as a download:
