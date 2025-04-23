@@ -10,7 +10,7 @@ from models import (
 )
 
 with get_session() as db_session:
-    for study_id in ['SMGDB00000001', 'SMGDB00000002', 'SMGDB00000003']:
+    for study_id in ['SMGDB00000001', 'SMGDB00000002']:
         print(f"> Working on study: {study_id}")
 
         study = db_session.scalars(sql.select(Study).where(Study.studyId == study_id)).one()

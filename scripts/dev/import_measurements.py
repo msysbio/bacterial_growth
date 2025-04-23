@@ -66,7 +66,6 @@ def insert_from_growth_csv(db_session, study_id, csv_string):
                 bioreplicateUniqueId=bioreplicate_uuid,
                 position=row['Position'],
                 timeInSeconds=round(float(row['Time']) * 3600),
-                pH=row.get('pH', None),
                 unit=unit,
                 technique=technique,
                 value=value,
@@ -86,7 +85,6 @@ def insert_from_growth_csv(db_session, study_id, csv_string):
                 bioreplicateUniqueId=bioreplicate_uuid,
                 position=row['Position'],
                 timeInSeconds=round(float(row['Time']) * 3600),
-                pH=row.get('pH', None),
                 # TODO: units are not configurable
                 unit='mM',
                 # TODO (2025-03-03) What is the actual technique?
@@ -155,7 +153,6 @@ def insert_from_reads_csv(db_session, study_id, csv_string):
                     timeInSeconds=round(float(row['Time']) * 3600),
                     studyId=study_id,
                     bioreplicateUniqueId=bioreplicate_uuid,
-                    pH=row.get('pH', None),
                     # TODO: units are not configurable
                     unit='Cells/mL',
                     technique=technique,
@@ -171,7 +168,7 @@ def insert_from_reads_csv(db_session, study_id, csv_string):
     return measurements
 
 with get_session() as db_session:
-    for study_id in ['SMGDB00000001', 'SMGDB00000002', 'SMGDB00000003']:
+    for study_id in ['SMGDB00000001', 'SMGDB00000002']:
         db_session.execute(sql.delete(Measurement).where(Measurement.studyId == study_id))
 
         growth_csv = Path(f'tmp_data/{study_id}/Growth_Metabolites.csv').read_text()
