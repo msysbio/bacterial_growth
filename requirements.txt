@@ -27,7 +27,7 @@ pytest-cov
 freezegun
 
 # Streamlit app:
-matplotlib
-mysql-connector-python
-prettytable
-pyyaml
+# matplotlib
+# mysql-connector-python
+# prettytable
+# pyyaml
