@@ -10,7 +10,6 @@ def init_assets(app):
         'js/vendor/moment-2.30.1.js',
         'js/vendor/popper-core-2.11.8.js',
         'js/vendor/tippy-6.3.7.js',
-        'js/init.js',
         'js/upload/step1.js',
         'js/upload/step2.js',
         'js/upload/step3.js',
