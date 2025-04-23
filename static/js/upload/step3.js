@@ -101,7 +101,7 @@ $(document).ready(function() {
           width: '100%',
           minimumInputLength: 1,
           ajax: {
-            url: '/metabolites/completion',
+            url: `${BASE_URL}/metabolites/completion`,
             dataType: 'json',
             delay: 100,
             cache: true,

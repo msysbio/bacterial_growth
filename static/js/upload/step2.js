@@ -20,7 +20,7 @@ $(document).ready(function() {
       theme: 'custom',
       minimumInputLength: 1,
       ajax: {
-        url: '/strains/completion',
+        url: `${BASE_URL}/strains/completion`,
         dataType: 'json',
         delay: 100,
         cache: true,
@@ -87,7 +87,7 @@ $(document).ready(function() {
         width: '100%',
         minimumInputLength: 1,
         ajax: {
-          url: '/strains/completion',
+          url: `${BASE_URL}/strains/completion`,
           dataType: 'json',
           delay: 100,
           cache: true,
