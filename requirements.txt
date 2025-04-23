@@ -6,6 +6,7 @@ pandas
 plotly
 openpyxl
 humanize
+celery[redis]
 
 # Database
 sqlalchemy

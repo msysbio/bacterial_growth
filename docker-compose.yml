@@ -10,3 +10,9 @@ services:
       MYSQL_USER:          'bacterial_growth'
       MYSQL_PASSWORD:      'nVI8imBD3bl24pcP'
       MYSQL_ROOT_PASSWORD: 'nVI8imBD3bl24pcP'
+  redis:
+    image: redis:7.4.2
+    restart: always
+    container_name: bacterial_growth_redis
+    ports:
+      - "6380:6379"

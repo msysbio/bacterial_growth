@@ -6,6 +6,7 @@ from flask import (
 )
 from werkzeug.exceptions import Forbidden
 import sqlalchemy as sql
+from celery.result import AsyncResult as CeleryResult
 
 import models.study_dfs as study_dfs
 from models import (
@@ -14,6 +15,7 @@ from models import (
 )
 from forms.experiment_export_form import ExperimentExportForm
 from forms.experiment_chart_form import ExperimentChartForm
+from lib.tasks.example import add_together
 import lib.util as util
 
 
@@ -141,6 +143,25 @@ def study_chart_fragment(studyId):
         fig_htmls=fig_htmls,
         show_log_toggle=show_log_toggle
     )
+
+
+def study_calculations_action(studyId):
+    left  = int(request.form['left'])
+    right = int(request.form['right'])
+
+    result = add_together.delay(left, right)
+
+    return {'taskId': result.id}
+
+
+def study_calculations_check_json(studyId, taskId):
+    result = CeleryResult(taskId)
+
+    return {
+        "ready":      result.ready(),
+        "successful": result.successful(),
+        "value":      result.result if result.ready() else None,
+    }
 
 
 def _fetch_study(studyId, check_user_visibility=True):

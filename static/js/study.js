@@ -1,7 +1,9 @@
 $(document).ready(function() {
   $('.study-page').each(function() {
-    let $page = $(this);
+    let $page       = $(this);
     let $compareBox = $(document).find('.js-compare-box')
+
+    let studyId     = $page.data('studyId');
     let compareData = $compareBox.data('value');
 
     // TODO: a timestamp with a check on update?
@@ -75,6 +77,45 @@ $(document).ready(function() {
         // Unhighlight previously compared row
         $container.parents('.js-table-row').removeClass('highlight');
       });
+    });
+
+    $page.on('submit', '.js-calculation-form', function(e) {
+      e.preventDefault();
+      let $form = $(e.currentTarget);
+
+      $.ajax({
+        url: `/study/${studyId}/calculations`,
+        dataType: 'json',
+        method: 'POST',
+        data: $form.serializeArray(),
+        success: function(response) {
+          let taskId = response.taskId;
+          let $result = $page.find('.js-calculation-result');
+
+          function check() {
+            $.ajax({
+              url: `/study/${studyId}/calculations/${taskId}.json`,
+              dataType: 'json',
+              success: function(response) {
+                if (!response.ready) {
+                  $result.html('[<em>calculating...</em>]');
+                  setTimeout(check, 1000);
+                  return;
+                }
+
+                if (!response.successful) {
+                  $result.html('<span class="error">[error]</span>');
+                  return;
+                }
+
+                $result.html(response.value);
+              }
+            });
+          }
+
+          check();
+        }
+      })
     });
 
     function updateCompareBox(action, target, successCallback) {

@@ -5,7 +5,7 @@
 {% block title %}: Manage study {{ study.studyId }}{% endblock %}
 
 {% block content %}
-  <div class="container study-page">
+  <div class="container study-page" data-study-id="{{ study.studyId }}">
     {% include 'pages/studies/_header.html' %}
 
     <article>
@@ -55,6 +55,22 @@
           {{ post_button("Edit submission", url_for('edit_submission_action', id=lastSubmission.id)) }}
         </p>
       {% endif %}
+
+      <h2>Trigger background job</h2>
+
+      <form
+          action="{{ url_for('study_calculations_action', studyId=study.publicId) }}"
+          class="simple-form js-calculation-form"
+          method="POST">
+        <p>
+          Example calculation,
+          <input type="number" name="left" style="width: 60px;" /> +
+          <input type="number" name="right" style="width: 60px;" /> =
+          <span class="js-calculation-result">[?]</span>
+        </p>
+
+        <input type="submit" class="flex-end" value="Calculate" />
+      </form>
     </article>
   </div>
 {% endblock %}

@@ -10,6 +10,7 @@ from initialization.timing import init_timing
 from initialization.global_handlers import init_global_handlers
 from initialization.template_filters import init_template_filters
 from initialization.admin import init_admin
+from initialization.celery import init_celery
 
 
 def create_app():
@@ -22,6 +23,7 @@ def create_app():
     app = init_global_handlers(app)
     app = init_template_filters(app)
     app = init_admin(app)
+    app = init_celery(app)
 
     init_plotly()
 
