@@ -5,7 +5,9 @@
       <li class="complete">
         <span class="icon"></span>
         Study design uploaded:
-        <code class="inline">{{ submission.studyFile.filename }}</code>
+        <a href="{{ url_for('download_excel_file', id=submission.studyFile.id) }}">
+          {{ submission.studyFile.filename }}
+        </a>
       </li>
     {% else %}
       <li class="incomplete">
@@ -17,7 +19,10 @@
       <li class="complete">
         <span class="icon"></span>
         Experimental data uploaded:
-        <code class="inline">{{ submission.dataFile.filename }}</code>
+
+        <a href="{{ url_for('download_excel_file', id=submission.dataFile.id) }}">
+          {{ submission.dataFile.filename }}
+        </a>
       </li>
     {% else %}
       <li class="incomplete">

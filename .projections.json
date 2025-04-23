@@ -1,4 +1,7 @@
 {
+  "initialization/*.py": {
+    "type": "init"
+  },
   "templates/*.html": {
     "type": "template"
   },
@@ -9,6 +12,10 @@
   "models/*.py": {
     "type": "model",
     "alternate": "tests/models/test_{}.py"
+  },
+  "lib/*.py": {
+    "type": "lib",
+    "alternate": "tests/lib/test_{}.py"
   },
   "pages/*.py": {
     "type": "page"

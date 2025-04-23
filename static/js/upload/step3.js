@@ -57,6 +57,9 @@ $(document).ready(function() {
         $input.attr('name', `techniques-${techniqueIndex}-${name}`);
       });
 
+      // Add sequential number:
+      $newForm.find('.js-index').text(`${techniqueIndex + 1}. `)
+
       // Give it a different style:
       $newForm.addClass('new');
 

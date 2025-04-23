@@ -30,11 +30,13 @@
 
     <div class="columns" style="margin-top: 10px;">
       <div class="column" style="width: 50%;">
-        {{ post_button("⬇ Download Study Template", url_for('download_study_template_xlsx')) }}
+        {% set text = "<span class=\"icon icon-download-white\"></span> Download Study Template" %}
+        {{ post_button(text, url_for('download_study_template_xlsx')) }}
       </div>
 
       <div class="column" style="width: 50%;">
-        {{ post_button("⬇ Download Data Template", url_for('download_data_template_xlsx')) }}
+        {% set text = "<span class=\"icon icon-download-white\"></span> Download Data Template" %}
+        {{ post_button(text, url_for('download_data_template_xlsx')) }}
       </div>
     </div>
   </div>
@@ -69,7 +71,7 @@
           <div class="form-row full">
             <div class="file-upload-container full js-file-upload">
               <img
-                  src="{{ url_for('static', filename='images/cloud-upload.svg') }}"
+                  src="{{ url_for('static', filename='images/icons/cloud-upload.svg') }}"
                   height="40"
                   title="Upload" />
 
@@ -96,7 +98,7 @@
           <div class="form-row full">
             <div class="file-upload-container full js-file-upload">
               <img
-                  src="{{ url_for('static', filename='images/cloud-upload.svg') }}"
+                  src="{{ url_for('static', filename='images/icons/cloud-upload.svg') }}"
                   height="40"
                   title="Upload" />
 

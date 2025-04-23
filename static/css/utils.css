@@ -32,6 +32,18 @@
   margin-left: auto;
 }
 
+.flex-end {
+  align-self: flex-end;
+}
+
+.flex-gap-10 {
+  gap: 10px;
+}
+
+.flex-gap-6 {
+  gap: 6px;
+}
+
 code.inline {
   font-family: monospace;
   font-size: 16px;
@@ -39,7 +51,13 @@ code.inline {
   padding: 0 6px;
 }
 
+.truncate {
+  overflow-x: hidden;
+  text-overflow: ellipsis;
+}
+
 hr {
+  clear: both;
   height: 2px;
   background-color: var(--border-color);
   border: 0;
@@ -53,11 +71,20 @@ hr {
   padding: 10px;
 }
 
-.error-message {
+.error-message,
+.flash-error {
   display: block;
   background: pink;
   padding: 10px;
   border-left: 4px solid #d02631;
+}
+
+.warning-message,
+.flash-warning {
+  display: block;
+  background: #fff3cd;
+  padding: 10px;
+  border-left: 4px solid #ffeeba;
 }
 
 .error-message-list {
@@ -88,7 +115,6 @@ table.simple-table {
 
 table.dataframe-table {
   border-spacing: 0;
-  border-collapse: collapse;
   font-size: 13px;
 
   th {
@@ -160,7 +186,8 @@ form.simple-form {
     }
   }
 
-  input[type="submit"] {
+  input[type="submit"],
+  button[type="submit"] {
     cursor: pointer;
     padding: 0.7rem;
     border: 1px solid rgb(8, 131, 149);
@@ -168,14 +195,24 @@ form.simple-form {
     background-color: rgb(8, 131, 149);
     color: white;
 
+    &.small-button {
+      padding: 0.3rem;
+    }
+
     &:hover {
       background-color: rgb(7, 110, 126);
     }
-  }
 
-  .help {
-    font-style: italic;
-    opacity: 0.6;
+    span {
+      color: white;
+    }
+
+    &.icon {
+      border: none !important;
+      background-color: transparent !important;
+      margin: 0 !important;
+      padding: 0 !important;
+    }
   }
 
   input.error,
@@ -190,6 +227,18 @@ form.simple-form {
   {
     color: gray;
   }
+
+  button[disabled] {
+    background-color: gray;
+    &:hover {
+      background-color: gray;
+    }
+  }
+}
+
+.help {
+  font-style: italic;
+  opacity: 0.6;
 }
 
 .form-input-blue {
@@ -231,6 +280,11 @@ form.simple-form {
   color: black;
   white-space: nowrap;
 
+  &.flex-row {
+    display: flex;
+    gap: 6px;
+  }
+
   &:hover {
     background-color: #eee;
     color: inherit;
@@ -242,6 +296,10 @@ form.simple-form {
 
   &.small-button {
     padding: 0.3rem;
+  }
+
+  &.orange-border {
+    border: 1px solid orange;
   }
 }
 
@@ -284,3 +342,20 @@ form.simple-form {
     border-radius: 0 var(--border-radius) var(--border-radius) 0;
   }
 }
+
+.icon {
+  width: 18px;
+  height: 18px;
+  background-size: cover;
+  flex-shrink: 0;
+}
+
+.icon.icon-edit           { background-image: url('/static/images/icons/edit.svg'); }
+.icon.icon-remove         { background-image: url('/static/images/icons/red-minus.svg'); }
+.icon.icon-delete         { background-image: url('/static/images/icons/square-red-minus.svg'); }
+.icon.icon-add            { background-image: url('/static/images/icons/green-plus.svg'); }
+.icon.icon-download-black { background-image: url('/static/images/icons/download-black.svg'); }
+.icon.icon-download-white { background-image: url('/static/images/icons/download-white.svg'); }
+.icon.icon-chart          { background-image: url('/static/images/icons/chart-dots-2.svg'); }
+.icon.icon-tool           { background-image: url('/static/images/icons/tool.svg'); }
+.icon.icon-info           { background-image: url('/static/images/icons/info-circle.svg'); }

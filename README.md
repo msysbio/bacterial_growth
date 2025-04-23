@@ -87,3 +87,6 @@ make html
 - CSS reset: <https://piccalil.li/blog/a-more-modern-css-reset/>
 - SVG Spinners: <https://github.com/n3r4zzurr0/svg-spinners>
 - Web icons: <https://github.com/tabler/tabler-icons>
+- Freepik icons:
+    - Bacteria: <a href="http://www.freepik.com">Designed by macrovector_official / Freepik</a>
+    - Test tube: <a href="http://www.freepik.com">Designed by Alvaro_cabrera / Freepik</a>

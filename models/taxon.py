@@ -9,6 +9,7 @@ from sqlalchemy.orm import (
 
 from models.orm_base import OrmBase
 
+
 class Taxon(OrmBase):
     __tablename__ = 'Taxa'
 

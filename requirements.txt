@@ -4,19 +4,26 @@ Flask-WTF
 cssmin
 pandas
 plotly
-pytest
-pytest-env
-pytest-cov
 openpyxl
 humanize
 
 # Database
 sqlalchemy
+SQLAlchemy-Utc
 pymysql
 cryptography
 
+# Admin panel
+flask-admin
+
 # Deployment
 gunicorn
+
+# Testing
+pytest
+pytest-env
+pytest-cov
+freezegun
 
 # Streamlit app:
 matplotlib

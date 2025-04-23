@@ -1,0 +1,60 @@
+{% from 'utils/_post_button.html' import post_button %}
+
+{% extends '_layout.html' %}
+
+{% block title %}: Manage study {{ study.studyId }}{% endblock %}
+
+{% block content %}
+  <div class="container study-page">
+    {% include 'pages/studies/_header.html' %}
+
+    <article>
+      <h1>{{ study.studyName }}</h1>
+
+      {% include 'pages/studies/_navigation_buttons.html' %}
+
+      <h2>Private Unique Identifier</h2>
+
+      <p>
+        This private ID can be used to gain access to the study for
+        editing purposes. Only share it with other users that need that
+        access.
+      </p>
+
+      <p>
+        <div class="copy-button-wrapper flex-row flex-grow">
+          <button type="button" class="js-copy-button copy-button green-button">
+            Copy 📋
+          </button>
+          <input
+              type="text"
+              value="{{ study.uuid }}"
+              class="js-export-url export-url form-input-blue full"
+              readonly />
+        </div>
+      </p>
+
+      <h2>Edit study</h2>
+
+      <p>
+        To re-upload the data or apply changes to the experimental design, you
+        need to go through the submission process again
+        (<a href="{{ url_for('upload_status_page') }}">Upload data</a>)
+        and choose to update this study.
+      </p>
+
+      {% set lastSubmission = study.find_last_submission(g.db_session) %}
+
+      {% if lastSubmission: %}
+        <p>
+          You can also edit the latest submission that updated this study by
+          clicking on this button:
+        </p>
+
+        <p>
+          {{ post_button("Edit submission", url_for('edit_submission_action', id=lastSubmission.id)) }}
+        </p>
+      {% endif %}
+    </article>
+  </div>
+{% endblock %}

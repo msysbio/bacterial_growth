@@ -45,4 +45,5 @@
    :caption: Developer Guide
 
    contributing/intro
-   contributing/models
+   contributing/model_layer
+   contributing/controller_layer

@@ -1,7 +1,6 @@
 import copy
 import itertools
 from uuid import uuid4
-from typing import List, Tuple
 
 import sqlalchemy as sql
 from sqlalchemy.orm.attributes import flag_modified
@@ -38,6 +37,7 @@ DEFAULT_STUDY_DESIGN = {
     'new_strains':     [],
     'techniques':      [],
 }
+
 
 class SubmissionForm:
     def __init__(self, submission_id=None, step=0, db_session=None, user_uuid=None):
@@ -79,6 +79,19 @@ class SubmissionForm:
             self.submission.studyUniqueID = str(uuid4())
         else:
             self.submission.studyUniqueID = data['study_uuid']
+
+        # If study to reuse has been given, copy its last submission's study
+        # design:
+        if data.get('reuse_study_uuid', '') != '':
+            previous_submission = self.db_session.scalars(
+                sql.select(Submission)
+                .where(Submission.studyUniqueID == data['reuse_study_uuid'])
+                .order_by(Submission.updatedAt.desc())
+                .limit(1)
+            ).one_or_none()
+
+            if previous_submission:
+                self.submission.studyDesign = previous_submission.studyDesign
 
         # Update text fields:
         self.submission.studyDesign['project'] = {

@@ -6,31 +6,12 @@
 
 {% block content %}
   <div class="container study-page">
-    <nav>
-      {% set projectUrl = url_for('project_show_page', projectId=study.project.projectId) %}
-
-      <ul>
-        <li class="small">
-          Project
-          <a href="{{ projectUrl }}">{{ study.project.projectId }}</a>:
-          {{ study.project.projectName }}
-        </li>
-        <li class="small">Study {{ study.studyId }}</li>
-      </ul>
-    </nav>
+    {% include 'pages/studies/_header.html' %}
 
     <article>
       <h1>{{ study.studyName }}</h1>
 
-      <p>
-        <a href="{{ url_for('dashboard_index_page', studyId=study['studyId']) }}" class="white-button">
-          📊 Visualize
-        </a>
-
-        <a href="{{ url_for('study_export_page', studyId=study['studyId']) }}" class="white-button">
-          ⬇ Export data
-        </a>
-      </p>
+      {% include 'pages/studies/_navigation_buttons.html' %}
 
       <h2>Basic information</h2>
 
@@ -41,9 +22,9 @@
         {% endif %}
       </p>
 
-      <p>
-        {{ study.studyDescription }}
-      </p>
+      {% if study.studyDescription: %}
+        <p>{{ study.studyDescription }}</p>
+      {% endif %}
 
       <h2>Measurement techniques</h2>
 
@@ -57,18 +38,24 @@
         {% for technique in study.measurementTechniques: %}
           <div class="technique-container">
             <h3>
-              {{ technique.long_name }}
+              {{ loop.index }}) {{ technique.long_name }}
 
               {% if technique.subjectType != 'metabolite': %}
                 per {{ technique.subject_short_name }}
               {% endif %}
+            </h3>
+
+            <p>
+              <strong>{{ technique.measurements|length }}</strong> total measurements
 
               {% if technique.units != '': %}
-                measured in {{ technique.units }}
+                recorded in <strong>{{ technique.units }}</strong>.
               {% endif %}
+            </p>
 
-              ({{ technique.measurements|length }} measurements)
-            </h3>
+            {% if technique.description: %}
+              <p>{{ technique.description }}</p>
+            {% endif %}
 
             <br>
 
@@ -77,27 +64,15 @@
                 <th>Actions</th>
                 <th>Subject</th>
                 <th>Time period</th>
-                <th colspan="3">Measurements</th>
+                <th>Measurements</th>
               </tr>
-
-              {% if technique.subjectType == 'bioreplicate': %}
-                <tr class="js-table-row">
-                  <th colspan="3"></th>
-                  <th>Count</th>
-                  <th>Mean</th>
-                  <th>STD</th>
-                </tr>
-              {% endif %}
 
               {% for bioreplicate, bioreplicate_measurements in technique.measurements_by_bioreplicate(g.db_session): %}
                 {% if technique.subjectType != 'bioreplicate': %}
                   <tr class="js-table-row">
-                    <th colspan="3" align="center">
+                    <th colspan="4" align="center">
                       Bioreplicate: {{ bioreplicate.bioreplicateId }}
                     </th>
-                    <th>Count</th>
-                    <th>Mean</th>
-                    <th>STD</th>
                   </tr>
                 {% endif %}
 
@@ -148,13 +123,9 @@
                     <td>{{ measurements[0].timeInHours }}h - {{ measurements[-1].timeInHours }}h</td>
 
                     <td class="numeric">
-                      {{ measurements|length }}
-                    </td>
-                    <td class="numeric">
-                      {{ "{:.2E}".format(measurements|mean('value')) }}
-                    </td>
-                    <td class="numeric">
-                      {{ "{:.2E}".format(measurements|std('value')) }}
+                      <div class="truncate">
+                        {{ measurements|map(attribute='value')|map_scientific|join(', ') }}
+                      </div>
                     </td>
                   </tr>
                 {% endfor %}

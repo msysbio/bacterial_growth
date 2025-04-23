@@ -9,11 +9,9 @@ from sqlalchemy.orm import (
     mapped_column,
     relationship,
 )
-from sqlalchemy.types import (
-    JSON,
-    DateTime,
-)
+from sqlalchemy.types import JSON
 from sqlalchemy.schema import FetchedValue
+from sqlalchemy_utc.sqltypes import UtcDateTime
 
 from models.orm_base import OrmBase
 
@@ -52,8 +50,8 @@ class Submission(OrmBase):
         single_parent=True,
     )
 
-    createdAt: Mapped[datetime] = mapped_column(DateTime, server_default=FetchedValue())
-    updatedAt: Mapped[datetime] = mapped_column(DateTime, server_default=FetchedValue())
+    createdAt: Mapped[datetime] = mapped_column(UtcDateTime, server_default=FetchedValue())
+    updatedAt: Mapped[datetime] = mapped_column(UtcDateTime, server_default=FetchedValue())
 
     @property
     def completed_step_count(self):
@@ -62,7 +60,7 @@ class Submission(OrmBase):
             1 if len(self.studyDesign.get('strains', [])) + len(self.studyDesign.get('new_strains', [])) > 0 else 0,
             1 if len(self.studyDesign.get('techniques', [])) > 0 and self.studyDesign.get('timepoint_count', 0) else 0,
             1 if self.studyFileId and self.dataFileId else 0,
-            0, # final step
+            1 if self.study and self.study.isPublished else 0,
         ])
 
     @property

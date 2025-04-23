@@ -4,7 +4,9 @@
 
 {% block content %}
   <div class="container profile-page">
-    <h2>Profile page</h2>
+    <h2>Profile page (temporary)</h2>
+
+    {% include 'shared/flashes.html' %}
 
     {% if g.current_user %}
       <h3>Your current user UUID:</h3>
@@ -31,9 +33,73 @@
             <input name="user_uuid" class="form-input-full form-input-blue" type="text" required />
           </label>
 
-          <input type="submit" value="Log in" />
+          <input type="submit" class="flex-end" value="Log in" />
         </div>
       </form>
     </p>
+
+    <h3>Your projects</h3>
+
+    {% if projects: %}
+      <ul>
+        {% for project in projects: %}
+          <li>
+            <a href="{{ url_for('project_show_page', projectId=project.publicId) }}">
+              [{{ project.publicId }}] {{ project.name }}
+            </a>
+          </li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+
+    <form action="{{ url_for('user_claim_project_action') }}" class="simple-form" method="POST">
+      <div class="form-row">
+        <label class="uuid">
+          <span>Claim project by UUID:</span>
+          <input name="uuid" class="form-input-full form-input-blue" type="text" required />
+        </label>
+
+        <input type="submit" class="flex-end" value="Get access" />
+      </div>
+    </form>
+
+    <h3>Your studies</h3>
+
+    {% if studies: %}
+      <ul>
+        {% for study in studies: %}
+          <li>
+            <a href="{{ url_for('study_show_page', studyId=study.publicId) }}">
+              [{{ study.publicId }}] {{ study.name }}
+            </a>
+          </li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+
+    <form action="{{ url_for('user_claim_study_action') }}" class="simple-form" method="POST">
+      <div class="form-row">
+        <label class="uuid">
+          <span>Claim study by UUID:</span>
+          <input name="uuid" class="form-input-full form-input-blue" type="text" required />
+        </label>
+
+        <input type="submit" class="flex-end" value="Get access" />
+      </div>
+    </form>
+
+    {% if custom_strains: %}
+      <h3>Your custom strains</h3>
+
+      <ul>
+        {% for strain in custom_strains: %}
+          <li>
+            <a href="{{ url_for('strain_show_page', id=strain.id) }}">
+              {{ strain.name }}
+            </a>
+          </li>
+        {% endfor %}
+      </ul>
+    {% endif %}
   </div>
 {% endblock %}

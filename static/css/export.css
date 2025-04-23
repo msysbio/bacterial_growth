@@ -10,10 +10,6 @@
     margin-bottom: 20px;
   }
 
-  h4 {
-    margin-bottom: 10px;
-  }
-
   .section-delimiter {
     label {
       display: block;
@@ -33,6 +29,10 @@
       display: block;
       line-height: 2;
     }
+  }
+
+  .section-bioreplicates {
+    margin-top: 20px;
   }
 
   .box {

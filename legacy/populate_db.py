@@ -19,22 +19,7 @@ from legacy.parse_raw_data import (
 # Rewrite project and study creation/update to use ORM style, update from submission only
 
 
-def save_measurements_to_database(conn, yml_dir, submission_form, data_template):
-    """
-    Function that populates all the data from the yaml files if not errors, in case of errors the function stops and returns the error
-
-    inputs:
-        - conn:            a database connection
-        - submission_form: a SubmissionForm object with submission details
-        - data_template:   an excel file uploaded by the user in step 4 with all the raw data
-
-    Returns:
-        - study_id:     study id of the uploaded study if susccessfull, if not it will be None
-        - errors:       List of all the errors resulting from the get_techniques_metabolites function
-        - errors_logic: List of all logial errors checked while populating the data into the database
-        - study_uuid:   Study Unique ID only if all was susscessful
-        - project_uuid: Project Unique ID only if all was susscessful
-    """
+def save_study_design_to_database(conn, yml_dir, submission_form, data_template, study, project):
     submission = submission_form.submission
 
     list_microbial_strains = [t.tax_names for t in submission_form.fetch_taxa()]
@@ -55,15 +40,14 @@ def save_measurements_to_database(conn, yml_dir, submission_form, data_template)
     # checks that all the options selected by the user in the interface match the uploaded raw data template
     # errors = get_techniques_metabolites(list_growth, list_metabolites, list_microbial_strains, data_template)
     # if errors:
-    #     return None, errors, [], None, None, None
+    #     return errors, []
 
-    errors = []
+    errors       = []
     errors_logic = []
 
-    study_id = None
-    project_id = None
-
+    study_id     = study.studyId
     study_uuid   = submission.studyUniqueID
+    project_id   = project.projectId
     project_uuid = submission.projectUniqueID
 
     #defining the dictioraries depending on the raw data uploaded by the user
@@ -88,70 +72,6 @@ def save_measurements_to_database(conn, yml_dir, submission_form, data_template)
     num_mem          = len(info_mem['Member_ID'])
     num_comu         = len(info_comu['Community_ID'])
     num_rep_metadata = len(replicate_metadata['Biological_Replicate_id'])
-
-    if 'Study_UniqueID' not in info_study:
-        errors.append("Missing study unique ID in the study template")
-    elif info_study['Study_UniqueID'][0].strip() != submission.studyUniqueID:
-        errors.append(
-            "The unique ID for the Study in the form doesn't match the one in the uploaded Excel file. "
-            "Check if you've uploaded the wrong file."
-        )
-
-    if 'Project_UniqueID' not in info_study:
-        errors.append("Missing study unique ID in the study template")
-    elif info_study['Project_UniqueID'][0].strip() != submission.projectUniqueID:
-        errors.append(
-            "The unique ID for the Project in the form doesn't match the one in the uploaded Excel file. "
-            "Check if you've uploaded the wrong file."
-        )
-
-    if errors:
-        return None, errors, [], None, None, None
-
-    study = {
-        'studyId':          submission_form.study_id,
-        'studyName':        submission.studyDesign['study']['name'],
-        'studyDescription': submission.studyDesign['study']['description'],
-        'studyURL':         submission.studyDesign['study']['url'],
-        'studyUniqueID':    submission.studyUniqueID,
-        'projectUniqueID':  submission.projectUniqueID,
-        'timeUnits':        submission.studyDesign['time_units'],
-    }
-    study_filtered = {k: v for k, v in study.items() if v is not None}
-
-    if len(study_filtered) > 0:
-        if submission_form.type == 'update_study':
-            study_id = submission_form.study_id
-            db.updateRecord(conn, 'Study', study_id, study_filtered)
-        else:
-            study_id = db.getStudyID(conn)
-            study_filtered['studyId'] = study_id
-            db.addRecord(conn, 'Study', study_filtered)
-            db.addRecord(conn, 'StudyUsers', {
-                'studyUniqueID': submission.studyUniqueID,
-                'userUniqueID': submission.userUniqueID,
-            })
-
-    project = {
-        'projectId':          submission_form.project_id,
-        'projectName':        submission.studyDesign['project']['name'],
-        'projectDescription': submission.studyDesign['project']['description'],
-        'projectUniqueID':    info_study['Project_UniqueID'][0]
-    }
-    project_filtered = {k: v for k, v in project.items() if v is not None}
-
-    if len(project_filtered) > 0:
-        if submission_form.type in ('new_study', 'update_study'):
-            project_id = submission_form.project_id
-            db.updateRecord(conn, 'Project', project_id, project_filtered)
-        else:
-            project_id = db.getProjectID(conn)
-            project_filtered['projectId'] = project_id
-            db.addRecord(conn, 'Project', project_filtered)
-            db.addRecord(conn, 'ProjectUsers', {
-                'projectUniqueID': submission.projectUniqueID,
-                'userUniqueID': submission.userUniqueID,
-            })
 
     #defining list that will save all the names and their corresponding ids
     biorep_id_list       = []
@@ -207,6 +127,7 @@ def save_measurements_to_database(conn, yml_dir, submission_form, data_template)
                 'NCBId': info_mem['NCBI_ID'][i],
                 'assemblyGenBankId': info_mem['Assembly_GenBank_ID'][i],
                 'descriptionMember': info_mem['Description'][i],
+                'userUniqueID': submission.userUniqueID,
             }
             members_filtered = {k: v for k, v in members.items() if v is not None}
             if len(members_filtered)>0:
@@ -427,7 +348,7 @@ def save_measurements_to_database(conn, yml_dir, submission_form, data_template)
         technique.studyUniqueID = study_uuid
         conn.add(technique)
 
-    return study_id, errors, errors_logic, study_uuid, project_uuid, project_id
+    return errors, errors_logic
 
 #function that stripst columns where more than one value is allowed
 def stripping_method(cell):

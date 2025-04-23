@@ -1,7 +1,21 @@
-{% macro render_bioreplicate_form(data, prefix) %}
+{% macro render_bioreplicate_form(data, index) %}
+  {% if index is none: %}
+    {% set prefix = '' %}
+  {% else: %}
+    {% set prefix = 'techniques-{}-'.format(index)  %}
+  {% endif %}
 
   <div class="technique-container js-technique-container" data-subject-type="bioreplicate">
-    <h3>Community-level measurement</h3>
+    <img
+        width="120"
+        class="form-icon"
+        alt="Community-level measurement"
+        src="/static/images/large-icons/test-tube.png" />
+
+    <h3>
+      <span class="js-index">{{ "{}.".format(index + 1) if index is not none }}</span>
+      Community-level measurement
+    </h3>
 
     <p>
       Measurement of the cell abundances in an entire community, or of a
@@ -87,7 +101,9 @@
       </div>
 
       <div class="no-label flex-right">
-        <a href="#" class="white-button js-remove">🗑 Remove</a>
+        <a href="#" class="white-button flex-row js-remove">
+          <span class="icon icon-remove"></span> Remove
+        </a>
       </div>
     </div>
   </div>

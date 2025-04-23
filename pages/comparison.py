@@ -61,7 +61,8 @@ def comparison_update_json(action):
     compare_data['targets'] = list(target_set)
     session['compareData'] = compare_data
 
-    return json.dumps({ 'targetCount': len(compare_data['targets']) })
+    return json.dumps({'targetCount': len(compare_data['targets'])})
+
 
 def comparison_clear_action():
     if 'compareData' in session:
@@ -74,7 +75,6 @@ def comparison_chart_fragment():
     args = request.args.to_dict()
 
     width = args.pop('width')
-    target_identifiers = args.keys()
     target_data = []
 
     for (target_identifier, direction) in args.items():
@@ -115,6 +115,7 @@ def comparison_chart_fragment():
         'pages/comparison/_chart.html',
         fig_html=fig_html,
     )
+
 
 def _init_compare_data():
     return session.get('compareData', {'targets': []})

@@ -1,6 +1,4 @@
 import io
-import os
-import tempfile
 
 from flask import (
     g,
@@ -11,12 +9,9 @@ from flask import (
     url_for,
     send_file,
 )
-import humanize
-import pandas as pd
 import sqlalchemy as sql
 
 from models import (
-    Measurement,
     Submission,
     ExcelFile,
     Project,
@@ -25,15 +20,12 @@ from models import (
     StudyUser,
 )
 from forms.submission_form import SubmissionForm
+from forms.upload_step2_form import UploadStep2Form
+from forms.upload_step3_form import UploadStep3Form
+from lib.submission_process import persist_submission_to_database
 
 import legacy.study_spreadsheet as study_spreadsheet
 import legacy.data_spreadsheet as data_spreadsheet
-from legacy.upload_validation import validate_upload
-from legacy.populate_db import save_measurements_to_database
-from legacy.chart_data import save_chart_data_to_files
-
-from forms.upload_step2_form import UploadStep2Form
-from forms.upload_step3_form import UploadStep3Form
 
 
 def upload_status_page():
@@ -200,21 +192,10 @@ def upload_step4_page():
 
         submission_form.save()
 
-        with tempfile.TemporaryDirectory() as yml_dir:
-            errors = validate_upload(yml_dir, submission)
+        errors = persist_submission_to_database(submission_form)
 
-            if len(errors) == 0:
-                # TODO (2025-04-03) instead of returning all that, return updated submission_form
-                (study_id, errors, errors_logic, studyUniqueID, projectUniqueID, project_id) = \
-                    save_measurements_to_database(g.db_session, yml_dir, submission_form, submission.dataFile.content)
-                g.db_session.commit()
-
-                if len(errors) == 0:
-                    study = g.db_session.get(Study, studyUniqueID)
-                    _save_chart_data_to_database(g.db_session, study, submission)
-                    submission_form.save()
-
-                    return redirect(url_for('upload_step5_page'))
+        if not errors:
+            return redirect(url_for('upload_step5_page'))
 
     return render_template(
         "pages/upload/index.html",
@@ -236,6 +217,16 @@ def upload_spreadsheet_preview_fragment():
 def upload_step5_page():
     submission_form = _init_submission_form(step=5)
 
+    if request.method == 'POST':
+        study = submission_form.submission.study
+
+        if study and study.isPublishable:
+            study.publish()
+            g.db_session.add(study)
+            g.db_session.commit()
+
+            return redirect(url_for('study_show_page', studyId=study.publicId))
+
     return render_template(
         "pages/upload/index.html",
         submission_form=submission_form,
@@ -250,20 +241,3 @@ def _init_submission_form(step):
         db_session=g.db_session,
         user_uuid=g.current_user.uuid,
     )
-
-
-def _save_chart_data_to_database(db_session, study, submission):
-    data_xls = submission.dataFile.content
-    sheets = pd.read_excel(io.BytesIO(data_xls), sheet_name=None)
-
-    if 'Growth data per community' in sheets:
-        df = sheets['Growth data per community']
-        Measurement.insert_from_bioreplicates_csv(db_session, study, df.to_csv(index=False))
-
-    if 'Growth data per strain' in sheets:
-        df = sheets['Growth data per strain']
-        Measurement.insert_from_strain_csv(db_session, study, df.to_csv(index=False))
-
-    if 'Growth data per metabolite' in sheets:
-        df = sheets['Growth data per metabolite']
-        Measurement.insert_from_metabolites_csv(db_session, study, df.to_csv(index=False))

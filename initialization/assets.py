@@ -7,6 +7,9 @@ def init_assets(app):
     assets.register('app_js', flask_assets.Bundle(
         'js/vendor/jquery-3.7.1.js',
         'js/vendor/select2-4.0.13.js',
+        'js/vendor/moment-2.30.1.js',
+        'js/vendor/popper-core-2.11.8.js',
+        'js/vendor/tippy-6.3.7.js',
         'js/upload/step1.js',
         'js/upload/step2.js',
         'js/upload/step3.js',
@@ -14,9 +17,9 @@ def init_assets(app):
         'js/util.js',
         'js/main.js',
         'js/search.js',
-        'js/dashboard.js',
         'js/export.js',
         'js/study.js',
+        'js/study_visualize.js',
         'js/comparison.js',
         filters='rjsmin',
         output='build/app.js'
@@ -29,6 +32,7 @@ def init_assets(app):
 
     assets.register('app_css', flask_assets.Bundle(
         'css/vendor/select2-4.0.13.css',
+        'css/vendor/tippy-light-border-theme.css',
         'css/select2-custom.css',
         'css/reset.css',
         'css/utils.css',
@@ -36,11 +40,11 @@ def init_assets(app):
         'css/main.css',
         'css/sidebar.css',
         'css/search.css',
-        'css/dashboard.css',
         'css/upload.css',
         'css/export.css',
         'css/profile.css',
         'css/study.css',
+        'css/study-visualize.css',
         'css/comparison.css',
         filters='cssmin',
         output='build/app.css'

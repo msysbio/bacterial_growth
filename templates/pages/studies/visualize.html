@@ -1,0 +1,38 @@
+{% from 'pages/studies/_experiment_form.html' import render_experiment_form %}
+
+{% extends '_layout.html' %}
+
+{% block title %}: Visualize Study{% endblock %}
+
+{% block content %}
+  <div class="container study-page study-visualize-page" data-study-id="{{ study.publicId }}">
+    {% include 'pages/studies/_header.html' %}
+
+    <article>
+      <h1>{{ study.studyName }}</h1>
+
+      {% include 'pages/studies/_navigation_buttons.html' %}
+
+      <p>
+        Select the Biological replicates from the experiments you want to plot.
+        You can visualize different plots corresponding to Optical density,
+        Flow cytometry, Plate counts, 16S rRNA sequencing, and metabolite
+        concentrations. By clicking on the camera icon at the right corner of
+        each plot, the images can be saved locally on your computer as .png
+        files.
+      </p>
+
+      <p>
+        <h2>Experiments</h2>
+
+        {% for experiment_form in experiment_forms: %}
+          {{ render_experiment_form(experiment_form) }}
+        {% endfor %}
+      </p>
+    </article>
+  </div>
+
+  {% assets "plotly_js" %}
+  <script src="{{ ASSET_URL }}" type="text/javascript"></script>
+  {% endassets %}
+{% endblock %}

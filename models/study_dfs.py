@@ -7,7 +7,6 @@ it's just bags of data that are rendered as tables.
 """
 
 import sqlalchemy as sql
-import pandas as pd
 
 
 # TODO (2024-08-24) Sanitize: return (query, params)
@@ -19,7 +18,7 @@ def dynamical_query(all_advance_query):
         where_clause = ""
         if query_dict['option']:
             if query_dict['option'] == 'Project Name':
-                project_name = query_dict['value'].lower()
+                project_name = query_dict['value'].strip().lower()
                 if project_name != '':
                     where_clause = f"""
                     FROM Study
@@ -40,7 +39,7 @@ def dynamical_query(all_advance_query):
                 )
                 """
             elif query_dict['option'] == 'Study Name':
-                study_name = query_dict['value'].lower()
+                study_name = query_dict['value'].strip().lower()
                 where_clause = f"""
                     FROM Study
                     WHERE LOWER(studyName) LIKE '%{study_name}%'
@@ -52,7 +51,7 @@ def dynamical_query(all_advance_query):
                 WHERE studyId = '{study_id}'
                 """
             elif query_dict['option'] == 'Microbial Strain':
-                microb_strain = query_dict['value'].lower()
+                microb_strain = query_dict['value'].strip().lower()
                 where_clause = f"""
                 FROM Strains
                 WHERE LOWER(memberName) LIKE '%{microb_strain}%'
@@ -64,7 +63,7 @@ def dynamical_query(all_advance_query):
                 WHERE NCBId = '{microb_ID}'
                 """
             elif query_dict['option'] == 'Metabolites':
-                metabo = query_dict['value'].lower()
+                metabo = query_dict['value'].strip().lower()
                 where_clause = f"""
                 FROM MetabolitePerExperiment
                 WHERE LOWER(metabo_name) LIKE '%{metabo}%'
@@ -142,141 +141,3 @@ def get_general_info(studyId, conn):
     result['metabolites'] = list(conn.execute(sql.text(query), params).all())
 
     return result
-
-
-def get_experiments(studyId, conn):
-    query = """
-    SELECT
-        E.experimentUniqueId,
-        E.experimentId,
-        E.experimentDescription,
-        E.cultivationMode,
-        GROUP_CONCAT(DISTINCT BRI.bioreplicateId) AS bioreplicateIds,
-        E.controlDescription,
-        GROUP_CONCAT(DISTINCT BR.bioreplicateId) AS control_bioreplicateIds,
-        GROUP_CONCAT(DISTINCT C.communityId) AS communityIds,
-        GROUP_CONCAT(DISTINCT CP.compartmentId) AS compartmentIds
-    FROM
-        Experiments AS E
-    LEFT JOIN
-        BioReplicatesPerExperiment AS BRI ON E.experimentUniqueId = BRI.experimentUniqueId
-    LEFT JOIN
-        BioReplicatesPerExperiment AS BR ON E.experimentUniqueId = BR.experimentUniqueId
-    LEFT JOIN
-        Community AS C ON E.studyId = C.studyId
-    LEFT JOIN
-        CompartmentsPerExperiment AS CP ON E.experimentUniqueId = CP.experimentUniqueId
-    WHERE
-        E.studyId = %(studyId)s
-        -- Note: Need to consider how to refer to controls while *uploading*,
-        -- data spreadsheet breaks
-        --
-        -- AND BR.controls = 1
-    GROUP BY
-        E.experimentId,
-        E.experimentUniqueId,
-        E.experimentDescription,
-        E.cultivationMode,
-        E.controlDescription;
-    """
-    return pd.read_sql(query, conn, params={'studyId': studyId})
-
-
-def get_compartments(studyId, conn):
-    query = "SELECT DISTINCT * FROM Compartments WHERE studyId = %(studyId)s;"
-    df_compartments = pd.read_sql(query, conn, params={'studyId': studyId})
-    columns_to_exclude = ['studyId', 'compartmentUniqueId']
-    return df_compartments.drop(columns=columns_to_exclude)
-
-
-def get_communities(studyId, conn):
-    query = """
-    SELECT
-        C.communityId,
-        GROUP_CONCAT(DISTINCT S.memberName) AS memberNames,
-        GROUP_CONCAT(DISTINCT CP.compartmentId) AS compartmentIds
-    FROM
-        Community AS C
-    LEFT JOIN
-        Strains AS S ON C.strainId = S.strainId
-    LEFT JOIN
-        CompartmentsPerExperiment AS CP ON CP.communityUniqueId = C.communityUniqueId
-    WHERE
-        C.studyId = %(studyId)s
-    GROUP BY
-        C.communityId;
-    """
-    df_communities = pd.read_sql(query, conn, params={'studyId': studyId})
-    return df_communities
-
-
-def get_microbial_strains(studyId, conn):
-    query = "SELECT * FROM Strains WHERE studyId = %(studyId)s;"
-    df_strains = pd.read_sql(query, conn, params={'studyId': studyId})
-    columns_to_exclude = ['studyId']
-    return df_strains.drop(columns=columns_to_exclude)
-
-
-def get_biological_replicates(studyId, conn):
-    query = """
-    SELECT
-        B.bioreplicateId,
-        B.bioreplicateUniqueId,
-        B.controls,
-        B.OD,
-        B.Plate_counts,
-        B.pH,
-        B.experimentId,
-        BM.biosampleLink,
-        BM.bioreplicateDescrition
-    FROM
-        BioReplicatesPerExperiment AS B
-    LEFT JOIN
-        BioReplicatesMetadata AS BM ON B.bioreplicateUniqueId = BM.bioreplicateUniqueId
-    WHERE
-        B.studyId = %(studyId)s;
-        """
-    df_bioreps = pd.read_sql(query, conn, params={'studyId': studyId})
-    columns_to_exclude = ['bioreplicateUniqueId']
-    return df_bioreps.drop(columns=columns_to_exclude)
-
-
-def get_abundances(studyId, conn):
-    query = """
-    SELECT
-        A.bioreplicateId,
-        S.memberName,
-        S.NCBId
-    FROM
-        Abundances AS A
-    JOIN
-        Strains AS S ON A.strainId = S.strainId
-    WHERE
-        A.studyId = %(studyId)s;
-        """
-    df_abundances = pd.read_sql(query, conn, params={'studyId': studyId})
-    return df_abundances
-
-
-def get_fc_counts(studyId, conn):
-    query = """
-    SELECT
-        F.bioreplicateId,
-        S.memberName,
-        S.NCBId
-    FROM
-        FC_Counts AS F
-    JOIN
-        Strains AS S ON F.strainId = S.strainId
-    WHERE
-        F.studyId = %(studyId)s;
-        """
-    df_fc_counts = pd.read_sql(query, conn, params={'studyId': studyId})
-    return df_fc_counts
-
-
-def get_metabolites_per_replicate(studyId, conn):
-    query = "SELECT * FROM MetabolitePerExperiment WHERE studyId = %(studyId)s;"
-    df_metabolites = pd.read_sql(query, conn, params={'studyId': studyId})
-    columns_to_exclude = ['experimentUniqueId', 'bioreplicateUniqueId']
-    return df_metabolites.drop(columns=columns_to_exclude)

@@ -1,6 +1,11 @@
 import statistics
 
+
 def init_template_filters(app):
+    @app.template_filter('map_scientific')
+    def _map_scientific(values):
+        return ["{:.2E}".format(v) for v in values if v is not None]
+
     @app.template_filter('mean')
     def _mean(values, attribute=None):
         if attribute is not None:

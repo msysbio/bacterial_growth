@@ -1,0 +1,26 @@
+<p class="navigation-buttons">
+  <a href="{{ url_for('study_show_page', studyId=study['studyId']) }}" class="white-button">
+    <span class="icon icon-info"></span>
+    View information
+  </a>
+
+  <a href="{{ url_for('study_visualize_page', studyId=study['studyId']) }}" class="white-button">
+    <span class="icon icon-chart"></span>
+    Visualize
+  </a>
+
+  <a href="{{ url_for('study_export_page', studyId=study['studyId']) }}" class="white-button">
+    <span class="icon icon-download-black"></span>
+    Export data
+  </a>
+
+  {% if g.current_user and g.current_user.uuid in study.managerUuids: %}
+    <a
+        href="{{ url_for('study_manage_page', studyId=study['studyId']) }}"
+        class="white-button orange-border">
+      <span class="icon icon-tool"></span>
+      Manage
+    </a>
+  {% endif %}
+</p>
+

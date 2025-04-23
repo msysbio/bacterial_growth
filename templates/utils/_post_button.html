@@ -1,4 +1,5 @@
-{% macro post_button(text, url, confirm=None, class='') %}
+{% macro post_button(text, url, confirm=None, class='', button_class='') %}
+
   <form
     action="{{ url }}"
     class="simple-form {{ class }}"
@@ -7,7 +8,9 @@
       onSubmit="return confirm('{{ confirm | replace("'", "\\'") }}')"
     {% endif %}
     method="POST">
-    <input type="submit" value="{{ text }}" />
+    <button type="submit" class="flex-row flex-gap-6 {{ button_class }}">
+      {{ text|safe }}
+    </button>
   </form>
 
 {% endmacro %}
