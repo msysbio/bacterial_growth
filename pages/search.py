@@ -30,12 +30,17 @@ def search_index_page():
 
         if len(studyIds) == 0:
             message = "Couldn't find a study with these parameters."
-            return render_template("pages/search/index.html", form=form, error=message, template_clause=template_clause)
+            return render_template(
+                "pages/search/index.html",
+                form=form,
+                error=message,
+                template_clause=template_clause,
+            )
     else:
         # TODO (2025-04-15) Extract, test with multiple users
         studyIds = g.db_session.scalars(
             sql.select(Study.studyId)
-            .join(StudyUser)
+            .join(StudyUser, isouter=True)
             .where(sql.or_(
                 Study.isPublished,
                 StudyUser.userUniqueID == g.current_user.uuid
