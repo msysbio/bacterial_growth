@@ -1,24 +1,24 @@
+# Core
+pandas
+humanize
+pyyaml
+openpyxl
+
+# Web
 Flask
 Flask-Assets
 Flask-WTF
 cssmin
-pandas
 plotly
-openpyxl
-humanize
 celery[redis]
+flask-admin
+gunicorn
 
 # Database
 sqlalchemy
 SQLAlchemy-Utc
 pymysql
 cryptography
-
-# Admin panel
-flask-admin
-
-# Deployment
-gunicorn
 
 # Testing
 pytest
@@ -30,4 +30,3 @@ freezegun
 # matplotlib
 # mysql-connector-python
 # prettytable
-# pyyaml
