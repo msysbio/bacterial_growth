@@ -89,6 +89,36 @@ CREATE TABLE BioReplicatesPerExperiment (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `CalculationTechniques`
+--
+
+DROP TABLE IF EXISTS CalculationTechniques;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE CalculationTechniques (
+  id int NOT NULL AUTO_INCREMENT,
+  `type` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  subjectId varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  subjectType varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  `description` text,
+  measurementTechniqueId int DEFAULT NULL,
+  studyUniqueId varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  coefficients json DEFAULT (json_object()),
+  jobUuid varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `error` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  state varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL DEFAULT 'pending',
+  createdAt datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updatedAt datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  calculatedAt datetime DEFAULT NULL,
+  PRIMARY KEY (id),
+  KEY CalculationTechniques_measurementTechniqueId (measurementTechniqueId),
+  KEY CalculationTechniques_studyUniqueId (studyUniqueId),
+  CONSTRAINT CalculationTechniques_measurementTechniqueId FOREIGN KEY (measurementTechniqueId) REFERENCES MeasurementTechniques (id) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT CalculationTechniques_studyUniqueId FOREIGN KEY (studyUniqueId) REFERENCES Study (studyUniqueID) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `Community`
 --
 
@@ -553,5 +583,6 @@ INSERT INTO MigrationVersions VALUES
 (18,'2025_03_30_160720_add_technique_id_to_measurements','2025-04-23 11:11:59'),
 (19,'2025_04_03_121425_add_time_units_to_study','2025-04-23 11:11:59'),
 (20,'2025_04_03_125243_add_timestamps_to_study_and_project','2025-04-23 11:12:00'),
-(21,'2025_04_15_112546_add_publishing_related_states_to_studies','2025-04-23 11:12:00');
+(21,'2025_04_15_112546_add_publishing_related_states_to_studies','2025-04-23 11:12:00'),
+(24,'2025_04_24_095808_create_calculation_techniques','2025-04-24 08:46:59');
 
