@@ -176,7 +176,9 @@ def study_calculations_preview_fragment(studyId):
     subject_type = args.pop('subjectType')
     subject_id   = args.pop('subjectId')
     technique_id = args.pop('techniqueId')
-    width        = args.pop('width')
+
+    width  = args.pop('width')
+    height = args.pop('height')
 
     technique = g.db_session.get(MeasurementTechnique, technique_id)
     subject = Measurement.get_subject(g.db_session, subject_id, subject_type)
@@ -212,6 +214,7 @@ def study_calculations_preview_fragment(studyId):
         full_html=False,
         include_plotlyjs=False,
         default_width=f"{width}px",
+        default_height=f"{height}px",
     )
 
     return render_template(

@@ -1,0 +1,11 @@
+.study-manage-page {
+  .measurement-subjects .box {
+    width: 100%;
+    max-height: 300px;
+    overflow-y: auto;
+  }
+
+  .chart-container {
+    height: 300px;
+  }
+}

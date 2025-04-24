@@ -46,6 +46,7 @@ def init_assets(app):
         'css/profile.css',
         'css/study.css',
         'css/study-visualize.css',
+        'css/study-manage.css',
         'css/comparison.css',
         filters='cssmin',
         output='build/app.css'

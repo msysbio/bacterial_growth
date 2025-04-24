@@ -19,7 +19,10 @@ $(document).ready(function() {
       $.ajax({
         url: url,
         dataType: 'html',
-        data: { 'width': $preview.width() },
+        data: {
+          'width':  $preview.width(),
+          'height': $preview.height(),
+        },
         success: function(response) {
           $preview.html(response)
         },
