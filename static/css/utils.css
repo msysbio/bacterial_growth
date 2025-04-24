@@ -188,7 +188,6 @@ form.simple-form {
 
   input[type="submit"],
   button[type="submit"] {
-    cursor: pointer;
     padding: 0.7rem;
     border: 1px solid rgb(8, 131, 149);
     border-radius: var(--border-radius);
@@ -213,6 +212,10 @@ form.simple-form {
       margin: 0 !important;
       padding: 0 !important;
     }
+  }
+
+  button {
+    cursor: pointer;
   }
 
   input.error,

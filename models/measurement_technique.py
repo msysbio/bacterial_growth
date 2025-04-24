@@ -86,7 +86,17 @@ class MeasurementTechnique(OrmBase):
     def is_growth(self):
         return self.type not in ('ph', 'metabolite')
 
-    def get_subjects(self, db_session):
+    def get_bioreplicates(self, db_session):
+        from models import Bioreplicate, Measurement
+
+        return db_session.scalars(
+            sql.select(Bioreplicate)
+            .distinct()
+            .join(Measurement)
+            .where(Measurement.techniqueId == self.id)
+        ).all()
+
+    def get_subjects_for_bioreplicate(self, db_session, bioreplicate):
         from models import Study, Measurement
 
         match self.subjectType:
@@ -105,7 +115,11 @@ class MeasurementTechnique(OrmBase):
             .where(subject_class.id.in_(
                 sql.select(Measurement.subjectId)
                 .distinct()
-                .where(Measurement.techniqueId == self.id)
+                .where(
+                    Measurement.techniqueId == self.id,
+                    Measurement.bioreplicateUniqueId == bioreplicate.uuid,
+                    Measurement.value.is_not(None),
+                )
             ))
         ).all()
 

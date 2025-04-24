@@ -6,16 +6,21 @@ from flask import (
 )
 from werkzeug.exceptions import Forbidden
 import sqlalchemy as sql
+from sqlalchemy.sql.expression import literal
 from celery.result import AsyncResult as CeleryResult
 
 import models.study_dfs as study_dfs
 from models import (
     Study,
     Experiment,
+    Measurement,
+    MeasurementTechnique,
 )
 from forms.experiment_export_form import ExperimentExportForm
 from forms.experiment_chart_form import ExperimentChartForm
 from lib.tasks.example import add_together
+from lib.figures import make_figure_with_traces
+from lib.db import execute_into_df
 import lib.util as util
 
 
@@ -162,6 +167,57 @@ def study_calculations_check_json(studyId, taskId):
         "successful": result.successful(),
         "value":      result.result if result.ready() else None,
     }
+
+
+def study_calculations_preview_fragment(studyId):
+    args = request.args.to_dict()
+
+    biorep_uuid  = args.pop('bioreplicateUniqueId')
+    subject_type = args.pop('subjectType')
+    subject_id   = args.pop('subjectId')
+    technique_id = args.pop('techniqueId')
+    width        = args.pop('width')
+
+    technique = g.db_session.get(MeasurementTechnique, technique_id)
+    subject = Measurement.get_subject(g.db_session, subject_id, subject_type)
+
+    df = execute_into_df(
+        g.db_session,
+        sql.select(
+            Measurement.timeInHours.label("time"),
+            Measurement.value.label("value"),
+            (literal(subject.name) + ' ' + literal(technique.short_name)).label("name"),
+        )
+        .where(
+            Measurement.bioreplicateUniqueId == biorep_uuid,
+            Measurement.subjectType == subject_type,
+            Measurement.subjectId == subject_id,
+            Measurement.techniqueId == technique_id,
+        )
+    )
+
+    fig = make_figure_with_traces(
+        [df],
+        labels={
+            'time': 'Hours',
+            'value': technique.units,
+        },
+    )
+    fig.update_layout(
+        margin=dict(l=0, r=0, t=0, b=0),
+        title=dict(x=0)
+    )
+
+    fig_html = fig.to_html(
+        full_html=False,
+        include_plotlyjs=False,
+        default_width=f"{width}px",
+    )
+
+    return render_template(
+        'pages/studies/_figs.html',
+        fig_htmls=[fig_html],
+    )
 
 
 def _fetch_study(studyId, check_user_visibility=True):

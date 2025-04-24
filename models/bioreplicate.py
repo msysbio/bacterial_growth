@@ -38,6 +38,10 @@ class Bioreplicate(OrmBase):
         return self.bioreplicateUniqueId
 
     @hybrid_property
+    def uuid(self):
+        return self.bioreplicateUniqueId
+
+    @hybrid_property
     def name(self):
         return self.bioreplicateId
 

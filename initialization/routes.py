@@ -67,6 +67,10 @@ def init_routes(app):
         "/study/<string:studyId>/calculations/<string:taskId>.json",
         view_func=study_pages.study_calculations_check_json,
     )
+    app.add_url_rule(
+        "/study/<string:studyId>/calculations/preview",
+        view_func=study_pages.study_calculations_preview_fragment,
+    )
 
     app.add_url_rule("/project/<string:projectId>", view_func=project_pages.project_show_page)
 

@@ -20,6 +20,7 @@ def init_assets(app):
         'js/export.js',
         'js/study.js',
         'js/study_visualize.js',
+        'js/study_manage.js',
         'js/comparison.js',
         filters='rjsmin',
         output='build/app.js'

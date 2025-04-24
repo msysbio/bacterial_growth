@@ -106,15 +106,40 @@
 
             <div class="form-row">
               {% for technique in study.measurementTechniques if technique.is_growth: %}
-                <div class="box hidden" data-technique-id="{{ technique.id }}">
-                  {% for subject in technique.get_subjects(g.db_session): %}
-                    <label>
-                      <input
-                          type="checkbox"
-                          name="subject|{{ technique.subjectType }}|{{ subject.id }}" />
-                      {{ subject.name }}
-                    </label>
-                    <br>
+                <div class="box hidden flex-column flex-gap-6 js-technique-box" data-technique-id="{{ technique.id }}">
+                  {% for bioreplicate in technique.get_bioreplicates(g.db_session): %}
+                    {% if technique.subjectType != 'bioreplicate': %}
+                      <strong>
+                        Bioreplicate: {{ bioreplicate.bioreplicateId }}
+                      </strong>
+                    {% endif %}
+
+                    {% for subject in technique.get_subjects_for_bioreplicate(g.db_session, bioreplicate): %}
+                      <div class="flex-row flex-gap-10 js-subject-row" style="align-items: center">
+                        <label>
+                          <input
+                              type="checkbox"
+                              name="subject|{{ technique.subjectType }}|{{ subject.id }}" />
+                          {{ subject.name }}
+                        </label>
+
+                        {% set preview_url = url_for(
+                          "study_calculations_preview_fragment",
+                          studyId=study.publicId,
+                          bioreplicateUniqueId=bioreplicate.uuid,
+                          subjectType=technique.subjectType,
+                          subjectId=subject.id,
+                          techniqueId=technique.id
+                        ) %}
+
+                        <button
+                            type="button"
+                            class="white-button small-button flex-right js-preview-trigger"
+                            data-url="{{ preview_url }}">
+                          Preview
+                        </button>
+                      </div>
+                    {% endfor %}
                   {% endfor %}
                 </div>
               {% endfor %}
@@ -122,7 +147,7 @@
           </div>
 
           <div class="column full">
-            <div class="box">
+            <div class="box js-preview">
               Preview
             </div>
 
@@ -136,4 +161,8 @@
       </form>
     </article>
   </div>
+
+  {% assets "plotly_js" %}
+  <script src="{{ ASSET_URL }}" type="text/javascript"></script>
+  {% endassets %}
 {% endblock %}
