@@ -2,6 +2,7 @@ from datetime import datetime
 from typing import List
 import itertools
 
+import sqlalchemy as sql
 from sqlalchemy import (
     String,
     Boolean,
@@ -80,6 +81,33 @@ class MeasurementTechnique(OrmBase):
             case 'bioreplicate': return 'community'
             case 'strain': return 'strain'
             case 'metabolite': return 'metabolite'
+
+    @property
+    def is_growth(self):
+        return self.type not in ('ph', 'metabolite')
+
+    def get_subjects(self, db_session):
+        from models import Study, Measurement
+
+        match self.subjectType:
+            case 'bioreplicate':
+                from models import Bioreplicate
+                subject_class = Bioreplicate
+            case 'strain':
+                from models import Strain
+                subject_class = Strain
+            case 'metabolite':
+                from models import Metabolite
+                subject_class = Metabolite
+
+        return db_session.scalars(
+            sql.select(subject_class)
+            .where(subject_class.id.in_(
+                sql.select(Measurement.subjectId)
+                .distinct()
+                .where(Measurement.techniqueId == self.id)
+            ))
+        ).all()
 
     def csv_column_name(self, subject_name=None):
         if self.subjectType == 'bioreplicate':

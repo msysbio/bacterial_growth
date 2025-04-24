@@ -79,6 +79,20 @@ $(document).ready(function() {
       });
     });
 
+    $page.on('change', '.js-technique-type', function() {
+      updateMeasurementSubjects($(this).parents('form'));
+    });
+
+    updateMeasurementSubjects($page.find('.js-calculation-form'));
+
+    function updateMeasurementSubjects($form) {
+      let $techniqueSelect = $form.find('.js-technique-type');
+      let techniqueId = $techniqueSelect.val();
+
+      $form.find('[data-technique-id]').addClass('hidden')
+      $form.find(`[data-technique-id=${techniqueId}]`).removeClass('hidden')
+    }
+
     $page.on('submit', '.js-calculation-form', function(e) {
       e.preventDefault();
       let $form = $(e.currentTarget);

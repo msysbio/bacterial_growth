@@ -32,9 +32,9 @@ class Measurement(OrmBase):
     )
     bioreplicate: Mapped['Bioreplicate'] = relationship(back_populates='measurements')
 
-    # Note: should be a ForeignKey + relationship. However, ORM model is not
-    # defined yet.
-    studyId: Mapped[str] = mapped_column(String(100), nullable=False)
+    # TODO (2025-04-24) Use unique id
+    studyId: Mapped[str] = mapped_column(ForeignKey('Study.studyId'), nullable=False)
+    study: Mapped['Study'] = relationship(back_populates="measurements")
 
     position:      Mapped[str] = mapped_column(String(100), nullable=False)
     timeInSeconds: Mapped[int] = mapped_column(Integer,     nullable=False)

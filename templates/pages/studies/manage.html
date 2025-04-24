@@ -56,18 +56,81 @@
         </p>
       {% endif %}
 
-      <h2>Trigger background job</h2>
+      <h2>Models and other calculations</h2>
+
+      <p>
+        Select a type of calculation to perform on the study's measurements.
+        The results will be available for visualization once the calculation is
+        finished.
+      </p>
+
+      <br>
 
       <form
           action="{{ url_for('study_calculations_action', studyId=study.publicId) }}"
           class="simple-form js-calculation-form"
           method="POST">
-        <p>
-          Example calculation,
-          <input type="number" name="left" style="width: 60px;" /> +
-          <input type="number" name="right" style="width: 60px;" /> =
-          <span class="js-calculation-result">[?]</span>
-        </p>
+        <div class="flex-row flex-gap-10">
+          <div class="column full">
+            <div class="form-row">
+              <label>
+                <span>Calculation type</span>
+                <br>
+                <select class="form-input-blue">
+                  <option name="type" value="baranyi_roberts">Baranyi-Roberts model</option>
+                </select>
+              </label>
+            </div>
+
+            <div class="form-row">
+              <label>
+                <span>Measurement technique</span>
+                <br>
+                <select class="form-input-blue js-technique-type">
+                  {% for technique in study.measurementTechniques if technique.is_growth: %}
+                    <option name="measurementTechniqueId" value="{{ technique.id }}">
+                      {{ technique.long_name }}
+
+                      {% if technique.subjectType != 'metabolite': %}
+                        per {{ technique.subject_short_name }}
+                      {% endif %}
+                    </option>
+                  {% endfor %}
+                </select>
+              </label>
+            </div>
+
+            <div class="form-row">
+              Measurement subjects:
+            </div>
+
+            <div class="form-row">
+              {% for technique in study.measurementTechniques if technique.is_growth: %}
+                <div class="box hidden" data-technique-id="{{ technique.id }}">
+                  {% for subject in technique.get_subjects(g.db_session): %}
+                    <label>
+                      <input
+                          type="checkbox"
+                          name="subject|{{ technique.subjectType }}|{{ subject.id }}" />
+                      {{ subject.name }}
+                    </label>
+                    <br>
+                  {% endfor %}
+                </div>
+              {% endfor %}
+            </div>
+          </div>
+
+          <div class="column full">
+            <div class="box">
+              Preview
+            </div>
+
+            <div>
+              <h4>Coefficients</h4>
+            </div>
+          </div>
+        </div>
 
         <input type="submit" class="flex-end" value="Calculate" />
       </form>
