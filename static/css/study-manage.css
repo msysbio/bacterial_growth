@@ -5,7 +5,7 @@
     overflow-y: auto;
   }
 
-  .chart-container {
+  .chart-placeholder {
     height: 300px;
   }
 }

@@ -79,8 +79,8 @@
             <div class="form-row">
               <label class="full">
                 <span>Calculation type</span>
-                <select class="form-input-blue form-input-full">
-                  <option name="type" value="baranyi_roberts">Baranyi-Roberts model</option>
+                <select name="type" class="form-input-blue form-input-full">
+                  <option value="baranyi_roberts">Baranyi-Roberts model</option>
                 </select>
               </label>
             </div>
@@ -88,14 +88,16 @@
             <div class="form-row">
               <label class="full">
                 <span>Measurement technique</span>
-                <select class="form-input-blue form-input-full js-technique-type">
+                <select
+                    name="measurementTechniqueId"
+                    class="form-input-blue form-input-full js-technique-type">
                   {% for technique in study.measurementTechniques if technique.is_growth: %}
-                    <option name="measurementTechniqueId" value="{{ technique.id }}">
-                      {{ technique.long_name }}
+                    <option value="{{ technique.id }}">
+                    {{ technique.long_name }}
 
-                      {% if technique.subjectType != 'metabolite': %}
-                        per {{ technique.subject_short_name }}
-                      {% endif %}
+                    {% if technique.subjectType != 'metabolite': %}
+                      per {{ technique.subject_short_name }}
+                    {% endif %}
                     </option>
                   {% endfor %}
                 </select>
@@ -157,61 +159,67 @@
           <div class="column full flex-column flex-gap-10">
             <h3>Preview</h3>
 
-            <div class="box chart-container js-preview">
-              <div class="chart-placeholder">
-                📊
+            <div class="box chart-container">
+              <div class="chart-container js-preview">
+                <div class="chart-placeholder">
+                  📊
+                </div>
               </div>
-            </div>
 
-            <h3>Coefficients</h3>
+              <div class="form-row">
+                <label>
+                  <span>y0: <span class="help">initial value of abundance</span></span>
+                  <input
+                      type="text"
+                      name="param-y0"
+                      class="form-input-blue form-input-full"
+                      value="..."
+                      readonly />
+                </label>
+              </div>
 
-            <div class="form-row">
-              <label>
-                <span>y0: <span class="help">initial value of abundance</span></span>
-                <input
-                    type="text"
-                    name="param-y0"
-                    class="form-input-blue form-input-full"
-                    value="..."
-                    readonly />
-              </label>
-            </div>
+              <div class="form-row">
+                <label>
+                  <span>mumax: <span class="help">maximum growth rate (1/time)</span></span>
+                  <input
+                      type="text"
+                      name="param-mumax"
+                      class="form-input-blue form-input-full"
+                      value="..."
+                      readonly />
+                </label>
+              </div>
 
-            <div class="form-row">
-              <label>
-                <span>mumax: <span class="help">maximum growth rate (1/time)</span></span>
-                <input
-                    type="text"
-                    name="param-mumax"
-                    class="form-input-blue form-input-full"
-                    value="..."
-                    readonly />
-              </label>
-            </div>
+              <div class="form-row">
+                <label>
+                  <span>K: <span class="help">carrying capacity (max. abundance)</span></span>
+                  <input
+                      type="text"
+                      name="param-K"
+                      class="form-input-blue form-input-full"
+                      value="..."
+                      readonly />
+                </label>
+              </div>
 
-            <div class="form-row">
-              <label>
-                <span>K: <span class="help">carrying capacity (max. abundance)</span></span>
-                <input
-                    type="text"
-                    name="param-K"
-                    class="form-input-blue form-input-full"
-                    value="..."
-                    readonly />
-              </label>
-            </div>
-
-            <div class="form-row">
-              <label>
-                <span>h0: <span class="help">parameter specifying the initial physiological state of organisms (e.g.
-cells) and in consequence the lag phase (h0 = max growth rate * lag phase)</span></span>
-                <input
-                    type="text"
-                    name="param-h0"
-                    class="form-input-blue form-input-full"
-                    value="..."
-                    readonly />
-              </label>
+              <div class="form-row">
+                <label>
+                  <span>
+                    h0:
+                    <span class="help">
+                      parameter specifying the initial physiological state of
+                      organisms (e.g. cells) and in consequence the lag phase (h0
+                      = max growth rate * lag phase)
+                    </span>
+                  </span>
+                  <input
+                      type="text"
+                      name="param-h0"
+                      class="form-input-blue form-input-full"
+                      value="..."
+                      readonly />
+                </label>
+              </div>
             </div>
 
             <div class="flex-column flex-gap-10">
