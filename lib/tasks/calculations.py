@@ -34,6 +34,11 @@ def update_calculations(calculation_technique_id, target_param_list):
                 db_session.add(calculation)
                 calculation_technique.calculations.append(calculation)
 
+                # rscript = RScript(...)
+                # rscript.write_csv('input.csv', calculation.get_df())
+                # rscript.run('baranyi_roberts.R', 'input.csv', 'coefficients.json')
+                # calculation.coefficients = rscript.read_json('coefficients.json')
+
             calculation_technique.state = 'ready'
             calculation_technique.error = None
             db_session.commit()
