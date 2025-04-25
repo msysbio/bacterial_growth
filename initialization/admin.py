@@ -4,7 +4,7 @@ from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
 from sqlalchemy.orm import configure_mappers
 
-from db import get_session
+from db import get_session, FLASK_DB
 from models import (
     Calculation,
     CalculationTechnique,
@@ -32,8 +32,7 @@ def init_admin(app):
 
     admin = Admin(app, name='μGrowthDB admin', template_mode='bootstrap4')
 
-    # TODO (2025-04-25) This session is not reloaded
-    db_session = get_session()
+    db_session = FLASK_DB.session
 
     class StudyView(AppView):
         column_searchable_list = ['studyName', 'studyDescription']

@@ -3,6 +3,7 @@ import os
 from flask import Flask
 
 from initialization.config import init_config
+from initialization.flask_db import init_flask_db
 from initialization.assets import init_assets
 from initialization.routes import init_routes, dump_routes
 from initialization.plotly import init_plotly
@@ -18,6 +19,7 @@ def create_app():
     app = Flask(__name__)
 
     app = init_config(app)
+    app = init_flask_db(app)
     app = init_assets(app)
     app = init_routes(app)
     app = init_global_handlers(app)
