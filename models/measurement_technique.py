@@ -16,6 +16,7 @@ from sqlalchemy.orm import (
 )
 from sqlalchemy.schema import FetchedValue
 from sqlalchemy_utc.sqltypes import UtcDateTime
+from lib.db import execute_into_df
 
 from models.orm_base import OrmBase
 
@@ -179,3 +180,26 @@ class MeasurementTechnique(OrmBase):
             subject = Measurement.get_subject(db_session, subject_id, subject_type)
 
             yield (subject, measurements)
+
+    def get_subject_df(self, db_session, subject_id, subject_type):
+        from models import Measurement
+
+        subjectName, subjectJoin = Measurement.subject_join(subject_type)
+
+        query = (
+            sql.select(
+                Measurement.timeInHours.label("time"),
+                Measurement.value,
+                Measurement.std,
+                subjectName,
+            )
+            .join(*subjectJoin)
+            .where(
+                Measurement.techniqueId == self.id,
+                Measurement.subjectId == subject_id,
+                Measurement.subjectType == subject_type,
+            )
+            .order_by(Measurement.timeInSeconds)
+        )
+
+        return execute_into_df(db_session, query)

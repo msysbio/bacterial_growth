@@ -26,10 +26,10 @@ This will install python version 3.12 and R and activate the environment by name
 pip install -r requirements.txt
 ```
 
-The only R dependency is the package [growthrates](https://cran.r-project.org/package=growthrates), which you can install using `Rscript`:
+There are a few R dependencies, most notably the package [growthrates](https://cran.r-project.org/package=growthrates), which you can install using `Rscript`:
 
 ```
-Rscript -e 'install.packages("growthrates", repos="https://cloud.r-project.org")'
+Rscript -e 'install.packages(c("growthrates", "jsonlite"), repos="https://cloud.r-project.org")'
 ```
 
 In the database config directory, the file [`db/config.toml.example`](db/config.toml.example) contains a template for the database configuration. Copy this file to `db/config.toml` and update it with the correct credentials to access a running mysql database. On linux, you may have to add a `unix_socket = ` field as well.

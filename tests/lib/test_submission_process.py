@@ -1,3 +1,5 @@
+import tests.init  # noqa: F401
+
 import unittest
 from datetime import datetime, timedelta, UTC
 from freezegun import freeze_time

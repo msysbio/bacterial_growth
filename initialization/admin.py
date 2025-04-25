@@ -36,19 +36,19 @@ def init_admin(app):
 
     class StudyView(AppView):
         column_searchable_list = ['studyName', 'studyDescription']
-    admin.add_view(StudyView(Study, db_session, category="Studies"))
 
+    admin.add_view(StudyView(Study,    db_session, category="Studies"))
     admin.add_view(AppView(Submission, db_session, category="Studies"))
 
     admin.add_view(AppView(MeasurementTechnique, db_session, category="Measurements"))
-    admin.add_view(AppView(Measurement, db_session, category="Measurements"))
+    admin.add_view(AppView(Measurement,          db_session, category="Measurements"))
     admin.add_view(AppView(CalculationTechnique, db_session, category="Measurements"))
-    admin.add_view(AppView(Calculation, db_session, category="Measurements"))
+    admin.add_view(AppView(Calculation,          db_session, category="Measurements"))
 
     admin.add_view(AppView(Metabolite, db_session, category="External data"))
-    admin.add_view(AppView(Taxon, db_session, category="External data"))
+    admin.add_view(AppView(Taxon,      db_session, category="External data"))
 
-    admin.add_view(AppView(StudyUser, db_session, category="Users"))
+    admin.add_view(AppView(StudyUser,   db_session, category="Users"))
     admin.add_view(AppView(ProjectUser, db_session, category="Users"))
 
     return app

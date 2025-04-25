@@ -19,7 +19,7 @@ from models import (
 )
 from forms.experiment_export_form import ExperimentExportForm
 from forms.experiment_chart_form import ExperimentChartForm
-from lib.tasks.calculations import update_calculations
+from lib.tasks.calculations import update_calculation_technique
 from lib.figures import make_figure_with_traces
 from lib.db import execute_into_df
 import lib.util as util
@@ -184,7 +184,7 @@ def study_calculations_action(studyId):
         g.db_session.add(calculation_technique)
         g.db_session.commit()
 
-    result = update_calculations.delay(calculation_technique.id, target_param_list)
+    result = update_calculation_technique.delay(calculation_technique.id, target_param_list)
     calculation_technique.jobUuid = result.task_id
     g.db_session.commit()
 
