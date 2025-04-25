@@ -15,10 +15,11 @@ from models import (
     Experiment,
     Measurement,
     MeasurementTechnique,
+    CalculationTechnique,
 )
 from forms.experiment_export_form import ExperimentExportForm
 from forms.experiment_chart_form import ExperimentChartForm
-from lib.tasks.example import add_together
+from lib.tasks.calculations import update_calculations
 from lib.figures import make_figure_with_traces
 from lib.db import execute_into_df
 import lib.util as util
@@ -151,26 +152,51 @@ def study_chart_fragment(studyId):
 
 
 def study_calculations_action(studyId):
-    args = request.args.to_dict()
+    args = request.form.to_dict()
 
-    print(args)
+    study = _fetch_study(studyId)
+    calculation_type = args['type']
 
-    left  = int(request.form['left'])
-    right = int(request.form['right'])
+    target_param_list = []
+    for target_identifier in args.keys():
+        if not target_identifier.startswith('target|'):
+            continue
 
-    result = add_together.delay(left, right)
+        (_label, measurement_technique_id, subject_type, subject_id) = target_identifier.split('|')
+        target_param_list.append({
+            'measurement_technique_id': measurement_technique_id,
+            'subject_type': subject_type,
+            'subject_id': subject_id,
+        })
 
-    return {'taskId': result.id}
+    calculation_technique = g.db_session.scalars(
+        sql.select(CalculationTechnique)
+        .where(
+            CalculationTechnique.type == calculation_type,
+            CalculationTechnique.studyUniqueID == study.uuid
+        )
+    ).one_or_none()
+    if calculation_technique is None:
+        calculation_technique = CalculationTechnique(
+            type='baranyi_roberts',
+            studyUniqueID=study.uuid,
+        )
+        g.db_session.add(calculation_technique)
+        g.db_session.commit()
+
+    result = update_calculations.delay(calculation_technique.id, target_param_list)
+    calculation_technique.jobUuid = result.task_id
+    g.db_session.commit()
+
+    return {'calculationTechniqueId': calculation_technique.id}
 
 
-def study_calculations_check_json(studyId, taskId):
-    result = CeleryResult(taskId)
+def study_calculations_check_json(studyId, calculationTechniqueId):
+    calculation_technique = g.db_session.get(CalculationTechnique, calculationTechniqueId)
 
     return {
-        "ready":      result.ready(),
-        "successful": result.successful(),
-        "value":      result.result if result.ready() else None,
-        "params":     {},
+        "ready":      calculation_technique.state in ('ready', 'error'),
+        "successful": calculation_technique.state != 'error',
     }
 
 

@@ -101,6 +101,7 @@ CREATE TABLE CalculationTechniques (
   studyUniqueId varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
   jobUuid varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
   state varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  `error` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
   createdAt datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updatedAt datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (id),
@@ -603,6 +604,6 @@ INSERT INTO MigrationVersions VALUES
 (19,'2025_04_03_121425_add_time_units_to_study','2025-04-25 09:06:54'),
 (20,'2025_04_03_125243_add_timestamps_to_study_and_project','2025-04-25 09:06:54'),
 (21,'2025_04_15_112546_add_publishing_related_states_to_studies','2025-04-25 09:06:54'),
-(22,'2025_04_24_095808_create_calculation_techniques','2025-04-25 09:06:54'),
-(23,'2025_04_25_103658_create_calculations','2025-04-25 09:06:54');
+(24,'2025_04_24_095808_create_calculation_techniques','2025-04-25 10:19:28'),
+(25,'2025_04_25_103658_create_calculations','2025-04-25 10:19:28');
 

@@ -79,59 +79,6 @@ $(document).ready(function() {
       });
     });
 
-    $page.on('change', '.js-technique-type', function() {
-      updateMeasurementSubjects($(this).parents('form'));
-    });
-
-    updateMeasurementSubjects($page.find('.js-calculation-form'));
-
-    function updateMeasurementSubjects($form) {
-      let $techniqueSelect = $form.find('.js-technique-type');
-      let techniqueId = $techniqueSelect.val();
-
-      $form.find('[data-technique-id]').addClass('hidden')
-      $form.find(`[data-technique-id=${techniqueId}]`).removeClass('hidden')
-    }
-
-    $page.on('submit', '.js-calculation-form', function(e) {
-      e.preventDefault();
-      let $form = $(e.currentTarget);
-
-      $.ajax({
-        url: `/study/${studyId}/calculations`,
-        dataType: 'json',
-        method: 'POST',
-        data: $form.serializeArray(),
-        success: function(response) {
-          let taskId = response.taskId;
-          let $result = $page.find('.js-calculation-result');
-
-          function check() {
-            $.ajax({
-              url: `/study/${studyId}/calculations/${taskId}.json`,
-              dataType: 'json',
-              success: function(response) {
-                if (!response.ready) {
-                  $result.html('[<em>calculating...</em>]');
-                  setTimeout(check, 1000);
-                  return;
-                }
-
-                if (!response.successful) {
-                  $result.html('<span class="error">[error]</span>');
-                  return;
-                }
-
-                $result.html(response.value);
-              }
-            });
-          }
-
-          check();
-        }
-      })
-    });
-
     function updateCompareBox(action, target, successCallback) {
       $.ajax({
         type: 'POST',

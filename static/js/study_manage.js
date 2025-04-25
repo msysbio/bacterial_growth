@@ -1,6 +1,7 @@
 $(document).ready(function() {
   $('.study-page').each(function() {
-    let $page = $(this);
+    let $page   = $(this);
+    let studyId = $page.data('studyId');
 
     $page.on('change', '.js-technique-type', function() {
       updateMeasurementSubjects($(this).parents('form'));
@@ -39,16 +40,16 @@ $(document).ready(function() {
         method: 'POST',
         data: $form.serializeArray(),
         success: function(response) {
-          let taskId = response.taskId;
+          let calculationTechniqueId = response.calculationTechniqueId;
           let $result = $page.find('.js-calculation-result');
 
           function check() {
             $.ajax({
-              url: `/study/${studyId}/calculations/${taskId}.json`,
+              url: `/study/${studyId}/calculations/${calculationTechniqueId}.json`,
               dataType: 'json',
               success: function(response) {
                 if (!response.ready) {
-                  $result.html('[<em>calculating...</em>]');
+                  $result.html('Calculating...');
                   setTimeout(check, 1000);
                   return;
                 }
@@ -58,7 +59,7 @@ $(document).ready(function() {
                   return;
                 }
 
-                $result.html(response.value);
+                $result.html("OK");
               }
             });
           }

@@ -11,6 +11,7 @@ def up(conn):
 
           jobUuid VARCHAR(100) COLLATE utf8mb4_bin,
           state   VARCHAR(100) COLLATE utf8mb4_bin NOT NULL,
+          error   VARCHAR(100) COLLATE utf8mb4_bin,
 
           createdAt datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
           updatedAt datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,

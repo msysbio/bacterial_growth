@@ -24,6 +24,7 @@ VALID_STATES = [
     'pending',
     'in_progress',
     'ready',
+    'error',
 ]
 
 
@@ -38,12 +39,14 @@ class CalculationTechnique(OrmBase):
 
     jobUuid: Mapped[str] = mapped_column(String(100))
     state:   Mapped[str] = mapped_column(String(100), default='pending')
+    error:   Mapped[str] = mapped_column(String(100))
 
     createdAt: Mapped[datetime] = mapped_column(UtcDateTime, server_default=FetchedValue())
     updatedAt: Mapped[datetime] = mapped_column(UtcDateTime, server_default=FetchedValue())
 
     calculations: Mapped[List['Calculation']] = relationship(
-        back_populates="calculationTechnique"
+        back_populates="calculationTechnique",
+        cascade="all, delete-orphan"
     )
 
     @validates('type')

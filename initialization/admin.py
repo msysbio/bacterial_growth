@@ -6,6 +6,8 @@ from sqlalchemy.orm import configure_mappers
 
 from db import get_session
 from models import (
+    Calculation,
+    CalculationTechnique,
     Measurement,
     MeasurementTechnique,
     Metabolite,
@@ -30,6 +32,7 @@ def init_admin(app):
 
     admin = Admin(app, name='μGrowthDB admin', template_mode='bootstrap4')
 
+    # TODO (2025-04-25) This session is not reloaded
     db_session = get_session()
 
     class StudyView(AppView):
@@ -40,6 +43,8 @@ def init_admin(app):
 
     admin.add_view(AppView(MeasurementTechnique, db_session, category="Measurements"))
     admin.add_view(AppView(Measurement, db_session, category="Measurements"))
+    admin.add_view(AppView(CalculationTechnique, db_session, category="Measurements"))
+    admin.add_view(AppView(Calculation, db_session, category="Measurements"))
 
     admin.add_view(AppView(Metabolite, db_session, category="External data"))
     admin.add_view(AppView(Taxon, db_session, category="External data"))

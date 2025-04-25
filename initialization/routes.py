@@ -64,7 +64,7 @@ def init_routes(app):
         methods=["POST"],
     )
     app.add_url_rule(
-        "/study/<string:studyId>/calculations/<string:taskId>.json",
+        "/study/<string:studyId>/calculations/<string:calculationTechniqueId>.json",
         view_func=study_pages.study_calculations_check_json,
     )
     app.add_url_rule(

@@ -123,7 +123,7 @@
                         <label>
                           <input
                               type="checkbox"
-                              name="subject|{{ technique.subjectType }}|{{ subject.id }}" />
+                              name="target|{{ technique.id }}|{{ technique.subjectType }}|{{ subject.id }}" />
                           {{ subject.name }}
                         </label>
 
@@ -152,7 +152,9 @@
             <h3>Calculation status</h3>
 
             <div class="help">
-              Pending, submit the form to start calculation process.
+              <div class="js-calculation-result">
+                Pending, submit the form to start calculation process.
+              </div>
             </div>
           </div>
 
