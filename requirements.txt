@@ -8,6 +8,7 @@ openpyxl
 Flask
 Flask-Assets
 Flask-WTF
+Flask-SQLAlchemy
 cssmin
 plotly
 celery[redis]
