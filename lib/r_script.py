@@ -12,6 +12,9 @@ class RScript:
         self.root_path   = Path(root_path)
         self.rscript_exe = shutil.which('Rscript')
 
+        if self.rscript_exe is None:
+            raise ValueError("Could not find `Rscript` executable in PATH")
+
     def run(self, script_path, *args):
         script_path = Path(script_path).absolute()
 
