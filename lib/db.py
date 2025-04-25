@@ -8,7 +8,7 @@ def execute_text(db_conn, text, **params):
 
 
 def execute_into_df(db_conn, query):
-    if getattr(db_conn, 'connection', None) is not None:
+    if callable(getattr(db_conn, 'connection', None)):
         db_conn = db_conn.connection()
 
     statement = query.compile(dialect=mysql.dialect())
