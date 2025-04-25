@@ -1,13 +1,18 @@
+import re
+
 from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
+from sqlalchemy.orm import configure_mappers
 
 from db import get_session
 from models import (
-    Study,
-    Submission,
-    MeasurementTechnique,
     Measurement,
+    MeasurementTechnique,
     Metabolite,
+    ProjectUser,
+    Study,
+    StudyUser,
+    Submission,
     Taxon,
 )
 
@@ -16,8 +21,13 @@ class AppView(ModelView):
     can_export = True
     can_view_details = True
 
+    def _prettify_name(self, name):
+        return re.sub(r'([a-z])([A-Z])', r'\1 \2', name).title()
+
 
 def init_admin(app):
+    configure_mappers()
+
     admin = Admin(app, name='μGrowthDB admin', template_mode='bootstrap4')
 
     db_session = get_session()
@@ -33,5 +43,8 @@ def init_admin(app):
 
     admin.add_view(AppView(Metabolite, db_session, category="External data"))
     admin.add_view(AppView(Taxon, db_session, category="External data"))
+
+    admin.add_view(AppView(StudyUser, db_session, category="Users"))
+    admin.add_view(AppView(ProjectUser, db_session, category="Users"))
 
     return app
