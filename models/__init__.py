@@ -1,4 +1,5 @@
 from .bioreplicate import Bioreplicate
+from .calculation import Calculation
 from .calculation_technique import CalculationTechnique
 from .excel_file import ExcelFile
 from .experiment import Experiment

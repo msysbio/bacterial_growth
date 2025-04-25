@@ -63,7 +63,7 @@ class MeasurementTechnique(OrmBase):
     measurements: Mapped[List['Measurement']] = relationship(
         back_populates="techniqueRecord"
     )
-    calculationTechniques: Mapped[List['CalculationTechnique']] = relationship(
+    calculations: Mapped[List['Calculation']] = relationship(
         back_populates="measurementTechnique"
     )
 

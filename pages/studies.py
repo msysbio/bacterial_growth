@@ -151,6 +151,10 @@ def study_chart_fragment(studyId):
 
 
 def study_calculations_action(studyId):
+    args = request.args.to_dict()
+
+    print(args)
+
     left  = int(request.form['left'])
     right = int(request.form['right'])
 
@@ -166,6 +170,7 @@ def study_calculations_check_json(studyId, taskId):
         "ready":      result.ready(),
         "successful": result.successful(),
         "value":      result.result if result.ready() else None,
+        "params":     {},
     }
 
 

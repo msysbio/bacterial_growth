@@ -4,28 +4,16 @@ import sqlalchemy as sql
 def up(conn):
     query = """
         CREATE TABLE CalculationTechniques (
-          id          INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-          type        VARCHAR(100) COLLATE utf8mb4_bin NOT NULL,
-          subjectId   VARCHAR(100) COLLATE utf8mb4_bin NOT NULL,
-          subjectType VARCHAR(100) COLLATE utf8mb4_bin NOT NULL,
-          description TEXT,
+          id   INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+          type VARCHAR(100) COLLATE utf8mb4_bin NOT NULL,
 
-          measurementTechniqueId int,
           studyUniqueId VARCHAR(100) COLLATE utf8mb4_bin NOT NULL,
 
-          coefficients JSON DEFAULT (JSON_OBJECT()),
-
           jobUuid VARCHAR(100) COLLATE utf8mb4_bin,
-          error   VARCHAR(100) COLLATE utf8mb4_bin,
           state   VARCHAR(100) COLLATE utf8mb4_bin NOT NULL,
 
           createdAt datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
           updatedAt datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-          calculatedAt datetime,
-
-          CONSTRAINT CalculationTechniques_measurementTechniqueId FOREIGN KEY (measurementTechniqueId)
-              REFERENCES MeasurementTechniques (id)
-              ON DELETE CASCADE ON UPDATE CASCADE,
 
           CONSTRAINT CalculationTechniques_studyUniqueId FOREIGN KEY (studyUniqueId)
               REFERENCES Study (studyUniqueId)
