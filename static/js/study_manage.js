@@ -9,16 +9,16 @@ $(document).ready(function() {
 
     updateMeasurementSubjects($page.find('.js-calculation-form'));
 
-    $page.on('click', '.js-edit-trigger', function() {
-      let $button = $(this);
-      let $result = $button.parents('form').find('.js-result-container')
-      let $chart  = $result.find('.js-chart-preview')
-      let url     = $button.data('url');
+    $page.on('click', '.js-edit-trigger', function(e) {
+      e.preventDefault();
+
+      let $trigger = $(this);
+      let $result  = $trigger.parents('form').find('.js-result-container')
+      let $chart   = $result.find('.js-chart-preview')
+      let url      = $trigger.attr('href');
 
       $page.find('.js-subject-row').removeClass('highlight');
-      $button.parents('.js-subject-row').addClass('highlight');
-
-      console.log($chart);
+      $trigger.parents('.js-subject-row').addClass('highlight');
 
       $.ajax({
         url: url,

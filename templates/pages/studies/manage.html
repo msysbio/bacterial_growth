@@ -113,9 +113,11 @@
                 <div class="box hidden flex-column flex-gap-6 js-technique-box" data-technique-id="{{ technique.id }}">
                   {% for bioreplicate in technique.get_bioreplicates(g.db_session): %}
                     {% if technique.subjectType != 'bioreplicate': %}
-                      <strong>
-                        Bioreplicate: {{ bioreplicate.bioreplicateId }}
-                      </strong>
+                      <div class="flex-row">
+                        <strong>
+                          Bioreplicate: {{ bioreplicate.bioreplicateId }}
+                        </strong>
+                      </div>
                     {% endif %}
 
                     {% for subject in technique.get_subjects_for_bioreplicate(g.db_session, bioreplicate): %}
@@ -143,12 +145,9 @@
                           techniqueId=technique.id
                         ) %}
 
-                        <button
-                            type="button"
-                            class="white-button small-button flex-right js-edit-trigger"
-                            data-url="{{ edit_url }}">
+                        <a href="{{ edit_url }}" class="flex-right js-edit-trigger">
                           <div class="icon icon-edit"></div>
-                        </button>
+                        </a>
                       </div>
                     {% endfor %}
                   {% endfor %}
