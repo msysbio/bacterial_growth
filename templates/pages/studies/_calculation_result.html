@@ -1,0 +1,60 @@
+<div class="chart-container js-chart-preview">
+  {% for fig_html in fig_htmls %}
+    {{ fig_html|safe }}
+  {% endfor %}
+</div>
+
+<div class="form-row">
+  <label>
+    <span>y0: <span class="help">initial value of abundance</span></span>
+    <input
+        type="text"
+        name="param-y0"
+        class="form-input-blue form-input-full"
+        value="{{ calculation and calculation.coefficients['y0'] or '' }}"
+        {{ 'readonly' if calculation is none }} />
+  </label>
+</div>
+
+<div class="form-row">
+  <label>
+    <span>mumax: <span class="help">maximum growth rate (1/time)</span></span>
+    <input
+        type="text"
+        name="param-mumax"
+        class="form-input-blue form-input-full"
+        value="{{ calculation and calculation.coefficients['mumax'] or '' }}"
+        {{ 'readonly' if calculation is none }} />
+  </label>
+</div>
+
+<div class="form-row">
+  <label>
+    <span>K: <span class="help">carrying capacity (max. abundance)</span></span>
+    <input
+        type="text"
+        name="param-K"
+        class="form-input-blue form-input-full"
+        value="{{ calculation and calculation.coefficients['K'] or '' }}"
+        {{ 'readonly' if calculation is none }} />
+  </label>
+</div>
+
+<div class="form-row">
+  <label>
+    <span>
+      h0:
+      <span class="help">
+        parameter specifying the initial physiological state of
+        organisms (e.g. cells) and in consequence the lag phase (h0
+        = max growth rate * lag phase)
+      </span>
+    </span>
+    <input
+        type="text"
+        name="param-h0"
+        class="form-input-blue form-input-full"
+        value="{{ calculation and calculation.coefficients['h0'] or '' }}"
+        {{ 'readonly' if calculation is none }} />
+  </label>
+</div>

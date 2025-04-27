@@ -209,7 +209,7 @@ def study_calculations_check_json(studyId, calculationTechniqueId):
     }
 
 
-def study_calculations_preview_fragment(studyId):
+def study_calculations_edit_fragment(studyId):
     args = request.args.to_dict()
 
     biorep_uuid  = args.pop('bioreplicateUniqueId')
@@ -280,7 +280,8 @@ def study_calculations_preview_fragment(studyId):
     )
 
     return render_template(
-        'pages/studies/_figs.html',
+        'pages/studies/_calculation_result.html',
+        calculation=calculation,
         fig_htmls=[fig_html],
     )
 

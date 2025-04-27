@@ -9,23 +9,26 @@ $(document).ready(function() {
 
     updateMeasurementSubjects($page.find('.js-calculation-form'));
 
-    $page.on('click', '.js-preview-trigger', function() {
+    $page.on('click', '.js-edit-trigger', function() {
       let $button = $(this);
-      let $preview = $button.parents('form').find('.js-preview')
-      let url = $button.data('url');
+      let $result = $button.parents('form').find('.js-result-container')
+      let $chart  = $result.find('.js-chart-preview')
+      let url     = $button.data('url');
 
       $page.find('.js-subject-row').removeClass('highlight');
       $button.parents('.js-subject-row').addClass('highlight');
+
+      console.log($chart);
 
       $.ajax({
         url: url,
         dataType: 'html',
         data: {
-          'width':  $preview.width(),
-          'height': $preview.height(),
+          'width':  $chart.width(),
+          'height': $chart.height(),
         },
         success: function(response) {
-          $preview.html(response)
+          $result.html(response)
         },
       });
     });
