@@ -16,6 +16,7 @@ class TestCalculations(DatabaseTest):
 
         with self.assertRaises(sql.exc.NoResultFound):
             _update_calculation_technique(self.db_session, calculation_technique.id, [{
+                'bioreplicate_uuid':        'nonexistent',
                 'subject_id':               'nonexistent',
                 'subject_type':             'nonexistent',
                 'measurement_technique_id': 'nonexistent',
@@ -36,9 +37,11 @@ class TestCalculations(DatabaseTest):
         study                 = self.create_study()
         strain                = self.create_strain(studyId=study.publicId)
         measurement_technique = self.create_measurement_technique(studyUniqueID=study.uuid)
+        bioreplicate          = self.create_bioreplicate(studyId=study.publicId)
         calculation_technique = self.create_calculation_technique()
 
         params = {
+            'bioreplicateUniqueId': bioreplicate.uuid,
             'techniqueId': measurement_technique.id,
             'subjectId': strain.id,
             'subjectType': 'strain',
@@ -49,6 +52,7 @@ class TestCalculations(DatabaseTest):
         self.create_measurement(**params, timeInSeconds=240, value=20.0)
 
         _update_calculation_technique(self.db_session, calculation_technique.id, [{
+            'bioreplicate_uuid':        bioreplicate.uuid,
             'subject_id':               strain.id,
             'subject_type':             'strain',
             'measurement_technique_id': measurement_technique.id
