@@ -119,11 +119,18 @@
                     {% endif %}
 
                     {% for subject in technique.get_subjects_for_bioreplicate(g.db_session, bioreplicate): %}
+                      {% set target_identifier = [
+                        bioreplicate.bioreplicateUniqueId,
+                        technique.id,
+                        technique.subjectType,
+                        subject.id,
+                      ]|join('|')%}
+
                       <div class="flex-row flex-gap-10 js-subject-row" style="align-items: center">
                         <label>
                           <input
                               type="checkbox"
-                              name="target|{{ technique.id }}|{{ technique.subjectType }}|{{ subject.id }}" />
+                              name="target|{{ target_identifier }}" />
                           {{ subject.name }}
                         </label>
 

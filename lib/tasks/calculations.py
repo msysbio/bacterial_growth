@@ -1,5 +1,7 @@
 import time
 import tempfile
+from datetime import datetime, UTC
+
 from celery import shared_task
 from celery.utils.log import get_task_logger
 
@@ -30,6 +32,7 @@ def _update_calculation_technique(db_session, calculation_technique_id, target_p
         try:
             calculation_technique.calculations = []
             for target_params in target_param_list:
+                bioreplicate_uuid        = target_params['bioreplicate_uuid']
                 subject_id               = target_params['subject_id']
                 subject_type             = target_params['subject_type']
                 measurement_technique_id = target_params['measurement_technique_id']
@@ -45,17 +48,24 @@ def _update_calculation_technique(db_session, calculation_technique_id, target_p
                     subjectType=subject_type,
                     measurementTechniqueId=measurement_technique_id,
                     calculationTechniqueId=calculation_technique.id,
+                    bioreplicateUniqueId=bioreplicate_uuid,
                 )
                 db_session.add(calculation)
                 calculation_technique.calculations.append(calculation)
 
-                rscript = RScript(root_path=tmp_dir_name)
-                rscript.write_csv(
-                    'input.csv',
-                    measurement_technique.get_subject_df(db_session, subject_id, subject_type),
+                data = measurement_technique.get_subject_df(
+                    db_session,
+                    bioreplicate_uuid,
+                    subject_id,
+                    subject_type,
                 )
+
+                rscript = RScript(root_path=tmp_dir_name)
+                rscript.write_csv('input.csv', data)
                 output = rscript.run('scripts/modeling/baranyi_roberts.R', 'input.csv', 'coefficients.json')
                 calculation.coefficients = rscript.read_json('coefficients.json')
+                calculation.state = 'ready'
+                calculation.calculatedAt = datetime.now(UTC)
 
             calculation_technique.state = 'ready'
             calculation_technique.error = None

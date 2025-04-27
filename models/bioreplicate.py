@@ -32,6 +32,10 @@ class Bioreplicate(OrmBase):
         back_populates='bioreplicate',
         cascade='all, delete-orphan'
     )
+    calculations: Mapped[List["Calculation"]] = relationship(
+        back_populates='bioreplicate',
+        cascade='all, delete-orphan'
+    )
 
     @hybrid_property
     def id(self):

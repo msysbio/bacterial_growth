@@ -16,6 +16,7 @@ from models import (
     Measurement,
     MeasurementTechnique,
     CalculationTechnique,
+    Calculation,
 )
 from forms.experiment_export_form import ExperimentExportForm
 from forms.experiment_chart_form import ExperimentChartForm
@@ -162,8 +163,16 @@ def study_calculations_action(studyId):
         if not target_identifier.startswith('target|'):
             continue
 
-        (_label, measurement_technique_id, subject_type, subject_id) = target_identifier.split('|')
+        (
+            _label,
+            bioreplicate_uuid,
+            measurement_technique_id,
+            subject_type,
+            subject_id,
+        ) = target_identifier.split('|')
+
         target_param_list.append({
+            'bioreplicate_uuid': bioreplicate_uuid,
             'measurement_technique_id': measurement_technique_id,
             'subject_type': subject_type,
             'subject_id': subject_id,
@@ -211,15 +220,15 @@ def study_calculations_preview_fragment(studyId):
     width  = args.pop('width')
     height = args.pop('height')
 
-    technique = g.db_session.get(MeasurementTechnique, technique_id)
+    measurement_technique = g.db_session.get(MeasurementTechnique, technique_id)
     subject = Measurement.get_subject(g.db_session, subject_id, subject_type)
 
-    df = execute_into_df(
+    measurement_df = execute_into_df(
         g.db_session,
         sql.select(
             Measurement.timeInHours.label("time"),
             Measurement.value.label("value"),
-            (literal(subject.name) + ' ' + literal(technique.short_name)).label("name"),
+            (literal(subject.name) + ' ' + literal(measurement_technique.short_name)).label("name"),
         )
         .where(
             Measurement.bioreplicateUniqueId == biorep_uuid,
@@ -229,16 +238,38 @@ def study_calculations_preview_fragment(studyId):
         )
     )
 
+    query = (
+        sql.select(Calculation)
+        .where(
+            Calculation.bioreplicateUniqueId == biorep_uuid,
+            Calculation.subjectType == subject_type,
+            Calculation.subjectId == subject_id,
+            Calculation.measurementTechniqueId == measurement_technique.id,
+            Calculation.state.in_(('ready', 'error')),
+        )
+    )
+    calculation = g.db_session.scalars(query).one_or_none()
+
+    if calculation:
+        calculation_df = calculation.render_df(measurement_df)
+        fig_dfs = [measurement_df, calculation_df]
+    else:
+        fig_dfs = [measurement_df]
+
     fig = make_figure_with_traces(
-        [df],
+        fig_dfs,
         labels={
             'time': 'Hours',
-            'value': technique.units,
+            'value': measurement_technique.units,
         },
     )
     fig.update_layout(
         margin=dict(l=0, r=0, t=0, b=0),
-        title=dict(x=0)
+        title=dict(x=0),
+        legend=dict(
+            yanchor="bottom",
+            xanchor="right",
+        ),
     )
 
     fig_html = fig.to_html(

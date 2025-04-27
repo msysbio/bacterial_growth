@@ -9,8 +9,9 @@ def up(conn):
           subjectId   VARCHAR(100) COLLATE utf8mb4_bin NOT NULL,
           subjectType VARCHAR(100) COLLATE utf8mb4_bin NOT NULL,
 
-          calculationTechniqueId int NOT NULL,
-          measurementTechniqueId int NOT NULL,
+          calculationTechniqueId INT NOT NULL,
+          measurementTechniqueId INT NOT NULL,
+          bioreplicateUniqueId   INT NOT NULL,
 
           coefficients JSON DEFAULT (JSON_OBJECT()),
 

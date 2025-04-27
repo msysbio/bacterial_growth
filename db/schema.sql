@@ -124,6 +124,7 @@ CREATE TABLE Calculations (
   subjectType varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
   calculationTechniqueId int NOT NULL,
   measurementTechniqueId int NOT NULL,
+  bioreplicateUniqueId int NOT NULL,
   coefficients json DEFAULT (json_object()),
   state varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
   `error` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
@@ -605,5 +606,5 @@ INSERT INTO MigrationVersions VALUES
 (20,'2025_04_03_125243_add_timestamps_to_study_and_project','2025-04-25 09:06:54'),
 (21,'2025_04_15_112546_add_publishing_related_states_to_studies','2025-04-25 09:06:54'),
 (24,'2025_04_24_095808_create_calculation_techniques','2025-04-25 10:19:28'),
-(25,'2025_04_25_103658_create_calculations','2025-04-25 10:19:28');
+(26,'2025_04_25_103658_create_calculations','2025-04-27 10:02:53');
 

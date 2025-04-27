@@ -1,5 +1,7 @@
 from datetime import datetime
 
+import numpy as np
+import pandas as pd
 from sqlalchemy import (
     String,
     ForeignKey,
@@ -26,6 +28,10 @@ VALID_STATES = [
     'error',
 ]
 
+MODEL_NAMES = {
+    'baranyi_roberts': 'Baranyi-Roberts model',
+}
+
 
 class Calculation(OrmBase):
     __tablename__ = "Calculations"
@@ -51,6 +57,14 @@ class Calculation(OrmBase):
         back_populates="calculations",
     )
 
+    bioreplicateUniqueId: Mapped[int] = mapped_column(
+        ForeignKey('BioReplicatesPerExperiment.bioreplicateUniqueId'),
+        nullable=False,
+    )
+    bioreplicate: Mapped['Bioreplicate'] = relationship(
+        back_populates='calculations',
+    )
+
     coefficients: Mapped[JSON] = mapped_column(JSON, nullable=False)
 
     state: Mapped[str] = mapped_column(String(100), default='pending')
@@ -67,3 +81,33 @@ class Calculation(OrmBase):
     @validates('state')
     def _validate_state(self, key, value):
         return self._validate_inclusion(key, value, VALID_STATES)
+
+    def render_df(self, measurements_df):
+        start_time = measurements_df['time'].min()
+        end_time   = measurements_df['time'].max()
+
+        timepoints = np.linspace(start_time, end_time, 200)
+        values = self._predict(timepoints)
+
+        return pd.DataFrame.from_dict({
+            'time': timepoints,
+            'value': values,
+            'name': MODEL_NAMES[self.type],
+        })
+
+    def _predict(self, timepoints):
+        if self.type == 'baranyi_roberts':
+            return self._predict_baranyi_roberts(timepoints)
+        else:
+            raise ValueError(f"Don't know how to predict values for calculation type: {repr(self.type)}")
+
+    def _predict_baranyi_roberts(self, time):
+        y0    = self.coefficients['y0']
+        mumax = self.coefficients['mumax']
+        K     = self.coefficients['K']
+        h0    = self.coefficients['h0']
+
+        A = time + 1/mumax * np.log(np.exp(-mumax * time) + np.exp(-h0) - np.exp(-mumax * time - h0))
+        log_y = np.log(y0) + mumax * A - np.log(1 + (np.exp(mumax * A) - 1)/np.exp(np.log(K) - np.log(y0)))
+
+        return np.exp(log_y)
