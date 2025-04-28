@@ -17,6 +17,7 @@ from sqlalchemy_utc.sqltypes import UtcDateTime
 from models.orm_base import OrmBase
 
 VALID_TYPES = [
+    'easy_linear',
     'baranyi_roberts',
 ]
 

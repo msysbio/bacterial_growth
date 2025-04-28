@@ -12,10 +12,11 @@ $(document).ready(function() {
     $page.on('click', '.js-edit-trigger', function(e) {
       e.preventDefault();
 
-      let $trigger = $(this);
-      let $result  = $trigger.parents('form').find('.js-result-container')
-      let $chart   = $result.find('.js-chart-preview')
-      let url      = $trigger.attr('href');
+      let $trigger        = $(this);
+      let $result         = $trigger.parents('form').find('.js-result-container')
+      let $chart          = $result.find('.js-chart-preview')
+      let url             = $trigger.attr('href');
+      let calculationType = $trigger.parents('form').find('input[name=type]').val()
 
       $page.find('.js-subject-row').removeClass('highlight');
       $trigger.parents('.js-subject-row').addClass('highlight');
@@ -24,8 +25,9 @@ $(document).ready(function() {
         url: url,
         dataType: 'html',
         data: {
-          'width':  $chart.width(),
-          'height': $chart.height(),
+          'calculationType': calculationType,
+          'width':           $chart.width(),
+          'height':          $chart.height(),
         },
         success: function(response) {
           $result.html(response)
@@ -38,7 +40,7 @@ $(document).ready(function() {
       let $form = $(e.currentTarget);
 
       $.ajax({
-        url: `/study/${studyId}/calculations`,
+        url: $form.attr('action'),
         dataType: 'json',
         method: 'POST',
         data: $form.serializeArray(),

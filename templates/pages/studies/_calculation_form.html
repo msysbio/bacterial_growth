@@ -4,7 +4,7 @@
       action="{{ url_for('study_calculations_action', studyId=study.publicId) }}"
       class="simple-form js-calculation-form"
       method="POST">
-    <input type="hidden" name="type" value="baranyi_roberts" />
+    <input type="hidden" name="type" value="{{ type }}" />
 
     <div class="flex-row flex-gap-10">
       <div class="column full flex-column flex-gap-10">
@@ -60,12 +60,12 @@
                     </label>
 
                     {% set edit_url = url_for(
-                    "study_calculations_edit_fragment",
-                    studyId=study.publicId,
-                    bioreplicateUniqueId=bioreplicate.uuid,
-                    subjectType=technique.subjectType,
-                    subjectId=subject.id,
-                    techniqueId=technique.id
+                      "study_calculations_edit_fragment",
+                      studyId=study.publicId,
+                      bioreplicateUniqueId=bioreplicate.uuid,
+                      subjectType=technique.subjectType,
+                      subjectId=subject.id,
+                      techniqueId=technique.id
                     ) %}
 
                     <a href="{{ edit_url }}" class="flex-right js-edit-trigger">

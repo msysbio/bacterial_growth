@@ -62,7 +62,10 @@ def _update_calculation_technique(db_session, calculation_technique_id, target_p
 
                 rscript = RScript(root_path=tmp_dir_name)
                 rscript.write_csv('input.csv', data)
-                output = rscript.run('scripts/modeling/baranyi_roberts.R', 'input.csv', 'coefficients.json')
+
+                script_name = f"scripts/modeling/{calculation_technique.type}.R"
+                output = rscript.run(script_name, 'input.csv', 'coefficients.json')
+
                 calculation.coefficients = rscript.read_json('coefficients.json')
                 calculation.state = 'ready'
                 calculation.calculatedAt = datetime.now(UTC)
@@ -73,6 +76,8 @@ def _update_calculation_technique(db_session, calculation_technique_id, target_p
         except Exception as e:
             db_session.rollback()
             calculation_technique.state = 'error'
+
+            # TODO (2025-04-28) Make "error" a text field, show it somewhere
             calculation_technique.error = str(e)[0:100]
             db_session.commit()
 

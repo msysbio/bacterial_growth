@@ -172,10 +172,10 @@ def study_calculations_action(studyId):
         ) = target_identifier.split('|')
 
         target_param_list.append({
-            'bioreplicate_uuid': bioreplicate_uuid,
+            'bioreplicate_uuid':        bioreplicate_uuid,
             'measurement_technique_id': measurement_technique_id,
-            'subject_type': subject_type,
-            'subject_id': subject_id,
+            'subject_type':             subject_type,
+            'subject_id':               subject_id,
         })
 
     calculation_technique = g.db_session.scalars(
@@ -187,7 +187,7 @@ def study_calculations_action(studyId):
     ).one_or_none()
     if calculation_technique is None:
         calculation_technique = CalculationTechnique(
-            type='baranyi_roberts',
+            type=calculation_type,
             studyUniqueID=study.uuid,
         )
         g.db_session.add(calculation_technique)
@@ -212,10 +212,11 @@ def study_calculations_check_json(studyId, calculationTechniqueId):
 def study_calculations_edit_fragment(studyId):
     args = request.args.to_dict()
 
-    biorep_uuid  = args.pop('bioreplicateUniqueId')
-    subject_type = args.pop('subjectType')
-    subject_id   = args.pop('subjectId')
-    technique_id = args.pop('techniqueId')
+    calculation_type = args.pop('calculationType')
+    biorep_uuid      = args.pop('bioreplicateUniqueId')
+    subject_type     = args.pop('subjectType')
+    subject_id       = args.pop('subjectId')
+    technique_id     = args.pop('techniqueId')
 
     width  = args.pop('width')
     height = args.pop('height')
@@ -241,6 +242,7 @@ def study_calculations_edit_fragment(studyId):
     query = (
         sql.select(Calculation)
         .where(
+            Calculation.type == calculation_type,
             Calculation.bioreplicateUniqueId == biorep_uuid,
             Calculation.subjectType == subject_type,
             Calculation.subjectId == subject_id,
@@ -263,6 +265,10 @@ def study_calculations_edit_fragment(studyId):
             'value': measurement_technique.units,
         },
     )
+
+    max_y = measurement_df['value'].max()
+    std_y = measurement_df['value'].std()
+
     fig.update_layout(
         margin=dict(l=0, r=0, t=0, b=0),
         title=dict(x=0),
@@ -270,6 +276,7 @@ def study_calculations_edit_fragment(studyId):
             yanchor="bottom",
             xanchor="right",
         ),
+        yaxis_range=[-std_y / 10, max_y + std_y / 2]
     )
 
     fig_html = fig.to_html(

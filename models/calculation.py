@@ -19,6 +19,7 @@ from sqlalchemy_utc.sqltypes import UtcDateTime
 from models.orm_base import OrmBase
 
 VALID_TYPES = [
+    'easy_linear',
     'baranyi_roberts',
 ]
 
@@ -29,6 +30,7 @@ VALID_STATES = [
 ]
 
 MODEL_NAMES = {
+    'easy_linear': 'Easy linear model',
     'baranyi_roberts': 'Baranyi-Roberts model',
 }
 
@@ -96,10 +98,24 @@ class Calculation(OrmBase):
         })
 
     def _predict(self, timepoints):
-        if self.type == 'baranyi_roberts':
+        if self.type == 'easy_linear':
+            return self._predict_easy_linear(timepoints)
+        elif self.type == 'baranyi_roberts':
             return self._predict_baranyi_roberts(timepoints)
         else:
             raise ValueError(f"Don't know how to predict values for calculation type: {repr(self.type)}")
+
+    def _predict_easy_linear(self, time):
+        y0    = self.coefficients['y0']
+        y0_lm = self.coefficients['y0_lm']
+        mumax = self.coefficients['mumax']
+        # lag   = self.coefficients['lag']
+
+        # No lag:
+        # return y0 * np.exp(time * mumax)
+
+        # Exponential:
+        return y0_lm * np.exp(time * mumax)
 
     def _predict_baranyi_roberts(self, time):
         y0    = self.coefficients['y0']

@@ -36,7 +36,5 @@ class RScript:
         df.to_csv(self.root_path / filename, index=False)
 
     def read_json(self, filename):
-        print((self.root_path / filename).read_text())
-
         with open(self.root_path / filename) as f:
             return json.load(f)
