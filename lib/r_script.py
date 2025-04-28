@@ -25,7 +25,15 @@ class RScript:
         )
 
         if result.returncode != 0:
-            raise ValueError(f"Failed RScript call,\n> STDOUT:\n{result.stdout}\n> STDERR:\n{result.stderr}")
+            LOGGER.error("STDOUT:")
+            for line in result.stdout.decode('utf-8').split("\n"):
+                LOGGER.error(line)
+
+            LOGGER.error("STDERR:")
+            for line in result.stderr.decode('utf-8').split("\n"):
+                LOGGER.error(line)
+
+            raise ValueError(f"Failed RScript call")
 
         for line in result.stderr.decode('utf-8').split("\n"):
             LOGGER.warning(line)

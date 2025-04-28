@@ -60,6 +60,13 @@ def _update_calculation_technique(db_session, calculation_technique_id, target_p
                     subject_type,
                 )
 
+                # If there is no standard deviation, remove it:
+                if data['std'].isna().all():
+                    data = data.drop(columns=['std'])
+
+                # Remove rows with NA values
+                data = data.dropna()
+
                 rscript = RScript(root_path=tmp_dir_name)
                 rscript.write_csv('input.csv', data)
 

@@ -9,12 +9,21 @@ output_json = args[2]
 data <- read.table(input_csv, header=T, sep=',')
 
 ## initial parameters and box constraints
-p <- c(y0 = 0.03, mumax = .1, K = 0.1, h0 = 1)
+max_value = max(data$value)
 
-model_fit <- fit_growthmodel(FUN  = grow_baranyi,
-                             time = data$time,
-                             y    = data$value,
-                             p    = p)
+p     <- c(y0 = 0.03,  mumax = .1,   K = max_value,      h0 = 1)
+lower <- c(y0 = 0.001, mumax = 1e-2, K = max_value / 10, h0 = -10)
+upper <- c(y0 = 0.1,   mumax = 1,    K = max_value * 10, h0 = 10)
+
+model_fit <- fit_growthmodel(FUN       = grow_baranyi,
+                             transform = 'log',
+                             time      = data$time,
+                             y         = data$value,
+                             p         = p,
+                             upper     = upper,
+                             lower     = lower)
+
+summary(model_fit)
 
 coefficients = coef(model_fit)
 

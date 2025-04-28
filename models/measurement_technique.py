@@ -182,7 +182,7 @@ class MeasurementTechnique(OrmBase):
             yield (subject, measurements)
 
     def get_subject_df(self, db_session, bioreplicate_uuid, subject_id, subject_type):
-        from models import Measurement
+        from models import Measurement, Bioreplicate
 
         subjectName, subjectJoin = Measurement.subject_join(subject_type)
 
@@ -193,6 +193,7 @@ class MeasurementTechnique(OrmBase):
                 Measurement.std,
                 subjectName,
             )
+            .join(Bioreplicate)
             .join(*subjectJoin)
             .where(
                 Measurement.techniqueId == self.id,
