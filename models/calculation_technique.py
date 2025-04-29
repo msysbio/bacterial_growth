@@ -28,6 +28,11 @@ VALID_STATES = [
     'error',
 ]
 
+MODEL_NAMES = {
+    'easy_linear':     'Easy linear model',
+    'baranyi_roberts': 'Baranyi-Roberts model',
+}
+
 
 class CalculationTechnique(OrmBase):
     __tablename__ = "CalculationTechniques"
@@ -57,3 +62,7 @@ class CalculationTechnique(OrmBase):
     @validates('state')
     def _validate_state(self, key, value):
         return self._validate_inclusion(key, value, VALID_STATES)
+
+    @property
+    def long_name(self):
+        return MODEL_NAMES[self.type]

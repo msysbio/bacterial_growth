@@ -30,7 +30,7 @@ VALID_STATES = [
 ]
 
 MODEL_NAMES = {
-    'easy_linear': 'Easy linear model',
+    'easy_linear':     'Easy linear model',
     'baranyi_roberts': 'Baranyi-Roberts model',
 }
 
@@ -83,6 +83,22 @@ class Calculation(OrmBase):
     @validates('state')
     def _validate_state(self, key, value):
         return self._validate_inclusion(key, value, VALID_STATES)
+
+    def get_subject(self, db_session):
+        from models import (
+            Metabolite,
+            Strain,
+            Bioreplicate,
+        )
+
+        if self.subjectType == 'metabolite':
+            return db_session.get(Metabolite, self.subjectId)
+        elif self.subjectType == 'strain':
+            return db_session.get(Strain, self.subjectId)
+        elif self.subjectType == 'bioreplicate':
+            return db_session.get(Bioreplicate, self.subjectId)
+        else:
+            raise ValueError(f"Unknown subject type: {self.subjectType}")
 
     def render_df(self, measurements_df):
         start_time = measurements_df['time'].min()

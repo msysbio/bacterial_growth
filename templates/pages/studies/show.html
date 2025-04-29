@@ -26,7 +26,7 @@
         <p>{{ study.studyDescription }}</p>
       {% endif %}
 
-      <h2>Measurement techniques</h2>
+      <h2>Measurements</h2>
 
       <p>
         To explore the data in graphical form, click "Compare" on the
@@ -129,6 +129,95 @@
                     </td>
                   </tr>
                 {% endfor %}
+              {% endfor %}
+            </table>
+          </div>
+        {% endfor %}
+      </div>
+
+      <h2>Calculations</h2>
+
+      <p>
+        TODO Make this comparable to the measurements
+      </p>
+
+      <div class="calculation-techniques">
+        {% for technique in study.calculationTechniques: %}
+          <div class="technique-container">
+            <h3>
+              {{ loop.index }}) {{ technique.long_name }}
+            </h3>
+
+            <br>
+
+            <table class="dataframe-table measurements-table">
+              <tr>
+                <th>Actions</th>
+                <th>Subject</th>
+                <th>Coefficients</th>
+              </tr>
+
+              {% for calculation in technique.calculations: %}
+                {% if calculation.subjectType != 'bioreplicate': %}
+                  <tr class="js-table-row">
+                    <th colspan="3" align="center">
+                      Bioreplicate: {{ calculation.bioreplicate.bioreplicateId }}
+                    </th>
+                  </tr>
+                {% endif %}
+
+                {% set bioreplicate = calculation.bioreplicate %}
+                {% set subject = calculation.get_subject(g.db_session) %}
+                {% set subjectClass = subject.__class__.__name__ %}
+
+                <tr class="js-table-row">
+                  <td>
+                    {% set targetIdentifier = "{}|{}|{}|{}".format(
+                      bioreplicate.bioreplicateUniqueId,
+                      technique.id,
+                      subjectClass|lower,
+                      subject.id
+                    ) %}
+
+                    <div class="js-compare-container" data-target-identifier="{{ targetIdentifier }}">
+                      <span class="js-compare">
+                        <a
+                            href="#"
+                            class="white-button small-button">
+                          ↔ Compare
+                        </a>
+                      </span>
+
+                      <span class="js-uncompare hidden">
+                        ✅ Comparing
+                        <a
+                            href="#"
+                            class="white-button small-button">
+                          ➖
+                        </a>
+                      </span>
+                    </div>
+                  </td>
+                  <td>
+                    {% if calculation.subjectType == 'bioreplicate': %}
+                      {{ subject.name }}
+                    {% elif calculation.subjectType == 'strain': %}
+                      <a href="{{ url_for('strain_show_page', id=subject.id) }}">
+                        {{ subject.name }}
+                      </a>
+                    {% elif calculation.subjectType == 'metabolite': %}
+                      <a href="{{ url_for('metabolite_show_page', chebi_id=subject.id) }}">
+                        {{ subject.name }}
+                      </a>
+                    {% endif %}
+                  </td>
+
+                  <td class="numeric">
+                    <div class="truncate">
+                      {{ calculation.coefficients|tojson }}
+                    </div>
+                  </td>
+                </tr>
               {% endfor %}
             </table>
           </div>
