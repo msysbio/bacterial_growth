@@ -47,3 +47,4 @@
    contributing/intro
    contributing/model_layer
    contributing/controller_layer
+   contributing/workers
