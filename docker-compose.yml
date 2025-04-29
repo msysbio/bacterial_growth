@@ -11,7 +11,7 @@ services:
       MYSQL_PASSWORD:      'nVI8imBD3bl24pcP'
       MYSQL_ROOT_PASSWORD: 'nVI8imBD3bl24pcP'
   redis:
-    image: redis:7.4.2
+    image: redis:7.4-alpine
     restart: always
     container_name: bacterial_growth_redis
     ports:
