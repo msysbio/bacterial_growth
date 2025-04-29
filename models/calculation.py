@@ -100,7 +100,7 @@ class Calculation(OrmBase):
         else:
             raise ValueError(f"Unknown subject type: {self.subjectType}")
 
-    def render_df(self, measurements_df):
+    def generate_chart_df(self, measurements_df):
         start_time = measurements_df['time'].min()
         end_time   = measurements_df['time'].max()
 
@@ -139,6 +139,9 @@ class Calculation(OrmBase):
         K     = self.coefficients['K']
         h0    = self.coefficients['h0']
 
+        # Formula taken from the "growthrates" documentation under `grow_baranyi`:
+        # https://cran.r-project.org/web/packages/growthrates/growthrates.pdf
+        #
         A = time + 1/mumax * np.log(np.exp(-mumax * time) + np.exp(-h0) - np.exp(-mumax * time - h0))
         log_y = np.log(y0) + mumax * A - np.log(1 + (np.exp(mumax * A) - 1)/np.exp(np.log(K) - np.log(y0)))
 

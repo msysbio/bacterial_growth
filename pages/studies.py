@@ -253,7 +253,7 @@ def study_calculations_edit_fragment(studyId):
     calculation = g.db_session.scalars(query).one_or_none()
 
     if calculation:
-        calculation_df = calculation.render_df(measurement_df)
+        calculation_df = calculation.generate_chart_df(measurement_df)
         fig_dfs = [measurement_df, calculation_df]
     else:
         fig_dfs = [measurement_df]

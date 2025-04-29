@@ -8,6 +8,13 @@ LOGGER = logging.getLogger()
 
 
 class RScript:
+    """
+    This object provides a generic interface to executing an R script using an
+    `Rscript` executable found in the PATH. It expects to be given a root
+    directory (likely a temporary one) where it'll look for its input files and
+    produce its outputs.
+    """
+
     def __init__(self, root_path):
         self.root_path   = Path(root_path)
         self.rscript_exe = shutil.which('Rscript')
