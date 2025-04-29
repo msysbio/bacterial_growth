@@ -4,7 +4,7 @@ import unittest
 
 import sqlalchemy as sql
 
-from lib.tasks.calculations import _update_calculation_technique
+from lib.calculation_tasks import _update_calculation_technique
 from tests.database_test import DatabaseTest
 
 class TestCalculations(DatabaseTest):
@@ -46,10 +46,27 @@ class TestCalculations(DatabaseTest):
             'subjectId': strain.id,
             'subjectType': 'strain',
         }
-        self.create_measurement(**params, timeInSeconds=60,  value=10.0)
-        self.create_measurement(**params, timeInSeconds=120, value=11.0)
-        self.create_measurement(**params, timeInSeconds=180, value=40.0)
-        self.create_measurement(**params, timeInSeconds=240, value=20.0)
+        data = [
+            (0.0,   2146.0),
+            (4.0,   23640.0),
+            (8.0,   400810.0),
+            (12.0,  1139840.0),
+            (16.0,  1418960.0),
+            (20.0,  1122060.0),
+            (24.0,  979120.0),
+            (28.0,  874350.0),
+            (32.0,  860460.0),
+            (36.0,  898770.0),
+            (40.0,  840550.0),
+            (48.0,  964230.0),
+            (60.0,  952260.0),
+            (72.0,  1253140.0),
+            (86.0,  1095660.0),
+            (96.0,  1001220.0),
+            (120.0, 967930.0),
+        ]
+        for (hours, value) in data:
+            self.create_measurement(**params, timeInSeconds=(hours * 3600), value=value)
 
         _update_calculation_technique(self.db_session, calculation_technique.id, [{
             'bioreplicate_uuid':        bioreplicate.uuid,

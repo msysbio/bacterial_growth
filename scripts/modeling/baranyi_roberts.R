@@ -23,11 +23,16 @@ model_fit <- fit_growthmodel(FUN       = grow_baranyi,
                              upper     = upper,
                              lower     = lower)
 
+# Evaluate summary to ensure an error is raised if there are fit issues:
 summary(model_fit)
 
 coefficients = coef(model_fit)
 
 f <- file(output_json)
+
+# TODO: try toJSON(as.data.frame(coefficients))
+# TODO: Write model fit to file as well
+
 writeLines(c(
            '{',
            paste('"y0":',    coefficients['y0'], ','),

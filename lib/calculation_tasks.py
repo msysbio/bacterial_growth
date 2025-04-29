@@ -31,6 +31,7 @@ def _update_calculation_technique(db_session, calculation_technique_id, target_p
     with tempfile.TemporaryDirectory() as tmp_dir_name:
         try:
             calculation_technique.calculations = []
+
             for target_params in target_param_list:
                 bioreplicate_uuid        = target_params['bioreplicate_uuid']
                 subject_id               = target_params['subject_id']
@@ -74,6 +75,7 @@ def _update_calculation_technique(db_session, calculation_technique_id, target_p
                 output = rscript.run(script_name, 'input.csv', 'coefficients.json')
 
                 calculation.coefficients = rscript.read_json('coefficients.json')
+
                 calculation.state = 'ready'
                 calculation.calculatedAt = datetime.now(UTC)
 
