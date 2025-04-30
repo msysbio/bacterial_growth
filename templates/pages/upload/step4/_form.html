@@ -1,0 +1,28 @@
+{% macro render_step4_form(submission_form, upload_form) %}
+  <p>
+    TODO
+  </p>
+
+  <br>
+
+  <form
+      class="simple-form"
+      action="{{ url_for('upload_step4_page') }}"
+      method="POST">
+
+    <div class="form-row full">
+      <label>
+        <div>TODO</div>
+        <input type="text" />
+      </label>
+    </div>
+
+    <div class="form-row">
+      <input
+          type="submit"
+          class="form-input-blue"
+          value="Next" />
+    </div>
+  </form>
+
+{% endmacro %}

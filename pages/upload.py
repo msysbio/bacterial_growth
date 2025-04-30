@@ -125,6 +125,28 @@ def upload_step3_page():
         )
 
 
+def upload_step4_page():
+    submission_form = _init_submission_form(step=4)
+    submission = submission_form.submission
+
+    return render_template(
+        "pages/upload/index.html",
+        submission_form=submission_form,
+        submission=submission_form.submission,
+    )
+
+
+def upload_step5_page():
+    submission_form = _init_submission_form(step=5)
+    submission = submission_form.submission
+
+    return render_template(
+        "pages/upload/index.html",
+        submission_form=submission_form,
+        submission=submission_form.submission,
+    )
+
+
 def upload_step6_page():
     submission_form = _init_submission_form(step=6)
     submission = submission_form.submission
