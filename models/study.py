@@ -34,9 +34,10 @@ class Study(OrmBase):
 
     project: Mapped['Project'] = relationship(back_populates="studies")
 
-    studyUsers:  Mapped[List['StudyUser']]  = relationship(back_populates="study")
-    experiments: Mapped[List['Experiment']] = relationship(back_populates='study')
-    strains:     Mapped[List['Strain']]     = relationship(back_populates='study')
+    studyUsers:   Mapped[List['StudyUser']]   = relationship(back_populates="study")
+    experiments:  Mapped[List['Experiment']]  = relationship(back_populates='study')
+    strains:      Mapped[List['Strain']]      = relationship(back_populates='study')
+    compartments: Mapped[List['Compartment']] = relationship(back_populates='study')
 
     measurementTechniques: Mapped[List['MeasurementTechnique']] = relationship(
         back_populates="study"
