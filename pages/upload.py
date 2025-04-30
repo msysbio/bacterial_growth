@@ -125,8 +125,34 @@ def upload_step3_page():
         )
 
 
+def upload_step6_page():
+    submission_form = _init_submission_form(step=6)
+    submission = submission_form.submission
+    errors = []
+
+    if request.method == 'POST':
+        if request.files['study-template']:
+            submission.studyFile = ExcelFile.from_upload(request.files['study-template'])
+        if request.files['data-template']:
+            submission.dataFile  = ExcelFile.from_upload(request.files['data-template'])
+
+        submission_form.save()
+
+        errors = persist_submission_to_database(submission_form)
+
+        if not errors:
+            return redirect(url_for('upload_step7_page'))
+
+    return render_template(
+        "pages/upload/index.html",
+        submission_form=submission_form,
+        submission=submission_form.submission,
+        errors=errors,
+    )
+
+
 def download_study_template_xlsx():
-    submission_form = _init_submission_form(step=3)
+    submission_form = _init_submission_form(step=7)
     submission = submission_form.submission
 
     taxa_ids   = submission.studyDesign['strains']
@@ -179,32 +205,6 @@ def download_data_template_xlsx():
     )
 
 
-def upload_step4_page():
-    submission_form = _init_submission_form(step=4)
-    submission = submission_form.submission
-    errors = []
-
-    if request.method == 'POST':
-        if request.files['study-template']:
-            submission.studyFile = ExcelFile.from_upload(request.files['study-template'])
-        if request.files['data-template']:
-            submission.dataFile  = ExcelFile.from_upload(request.files['data-template'])
-
-        submission_form.save()
-
-        errors = persist_submission_to_database(submission_form)
-
-        if not errors:
-            return redirect(url_for('upload_step5_page'))
-
-    return render_template(
-        "pages/upload/index.html",
-        submission_form=submission_form,
-        submission=submission_form.submission,
-        errors=errors,
-    )
-
-
 def upload_spreadsheet_preview_fragment():
     excel_file = ExcelFile.from_upload(request.files['file'])
 
@@ -214,8 +214,8 @@ def upload_spreadsheet_preview_fragment():
     )
 
 
-def upload_step5_page():
-    submission_form = _init_submission_form(step=5)
+def upload_step7_page():
+    submission_form = _init_submission_form(step=7)
 
     if request.method == 'POST':
         study = submission_form.submission.study

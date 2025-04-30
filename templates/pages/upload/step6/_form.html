@@ -1,8 +1,8 @@
 {% from 'utils/_form_errors.html' import render_form_errors %}
 {% from 'utils/_post_button.html' import post_button %}
-{% from 'pages/upload/step4/_spreadsheet_preview.html' import render_spreadsheet_preview %}
+{% from 'pages/upload/step6/_spreadsheet_preview.html' import render_spreadsheet_preview %}
 
-{% macro render_step4_form(submission_form, errors) %}
+{% macro render_step6_form(submission_form, errors) %}
 
   <div>
     <h3>Download Templates</h3>
@@ -47,7 +47,7 @@
       class="simple-form"
       enctype="multipart/form-data"
       method="POST"
-      action="{{ url_for('upload_step4_page') }}">
+      action="{{ url_for('upload_step6_page') }}">
 
     <div>
       <h3>Upload Completed Spreadsheets</h3>

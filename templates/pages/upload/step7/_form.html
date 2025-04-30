@@ -1,11 +1,11 @@
 {% from 'utils/_time_tag.html' import time_tag %}
 
-{% macro render_step5_form(submission_form, submission) %}
+{% macro render_step7_form(submission_form, submission) %}
 
   <form
       class="simple-form"
       method="POST"
-      action="{{ url_for('upload_step5_page') }}">
+      action="{{ url_for('upload_step7_page') }}">
 
     {% if not submission.study: %}
 

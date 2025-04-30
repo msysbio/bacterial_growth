@@ -1,14 +1,14 @@
 {% from 'pages/upload/step1/_form.html' import render_step1_form %}
 {% from 'pages/upload/step2/_form.html' import render_step2_form %}
 {% from 'pages/upload/step3/_form.html' import render_step3_form %}
-{% from 'pages/upload/step4/_form.html' import render_step4_form %}
-{% from 'pages/upload/step5/_form.html' import render_step5_form %}
+{% from 'pages/upload/step6/_form.html' import render_step6_form %}
+{% from 'pages/upload/step7/_form.html' import render_step7_form %}
 
 {% from 'pages/upload/step1/_status.html' import render_step1_status %}
 {% from 'pages/upload/step2/_status.html' import render_step2_status %}
 {% from 'pages/upload/step3/_status.html' import render_step3_status %}
-{% from 'pages/upload/step4/_status.html' import render_step4_status %}
-{% from 'pages/upload/step5/_status.html' import render_step5_status %}
+{% from 'pages/upload/step6/_status.html' import render_step6_status %}
+{% from 'pages/upload/step7/_status.html' import render_step7_status %}
 
 {% from 'pages/upload/_user_submissions.html' import render_user_submissions %}
 {% from 'utils/_post_button.html' import post_button %}
@@ -106,27 +106,27 @@
           {% endif %}
         </div>
 
-        <div class="step-content step-4 {{ submission_form.html_step_classes(4) }}">
-          {% call section_link(submission_form.step, 4, 'upload_step4_page') %}
-            Step 4: Upload data
+        <div class="step-content step-6 {{ submission_form.html_step_classes(6) }}">
+          {% call section_link(submission_form.step, 6, 'upload_step6_page') %}
+            Step 6: Upload data
           {% endcall %}
 
-          {% if submission_form.step == 4 %}
-            {{ render_step4_form(submission_form, errors) }}
+          {% if submission_form.step == 6 %}
+            {{ render_step6_form(submission_form, errors) }}
           {% else %}
-            {{ render_step4_status(submission) }}
+            {{ render_step6_status(submission) }}
           {% endif %}
         </div>
 
-        <div class="step-content step-5 {{ submission_form.html_step_classes(5) }}">
-          {% call section_link(submission_form.step, 5, 'upload_step5_page') %}
-            Step 5: Publish data
+        <div class="step-content step-7 {{ submission_form.html_step_classes(7) }}">
+          {% call section_link(submission_form.step, 7, 'upload_step7_page') %}
+            Step 7: Publish data
           {% endcall %}
 
-          {% if submission_form.step == 5 %}
-            {{ render_step5_form(submission_form, submission) }}
+          {% if submission_form.step == 7 %}
+            {{ render_step7_form(submission_form, submission) }}
           {% else %}
-            {{ render_step5_status(submission_form) }}
+            {{ render_step7_status(submission_form) }}
           {% endif %}
         </div>
       </div>
