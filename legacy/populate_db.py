@@ -267,11 +267,8 @@ def save_study_design_to_database(conn, yml_dir, submission_form, data_template,
                 comp_per_biorep={
                     'studyId': study_id,
                     'experimentUniqueId': search_id(info_experiments['Experiment_ID'][i],biorep_id_list),
-                    'experimentId': info_experiments['Experiment_ID'][i],
                     'compartmentUniqueId': search_id(j, compartments_id_list),
-                    'compartmentId': j,
                     'communityUniqueId': community_unique_id,
-                    'communityId': k
                 }
                 comp_per_biorep_filtered = {t: v for t, v in comp_per_biorep.items() if v is not None}
                 if len(comp_per_biorep_filtered)>0:

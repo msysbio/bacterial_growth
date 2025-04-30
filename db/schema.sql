@@ -202,15 +202,17 @@ DROP TABLE IF EXISTS CompartmentsPerExperiment;
 CREATE TABLE CompartmentsPerExperiment (
   studyId varchar(100) COLLATE utf8mb4_bin DEFAULT NULL,
   experimentUniqueId int NOT NULL,
-  experimentId varchar(100) COLLATE utf8mb4_bin NOT NULL,
   compartmentUniqueId int NOT NULL,
-  compartmentId varchar(100) COLLATE utf8mb4_bin NOT NULL,
   communityUniqueId int NOT NULL,
-  communityId varchar(100) COLLATE utf8mb4_bin NOT NULL,
-  PRIMARY KEY (experimentUniqueId,compartmentUniqueId,communityUniqueId),
+  id bigint unsigned NOT NULL AUTO_INCREMENT,
+  experimentId varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  compartmentId varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  communityId varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  PRIMARY KEY (id),
   KEY fk_2 (compartmentUniqueId),
   KEY fk_3 (communityUniqueId),
   KEY fk_4 (studyId),
+  KEY CompartmentsPerExperiment_fk_1 (experimentUniqueId),
   CONSTRAINT CompartmentsPerExperiment_fk_1 FOREIGN KEY (experimentUniqueId) REFERENCES Experiments (experimentUniqueId) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT CompartmentsPerExperiment_fk_2 FOREIGN KEY (compartmentUniqueId) REFERENCES Compartments (compartmentUniqueId) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT CompartmentsPerExperiment_fk_3 FOREIGN KEY (communityUniqueId) REFERENCES Community (communityUniqueId) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -606,5 +608,6 @@ INSERT INTO MigrationVersions VALUES
 (20,'2025_04_03_125243_add_timestamps_to_study_and_project','2025-04-25 09:06:54'),
 (21,'2025_04_15_112546_add_publishing_related_states_to_studies','2025-04-25 09:06:54'),
 (24,'2025_04_24_095808_create_calculation_techniques','2025-04-25 10:19:28'),
-(26,'2025_04_25_103658_create_calculations','2025-04-27 10:02:53');
+(26,'2025_04_25_103658_create_calculations','2025-04-27 10:02:53'),
+(34,'2025_04_30_135012_fix_compartments_per_experiment_keys_and_columns','2025-04-30 12:17:09');
 
