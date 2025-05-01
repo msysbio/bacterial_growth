@@ -1,0 +1,58 @@
+{% macro render_community_form(form, submission_form, index) %}
+  {% if index is none: %}
+    {% set prefix = '' %}
+  {% else: %}
+    {% set prefix = 'communities-{}-'.format(index)  %}
+  {% endif %}
+
+  {% set strainIdentifiers = form.data['strainIdentifiers'] %}
+
+  <div class="subform-container js-community-container">
+    <h3>Community <span class="js-index">{{ index + 1 if index is not none else '' }}</span></h3>
+
+    <div class="form-row">
+      <label>
+        <div class="required">Name</div>
+        {{ form.name_(class='form-input-blue form-input-full') }}
+      </label>
+    </div>
+
+    <div class="form-row">
+      <label class="full">
+        <div>Strains</div>
+
+        <select
+            multiple
+            name="{{ prefix }}strainIdentifiers"
+            class="form-input-blue form-input-full js-strain-select">
+          {% for taxon in submission_form.fetch_taxa(): %}
+            <option
+                value="{{ taxon.tax_id }}"
+                {{ "selected" if strainIdentifiers and taxon.tax_id in strainIdentifiers }}>
+              {{ taxon.tax_names }}
+            </option>
+          {% endfor %}
+
+          {% for strain in submission_form.fetch_new_strains(): %}
+            <option
+                value="{{ strain['name'] }}"
+                {{ "selected" if strainIdentifiers and strain['name'] in strainIdentifiers }}>
+            {{ strain['name'] }}
+            </option>
+          {% endfor %}
+        </select>
+
+        <div class="help">
+          Leave empty to create a blank community for OD blanks or control experiments.
+        </div>
+      </label>
+
+      <div class="no-label flex-right">
+        <a href="#" class="white-button flex-row js-remove">
+          <span class="icon icon-remove"></span> Remove
+        </a>
+      </div>
+    </div>
+  </div>
+
+{% endmacro %}

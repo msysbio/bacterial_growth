@@ -1,17 +1,36 @@
 {% macro render_step4_status(submission_form, submission) %}
 
   <ul class="upload-status">
-    <li class="complete">
-      <span class="icon"></span>
-      <span>TODO:</span>
-      <span class="truncate">
-        <strong>TODO</strong>
-      </span>
-    </li>
+    {% set compartments = submission.studyDesign['compartments'] %}
+    {% set communities = submission.studyDesign['communities'] %}
 
-    <li class="incomplete">
-      <span class="icon"></span> TODO
-    </li>
+    {% if compartments|length > 0: %}
+      <li class="complete">
+        <span class="icon"></span>
+        <span>{{ compartments|length }} compartment(s):</span>
+        <span class="truncate">
+          <strong>{{ compartments|map(attribute='name_')|join('</strong>, <strong>')|safe }}</strong>
+        </span>
+      </li>
+    {% else: %}
+      <li class="incomplete">
+        <span class="icon"></span> No compartments defined
+      </li>
+    {% endif %}
+
+    {% if communities|length > 0: %}
+      <li class="complete">
+        <span class="icon"></span>
+        <span>{{ communities|length }} communities(s):</span>
+        <span class="truncate">
+          <strong>{{ communities|map(attribute='name_')|join('</strong>, <strong>')|safe }}</strong>
+        </span>
+      </li>
+    {% else: %}
+      <li class="incomplete">
+        <span class="icon"></span> No communities defined
+      </li>
+    {% endif %}
   </ul>
 
 {% endmacro %}

@@ -3,17 +3,17 @@
     <h3>Compartment <span class="js-index">{{ index + 1 if index is not none else '' }}</span></h3>
 
     <div class="form-row form-row-compact">
-      <label class="name">
+      <label>
         <div class="required">Name</div>
         {{ form.name_(class='form-input-blue form-input-full') }}
       </label>
 
-      <label class="description">
+      <label>
         <div>Medium name</div>
         {{ form.mediumName(class='form-input-blue form-input-full', placeholder='e.g. Wilkins-Chalgren') }}
       </label>
 
-      <label class="description">
+      <label>
         <div>Medium URL</div>
         {{ form.mediumUrl(class='form-input-blue form-input-full', placeholder='https://example.com') }}
       </label>
@@ -93,6 +93,12 @@
         <div>Initial temperature (&deg;C)</div>
         {{ form.initialTemperature(class='form-input-blue') }}
       </label>
+
+      <div class="no-label flex-right">
+        <a href="#" class="white-button flex-row js-remove">
+          <span class="icon icon-remove"></span> Remove
+        </a>
+      </div>
     </div>
   </div>
 

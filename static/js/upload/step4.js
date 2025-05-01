@@ -9,45 +9,88 @@ $(document).ready(function() {
       addCompartmentForm($addButton);
     });
 
-    $step4.on('click', '.js-remove-compartment', function(e) {
+    $step4.on('click', '.js-add-community', function(e) {
       e.preventDefault();
-      $(e.currentTarget).parents('.js-compartment-container').remove();
+
+      let $addButton = $(e.currentTarget);
+      addCommunityForm($addButton);
+    });
+
+    $step4.on('click', '.js-remove', function(e) {
+      e.preventDefault();
+      $(e.currentTarget).parents('.js-compartment-container,.js-community-container').remove();
     });
 
     function addCompartmentForm($addButton) {
       let templateHtml = $('template.compartment-form').html();
 
-      let compartmentIndex = $step4.find('.js-compartment-container').length;
+      let subformIndex = $step4.find('.js-compartment-container').length;
       let $newForm = $(templateHtml);
 
       // Modify names:
       $newForm.find('input,select,textarea').each(function() {
         let $input = $(this);
         let name = $input.attr('name');
-        $input.attr('name', `compartments-${compartmentIndex}-${name}`);
+        $input.attr('name', `compartments-${subformIndex}-${name}`);
       });
 
       // Add sequential number:
-      $newForm.find('.js-index').text(`${compartmentIndex + 1}`)
+      $newForm.find('.js-index').text(`${subformIndex + 1}`)
 
       // Give it a different style:
       $newForm.addClass('new');
 
       // Insert into DOM
-      $addButton.log().parents('.form-row').log().before($newForm);
+      $addButton.parents('.form-row').before($newForm);
 
       initializeCompartmentForm($newForm);
     }
 
+    function addCommunityForm($addButton) {
+      let templateHtml = $('template.community-form').html();
+
+      let subformIndex = $step4.find('.js-community-container').length;
+      let $newForm = $(templateHtml);
+
+      // Modify names:
+      $newForm.find('input,select,textarea').each(function() {
+        let $input = $(this);
+        let name = $input.attr('name');
+        $input.attr('name', `communities-${subformIndex}-${name}`);
+      });
+
+      // Add sequential number:
+      $newForm.find('.js-index').text(`${subformIndex + 1}`)
+
+      // Give it a different style:
+      $newForm.addClass('new');
+
+      // Insert into DOM
+      $addButton.parents('.form-row').before($newForm);
+
+      initializeCommunityForm($newForm);
+    }
+
     // Initialize existing forms:
-    $('.js-compartment-container').each(function() {
+    $('.js-community-container').each(function() {
       let $container = $(this);
 
-      initializeCompartmentForm($(this));
+      initializeCommunityForm($(this));
     });
 
     function initializeCompartmentForm($container) {
       // Nothing?
+    }
+
+    function initializeCommunityForm($container) {
+      let $select = $container.find('.js-strain-select');
+
+      $select.select2({
+        multiple: true,
+        theme: 'custom',
+        width: '100%',
+        templateResult: select2Highlighter,
+      });
     }
 
   });

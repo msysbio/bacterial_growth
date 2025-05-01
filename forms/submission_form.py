@@ -37,6 +37,7 @@ DEFAULT_STUDY_DESIGN = {
     'new_strains':     [],
     'techniques':      [],
     'compartments':    [],
+    'communities':     [],
 }
 
 

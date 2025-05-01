@@ -1,13 +1,14 @@
 from flask_wtf import FlaskForm
 from wtforms import (
-    SelectField,
-    StringField,
     BooleanField,
+    DecimalField,
     FieldList,
     FormField,
-    DecimalField,
-    URLField,
+    SelectField,
+    SelectMultipleField,
+    StringField,
     TextAreaField,
+    URLField,
 )
 from wtforms.validators import DataRequired
 
@@ -48,7 +49,18 @@ class UploadStep4Form(FlaskForm):
 
         carbonSource = BooleanField('carbonSource')
 
+    class CommunityForm(FlaskForm):
+        class Meta:
+            csrf = False
+
+        name_             = StringField('name', validators=[DataRequired()])
+        strainIdentifiers = SelectMultipleField('strainIdentifiers')
+
     compartments = FieldList(FormField(CompartmentForm))
+    communities  = FieldList(FormField(CommunityForm))
 
     def get_compartment_template(self):
         return self.__class__.CompartmentForm()
+
+    def get_community_template(self):
+        return self.__class__.CommunityForm()
