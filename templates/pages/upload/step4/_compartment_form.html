@@ -2,7 +2,7 @@
   <div class="subform-container js-compartment-container">
     <h3>Compartment <span class="js-index">{{ index + 1 if index is not none else '' }}</span></h3>
 
-    <div class="form-row form-row-name">
+    <div class="form-row form-row-compact">
       <label class="name">
         <div class="required">Name</div>
         {{ form.name_(class='form-input-blue form-input-full') }}
@@ -19,7 +19,7 @@
       </label>
     </div>
 
-    <div class="form-row form-row-4">
+    <div class="form-row form-row-compact">
       <label>
         <div>Volume (mL)</div>
         {{ form.volume(class='form-input-blue') }}
@@ -41,7 +41,7 @@
       </label>
     </div>
 
-    <div class="form-row form-row-4">
+    <div class="form-row form-row-compact">
       <label>
         <div>O<sub>2</sub>%</div>
         {{ form.O2(class='form-input-blue') }}

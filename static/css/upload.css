@@ -94,11 +94,15 @@
       flex: 1;
     }
 
-    .form-row.form-row-4 {
+    .form-row.form-row-compact {
       label {
-        width: 22%;
         display: flex;
         flex-direction: column;
+        flex: 1;
+
+        input, select {
+          width: 100%;
+        }
       }
     }
   }
