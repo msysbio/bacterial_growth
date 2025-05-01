@@ -31,32 +31,25 @@ class Study(OrmBase):
     timeUnits:        Mapped[str] = mapped_column(String(100))
 
     projectUniqueID: Mapped[str] = mapped_column(ForeignKey('Project.projectUniqueID'))
-
     project: Mapped['Project'] = relationship(back_populates="studies")
-
-    studyUsers:   Mapped[List['StudyUser']]   = relationship(back_populates="study")
-    experiments:  Mapped[List['Experiment']]  = relationship(back_populates='study')
-    strains:      Mapped[List['Strain']]      = relationship(back_populates='study')
-    compartments: Mapped[List['Compartment']] = relationship(back_populates='study')
-
-    measurementTechniques: Mapped[List['MeasurementTechnique']] = relationship(
-        back_populates="study"
-    )
-    measurements: Mapped[List['Measurement']] = relationship(
-        back_populates="study"
-    )
-    calculationTechniques: Mapped[List['CalculationTechnique']] = relationship(
-        back_populates="study"
-    )
-    studyMetabolites: Mapped[List['StudyMetabolite']] = relationship(
-        back_populates="study"
-    )
 
     createdAt:        Mapped[datetime] = mapped_column(UtcDateTime, server_default=FetchedValue())
     updatedAt:        Mapped[datetime] = mapped_column(UtcDateTime, server_default=FetchedValue())
     publishableAt:    Mapped[datetime] = mapped_column(UtcDateTime, nullable=True)
     publishedAt:      Mapped[datetime] = mapped_column(UtcDateTime, nullable=True)
     embargoExpiresAt: Mapped[datetime] = mapped_column(UtcDateTime, nullable=True)
+
+    studyUsers:   Mapped[List['StudyUser']]   = relationship(back_populates="study")
+    experiments:  Mapped[List['Experiment']]  = relationship(back_populates='study')
+    strains:      Mapped[List['Strain']]      = relationship(back_populates='study')
+    compartments: Mapped[List['Compartment']] = relationship(back_populates='study')
+    communities:  Mapped[List['Community']]   = relationship(back_populates='study')
+
+    measurementTechniques: Mapped[List['MeasurementTechnique']] = relationship(back_populates="study")
+    measurements:          Mapped[List['Measurement']]          = relationship(back_populates="study")
+    calculationTechniques: Mapped[List['CalculationTechnique']] = relationship(back_populates="study")
+    studyMetabolites:      Mapped[List['StudyMetabolite']]      = relationship(back_populates="study")
+
 
     @hybrid_property
     def uuid(self):

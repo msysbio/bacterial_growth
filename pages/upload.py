@@ -132,7 +132,6 @@ def upload_step4_page():
 
     if request.method == 'POST':
         form = UploadStep4Form(request.form)
-        print(form.data)
 
         submission_form.update_study_design(form.data)
         session['submission_id'] = submission_form.save()
