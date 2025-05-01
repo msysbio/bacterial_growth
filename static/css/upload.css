@@ -69,34 +69,37 @@
     }
   }
 
+  .subform-container {
+    h3 {
+      margin-top: 0;
+    }
+
+    border: 2px solid var(--border-color);
+    &.new {
+      border-style: dashed;
+    }
+
+    border-radius: var(--border-radius);
+    padding: 10px;
+  }
+
   .step-1 {
     .column {
       width: 50%;
     }
   }
 
-  .step-2 {
-    .new-strain-container {
-      border: 2px solid var(--border-color);
-      &.new {
-        border-style: dashed;
-      }
+  .step-4 {
+    .form-row {
+      flex: 1;
     }
-  }
 
-  .step-3 {
-    .technique-container {
-      h3 {
-        margin-top: 0;
+    .form-row.form-row-4 {
+      label {
+        width: 22%;
+        display: flex;
+        flex-direction: column;
       }
-
-      border: 2px solid var(--border-color);
-      &.new {
-        border-style: dashed;
-      }
-
-      border-radius: var(--border-radius);
-      padding: 10px;
     }
   }
 
@@ -113,12 +116,6 @@
     display: flex;
     flex-direction: row;
     column-gap: 20px;
-  }
-
-  .new-strain-container {
-    border: 2px dashed var(--border-color);
-    border-radius: var(--border-radius);
-    padding: 10px;
   }
 
   .file-upload-container {

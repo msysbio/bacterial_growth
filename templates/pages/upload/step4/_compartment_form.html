@@ -1,0 +1,99 @@
+{% macro render_compartment_form(form, index) %}
+  <div class="subform-container js-compartment-container">
+    <h3>Compartment <span class="js-index">{{ index + 1 if index is not none else '' }}</span></h3>
+
+    <div class="form-row form-row-name">
+      <label class="name">
+        <div class="required">Name</div>
+        {{ form.name_(class='form-input-blue form-input-full') }}
+      </label>
+
+      <label class="description">
+        <div>Medium name</div>
+        {{ form.mediumName(class='form-input-blue form-input-full', placeholder='e.g. Wilkins-Chalgren') }}
+      </label>
+
+      <label class="description">
+        <div>Medium URL</div>
+        {{ form.mediumUrl(class='form-input-blue form-input-full', placeholder='https://example.com') }}
+      </label>
+    </div>
+
+    <div class="form-row form-row-4">
+      <label>
+        <div>Volume (mL)</div>
+        {{ form.volume(class='form-input-blue') }}
+      </label>
+
+      <label>
+        <div>Pressure (atm)</div>
+        {{ form.pressure(class='form-input-blue') }}
+      </label>
+
+      <label>
+        <div>Stirring mode</div>
+        {{ form.stirringMode(class='form-input-blue') }}
+      </label>
+
+      <label>
+        <div>Stirring speed (rpm)</div>
+        {{ form.stirringSpeed(class='form-input-blue') }}
+      </label>
+    </div>
+
+    <div class="form-row form-row-4">
+      <label>
+        <div>O<sub>2</sub>%</div>
+        {{ form.O2(class='form-input-blue') }}
+      </label>
+
+      <label>
+        <div>CO<sub>2</sub>%</div>
+        {{ form.CO2(class='form-input-blue') }}
+      </label>
+
+      <label>
+        <div>H<sub>2</sub>%</div>
+        {{ form.H2(class='form-input-blue') }}
+      </label>
+
+      <label>
+        <div>N<sub>2</sub>%</div>
+        {{ form.N2(class='form-input-blue') }}
+      </label>
+    </div>
+
+    <div class="form-row">
+      <label>
+        <div>Inoculum concentration (Cells/mL)</div>
+        {{ form.inoculumConcentration(class='form-input-blue') }}
+      </label>
+
+      <label>
+        <div>Inoculum volume (mL)</div>
+        {{ form.inoculumVolume(class='form-input-blue') }}
+      </label>
+
+      <label class="flex-end">
+        {{ form.carbonSource(class='form-input-blue') }}
+        <span>Carbon source</span>
+        <div class="help">
+          Does the compartment have a source of carbon?
+        </div>
+      </label>
+    </div>
+
+    <div class="form-row">
+      <label>
+        <div>Initial pH</div>
+        {{ form.initialPh(class='form-input-blue') }}
+      </label>
+
+      <label>
+        <div>Initial temperature (&deg;C)</div>
+        {{ form.initialTemperature(class='form-input-blue') }}
+      </label>
+    </div>
+  </div>
+
+{% endmacro %}

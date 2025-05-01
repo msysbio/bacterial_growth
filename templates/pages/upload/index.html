@@ -116,7 +116,7 @@
           {% endcall %}
 
           {% if submission_form.step == 4 %}
-            {{ render_step4_form(submission_form) }}
+            {{ render_step4_form(submission_form, upload_form) }}
           {% else %}
             {{ render_step4_status(submission_form, submission) }}
           {% endif %}

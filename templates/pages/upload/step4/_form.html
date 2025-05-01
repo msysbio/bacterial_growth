@@ -1,6 +1,18 @@
+{% from 'pages/upload/step4/_compartment_form.html' import render_compartment_form %}
+
 {% macro render_step4_form(submission_form, upload_form) %}
+
   <p>
-    TODO
+    Describe the physical containers of microbial communities as
+    "compartments". For each different combination of environmental conditions,
+    assign them a name and you'll associate these compartments to experiments
+    in the next step.
+  </p>
+
+  <p>
+    You might have a single compartment per vessel, but it's also possible to
+    define e.g. broth and mucin beads floating inside as separate
+    "compartments" that you measure separately as well.
   </p>
 
   <br>
@@ -10,12 +22,21 @@
       action="{{ url_for('upload_step4_page') }}"
       method="POST">
 
-    <div class="form-row full">
-      <label>
-        <div>TODO</div>
-        <input type="text" />
-      </label>
+    {% for compartment_form in upload_form.compartments: %}
+      {{ render_compartment_form(form=compartment_form, index=loop.index0) }}
+    {% endfor %}
+
+    <div class="form-row flex-right flex-row">
+      <a
+          href="#"
+          class="white-button flex-row js-add-compartment">
+        <span class="icon icon-add"></span> Compartment
+      </a>
     </div>
+
+    <template class="compartment-form">
+      {{ render_compartment_form(form=upload_form.get_compartment_template(), index=None) }}
+    </template>
 
     <div class="form-row">
       <input

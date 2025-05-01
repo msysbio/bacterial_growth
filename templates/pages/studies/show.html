@@ -36,7 +36,7 @@
 
       <div class="measurement-techniques">
         {% for technique in study.measurementTechniques: %}
-          <div class="technique-container">
+          <div class="subform-container technique-container">
             <h3>
               {{ loop.index }}) {{ technique.long_name }}
 
@@ -143,7 +143,7 @@
 
       <div class="calculation-techniques">
         {% for technique in study.calculationTechniques: %}
-          <div class="technique-container">
+          <div class="subform-container technique-container">
             <h3>
               {{ loop.index }}) {{ technique.long_name }}
             </h3>

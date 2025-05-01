@@ -14,6 +14,7 @@ def init_assets(app):
         'js/upload/step2.js',
         'js/upload/step3.js',
         'js/upload/step4.js',
+        'js/upload/step6.js',
         'js/util.js',
         'js/main.js',
         'js/search.js',

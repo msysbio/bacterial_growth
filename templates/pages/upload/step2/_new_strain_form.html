@@ -1,6 +1,6 @@
 {% macro render_new_strain_form(data, prefix) %}
 
-  <div class="new-strain-container js-new-strain-container">
+  <div class="subform-container new-strain-container js-new-strain-container">
     {% if g.current_user: %}
       <input
           name="{{ prefix }}userUniqueID"

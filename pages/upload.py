@@ -22,6 +22,7 @@ from models import (
 from forms.submission_form import SubmissionForm
 from forms.upload_step2_form import UploadStep2Form
 from forms.upload_step3_form import UploadStep3Form
+from forms.upload_step4_form import UploadStep4Form
 from lib.submission_process import persist_submission_to_database
 
 import legacy.study_spreadsheet as study_spreadsheet
@@ -129,11 +130,23 @@ def upload_step4_page():
     submission_form = _init_submission_form(step=4)
     submission = submission_form.submission
 
-    return render_template(
-        "pages/upload/index.html",
-        submission_form=submission_form,
-        submission=submission_form.submission,
-    )
+    if request.method == 'POST':
+        form = UploadStep4Form(request.form)
+
+        submission_form.update_study_design(form.data)
+        session['submission_id'] = submission_form.save()
+
+        return redirect(url_for('upload_step5_page'))
+
+    else:
+        upload_form = UploadStep4Form(data=submission.studyDesign)
+
+        return render_template(
+            "pages/upload/index.html",
+            submission_form=submission_form,
+            submission=submission_form.submission,
+            upload_form=upload_form,
+        )
 
 
 def upload_step5_page():

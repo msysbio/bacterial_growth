@@ -36,6 +36,7 @@ DEFAULT_STUDY_DESIGN = {
     'strains':         [],
     'new_strains':     [],
     'techniques':      [],
+    'compartments':    [],
 }
 
 
@@ -123,9 +124,9 @@ class SubmissionForm:
         study_design = {**self.submission.studyDesign, **data}
 
         if study_design['vessel_type'] == 'bottles':
-            study_design['vessel_count'] = data['bottle_count']
+            study_design['vessel_count'] = study_design['bottle_count']
         elif study_design['vessel_type'] == 'agar_plates':
-            study_design['vessel_count'] = data['plate_count']
+            study_design['vessel_count'] = study_design['plate_count']
 
         self.submission.studyDesign = study_design
         flag_modified(self.submission, 'studyDesign')

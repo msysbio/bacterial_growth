@@ -162,6 +162,11 @@ form.simple-form {
     justify-content: flex-end;
   }
 
+  .required::after {
+    content: "* ";
+    color: red;
+  }
+
   .form-row {
     display: flex;
     column-gap: 10px;
