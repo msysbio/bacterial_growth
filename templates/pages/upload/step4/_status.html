@@ -9,7 +9,7 @@
         <span class="icon"></span>
         <span>{{ compartments|length }} compartment(s):</span>
         <span class="truncate">
-          <strong>{{ compartments|map(attribute='name_')|join('</strong>, <strong>')|safe }}</strong>
+          <strong>{{ compartments|map(attribute='name')|join('</strong>, <strong>')|safe }}</strong>
         </span>
       </li>
     {% else: %}
@@ -23,7 +23,7 @@
         <span class="icon"></span>
         <span>{{ communities|length }} communities(s):</span>
         <span class="truncate">
-          <strong>{{ communities|map(attribute='name_')|join('</strong>, <strong>')|safe }}</strong>
+          <strong>{{ communities|map(attribute='name')|join('</strong>, <strong>')|safe }}</strong>
         </span>
       </li>
     {% else: %}

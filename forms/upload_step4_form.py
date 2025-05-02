@@ -19,7 +19,7 @@ class UploadStep4Form(FlaskForm):
         class Meta:
             csrf = False
 
-        name_       = StringField('name', validators=[DataRequired()])
+        name        = StringField('name', validators=[DataRequired()])
         description = TextAreaField('description')
 
         mediumName = StringField('mediumName')
@@ -53,7 +53,7 @@ class UploadStep4Form(FlaskForm):
         class Meta:
             csrf = False
 
-        name_             = StringField('name', validators=[DataRequired()])
+        name              = StringField('name', validators=[DataRequired()])
         strainIdentifiers = SelectMultipleField('strainIdentifiers')
 
     compartments = FieldList(FormField(CompartmentForm))

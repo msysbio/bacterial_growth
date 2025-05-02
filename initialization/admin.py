@@ -15,6 +15,7 @@ from models import (
     MeasurementTechnique,
     Metabolite,
     ProjectUser,
+    Strain,
     Study,
     StudyUser,
     Submission,
@@ -27,11 +28,12 @@ def json_formatter(_view, data, _name):
 
 
 def record_formatter(_view, record, _name):
-    return Markup(f"""
-        <div style="width: 200px; overflow-y: auto">
-            <pre>{json.dumps(record._asdict(), indent=2)}</pre>
-        </div>
-    """)
+    if hasattr(record, 'publicId'):
+        return record.publicId
+    elif hasattr(record, 'name'):
+        return record.name
+    else:
+        return str(record)
 
 
 class AppView(ModelView):
@@ -59,6 +61,7 @@ def init_admin(app):
 
     admin.add_view(StudyView(Study,    db_session, category="Studies"))
     admin.add_view(AppView(Submission, db_session, category="Studies"))
+    admin.add_view(AppView(Strain,     db_session, category="Studies"))
 
     admin.add_view(AppView(MeasurementTechnique, db_session, category="Measurements"))
     admin.add_view(AppView(Measurement,          db_session, category="Measurements"))
