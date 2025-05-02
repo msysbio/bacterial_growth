@@ -6,6 +6,7 @@ from sqlalchemy.orm import (
     Mapped,
     mapped_column,
 )
+from sqlalchemy.ext.hybrid import hybrid_property
 
 from models.orm_base import OrmBase
 
@@ -15,6 +16,14 @@ class Taxon(OrmBase):
 
     tax_id:    Mapped[str] = mapped_column(String(512), primary_key=True)
     tax_names: Mapped[str] = mapped_column(String(512))
+
+    @hybrid_property
+    def id(self):
+        return self.tax_id
+
+    @hybrid_property
+    def name(self):
+        return self.tax_names
 
     @property
     def short_name(self):

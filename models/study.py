@@ -22,6 +22,13 @@ from models.orm_base import OrmBase
 class Study(OrmBase):
     __tablename__ = 'Study'
 
+    # A relationship representing ownership of these records. Clearing them out
+    # should directly delete them so they can be replaced.
+    owner_relationship = lambda: relationship(
+        back_populates='study',
+        cascade='all, delete-orphan',
+    )
+
     studyUniqueID: Mapped[str] = mapped_column(String(100), primary_key=True)
 
     studyId:          Mapped[str] = mapped_column(String(100))
@@ -39,16 +46,17 @@ class Study(OrmBase):
     publishedAt:      Mapped[datetime] = mapped_column(UtcDateTime, nullable=True)
     embargoExpiresAt: Mapped[datetime] = mapped_column(UtcDateTime, nullable=True)
 
-    studyUsers:   Mapped[List['StudyUser']]   = relationship(back_populates="study")
-    experiments:  Mapped[List['Experiment']]  = relationship(back_populates='study')
-    strains:      Mapped[List['Strain']]      = relationship(back_populates='study')
-    compartments: Mapped[List['Compartment']] = relationship(back_populates='study')
-    communities:  Mapped[List['Community']]   = relationship(back_populates='study')
+    studyUsers:  Mapped[List['StudyUser']]  = owner_relationship()
+    experiments: Mapped[List['Experiment']] = owner_relationship()
+    strains:     Mapped[List['Strain']]     = owner_relationship()
 
-    measurementTechniques: Mapped[List['MeasurementTechnique']] = relationship(back_populates="study")
-    measurements:          Mapped[List['Measurement']]          = relationship(back_populates="study")
-    calculationTechniques: Mapped[List['CalculationTechnique']] = relationship(back_populates="study")
-    studyMetabolites:      Mapped[List['StudyMetabolite']]      = relationship(back_populates="study")
+    communities:  Mapped[List['Community']]   = owner_relationship()
+    compartments: Mapped[List['Compartment']] = owner_relationship()
+
+    measurementTechniques: Mapped[List['MeasurementTechnique']] = owner_relationship()
+    measurements:          Mapped[List['Measurement']]          = owner_relationship()
+    calculationTechniques: Mapped[List['CalculationTechnique']] = owner_relationship()
+    studyMetabolites:      Mapped[List['StudyMetabolite']]      = owner_relationship()
 
 
     @hybrid_property

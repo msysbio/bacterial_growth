@@ -1,5 +1,6 @@
 import io
 import tempfile
+import copy
 from datetime import datetime, timedelta, UTC
 from db import get_session, get_transaction
 
@@ -8,16 +9,21 @@ import pandas as pd
 from legacy.upload_validation import validate_upload
 from legacy.populate_db import save_study_design_to_database
 from models import (
+    Community,
+    Compartment,
     Measurement,
     Project,
     ProjectUser,
+    Strain,
     Study,
     StudyUser,
+    Taxon,
 )
 
 
 def persist_submission_to_database(submission_form):
     submission = submission_form.submission
+    user_uuid = submission.userUniqueID
     errors = []
 
     if submission_form.submission.dataFile is None:
@@ -41,6 +47,9 @@ def persist_submission_to_database(submission_form):
 
             study   = _save_study(db_trans_session, submission_form)
             project = _save_project(db_trans_session, submission_form)
+
+            _save_compartments(db_trans_session, submission_form, study)
+            _save_communities(db_trans_session, submission_form, study, user_uuid)
 
             db_trans_session.flush()
 
@@ -125,6 +134,68 @@ def _save_project(db_session, submission_form):
     return project
 
 
+def _save_compartments(db_session, submission_form, study):
+    submission = submission_form.submission
+    compartments = []
+
+    for compartment_data in submission.studyDesign['compartments']:
+        compartments.append(Compartment(**compartment_data))
+
+    study.compartments = compartments
+    db_session.add_all(compartments)
+
+    return compartments
+
+
+def _save_communities(db_session, submission_form, study, user_uuid):
+    submission = submission_form.submission
+    communities = []
+
+    for community_data in submission.studyDesign['communities']:
+        community_data = copy.deepcopy(community_data)
+        strain_identifiers = community_data.pop('strainIdentifiers')
+
+        community = Community(**community_data)
+        community.strainIds = []
+
+        for identifier in strain_identifiers:
+            strain = Strain(
+                studyId=study.publicId,
+                userUniqueID=user_uuid,
+            )
+
+            if identifier.startswith('existing|'):
+                taxon_id = identifier.removeprefix('existing|')
+                taxon = db_session.get_one(Taxon, taxon_id)
+
+                strain.memberName = taxon.name
+                strain.NCBId      = taxon.id
+                strain.defined    = True
+
+            elif identifier.startswith('custom|'):
+                identifier = identifier.removeprefix('custom|')
+                custom_strain_data = _find_new_strain(submission, identifier)
+
+                strain.memberName        = custom_strain_data['name']
+                strain.descriptionMember = custom_strain_data['description']
+                strain.NCBId             = custom_strain_data['species']
+                strain.defined           = False
+            else:
+                raise ValueError(f"Strain identifier {repr(identifier)} has an unexpected prefix")
+
+            db_session.add(strain)
+            db_session.flush()
+
+            community.strainIds.append(strain.id)
+
+        communities.append(community)
+
+    study.communities = communities
+    db_session.add_all(communities)
+
+    return communities
+
+
 def _save_chart_data_to_database(db_session, study, submission):
     data_xls = submission.dataFile.content
     sheets = pd.read_excel(io.BytesIO(data_xls), sheet_name=None)
@@ -140,3 +211,11 @@ def _save_chart_data_to_database(db_session, study, submission):
     if 'Growth data per metabolite' in sheets:
         df = sheets['Growth data per metabolite']
         Measurement.insert_from_metabolites_csv(db_session, study, df.to_csv(index=False))
+
+
+def _find_new_strain(submission, identifier):
+    for new_strain_data in submission.studyDesign['new_strains']:
+        if new_strain_data['name'] == identifier:
+            return new_strain_data
+    else:
+        raise IndexError(f"New strain with name {repr(identifier)} not found in submission")

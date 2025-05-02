@@ -28,15 +28,15 @@
             class="form-input-blue form-input-full js-strain-select">
           {% for taxon in submission_form.fetch_taxa(): %}
             <option
-                value="{{ taxon.tax_id }}"
+                value="existing|{{ taxon.tax_id }}"
                 {{ "selected" if strainIdentifiers and taxon.tax_id in strainIdentifiers }}>
-              {{ taxon.tax_names }}
+              {{ taxon.tax_names }} (NCBI:{{ taxon.tax_id }})
             </option>
           {% endfor %}
 
           {% for strain in submission_form.fetch_new_strains(): %}
             <option
-                value="{{ strain['name'] }}"
+                value="custom|{{ strain['name'] }}"
                 {{ "selected" if strainIdentifiers and strain['name'] in strainIdentifiers }}>
             {{ strain['name'] }}
             </option>
