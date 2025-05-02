@@ -1,18 +1,18 @@
 {% extends '_layout.html' %}
 
-{% block title %}: Strain {{ strain['memberName'] }}{% endblock %}
+{% block title %}: Strain {{ strain.name }}{% endblock %}
 
 {% block content %}
   <div class="container">
     <article>
-      <h2>{{ strain['memberName'] }}</h2>
+      <h2>{{ strain.name }}</h2>
 
-      <p>Description: {{ strain['descriptionMember'] }}</p>
+      <p>Description: {{ strain.description }}</p>
 
       <p>
         Part of study:
-        <a href="{{ url_for('study_show_page', studyId=study['studyId']) }}">
-          {{ study['studyName'] }}
+        <a href="{{ url_for('study_show_page', studyId=strain.study.publicId) }}">
+          {{ strain.study.name }}
         </a>
       </p>
 
@@ -27,7 +27,7 @@
       </p>
 
       <p>
-        {% set ncbi_id = strain['NCBId'] %}
+        {% set ncbi_id = strain.NCBId %}
         {% set ncbi_url = "https://www.ncbi.nlm.nih.gov/datasets/taxonomy/{}/".format(ncbi_id) %}
         More information at NCBI: <a href="{{ ncbi_url }}">NCBI:{{ ncbi_id }}</a>
       </p>

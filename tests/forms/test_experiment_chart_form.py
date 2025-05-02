@@ -55,8 +55,8 @@ class TestExperimentChartForm(DatabaseTest):
         experiment = self.db_session.get(Experiment, bioreplicate.experimentUniqueId)
         chart = ExperimentChartForm(experiment)
 
-        self.create_strain(strainId=1, memberName='R. intestinalis',     studyId=study_id)
-        self.create_strain(strainId=2, memberName='B. thetaiotaomicron', studyId=study_id)
+        s1 = self.create_strain(name='R. intestinalis',     studyId=study_id)
+        s2 = self.create_strain(name='B. thetaiotaomicron', studyId=study_id)
 
         shared_params = {
             'studyId': study_id,
@@ -69,10 +69,10 @@ class TestExperimentChartForm(DatabaseTest):
                 'subjectType': 'strain',
             }
         }
-        self.create_measurement(subjectId='1', timeInSeconds=3600, **shared_params)
-        self.create_measurement(subjectId='1', timeInSeconds=7200, **shared_params)
-        self.create_measurement(subjectId='2', timeInSeconds=3600, **shared_params)
-        self.create_measurement(subjectId='2', timeInSeconds=7200, **shared_params)
+        self.create_measurement(subjectId=s1.id, timeInSeconds=3600, **shared_params)
+        self.create_measurement(subjectId=s1.id, timeInSeconds=7200, **shared_params)
+        self.create_measurement(subjectId=s2.id, timeInSeconds=3600, **shared_params)
+        self.create_measurement(subjectId=s2.id, timeInSeconds=7200, **shared_params)
 
         self.db_session.commit()
 
@@ -97,14 +97,14 @@ class TestExperimentChartForm(DatabaseTest):
         bioreplicate1 = self.create_bioreplicate(experimentUniqueId=experiment_uuid, studyId=study_id)
         bioreplicate2 = self.create_bioreplicate(experimentUniqueId=experiment_uuid, studyId=study_id)
 
-        self.create_strain(strainId=1, memberName='R. intestinalis', studyId=study_id)
+        s1 = self.create_strain(name='R. intestinalis', studyId=study_id)
 
         experiment = self.db_session.get(Experiment, experiment_uuid)
         chart = ExperimentChartForm(experiment)
 
         shared_params = {
             'studyId': study_id,
-            'subjectId': 1,
+            'subjectId': s1.id,
             'subjectType': 'strain',
             # TODO (2025-04-02) Remove technique, use id
             'technique': '16S rRNA-seq',
@@ -157,7 +157,7 @@ class TestExperimentChartForm(DatabaseTest):
         bioreplicate1 = self.create_bioreplicate(experimentUniqueId=experiment_uuid, studyId=study_id)
         bioreplicate2 = self.create_bioreplicate(experimentUniqueId=experiment_uuid, studyId=study_id)
 
-        self.create_strain(strainId=1, memberName='R. intestinalis', studyId=study_id)
+        self.create_strain(name='R. intestinalis', studyId=study_id)
 
         experiment = self.db_session.get(Experiment, experiment_uuid)
         chart = ExperimentChartForm(experiment)

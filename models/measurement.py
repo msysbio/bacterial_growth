@@ -89,8 +89,8 @@ class Measurement(OrmBase):
             name = Metabolite.metabo_name.label("subjectName")
             join = (Metabolite, Measurement.subjectId == Metabolite.id)
         elif subject_type == 'strain':
-            name = Strain.memberName.label("subjectName")
-            join = (Strain, Measurement.subjectId == Strain.strainId)
+            name = Strain.name.label("subjectName")
+            join = (Strain, Measurement.subjectId == Strain.id)
         elif subject_type == 'bioreplicate':
             name = Bioreplicate.bioreplicateId.label("subjectName")
             Subject = aliased(Bioreplicate)

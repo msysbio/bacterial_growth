@@ -121,12 +121,11 @@ def save_study_design_to_database(conn, yml_dir, submission_form, data_template,
             mem_id = info_mem['Member_ID'][i]
             members = {
                 'studyId': study_id,
-                'memberId' : info_mem['Member_ID'][i],
                 'defined': info_mem['Defined'][i],
-                'memberName': info_mem['Member_Name'][i],
+                'name': info_mem['Member_Name'][i],
                 'NCBId': info_mem['NCBI_ID'][i],
                 'assemblyGenBankId': info_mem['Assembly_GenBank_ID'][i],
-                'descriptionMember': info_mem['Description'][i],
+                'description': info_mem['Description'][i],
                 'userUniqueID': submission.userUniqueID,
             }
             members_filtered = {k: v for k, v in members.items() if v is not None}

@@ -54,7 +54,7 @@ def dynamical_query(all_advance_query):
                 microb_strain = query_dict['value'].strip().lower()
                 where_clause = f"""
                 FROM Strains
-                WHERE LOWER(memberName) LIKE '%{microb_strain}%'
+                WHERE LOWER(name) LIKE '%{microb_strain}%'
                 """
             elif query_dict['option'] == 'NCBI ID':
                 microb_ID = query_dict['value']
@@ -114,10 +114,10 @@ def get_general_info(studyId, conn):
     result = conn.execute(sql.text(query), params).one()._asdict()
 
     query = """
-        SELECT memberName, strainId
+        SELECT name, id
         FROM Strains
         WHERE studyId = :studyId
-        ORDER BY memberName ASC
+        ORDER BY name ASC
     """
     result['members'] = list(conn.execute(sql.text(query), params).all())
 

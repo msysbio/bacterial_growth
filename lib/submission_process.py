@@ -168,18 +168,18 @@ def _save_communities(db_session, submission_form, study, user_uuid):
                 taxon_id = identifier.removeprefix('existing|')
                 taxon = db_session.get_one(Taxon, taxon_id)
 
-                strain.memberName = taxon.name
-                strain.NCBId      = taxon.id
-                strain.defined    = True
+                strain.name    = taxon.name
+                strain.NCBId   = taxon.id
+                strain.defined = True
 
             elif identifier.startswith('custom|'):
                 identifier = identifier.removeprefix('custom|')
                 custom_strain_data = _find_new_strain(submission, identifier)
 
-                strain.memberName        = custom_strain_data['name']
-                strain.descriptionMember = custom_strain_data['description']
-                strain.NCBId             = custom_strain_data['species']
-                strain.defined           = False
+                strain.name        = custom_strain_data['name']
+                strain.description = custom_strain_data['description']
+                strain.NCBId       = custom_strain_data['species']
+                strain.defined     = False
             else:
                 raise ValueError(f"Strain identifier {repr(identifier)} has an unexpected prefix")
 

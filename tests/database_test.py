@@ -138,14 +138,14 @@ class DatabaseTest(unittest.TestCase):
 
     def create_strain(self, **params):
         study_id = self._get_or_create_dependency(params, 'studyId', 'study')
+        self.ncbi_id = getattr(self, 'ncbi_id', 0) + 1
 
         params = {
-            'studyId': study_id,
-            'memberId': 'Member 1',
-            'defined': True,
-            'memberName': 'Member 1',
-            'NCBId': '1',
-            'descriptionMember': 'Member 1',
+            'name':        'Member 1',
+            'description': 'Member 1',
+            'studyId':     study_id,
+            'defined':     True,
+            'NCBId':       self.ncbi_id,
             **params,
         }
 

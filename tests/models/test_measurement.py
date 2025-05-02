@@ -154,9 +154,9 @@ class TestMeasurement(DatabaseTest):
             bioreplicateId='b1',
         )
 
-        s1_id = self.create_strain(memberName='B. thetaiotaomicron', studyId=study_id).strainId
-        s2_id = self.create_strain(memberName='R. intestinalis', studyId=study_id).strainId
-        strain_ids = [s1_id, s2_id]
+        s1 = self.create_strain(name='B. thetaiotaomicron', studyId=study_id)
+        s2 = self.create_strain(name='R. intestinalis', studyId=study_id)
+        strain_ids = [s1.id, s2.id]
 
         t_fc = self.create_measurement_technique(
             studyUniqueID=study_uuid,
@@ -209,9 +209,9 @@ class TestMeasurement(DatabaseTest):
                 if m.techniqueId == t_16s.id
             ],
             [
-                (3600, s1_id, Decimal('100.234')), (3600, s2_id, Decimal('200.456')),
-                (4500, s1_id, None),               (4500, s2_id, Decimal('400.456')),
-                (5400, s1_id, Decimal('300.234')), (5400, s2_id, Decimal('600.456')),
+                (3600, s1.id, Decimal('100.234')), (3600, s2.id, Decimal('200.456')),
+                (4500, s1.id, None),               (4500, s2.id, Decimal('400.456')),
+                (5400, s1.id, Decimal('300.234')), (5400, s2.id, Decimal('600.456')),
             ]
         )
 
@@ -223,9 +223,9 @@ class TestMeasurement(DatabaseTest):
                 if m.techniqueId == t_fc.id
             ],
             [
-                (3600, s1_id, Decimal('100.00')), (3600, s2_id, Decimal('200.00')),
-                (4500, s1_id, Decimal('200.00')), (4500, s2_id, Decimal('400.00')),
-                (5400, s1_id, Decimal('300.00')), (5400, s2_id, Decimal('600.00')),
+                (3600, s1.id, Decimal('100.00')), (3600, s2.id, Decimal('200.00')),
+                (4500, s1.id, Decimal('200.00')), (4500, s2.id, Decimal('400.00')),
+                (5400, s1.id, Decimal('300.00')), (5400, s2.id, Decimal('600.00')),
             ]
         )
 

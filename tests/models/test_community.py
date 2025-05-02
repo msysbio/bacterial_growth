@@ -16,7 +16,7 @@ class TestCommunity(DatabaseTest):
         community = Community(
             studyId=study.publicId,
             name="Test community",
-            strainIds=[strain1.strainId, strain2.strainId],
+            strainIds=[strain1.id, strain2.id],
         )
         self.db_session.add(community)
         self.db_session.flush()

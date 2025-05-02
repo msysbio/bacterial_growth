@@ -35,7 +35,7 @@ CREATE TABLE Abundances (
   KEY fk_2 (strainId),
   KEY fk_3 (studyId),
   CONSTRAINT Abundances_fk_1 FOREIGN KEY (experimentUniqueId) REFERENCES Experiments (experimentUniqueId) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT Abundances_fk_2 FOREIGN KEY (strainId) REFERENCES Strains (strainId) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT Abundances_fk_2 FOREIGN KEY (strainId) REFERENCES Strains (id) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT Abundances_fk_3 FOREIGN KEY (studyId) REFERENCES Study (studyId) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -274,7 +274,7 @@ CREATE TABLE FC_Counts (
   KEY fk_2 (strainId),
   KEY fk_3 (studyId),
   CONSTRAINT FC_Counts_fk_1 FOREIGN KEY (experimentUniqueId) REFERENCES Experiments (experimentUniqueId) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT FC_Counts_fk_2 FOREIGN KEY (strainId) REFERENCES Strains (strainId) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT FC_Counts_fk_2 FOREIGN KEY (strainId) REFERENCES Strains (id) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT FC_Counts_fk_3 FOREIGN KEY (studyId) REFERENCES Study (studyId) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -461,15 +461,14 @@ DROP TABLE IF EXISTS Strains;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE Strains (
   studyId varchar(100) COLLATE utf8mb4_bin DEFAULT NULL,
-  memberId varchar(50) COLLATE utf8mb4_bin DEFAULT NULL,
   defined tinyint(1) DEFAULT '0',
-  memberName text COLLATE utf8mb4_bin,
-  strainId int NOT NULL AUTO_INCREMENT,
+  `name` varchar(100) COLLATE utf8mb4_bin NOT NULL,
+  id int NOT NULL AUTO_INCREMENT,
   NCBId int DEFAULT NULL,
-  descriptionMember text COLLATE utf8mb4_bin,
+  `description` text COLLATE utf8mb4_bin,
   assemblyGenBankId varchar(50) COLLATE utf8mb4_bin DEFAULT NULL,
   userUniqueID varchar(100) COLLATE utf8mb4_bin DEFAULT NULL,
-  PRIMARY KEY (strainId),
+  PRIMARY KEY (id),
   KEY fk_1 (studyId),
   CONSTRAINT Strains_fk_1 FOREIGN KEY (studyId) REFERENCES Study (studyId) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
@@ -608,5 +607,6 @@ INSERT INTO MigrationVersions VALUES
 (23,'2025_04_25_103658_create_calculations','2025-04-30 12:54:15'),
 (24,'2025_04_30_135012_fix_compartments_per_experiment_keys_and_columns','2025-04-30 12:54:15'),
 (30,'2025_04_30_142205_fix_compartment_columns','2025-04-30 13:08:43'),
-(33,'2025_05_01_172225_fix_community_columns','2025-05-01 15:32:33');
+(33,'2025_05_01_172225_fix_community_columns','2025-05-01 15:32:33'),
+(36,'2025_05_02_171609_fix_strain_columns','2025-05-02 15:23:03');
 
