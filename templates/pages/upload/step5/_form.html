@@ -1,20 +1,33 @@
-{% macro render_step5_form(submission_form, upload_form) %}
-  <p>
-    TODO
-  </p>
+{% from 'pages/upload/step5/_experiment_form.html' import render_experiment_form %}
 
-  <br>
+{% macro render_step5_form(submission_form, upload_form) %}
 
   <form
       class="simple-form"
-      action="{{ url_for('upload_step4_page') }}"
+      action="{{ url_for('upload_step5_page') }}"
       method="POST">
 
-    <div class="form-row full">
-      <label>
-        <div>TODO</div>
-        <input type="text" />
-      </label>
+    <p>
+      Organize the data you've entered so far into experiments. Each experiment
+      has a single community, but may have multiple separate compartments that
+      are being measured.
+    </p>
+
+    <p>
+      For each experiment, name the biological replicates of the experimental
+      design. These will show up as rows in the data spreadsheet.
+    </p>
+
+    <br>
+
+    {% for experiment_form in upload_form.experiments: %}
+      {{ render_experiment_form(form=experiment_form, index=loop.index0) }}
+    {% endfor %}
+
+    <div class="form-row flex-right flex-row">
+      <a href="#" class="white-button flex-row js-add-experiment">
+        <span class="icon icon-add"></span> Experiment
+      </a>
     </div>
 
     <div class="form-row">
@@ -23,6 +36,11 @@
           class="form-input-blue"
           value="Next" />
     </div>
+
+    <template class="experiment-form">
+      {% set subform = upload_form.get_experiment_template() %}
+      {{ render_experiment_form(form=subform, index=None) }}
+    </template>
   </form>
 
 {% endmacro %}

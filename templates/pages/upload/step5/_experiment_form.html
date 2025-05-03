@@ -1,0 +1,28 @@
+{% macro render_experiment_form(form, index) %}
+  {% if index is none: %}
+    {% set prefix = '' %}
+  {% else: %}
+    {% set prefix = 'experiments-{}-'.format(index)  %}
+  {% endif %}
+
+  <div class="subform-container js-experiment-container">
+    <h3>Experiment <span class="js-index">{{ index + 1 if index is not none else '' }}</span></h3>
+
+    <div class="form-row">
+      <label>
+        <div class="required">Name</div>
+        {# Note: Have to access the input using [], since there is an existing `.name` attribute #}
+        {{ form['name'](class='form-input-blue form-input-full') }}
+      </label>
+    </div>
+
+    <div class="form-row">
+      <div class="no-label flex-right">
+        <a href="#" class="white-button flex-row js-remove">
+          <span class="icon icon-remove"></span> Remove
+        </a>
+      </div>
+    </div>
+  </div>
+
+{% endmacro %}

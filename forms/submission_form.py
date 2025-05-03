@@ -33,11 +33,13 @@ DEFAULT_STUDY_DESIGN = {
     'row_count':       None,
     'timepoint_count': None,
     'time_units':      None,
-    'strains':         [],
-    'new_strains':     [],
-    'techniques':      [],
-    'compartments':    [],
-    'communities':     [],
+
+    'strains':      [],
+    'new_strains':  [],
+    'techniques':   [],
+    'compartments': [],
+    'communities':  [],
+    'experiments':  [],
 }
 
 
