@@ -21,7 +21,7 @@
     <br>
 
     {% for experiment_form in upload_form.experiments: %}
-      {{ render_experiment_form(form=experiment_form, index=loop.index0) }}
+      {{ render_experiment_form(form=experiment_form, submission_form=submission_form, index=loop.index0) }}
     {% endfor %}
 
     <div class="form-row flex-right flex-row">
@@ -39,7 +39,7 @@
 
     <template class="experiment-form">
       {% set subform = upload_form.get_experiment_template() %}
-      {{ render_experiment_form(form=subform, index=None) }}
+      {{ render_experiment_form(form=subform, submission_form=submission_form, index=None) }}
     </template>
   </form>
 

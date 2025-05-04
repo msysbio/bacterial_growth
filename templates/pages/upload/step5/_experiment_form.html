@@ -1,22 +1,95 @@
-{% macro render_experiment_form(form, index) %}
+{% from 'pages/upload/step5/_bioreplicate_form.html' import render_bioreplicate_form %}
+
+{% macro render_experiment_form(form, submission_form, index) %}
+  {% set submission = submission_form.submission %}
+
   {% if index is none: %}
     {% set prefix = '' %}
   {% else: %}
     {% set prefix = 'experiments-{}-'.format(index)  %}
   {% endif %}
 
-  <div class="subform-container js-experiment-container">
+  <div
+      class="subform-container js-subform-container js-experiment-container"
+      data-index="{{ index if index is not none else '' }}">
     <h3>Experiment <span class="js-index">{{ index + 1 if index is not none else '' }}</span></h3>
 
     <div class="form-row">
-      <label>
+      <label class="full">
         <div class="required">Name</div>
         {# Note: Have to access the input using [], since there is an existing `.name` attribute #}
-        {{ form['name'](class='form-input-blue form-input-full') }}
+        {{ form['name'](class='form-input-blue form-input-full', placeholder="AB_CD_E") }}
+      </label>
+
+      <label class="full">
+        <div class="required">Cultivation mode</div>
+        {{ form.cultivationMode(class='form-input-blue form-input-full') }}
+      </label>
+
+      <label class="full">
+        <div class="required">Community</div>
+
+        <select name="{{ prefix }}communityName" class="form-input-blue form-input-full js-community-select">
+          {% for community_data in submission.studyDesign['communities']: %}
+            <option value="{{ community_data['name'] }}">
+              {{ community_data['name'] }}
+            </option>
+          {% endfor %}
+        </select>
+      </label>
+
+      <label class="full">
+        <div class="required">Compartments</div>
+
+        <select
+            multiple
+            name="{{ prefix }}compartmentNames"
+            class="js-compartment-select">
+          {% set compartmentNames = form.data['compartmentNames'] %}
+
+          {% for compartment_data in submission.studyDesign['compartments']: %}
+            <option
+                value="{{ compartment_data['name'] }}"
+                {{ "selected" if compartmentNames and compartment_data['name'] in compartmentNames }}>
+              {{ compartment_data['name'] }}
+            </option>
+          {% endfor %}
+        </select>
       </label>
     </div>
 
     <div class="form-row">
+      <label class="full">
+        <div class="required">Description</div>
+        {{ form['description'](
+          class='form-input-blue form-input-full',
+          placeholder="Bacterial strains AB and CD grown in conditions E.",
+          rows=3,
+        ) }}
+      </label>
+    </div>
+
+    <div class="form-row flex-column flex-gap-10">
+      <div class="form-row flex-row" style="align-items: center; margin-top: 10px;">
+        <h4>Biological replicates</h4>
+        <a href="#" class="white-button small-button flex-row js-add-bioreplicate">
+          <span class="icon icon-add"></span>
+        </a>
+      </div>
+
+      {% for bioreplicate_form in form.bioreplicates: %}
+        {{ render_bioreplicate_form(form=bioreplicate_form, submission_form=submission_form, index=loop.index0) }}
+      {% endfor %}
+
+      <template class="js-new-item-anchor"></template>
+
+      <template class="bioreplicate-form">
+        {% set subform = form.get_bioreplicate_template() %}
+        {{ render_bioreplicate_form(form=subform, submission_form=submission_form, index=None) }}
+      </template>
+    </div>
+
+    <div class="form-row" style="margin-top: 10px;">
       <div class="no-label flex-right">
         <a href="#" class="white-button flex-row js-remove">
           <span class="icon icon-remove"></span> Remove

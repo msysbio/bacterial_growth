@@ -1,17 +1,36 @@
 {% macro render_step5_status(submission_form, submission) %}
 
   <ul class="upload-status">
-    <li class="complete">
-      <span class="icon"></span>
-      <span>TODO:</span>
-      <span class="truncate">
-        <strong>TODO</strong>
-      </span>
-    </li>
+    {% set experiments = submission.studyDesign['experiments'] %}
+    {% set bioreplicates = submission.studyDesign['experiments']|sum(attribute='bioreplicates', start=[]) %}
 
-    <li class="incomplete">
-      <span class="icon"></span> TODO
-    </li>
+    {% if experiments|length > 0: %}
+      <li class="complete">
+        <span class="icon"></span>
+        <span>{{ experiments|length }} experiment(s):</span>
+        <span class="truncate">
+          <strong>{{ experiments|map(attribute='name')|join('</strong>, <strong>')|safe }}</strong>
+        </span>
+      </li>
+    {% else %}
+      <li class="incomplete">
+        <span class="icon"></span> No experiments defined
+      </li>
+    {% endif %}
+
+    {% if bioreplicates|length > 0: %}
+      <li class="complete">
+        <span class="icon"></span>
+        <span>{{ bioreplicates|length }} bioreplicate(s):</span>
+        <span class="truncate">
+          <strong>{{ bioreplicates|map(attribute='name')|join('</strong>, <strong>')|safe }}</strong>
+        </span>
+      </li>
+    {% else %}
+      <li class="incomplete">
+        <span class="icon"></span> No biological replicates defined
+      </li>
+    {% endif %}
   </ul>
 
 {% endmacro %}

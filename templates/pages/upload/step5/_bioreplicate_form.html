@@ -1,0 +1,34 @@
+{% macro render_bioreplicate_form(form, submission_form, index) %}
+  {% set submission = submission_form.submission %}
+
+  {% if index is none: %}
+    {% set prefix = '' %}
+  {% else: %}
+    {% set prefix = 'experiments-{}-'.format(index)  %}
+  {% endif %}
+
+  <div class="subform-container js-subform-container js-bioreplicate-container">
+    <div class="form-row">
+      <label class="full">
+        <div class="required">Name</div>
+        {# Note: Have to access the input using [], since there is an existing `.name` attribute #}
+        {{ form['name'](class='form-input-blue form-input-full', placeholder="AB_CD_E") }}
+      </label>
+
+      <label class="full">
+        <div>Note (optional)</div>
+        {{ form['description'](
+          class='form-input-blue form-input-full',
+          placeholder="e.g. replicate N/control/blank",
+        ) }}
+      </label>
+
+      <div class="no-label flex-right">
+        <a href="#" class="white-button flex-row js-remove">
+          <span class="icon icon-remove"></span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+{% endmacro %}
