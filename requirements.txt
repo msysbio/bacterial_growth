@@ -3,6 +3,7 @@ pandas
 humanize
 pyyaml
 openpyxl
+simplejson
 
 # Web
 Flask
