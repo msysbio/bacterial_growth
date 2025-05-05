@@ -252,12 +252,9 @@ def _save_experiments(db_session, submission_form, study):
 
         for bioreplicate_data in bioreplicates:
             bioreplicate = Bioreplicate(
-                # TODO rename
-                bioreplicateId=bioreplicate_data['name'],
-                # TODO (2025-05-05) Description
+                **bioreplicate_data,
                 studyId=study.publicId,
-                experimentId=experiment.name,
-                experimentUniqueId=experiment.id,
+                experimentId=experiment.id,
             )
 
             db_session.add(bioreplicate)

@@ -24,13 +24,13 @@ class ExperimentChartForm:
                 sql.select(Measurement.technique)
                 .join(Bioreplicate)
                 .distinct()
-                .where(Bioreplicate.experimentUniqueId == self.experiment.id)
+                .where(Bioreplicate.experimentId == self.experiment.id)
                 .order_by(Measurement.technique)
             ).scalars()
 
     def generate_growth_figures(self, technique, args):
         selected_bioreplicates, include_average, _ = self._extract_args(args)
-        bioreplicate_uuids = [b.bioreplicateUniqueId for b in selected_bioreplicates]
+        bioreplicate_uuids = [b.id for b in selected_bioreplicates]
 
         df = self.get_df(bioreplicate_uuids, technique, 'bioreplicate')
         if include_average:
@@ -59,7 +59,7 @@ class ExperimentChartForm:
 
         figs = []
         for index, bioreplicate in enumerate(selected_bioreplicates):
-            df = self.get_df([bioreplicate.bioreplicateUniqueId], technique, 'strain')
+            df = self.get_df([bioreplicate.id], technique, 'strain')
 
             value_label, value_std = self._transform_values(df, log=apply_log[index])
 
@@ -67,7 +67,7 @@ class ExperimentChartForm:
                 df,
                 # TODO (2025-03-03) STD should be handled consistently with apply_log
                 error_y=value_std,
-                title=f'{measurement_label}: {bioreplicate.bioreplicateId} per Microbial Strain',
+                title=f'{measurement_label}: {bioreplicate.name} per Microbial Strain',
                 labels={
                     'time': 'Hours',
                     'value': value_label,
@@ -100,11 +100,11 @@ class ExperimentChartForm:
 
         figs = []
         for bioreplicate in selected_bioreplicates:
-            df = self.get_df([bioreplicate.bioreplicateUniqueId], technique, 'metabolite')
+            df = self.get_df([bioreplicate.id], technique, 'metabolite')
 
             figs.append(self._render_figure(
                 df,
-                title=f'Metabolite Concentrations: {bioreplicate.bioreplicateId} per Metabolite',
+                title=f'Metabolite Concentrations: {bioreplicate.name} per Metabolite',
                 labels={
                     'time': 'Hours',
                     'value': 'mM',
@@ -147,7 +147,7 @@ class ExperimentChartForm:
         with get_session() as db_session:
             selected_bioreplicates = db_session.scalars(
                 sql.select(Bioreplicate)
-                .where(Bioreplicate.bioreplicateUniqueId.in_(bioreplicate_uuids))
+                .where(Bioreplicate.id.in_(bioreplicate_uuids))
             ).all()
 
         return selected_bioreplicates, include_average, apply_log

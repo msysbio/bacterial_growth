@@ -59,13 +59,8 @@ class Calculation(OrmBase):
         back_populates="calculations",
     )
 
-    bioreplicateUniqueId: Mapped[int] = mapped_column(
-        ForeignKey('BioReplicatesPerExperiment.bioreplicateUniqueId'),
-        nullable=False,
-    )
-    bioreplicate: Mapped['Bioreplicate'] = relationship(
-        back_populates='calculations',
-    )
+    bioreplicateUniqueId: Mapped[int] = mapped_column(ForeignKey('Bioreplicates.id'), nullable=False)
+    bioreplicate: Mapped['Bioreplicate'] = relationship(back_populates='calculations')
 
     coefficients: Mapped[JSON] = mapped_column(JSON, nullable=False)
 
@@ -85,11 +80,7 @@ class Calculation(OrmBase):
         return self._validate_inclusion(key, value, VALID_STATES)
 
     def get_subject(self, db_session):
-        from models import (
-            Metabolite,
-            Strain,
-            Bioreplicate,
-        )
+        from models import Metabolite, Strain, Bioreplicate
 
         if self.subjectType == 'metabolite':
             return db_session.get(Metabolite, self.subjectId)

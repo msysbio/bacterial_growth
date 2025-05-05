@@ -119,18 +119,17 @@ class DatabaseTest(unittest.TestCase):
         return self._create_orm_record(Experiment, params)
 
     def create_bioreplicate(self, **params):
-        # Note: this is just a sequential number
+        # Note: this is just a sequential number to ensure unique naming
         self.bioreplicate_uuid = getattr(self, 'bioreplicate_uuid', 0) + 1
+        name = f"Bioreplicate {self.bioreplicate_uuid}"
 
         study_id        = self._get_or_create_dependency(params, 'studyId', 'study')
-        experiment_uuid = self._get_or_create_dependency(params, 'experimentUniqueId', ('experiment', 'id'), studyId=study_id)
+        experiment_uuid = self._get_or_create_dependency(params, 'experimentId', ('experiment', 'id'), studyId=study_id)
 
         params = {
-            'studyId':              study_id,
-            'bioreplicateUniqueId': self.bioreplicate_uuid,
-            'bioreplicateId':       f"Bioreplicate {self.bioreplicate_uuid}",
-            'experimentUniqueId':   experiment_uuid,
-            'experimentId':         f"Experiment {experiment_uuid}",
+            'name':         name,
+            'studyId':      study_id,
+            'experimentId': experiment_uuid,
             **params,
         }
 
@@ -155,7 +154,7 @@ class DatabaseTest(unittest.TestCase):
         study_id          = self._get_or_create_dependency(params, 'studyId', 'study')
         experiment_uuid   = self._get_or_create_dependency(params, 'experimentUniqueId', ('experiment', 'id'), studyId=study_id)
         chebi_id          = self._get_or_create_dependency(params, 'chebi_id', 'metabolite')
-        bioreplicate_uuid = self._get_or_create_dependency(params, 'bioreplicateUniqueId', 'bioreplicate')
+        bioreplicate_uuid = self._get_or_create_dependency(params, 'bioreplicateUniqueId', ('bioreplicate', 'id'))
 
         params = {
             'studyId':              study_id,
@@ -169,7 +168,7 @@ class DatabaseTest(unittest.TestCase):
 
     def create_measurement(self, **params):
         study_id          = self._get_or_create_dependency(params, 'studyId', 'study')
-        bioreplicate_uuid = self._get_or_create_dependency(params, 'bioreplicateUniqueId', 'bioreplicate')
+        bioreplicate_uuid = self._get_or_create_dependency(params, 'bioreplicateUniqueId', ('bioreplicate', 'id'))
         technique_id      = self._get_or_create_dependency(params, 'id', 'measurement_technique')
 
         subject_id   = params['subjectId']

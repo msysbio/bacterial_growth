@@ -21,9 +21,7 @@ class Measurement(OrmBase):
 
     id: Mapped[int] = mapped_column(primary_key=True)
 
-    bioreplicateUniqueId: Mapped[int] = mapped_column(
-        sql.ForeignKey('BioReplicatesPerExperiment.bioreplicateUniqueId'),
-    )
+    bioreplicateUniqueId: Mapped[int] = mapped_column(sql.ForeignKey('Bioreplicates.id'))
     bioreplicate: Mapped['Bioreplicate'] = relationship(back_populates='measurements')
 
     # TODO (2025-04-24) Use unique id
@@ -57,11 +55,7 @@ class Measurement(OrmBase):
 
     @classmethod
     def get_subject(Self, db_session, subject_id, subject_type):
-        from models import (
-            Metabolite,
-            Strain,
-            Bioreplicate,
-        )
+        from models import Metabolite, Strain, Bioreplicate
 
         if subject_type == 'metabolite':
             return db_session.get(Metabolite, subject_id)
@@ -73,22 +67,17 @@ class Measurement(OrmBase):
             raise ValueError(f"Unknown subject type: {subject_type}")
 
     def subject_join(subject_type):
-        from models import (
-            Metabolite,
-            Strain,
-            Bioreplicate,
-        )
+        from models import Metabolite, Strain, Bioreplicate
 
         if subject_type == 'metabolite':
-            name = Metabolite.metabo_name.label("subjectName")
-            join = (Metabolite, Measurement.subjectId == Metabolite.id)
+            Subject = Metabolite
         elif subject_type == 'strain':
-            name = Strain.name.label("subjectName")
-            join = (Strain, Measurement.subjectId == Strain.id)
+            Subject = Strain
         elif subject_type == 'bioreplicate':
-            name = Bioreplicate.bioreplicateId.label("subjectName")
             Subject = aliased(Bioreplicate)
-            join = (Subject, Measurement.subjectId == Subject.bioreplicateUniqueId)
+
+        name = Subject.name.label("subjectName")
+        join = (Subject, Measurement.subjectId == Subject.id)
 
         return (name, join)
 

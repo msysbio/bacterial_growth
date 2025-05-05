@@ -13,17 +13,15 @@ from lib.db import execute_text
 
 
 class Bioreplicate(OrmBase):
-    __tablename__ = 'BioReplicatesPerExperiment'
+    __tablename__ = 'Bioreplicates'
 
-    bioreplicateUniqueId: Mapped[int] = mapped_column(primary_key=True)
-    bioreplicateId:       Mapped[str] = mapped_column(sql.String(100), nullable=False)
+    id:   Mapped[int] = mapped_column(primary_key=True)
+    name: Mapped[str] = mapped_column(sql.String(100), nullable=False)
 
     studyId: Mapped[str] = mapped_column(sql.ForeignKey('Study.studyId'), nullable=False)
     study: Mapped['Study'] = relationship(back_populates='bioreplicates')
 
-    experimentId: Mapped[str] = mapped_column(sql.String(100), nullable=False)
-
-    experimentUniqueId: Mapped[int] = mapped_column(sql.ForeignKey('Experiments.id'), nullable=False)
+    experimentId: Mapped[int] = mapped_column(sql.ForeignKey('Experiments.id'), nullable=False)
     experiment: Mapped['Experiment'] = relationship(back_populates='bioreplicates')
 
     measurements: Mapped[List["Measurement"]] = relationship(
@@ -36,23 +34,11 @@ class Bioreplicate(OrmBase):
         cascade='all, delete-orphan'
     )
 
-    @hybrid_property
-    def id(self):
-        return self.bioreplicateUniqueId
-
-    @hybrid_property
-    def uuid(self):
-        return self.bioreplicateUniqueId
-
-    @hybrid_property
-    def name(self):
-        return self.bioreplicateId
-
     @staticmethod
-    def find_for_study(db_conn, study_id, bioreplicate_id):
+    def find_for_study(db_conn, study_id, name):
         return execute_text(db_conn, """
-            SELECT bioreplicateUniqueId
-            FROM BioReplicatesPerExperiment
+            SELECT id
+            FROM Bioreplicates
             WHERE studyId = :study_id
-              AND bioreplicateId = :bioreplicate_id
-        """, study_id=study_id, bioreplicate_id=bioreplicate_id).scalar()
+              AND name = :name
+        """, study_id=study_id, name=name).scalar()

@@ -118,7 +118,7 @@ class MeasurementTechnique(OrmBase):
                 .distinct()
                 .where(
                     Measurement.techniqueId == self.id,
-                    Measurement.bioreplicateUniqueId == bioreplicate.uuid,
+                    Measurement.bioreplicateUniqueId == bioreplicate.id,
                     Measurement.value.is_not(None),
                 )
             ))

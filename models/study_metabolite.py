@@ -15,10 +15,7 @@ class StudyMetabolite(OrmBase):
     chebi_id:           Mapped[str] = mapped_column(sql.ForeignKey('Metabolites'),    primary_key=True)
     experimentUniqueId: Mapped[int] = mapped_column(sql.ForeignKey('Experiments.id'), primary_key=True)
 
-    bioreplicateUniqueId: Mapped[int] = mapped_column(
-        sql.ForeignKey('BioReplicatesPerExperiment'),
-        nullable=False,
-    )
+    bioreplicateUniqueId: Mapped[int] = mapped_column(sql.ForeignKey('Bioreplicates.id'), nullable=False)
 
     study:      Mapped['Study']      = relationship(back_populates="studyMetabolites")
     metabolite: Mapped['Metabolite'] = relationship(back_populates="studyMetabolites")

@@ -71,7 +71,7 @@
                 {% if technique.subjectType != 'bioreplicate': %}
                   <tr class="js-table-row">
                     <th colspan="4" align="center">
-                      Bioreplicate: {{ bioreplicate.bioreplicateId }}
+                      Bioreplicate: {{ bioreplicate.name }}
                     </th>
                   </tr>
                 {% endif %}
@@ -82,7 +82,7 @@
                   <tr class="js-table-row">
                     <td>
                       {% set targetIdentifier = "{}|{}|{}|{}".format(
-                        bioreplicate.bioreplicateUniqueId,
+                        bioreplicate.id,
                         technique.id,
                         subjectClass|lower,
                         subject.id
@@ -161,7 +161,7 @@
                 {% if calculation.subjectType != 'bioreplicate': %}
                   <tr class="js-table-row">
                     <th colspan="3" align="center">
-                      Bioreplicate: {{ calculation.bioreplicate.bioreplicateId }}
+                      Bioreplicate: {{ calculation.bioreplicate.name }}
                     </th>
                   </tr>
                 {% endif %}
@@ -173,7 +173,7 @@
                 <tr class="js-table-row">
                   <td>
                     {% set targetIdentifier = "{}|{}|{}|{}".format(
-                      bioreplicate.bioreplicateUniqueId,
+                      bioreplicate.id,
                       technique.id,
                       subjectClass|lower,
                       subject.id

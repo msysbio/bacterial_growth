@@ -41,49 +41,23 @@ CREATE TABLE Abundances (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `BioReplicatesMetadata`
+-- Table structure for table `Bioreplicates`
 --
 
-DROP TABLE IF EXISTS BioReplicatesMetadata;
+DROP TABLE IF EXISTS Bioreplicates;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE BioReplicatesMetadata (
+CREATE TABLE Bioreplicates (
   studyId varchar(100) COLLATE utf8mb4_bin NOT NULL,
-  bioreplicateUniqueId int NOT NULL,
-  bioreplicateId varchar(100) COLLATE utf8mb4_bin NOT NULL,
-  biosampleLink text COLLATE utf8mb4_bin,
-  bioreplicateDescrition text COLLATE utf8mb4_bin,
-  PRIMARY KEY (studyId,bioreplicateUniqueId),
-  UNIQUE KEY studyId (studyId,bioreplicateUniqueId),
-  KEY fk_1 (bioreplicateUniqueId),
-  CONSTRAINT BioReplicatesMetadata_fk_1 FOREIGN KEY (bioreplicateUniqueId) REFERENCES BioReplicatesPerExperiment (bioreplicateUniqueId) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT BioReplicatesMetadata_fk_2 FOREIGN KEY (studyId) REFERENCES Study (studyId) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `BioReplicatesPerExperiment`
---
-
-DROP TABLE IF EXISTS BioReplicatesPerExperiment;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE BioReplicatesPerExperiment (
-  studyId varchar(100) COLLATE utf8mb4_bin NOT NULL,
-  bioreplicateUniqueId int NOT NULL AUTO_INCREMENT,
-  bioreplicateId varchar(100) COLLATE utf8mb4_bin DEFAULT NULL,
-  experimentUniqueId int DEFAULT NULL,
-  experimentId varchar(100) COLLATE utf8mb4_bin NOT NULL,
-  controls tinyint(1) DEFAULT '0',
-  OD tinyint(1) DEFAULT '0',
-  OD_std tinyint(1) DEFAULT '0',
-  Plate_counts tinyint(1) DEFAULT '0',
-  Plate_counts_std tinyint(1) DEFAULT '0',
-  pH tinyint(1) DEFAULT '0',
-  PRIMARY KEY (bioreplicateUniqueId),
-  UNIQUE KEY studyId (studyId,bioreplicateId),
-  KEY fk_1 (experimentUniqueId),
-  CONSTRAINT BioReplicatesPerExperiment_fk_1 FOREIGN KEY (experimentUniqueId) REFERENCES Experiments (id) ON DELETE CASCADE ON UPDATE CASCADE,
+  id int NOT NULL AUTO_INCREMENT,
+  `name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  experimentId int NOT NULL,
+  `description` text COLLATE utf8mb4_bin,
+  biosampleUrl text COLLATE utf8mb4_bin,
+  PRIMARY KEY (id),
+  UNIQUE KEY studyId (studyId,`name`),
+  KEY fk_1 (experimentId),
+  CONSTRAINT BioReplicatesPerExperiment_fk_1 FOREIGN KEY (experimentId) REFERENCES Experiments (id) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT BioReplicatesPerExperiment_fk_2 FOREIGN KEY (studyId) REFERENCES Study (studyId) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -324,7 +298,7 @@ CREATE TABLE Measurements (
   PRIMARY KEY (id),
   KEY bioreplicateUniqueId (bioreplicateUniqueId),
   KEY studyId (studyId),
-  CONSTRAINT bioreplicateUniqueId FOREIGN KEY (bioreplicateUniqueId) REFERENCES BioReplicatesPerExperiment (bioreplicateUniqueId) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT bioreplicateUniqueId FOREIGN KEY (bioreplicateUniqueId) REFERENCES Bioreplicates (id) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT studyId FOREIGN KEY (studyId) REFERENCES Study (studyId) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -606,5 +580,7 @@ INSERT INTO MigrationVersions VALUES
 (33,'2025_05_01_172225_fix_community_columns','2025-05-01 15:32:33'),
 (36,'2025_05_02_171609_fix_strain_columns','2025-05-02 15:23:03'),
 (41,'2025_05_05_104555_fix_experiment_columns','2025-05-05 09:24:08'),
-(46,'2025_05_05_130725_fix_experiment_compartments','2025-05-05 11:21:15');
+(46,'2025_05_05_130725_fix_experiment_compartments','2025-05-05 11:21:15'),
+(53,'2025_05_05_201613_fix_bioreplicate_columns','2025-05-05 18:36:14'),
+(56,'2025_05_05_204021_remove_bioreplicate_metadata','2025-05-05 18:44:24');
 

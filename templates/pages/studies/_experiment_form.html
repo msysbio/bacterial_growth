@@ -21,16 +21,15 @@
           </div>
 
           {% for bioreplicate in experiment.bioreplicates %}
-            {% set key = "bioreplicate:{}".format(bioreplicate.bioreplicateUniqueId) %}
+            {% set key = "bioreplicate:{}".format(bioreplicate.id) %}
 
             <div class="form-row">
               <input
                   type="checkbox"
                   name="{{ key }}"
-                  value="{{ bioreplicateUniqueId }}"
                   id="{{ key }}" />
               <label for="{{ key }}">
-                {{ bioreplicate.bioreplicateId }}
+                {{ bioreplicate.name }}
               </label>
             </div>
           {% endfor %}

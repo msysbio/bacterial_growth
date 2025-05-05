@@ -31,7 +31,7 @@ class ExperimentExportForm:
             .join(Bioreplicate)
             .where(
                 sql.or_(
-                    Bioreplicate.bioreplicateUniqueId.in_(self.bioreplicate_uuids),
+                    Bioreplicate.id.in_(self.bioreplicate_uuids),
                     Experiment.id.in_(self.averaged_experiments),
                 ),
             )
@@ -151,16 +151,16 @@ class ExperimentExportForm:
         return (
             sql.select(
                 Measurement.timeInHours.label("Time (hours)"),
-                Bioreplicate.bioreplicateId.label("Biological Replicate ID"),
+                Bioreplicate.name.label("Biological Replicate ID"),
                 Measurement.value.label(value_label),
             )
             .join(Bioreplicate)
             .join(Experiment)
             .where(
                 Experiment.id == experiment.id,
-                Bioreplicate.bioreplicateUniqueId.in_(self.bioreplicate_uuids),
+                Bioreplicate.id.in_(self.bioreplicate_uuids),
             )
-            .order_by(Bioreplicate.bioreplicateId, Measurement.timeInSeconds)
+            .order_by(Bioreplicate.name, Measurement.timeInSeconds)
         )
 
     def _base_average_query(self, experiment, value_label):

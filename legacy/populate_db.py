@@ -85,9 +85,8 @@ def save_study_design_to_database(conn, yml_dir, submission_form, data_template,
         # Clear out previous data by studyId, in reverse insertion order:
         data_tables = [
             "Measurements",
-            "BioReplicatesMetadata",
             "MetabolitePerExperiment",
-            "BioReplicatesPerExperiment",
+            "Bioreplicates",
             "TechniquesPerExperiment",
             "CompartmentsPerExperiment",
             "Perturbation",
