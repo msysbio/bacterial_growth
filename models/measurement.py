@@ -3,12 +3,7 @@ import csv
 import functools
 from decimal import Decimal
 
-from sqlalchemy import (
-    Integer,
-    String,
-    Numeric,
-    ForeignKey,
-)
+import sqlalchemy as sql
 from sqlalchemy.orm import (
     Mapped,
     mapped_column,
@@ -16,7 +11,6 @@ from sqlalchemy.orm import (
     aliased,
 )
 from sqlalchemy.ext.hybrid import hybrid_property
-import sqlalchemy as sql
 
 from models.orm_base import OrmBase
 from lib.conversion import convert_time
@@ -28,34 +22,34 @@ class Measurement(OrmBase):
     id: Mapped[int] = mapped_column(primary_key=True)
 
     bioreplicateUniqueId: Mapped[int] = mapped_column(
-        ForeignKey('BioReplicatesPerExperiment.bioreplicateUniqueId'),
+        sql.ForeignKey('BioReplicatesPerExperiment.bioreplicateUniqueId'),
     )
     bioreplicate: Mapped['Bioreplicate'] = relationship(back_populates='measurements')
 
     # TODO (2025-04-24) Use unique id
-    studyId: Mapped[str] = mapped_column(ForeignKey('Study.studyId'), nullable=False)
+    studyId: Mapped[str] = mapped_column(sql.ForeignKey('Study.studyId'), nullable=False)
     study: Mapped['Study'] = relationship(back_populates="measurements")
 
-    position:      Mapped[str] = mapped_column(String(100), nullable=False)
-    timeInSeconds: Mapped[int] = mapped_column(Integer,     nullable=False)
-    unit:          Mapped[str] = mapped_column(String(100), nullable=False)
+    position:      Mapped[str] = mapped_column(sql.String(100), nullable=False)
+    timeInSeconds: Mapped[int] = mapped_column(sql.Integer,     nullable=False)
+    unit:          Mapped[str] = mapped_column(sql.String(100), nullable=False)
 
     # Should be removed at some point
-    technique: Mapped[str] = mapped_column(String(100))
+    technique: Mapped[str] = mapped_column(sql.String(100))
 
     # TODO (2025-03-30) This should not be nullable, but we need to migrate the data first
-    techniqueId: Mapped[int] = mapped_column(ForeignKey("MeasurementTechniques.id"))
+    techniqueId: Mapped[int] = mapped_column(sql.ForeignKey("MeasurementTechniques.id"))
 
     # TODO (2025-04-06) Remove the string `technique` or rename to `technique_name`
     techniqueRecord: Mapped['MeasurementTechnique'] = relationship(
         back_populates="measurements"
     )
 
-    value: Mapped[Decimal] = mapped_column(Numeric(20, 2), nullable=True)
-    std:   Mapped[Decimal] = mapped_column(Numeric(20, 2), nullable=True)
+    value: Mapped[Decimal] = mapped_column(sql.Numeric(20, 2), nullable=True)
+    std:   Mapped[Decimal] = mapped_column(sql.Numeric(20, 2), nullable=True)
 
-    subjectId:   Mapped[str] = mapped_column(String(100), nullable=False)
-    subjectType: Mapped[str] = mapped_column(String(100), nullable=False)
+    subjectId:   Mapped[str] = mapped_column(sql.String(100), nullable=False)
+    subjectType: Mapped[str] = mapped_column(sql.String(100), nullable=False)
 
     @hybrid_property
     def timeInHours(self):
@@ -164,26 +158,13 @@ class Measurement(OrmBase):
 
     @classmethod
     def insert_from_metabolites_csv(Self, db_session, study, csv_string):
-        from models import (
-            Metabolite,
-            StudyMetabolite,
-        )
-
         measurements = []
-
-        # TODO (2025-04-03) Figure out how to make a many-to-many relationship
-        metabolites = db_session.scalars(
-            sql.select(Metabolite)
-            .distinct()
-            .join(StudyMetabolite)
-            .where(StudyMetabolite.studyId == study.studyId)
-        ).all()
 
         for row, time, bioreplicate_uuid, technique in _iterate_over_measurement_csv(db_session, study, csv_string):
             if technique.subjectType != 'metabolite':
                 continue
 
-            for subject in metabolites:
+            for subject in study.metabolites:
                 value = row[technique.csv_column_name(subject.name)]
                 if value == '':
                     value = None

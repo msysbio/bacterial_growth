@@ -3,17 +3,16 @@ from typing import List
 from datetime import datetime, UTC
 
 import sqlalchemy as sql
-from sqlalchemy import (
-    String,
-    ForeignKey,
-    FetchedValue,
-)
 from sqlalchemy.orm import (
     Mapped,
     mapped_column,
     relationship,
 )
 from sqlalchemy.ext.hybrid import hybrid_property
+from sqlalchemy.ext.associationproxy import (
+    AssociationProxy,
+    association_proxy,
+)
 from sqlalchemy_utc.sqltypes import UtcDateTime
 
 from models.orm_base import OrmBase
@@ -29,19 +28,19 @@ class Study(OrmBase):
         cascade='all, delete-orphan',
     )
 
-    studyUniqueID: Mapped[str] = mapped_column(String(100), primary_key=True)
+    studyUniqueID: Mapped[str] = mapped_column(sql.String(100), primary_key=True)
 
-    studyId:          Mapped[str] = mapped_column(String(100))
-    studyName:        Mapped[str] = mapped_column(String(100))
-    studyDescription: Mapped[str] = mapped_column(String, nullable=True)
-    studyURL:         Mapped[str] = mapped_column(String, nullable=True)
-    timeUnits:        Mapped[str] = mapped_column(String(100))
+    studyId:          Mapped[str] = mapped_column(sql.String(100))
+    studyName:        Mapped[str] = mapped_column(sql.String(100))
+    studyDescription: Mapped[str] = mapped_column(sql.String, nullable=True)
+    studyURL:         Mapped[str] = mapped_column(sql.String, nullable=True)
+    timeUnits:        Mapped[str] = mapped_column(sql.String(100))
 
-    projectUniqueID: Mapped[str] = mapped_column(ForeignKey('Project.projectUniqueID'))
+    projectUniqueID: Mapped[str] = mapped_column(sql.ForeignKey('Project.projectUniqueID'))
     project: Mapped['Project'] = relationship(back_populates="studies")
 
-    createdAt:        Mapped[datetime] = mapped_column(UtcDateTime, server_default=FetchedValue())
-    updatedAt:        Mapped[datetime] = mapped_column(UtcDateTime, server_default=FetchedValue())
+    createdAt:        Mapped[datetime] = mapped_column(UtcDateTime, server_default=sql.FetchedValue())
+    updatedAt:        Mapped[datetime] = mapped_column(UtcDateTime, server_default=sql.FetchedValue())
     publishableAt:    Mapped[datetime] = mapped_column(UtcDateTime, nullable=True)
     publishedAt:      Mapped[datetime] = mapped_column(UtcDateTime, nullable=True)
     embargoExpiresAt: Mapped[datetime] = mapped_column(UtcDateTime, nullable=True)
@@ -56,9 +55,14 @@ class Study(OrmBase):
     measurementTechniques:  Mapped[List['MeasurementTechnique']]  = owner_relationship()
     measurements:           Mapped[List['Measurement']]           = owner_relationship()
     calculationTechniques:  Mapped[List['CalculationTechnique']]  = owner_relationship()
-    studyMetabolites:       Mapped[List['StudyMetabolite']]       = owner_relationship()
     experimentCompartments: Mapped[List['ExperimentCompartment']] = owner_relationship()
     bioreplicates:          Mapped[List['Bioreplicate']]          = owner_relationship()
+
+    studyMetabolites: Mapped[List['StudyMetabolite']] = owner_relationship()
+    metabolites: AssociationProxy[List['Metabolite']] = association_proxy(
+        "studyMetabolites",
+        "metabolite"
+    )
 
     @hybrid_property
     def uuid(self):
