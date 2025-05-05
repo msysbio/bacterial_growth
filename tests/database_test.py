@@ -111,8 +111,8 @@ class DatabaseTest(unittest.TestCase):
         study_id = self._get_or_create_dependency(params, 'studyId', 'study')
 
         params = {
-            'studyId':      study_id,
-            'experimentId': f"Experiment {self.experiment_sequence}",
+            'studyId': study_id,
+            'name':    f"Experiment {self.experiment_sequence}",
             **params,
         }
 

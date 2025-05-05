@@ -24,7 +24,7 @@ class ExperimentChartForm:
                 sql.select(Measurement.technique)
                 .join(Bioreplicate)
                 .distinct()
-                .where(Bioreplicate.experimentUniqueId == self.experiment.experimentUniqueId)
+                .where(Bioreplicate.experimentUniqueId == self.experiment.id)
                 .order_by(Measurement.technique)
             ).scalars()
 
@@ -39,7 +39,7 @@ class ExperimentChartForm:
 
         fig = self._render_figure(
             df,
-            title=f'{technique} Plot for Experiment: {self.experiment.experimentId} per Biological replicate',
+            title=f'{technique} Plot for Experiment: {self.experiment.name} per Biological replicate',
             labels={
                 'time': 'Hours',
                 'value': 'Cells/mL',
@@ -85,7 +85,7 @@ class ExperimentChartForm:
                 df,
                 # TODO (2025-03-03) STD should be handled consistently with apply_log
                 error_y=value_std,
-                title=f'{measurement_label}: Average {self.experiment.experimentId} per Microbial Strain',
+                title=f'{measurement_label}: Average {self.experiment.name} per Microbial Strain',
                 labels={
                     'time': 'Hours',
                     'value': value_label,
@@ -120,7 +120,7 @@ class ExperimentChartForm:
             figs.append(self._render_figure(
                 df,
                 error_y=df['std'],
-                title=f'Average metabolite concentrations for: {self.experiment.experimentId}',
+                title=f'Average metabolite concentrations for: {self.experiment.name}',
                 labels={
                     'time': 'Hours',
                     'value': 'mM',
@@ -177,7 +177,7 @@ class ExperimentChartForm:
 
     def get_average_df(self, technique, subject_type):
         if subject_type == 'bioreplicate':
-            subjectName = literal_column('CONCAT("Average ", Experiments.experimentId)').label('subjectName')
+            subjectName = literal_column('CONCAT("Average ", Experiments.name)').label('subjectName')
             subjectJoin = None
         else:
             subjectName, subjectJoin = Measurement.subject_join(subject_type)
@@ -194,7 +194,7 @@ class ExperimentChartForm:
             .where(
                 Measurement.technique == technique,
                 Measurement.subjectType == subject_type,
-                Experiment.experimentUniqueId == self.experiment.experimentUniqueId,
+                Experiment.id == self.experiment.id,
             )
             .group_by(Measurement.timeInSeconds, subjectName)
             .order_by(sql.text('subjectName'), Measurement.timeInSeconds)

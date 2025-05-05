@@ -1,9 +1,6 @@
 from typing import List
 
-from sqlalchemy import (
-    String,
-    ForeignKey,
-)
+import sqlalchemy as sql
 from sqlalchemy.orm import (
     Mapped,
     mapped_column,
@@ -19,12 +16,14 @@ class Bioreplicate(OrmBase):
     __tablename__ = 'BioReplicatesPerExperiment'
 
     bioreplicateUniqueId: Mapped[int] = mapped_column(primary_key=True)
-    bioreplicateId:       Mapped[str] = mapped_column(String(100), nullable=False)
+    bioreplicateId:       Mapped[str] = mapped_column(sql.String(100), nullable=False)
 
-    studyId:      Mapped[str] = mapped_column(String(100), nullable=False)
-    experimentId: Mapped[str] = mapped_column(String(100), nullable=False)
+    studyId: Mapped[str] = mapped_column(sql.ForeignKey('Study.studyId'), nullable=False)
+    study: Mapped['Study'] = relationship(back_populates='bioreplicates')
 
-    experimentUniqueId: Mapped[int] = mapped_column(ForeignKey('Experiments'), nullable=False)
+    experimentId: Mapped[str] = mapped_column(sql.String(100), nullable=False)
+
+    experimentUniqueId: Mapped[int] = mapped_column(sql.ForeignKey('Experiments.id'), nullable=False)
     experiment: Mapped['Experiment'] = relationship(back_populates='bioreplicates')
 
     measurements: Mapped[List["Measurement"]] = relationship(

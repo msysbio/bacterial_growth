@@ -19,6 +19,7 @@ from lib.submission_process import (
     _save_study,
     _save_compartments,
     _save_communities,
+    _save_experiments,
 )
 from tests.database_test import DatabaseTest
 
@@ -213,6 +214,63 @@ class TestSubmissionProcess(DatabaseTest):
         self.assertEqual([], [c.name for c in communities])
         self.assertEqual(communities, study.communities)
         self.assertEqual(0, self.db_session.scalar(sql.func.count(Community.id)))
+
+    def test_experiment_creation(self):
+        t_ri = self.create_taxon(tax_names='Roseburia intestinalis')
+
+        submission = self.create_submission(
+            studyDesign={
+                'project': {'name': 'Test project'},
+                'study':   {'name': 'Test study'},
+
+                'compartments': [
+                    {'name': 'WC', 'mediumName': 'WC'},
+                    {'name': 'MUCIN', 'mediumName': 'WC'}
+                ],
+                'communities': [
+                    {'name': 'RI', 'strainIdentifiers': [f"existing|{t_ri.id}"]},
+                ],
+
+                'experiments': [{
+                    'name': 'RI',
+                    'description': 'RI experiment',
+                    'cultivationMode': 'batch',
+                    'communityName': 'RI',
+                    'compartmentNames': ['WC', 'MUCIN'],
+                    'bioreplicates': [
+                        {'name': 'RI_1'},
+                        {'name': 'RI_2'},
+                        {'name': 'RI_3'},
+                    ]
+                }]
+            }
+        )
+        self.db_session.add(submission)
+        self.db_session.flush()
+
+        submission_form = SubmissionForm(submission_id=submission.id, db_session=self.db_session)
+
+        # Create dependencies
+        study       = _save_study(self.db_session, submission_form)
+        communities = _save_communities(self.db_session, submission_form, study, user_uuid='user1')
+        compartments = _save_compartments(self.db_session, submission_form, study)
+
+        experiments = _save_experiments(self.db_session, submission_form, study)
+
+        self.db_session.flush()
+
+        self.assertEqual(len(experiments), 1)
+        self.assertEqual(experiments, study.experiments)
+
+        experiment = experiments[0]
+
+        self.assertEqual(experiment.community, communities[0])
+        self.assertEqual(len(experiment.compartments), 2)
+        self.assertEqual(experiment.compartments, compartments)
+
+        self.assertEqual(len(experiment.bioreplicates), 3)
+        self.assertEqual(len(study.bioreplicates), 3)
+        self.assertEqual({'RI_1', 'RI_2', 'RI_3'}, {b.name for b in study.bioreplicates})
 
 
 if __name__ == '__main__':

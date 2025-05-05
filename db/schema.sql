@@ -34,7 +34,7 @@ CREATE TABLE Abundances (
   KEY fk_1 (experimentUniqueId),
   KEY fk_2 (strainId),
   KEY fk_3 (studyId),
-  CONSTRAINT Abundances_fk_1 FOREIGN KEY (experimentUniqueId) REFERENCES Experiments (experimentUniqueId) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT Abundances_fk_1 FOREIGN KEY (experimentUniqueId) REFERENCES Experiments (id) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT Abundances_fk_2 FOREIGN KEY (strainId) REFERENCES Strains (id) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT Abundances_fk_3 FOREIGN KEY (studyId) REFERENCES Study (studyId) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
@@ -83,7 +83,7 @@ CREATE TABLE BioReplicatesPerExperiment (
   PRIMARY KEY (bioreplicateUniqueId),
   UNIQUE KEY studyId (studyId,bioreplicateId),
   KEY fk_1 (experimentUniqueId),
-  CONSTRAINT BioReplicatesPerExperiment_fk_1 FOREIGN KEY (experimentUniqueId) REFERENCES Experiments (experimentUniqueId) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT BioReplicatesPerExperiment_fk_1 FOREIGN KEY (experimentUniqueId) REFERENCES Experiments (id) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT BioReplicatesPerExperiment_fk_2 FOREIGN KEY (studyId) REFERENCES Study (studyId) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -190,34 +190,6 @@ CREATE TABLE Compartments (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `CompartmentsPerExperiment`
---
-
-DROP TABLE IF EXISTS CompartmentsPerExperiment;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE CompartmentsPerExperiment (
-  studyId varchar(100) COLLATE utf8mb4_bin DEFAULT NULL,
-  experimentUniqueId int NOT NULL,
-  compartmentUniqueId int NOT NULL,
-  communityUniqueId int NOT NULL,
-  id bigint unsigned NOT NULL AUTO_INCREMENT,
-  experimentId varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
-  compartmentId varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
-  communityId varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
-  PRIMARY KEY (id),
-  KEY fk_2 (compartmentUniqueId),
-  KEY fk_3 (communityUniqueId),
-  KEY fk_4 (studyId),
-  KEY CompartmentsPerExperiment_fk_1 (experimentUniqueId),
-  CONSTRAINT CompartmentsPerExperiment_fk_1 FOREIGN KEY (experimentUniqueId) REFERENCES Experiments (experimentUniqueId) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT CompartmentsPerExperiment_fk_2 FOREIGN KEY (compartmentUniqueId) REFERENCES Compartments (id) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT CompartmentsPerExperiment_fk_3 FOREIGN KEY (communityUniqueId) REFERENCES Communities (id) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT CompartmentsPerExperiment_fk_4 FOREIGN KEY (studyId) REFERENCES Study (studyId) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
 -- Table structure for table `ExcelFiles`
 --
 
@@ -235,6 +207,28 @@ CREATE TABLE ExcelFiles (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `ExperimentCompartments`
+--
+
+DROP TABLE IF EXISTS ExperimentCompartments;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE ExperimentCompartments (
+  studyId varchar(100) COLLATE utf8mb4_bin DEFAULT NULL,
+  experimentId int NOT NULL,
+  compartmentId int NOT NULL,
+  id bigint unsigned NOT NULL AUTO_INCREMENT,
+  PRIMARY KEY (id),
+  KEY fk_2 (compartmentId),
+  KEY fk_4 (studyId),
+  KEY CompartmentsPerExperiment_fk_1 (experimentId),
+  CONSTRAINT CompartmentsPerExperiment_fk_1 FOREIGN KEY (experimentId) REFERENCES Experiments (id) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT CompartmentsPerExperiment_fk_2 FOREIGN KEY (compartmentId) REFERENCES Compartments (id) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT CompartmentsPerExperiment_fk_4 FOREIGN KEY (studyId) REFERENCES Study (studyId) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `Experiments`
 --
 
@@ -243,13 +237,15 @@ DROP TABLE IF EXISTS Experiments;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE Experiments (
   studyId varchar(100) COLLATE utf8mb4_bin DEFAULT NULL,
-  experimentUniqueId int NOT NULL AUTO_INCREMENT,
-  experimentId varchar(100) COLLATE utf8mb4_bin DEFAULT NULL,
-  experimentDescription text COLLATE utf8mb4_bin,
+  id int NOT NULL AUTO_INCREMENT,
+  `name` varchar(100) COLLATE utf8mb4_bin NOT NULL,
+  `description` text COLLATE utf8mb4_bin,
   cultivationMode varchar(50) COLLATE utf8mb4_bin DEFAULT NULL,
-  controlDescription text COLLATE utf8mb4_bin,
-  PRIMARY KEY (experimentUniqueId),
+  communityId int DEFAULT NULL,
+  PRIMARY KEY (id),
   KEY fk_1 (studyId),
+  KEY Experiment_fk_1 (communityId),
+  CONSTRAINT Experiment_fk_1 FOREIGN KEY (communityId) REFERENCES Communities (id) ON DELETE SET NULL ON UPDATE CASCADE,
   CONSTRAINT Experiments_fk_1 FOREIGN KEY (studyId) REFERENCES Study (studyId) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -273,7 +269,7 @@ CREATE TABLE FC_Counts (
   KEY fk_1 (experimentUniqueId),
   KEY fk_2 (strainId),
   KEY fk_3 (studyId),
-  CONSTRAINT FC_Counts_fk_1 FOREIGN KEY (experimentUniqueId) REFERENCES Experiments (experimentUniqueId) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT FC_Counts_fk_1 FOREIGN KEY (experimentUniqueId) REFERENCES Experiments (id) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT FC_Counts_fk_2 FOREIGN KEY (strainId) REFERENCES Strains (id) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT FC_Counts_fk_3 FOREIGN KEY (studyId) REFERENCES Study (studyId) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
@@ -350,7 +346,7 @@ CREATE TABLE MetabolitePerExperiment (
   KEY fk_2 (experimentUniqueId),
   KEY fk_3 (studyId),
   CONSTRAINT MetabolitePerExperiment_fk_1 FOREIGN KEY (chebi_id) REFERENCES Metabolites (chebi_id) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT MetabolitePerExperiment_fk_2 FOREIGN KEY (experimentUniqueId) REFERENCES Experiments (experimentUniqueId) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT MetabolitePerExperiment_fk_2 FOREIGN KEY (experimentUniqueId) REFERENCES Experiments (id) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT MetabolitePerExperiment_fk_3 FOREIGN KEY (studyId) REFERENCES Study (studyId) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -409,7 +405,7 @@ CREATE TABLE Perturbation (
   PRIMARY KEY (perturbationUniqueid),
   KEY fk_1 (experimentUniqueId),
   KEY fk_2 (studyId),
-  CONSTRAINT Perturbation_fk_1 FOREIGN KEY (experimentUniqueId) REFERENCES Experiments (experimentUniqueId) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT Perturbation_fk_1 FOREIGN KEY (experimentUniqueId) REFERENCES Experiments (id) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT Perturbation_fk_2 FOREIGN KEY (studyId) REFERENCES Study (studyId) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -567,7 +563,7 @@ CREATE TABLE TechniquesPerExperiment (
   techniqueUnit varchar(100) COLLATE utf8mb4_bin NOT NULL,
   PRIMARY KEY (experimentUniqueId,technique,techniqueUnit),
   KEY fk_2 (studyId),
-  CONSTRAINT TechniquesPerExperiment_fk_1 FOREIGN KEY (experimentUniqueId) REFERENCES Experiments (experimentUniqueId) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT TechniquesPerExperiment_fk_1 FOREIGN KEY (experimentUniqueId) REFERENCES Experiments (id) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT TechniquesPerExperiment_fk_2 FOREIGN KEY (studyId) REFERENCES Study (studyId) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -608,5 +604,7 @@ INSERT INTO MigrationVersions VALUES
 (24,'2025_04_30_135012_fix_compartments_per_experiment_keys_and_columns','2025-04-30 12:54:15'),
 (30,'2025_04_30_142205_fix_compartment_columns','2025-04-30 13:08:43'),
 (33,'2025_05_01_172225_fix_community_columns','2025-05-01 15:32:33'),
-(36,'2025_05_02_171609_fix_strain_columns','2025-05-02 15:23:03');
+(36,'2025_05_02_171609_fix_strain_columns','2025-05-02 15:23:03'),
+(41,'2025_05_05_104555_fix_experiment_columns','2025-05-05 09:24:08'),
+(46,'2025_05_05_130725_fix_experiment_compartments','2025-05-05 11:21:15');
 

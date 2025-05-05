@@ -92,7 +92,7 @@ class TestExperimentChartForm(DatabaseTest):
     def test_average_df_for_strain_chart(self):
         experiment      = self.create_experiment()
         study_id        = experiment.studyId
-        experiment_uuid = experiment.experimentUniqueId
+        experiment_uuid = experiment.id
 
         bioreplicate1 = self.create_bioreplicate(experimentUniqueId=experiment_uuid, studyId=study_id)
         bioreplicate2 = self.create_bioreplicate(experimentUniqueId=experiment_uuid, studyId=study_id)
@@ -152,7 +152,7 @@ class TestExperimentChartForm(DatabaseTest):
     def test_average_df_for_bioreplicate_chart(self):
         experiment      = self.create_experiment()
         study_id        = experiment.studyId
-        experiment_uuid = experiment.experimentUniqueId
+        experiment_uuid = experiment.id
 
         bioreplicate1 = self.create_bioreplicate(experimentUniqueId=experiment_uuid, studyId=study_id)
         bioreplicate2 = self.create_bioreplicate(experimentUniqueId=experiment_uuid, studyId=study_id)

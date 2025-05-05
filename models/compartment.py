@@ -1,3 +1,4 @@
+from typing import List
 from decimal import Decimal
 
 import sqlalchemy as sql
@@ -5,6 +6,10 @@ from sqlalchemy.orm import (
     mapped_column,
     relationship,
     Mapped,
+)
+from sqlalchemy.ext.associationproxy import (
+    association_proxy,
+    AssociationProxy,
 )
 
 from models.orm_base import OrmBase
@@ -39,3 +44,9 @@ class Compartment(OrmBase):
 
     mediumName: Mapped[str]  = mapped_column(sql.String(100), nullable=True)
     mediumUrl:  Mapped[str]  = mapped_column(sql.String(100), nullable=True)
+
+    experimentCompartments: Mapped[List['ExperimentCompartment']] = relationship(back_populates='compartment')
+    experiments: AssociationProxy[List['Experiment']] = association_proxy(
+        "experimentCompartments",
+        "experiment",
+    )

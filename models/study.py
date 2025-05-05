@@ -53,11 +53,12 @@ class Study(OrmBase):
     communities:  Mapped[List['Community']]   = owner_relationship()
     compartments: Mapped[List['Compartment']] = owner_relationship()
 
-    measurementTechniques: Mapped[List['MeasurementTechnique']] = owner_relationship()
-    measurements:          Mapped[List['Measurement']]          = owner_relationship()
-    calculationTechniques: Mapped[List['CalculationTechnique']] = owner_relationship()
-    studyMetabolites:      Mapped[List['StudyMetabolite']]      = owner_relationship()
-
+    measurementTechniques:  Mapped[List['MeasurementTechnique']]  = owner_relationship()
+    measurements:           Mapped[List['Measurement']]           = owner_relationship()
+    calculationTechniques:  Mapped[List['CalculationTechnique']]  = owner_relationship()
+    studyMetabolites:       Mapped[List['StudyMetabolite']]       = owner_relationship()
+    experimentCompartments: Mapped[List['ExperimentCompartment']] = owner_relationship()
+    bioreplicates:          Mapped[List['Bioreplicate']]          = owner_relationship()
 
     @hybrid_property
     def uuid(self):

@@ -1,4 +1,5 @@
 from decimal import Decimal
+from typing import List
 
 import sqlalchemy as sql
 from sqlalchemy.orm import (
@@ -22,3 +23,5 @@ class Community(OrmBase):
     study: Mapped['Study'] = relationship(back_populates='communities')
 
     strainIds: Mapped[JSON] = mapped_column(JSON, nullable=False)
+
+    experiments: Mapped[List['Experiment']] = relationship(back_populates='community')

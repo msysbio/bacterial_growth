@@ -1,16 +1,21 @@
 import io
 import tempfile
 import copy
+import itertools
 from datetime import datetime, timedelta, UTC
 from db import get_session, get_transaction
 
 import pandas as pd
+import sqlalchemy as sql
 
 from legacy.upload_validation import validate_upload
 from legacy.populate_db import save_study_design_to_database
 from models import (
+    Bioreplicate,
     Community,
     Compartment,
+    Experiment,
+    ExperimentCompartment,
     Measurement,
     Project,
     ProjectUser,
@@ -50,6 +55,7 @@ def persist_submission_to_database(submission_form):
 
             _save_compartments(db_trans_session, submission_form, study)
             _save_communities(db_trans_session, submission_form, study, user_uuid)
+            _save_experiments(db_trans_session, submission_form, study, user_uuid)
 
             db_trans_session.flush()
 
@@ -194,6 +200,75 @@ def _save_communities(db_session, submission_form, study, user_uuid):
     db_session.add_all(communities)
 
     return communities
+
+
+def _save_experiments(db_session, submission_form, study):
+    submission = submission_form.submission
+    experiments = []
+
+    # Fetch previously-created communities:
+    community_names = [c['name'] for c in submission.studyDesign['communities']]
+    communities = db_session.scalars(
+        sql.select(Community)
+        .where(
+            Community.studyId == study.publicId,
+            Community.name.in_(community_names)
+        )
+    )
+    communities_by_name = { k: next(g) for (k, g) in itertools.groupby(communities, lambda c: c.name) }
+
+    # Fetch previously-created compartments:
+    compartment_names = [c['name'] for c in submission.studyDesign['compartments']]
+    compartments = db_session.scalars(
+        sql.select(Compartment)
+        .where(
+            Compartment.studyId == study.publicId,
+            Compartment.name.in_(compartment_names)
+        )
+    )
+    compartments_by_name = { k: next(g) for (k, g) in itertools.groupby(compartments, lambda c: c.name) }
+
+    for experiment_data in submission.studyDesign['experiments']:
+        experiment_data = copy.deepcopy(experiment_data)
+
+        community_name    = experiment_data.pop('communityName')
+        compartment_names = experiment_data.pop('compartmentNames')
+        bioreplicates     = experiment_data.pop('bioreplicates')
+
+        experiment = Experiment(
+            **experiment_data,
+            communityId=communities_by_name[community_name].id,
+        )
+        db_session.add(experiment)
+        db_session.flush()
+
+        for compartment_name in compartment_names:
+            experiment_compartment = ExperimentCompartment(
+                studyId=study.publicId,
+                experimentId=experiment.id,
+                compartmentId=compartments_by_name[compartment_name].id,
+            )
+            db_session.add(experiment_compartment)
+
+        for bioreplicate_data in bioreplicates:
+            bioreplicate = Bioreplicate(
+                # TODO rename
+                bioreplicateId=bioreplicate_data['name'],
+                # TODO (2025-05-05) Description
+                studyId=study.publicId,
+                experimentId=experiment.name,
+                experimentUniqueId=experiment.id,
+            )
+
+            db_session.add(bioreplicate)
+            db_session.flush()
+
+        experiments.append(experiment)
+
+    study.experiments = experiments
+    db_session.add_all(experiments)
+
+    return experiments
 
 
 def _save_chart_data_to_database(db_session, study, submission):
