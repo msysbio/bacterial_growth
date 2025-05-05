@@ -7,10 +7,6 @@ from sqlalchemy.orm import (
     relationship,
     Mapped,
 )
-from sqlalchemy.ext.associationproxy import (
-    association_proxy,
-    AssociationProxy,
-)
 
 from models.orm_base import OrmBase
 
@@ -46,7 +42,7 @@ class Compartment(OrmBase):
     mediumUrl:  Mapped[str]  = mapped_column(sql.String(100), nullable=True)
 
     experimentCompartments: Mapped[List['ExperimentCompartment']] = relationship(back_populates='compartment')
-    experiments: AssociationProxy[List['Experiment']] = association_proxy(
-        "experimentCompartments",
-        "experiment",
+    experiments: Mapped[List['Experiment']] = relationship(
+        secondary="ExperimentCompartments",
+        viewonly=True
     )

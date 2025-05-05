@@ -9,10 +9,6 @@ from sqlalchemy.orm import (
     relationship,
 )
 from sqlalchemy.ext.hybrid import hybrid_property
-from sqlalchemy.ext.associationproxy import (
-    AssociationProxy,
-    association_proxy,
-)
 from sqlalchemy_utc.sqltypes import UtcDateTime
 
 from models.orm_base import OrmBase
@@ -59,9 +55,9 @@ class Study(OrmBase):
     bioreplicates:          Mapped[List['Bioreplicate']]          = owner_relationship()
 
     studyMetabolites: Mapped[List['StudyMetabolite']] = owner_relationship()
-    metabolites: AssociationProxy[List['Metabolite']] = association_proxy(
-        "studyMetabolites",
-        "metabolite"
+    metabolites: Mapped[List['Metabolite']] = relationship(
+        secondary='MetabolitePerExperiment',
+        viewonly=True,
     )
 
     @hybrid_property

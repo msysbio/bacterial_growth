@@ -11,10 +11,6 @@ from sqlalchemy.orm import (
     relationship,
 )
 from sqlalchemy.ext.hybrid import hybrid_property
-from sqlalchemy.ext.associationproxy import (
-    association_proxy,
-    AssociationProxy,
-)
 
 from models.orm_base import OrmBase
 
@@ -42,9 +38,9 @@ class Experiment(OrmBase):
     cultivationMode: Mapped[str] = mapped_column(String(50))
 
     experimentCompartments: Mapped[List['ExperimentCompartment']] = relationship(back_populates='experiment')
-    compartments: AssociationProxy[List['Compartment']] = association_proxy(
-        "experimentCompartments",
-        "compartment",
+    compartments: Mapped[List['Compartment']] = relationship(
+        secondary='ExperimentCompartments',
+        viewonly=True,
     )
 
     @property
