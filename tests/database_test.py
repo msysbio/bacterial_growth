@@ -123,7 +123,7 @@ class DatabaseTest(unittest.TestCase):
         self.bioreplicate_uuid = getattr(self, 'bioreplicate_uuid', 0) + 1
 
         study_id        = self._get_or_create_dependency(params, 'studyId', 'study')
-        experiment_uuid = self._get_or_create_dependency(params, 'experimentUniqueId', 'experiment', studyId=study_id)
+        experiment_uuid = self._get_or_create_dependency(params, 'experimentUniqueId', ('experiment', 'id'), studyId=study_id)
 
         params = {
             'studyId':              study_id,
@@ -153,7 +153,7 @@ class DatabaseTest(unittest.TestCase):
 
     def create_study_metabolite(self, **params):
         study_id          = self._get_or_create_dependency(params, 'studyId', 'study')
-        experiment_uuid   = self._get_or_create_dependency(params, 'experimentUniqueId', 'experiment', studyId=study_id)
+        experiment_uuid   = self._get_or_create_dependency(params, 'experimentUniqueId', ('experiment', 'id'), studyId=study_id)
         chebi_id          = self._get_or_create_dependency(params, 'chebi_id', 'metabolite')
         bioreplicate_uuid = self._get_or_create_dependency(params, 'bioreplicateUniqueId', 'bioreplicate')
 
@@ -247,6 +247,11 @@ class DatabaseTest(unittest.TestCase):
         return instance
 
     def _get_or_create_dependency(self, params, key_name, object_name, **dependency_params):
+        if isinstance(object_name, tuple):
+            (object_name, object_key_name) = object_name
+        else:
+            object_key_name = key_name
+
         if key_name in params:
             key_value = params[key_name]
         else:
@@ -257,6 +262,6 @@ class DatabaseTest(unittest.TestCase):
             }
 
             object = creator_func(**dependency_params)
-            key_value = getattr(object, key_name)
+            key_value = getattr(object, object_key_name)
 
         return key_value
