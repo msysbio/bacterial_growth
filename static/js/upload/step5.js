@@ -2,6 +2,60 @@ $(document).ready(function() {
   $('.upload-page .step-content.step-5.active').each(function() {
     let $step5 = $(this);
 
+    $step5.initAjaxSubform({
+      buildSubform: function(index) {
+        let templateHtml = $('template.experiment-form').html();
+        let $newForm = $(templateHtml);
+
+        $newForm.prefixInputNames(`experiments-${index}-`);
+
+        return $newForm;
+      },
+
+      initializeSubform: function($subform, index) {
+        // Initialize compartments:
+        let $select = $subform.find('.js-compartment-select');
+        $select.select2({
+          multiple: true,
+          theme: 'custom',
+          width: '100%',
+          templateResult: select2Highlighter,
+        })
+        $select.trigger('change');
+
+        // Accessed by javascript later
+        $subform.attr('data-index', index);
+
+        // Initialize bioreplicate forms (nested under experiments):
+        $subform.on('click', '.js-add-bioreplicate', function(e) {
+          e.preventDefault();
+
+          let $addButton = $(e.currentTarget);
+          addBioreplicateForm($addButton);
+        });
+
+        function addBioreplicateForm($addButton) {
+          let templateHtml = $subform.find('template.bioreplicate-form').html();
+
+          let parentFormIndex = $subform.data('index');
+          let $subforms       = $subform.find('.js-bioreplicate-container');
+          let subformIndex    = $subforms.length;
+          let $newForm        = $(templateHtml);
+
+          $newForm.prefixInputNames(`experiments-${parentFormIndex}-bioreplicates-${subformIndex}-`);
+
+          // Add sequential number:
+          $newForm.find('.js-index').text(`${subformIndex + 1}`)
+
+          // Give it a different style:
+          $newForm.addClass('new');
+
+          // Insert into DOM
+          $subform.find('.js-new-item-anchor').before($newForm);
+        }
+      }
+    })
+
     $step5.on('click', '.js-remove', function(e) {
       e.preventDefault();
       $(e.currentTarget).parents('.js-subform-container').first().remove();
@@ -70,49 +124,6 @@ $(document).ready(function() {
     }
 
     function initializeExperimentForm($container, index) {
-      let $select = $container.find('.js-compartment-select');
-      $select.select2({
-        multiple: true,
-        theme: 'custom',
-        width: '100%',
-        templateResult: select2Highlighter,
-      })
-      $select.trigger('change');
-
-      $container.attr('data-index', index);
-
-      // Initialize bioreplicate forms (nested under experiments):
-      $container.on('click', '.js-add-bioreplicate', function(e) {
-        e.preventDefault();
-
-        let $addButton = $(e.currentTarget);
-        addBioreplicateForm($addButton);
-      });
-
-      function addBioreplicateForm($addButton) {
-        let templateHtml = $container.find('template.bioreplicate-form').html();
-
-        let parentFormIndex = $container.data('index');
-        let $subforms       = $container.find('.js-bioreplicate-container');
-        let subformIndex    = $subforms.length;
-        let $newForm        = $(templateHtml);
-
-        // Modify names:
-        $newForm.find('input,select,textarea').each(function() {
-          let $input = $(this);
-          let name = $input.attr('name');
-          $input.attr('name', `experiments-${parentFormIndex}-bioreplicates-${subformIndex}-${name}`);
-        });
-
-        // Add sequential number:
-        $newForm.find('.js-index').text(`${subformIndex + 1}`)
-
-        // Give it a different style:
-        $newForm.addClass('new');
-
-        // Insert into DOM
-        $container.find('.js-new-item-anchor').before($newForm);
-      }
     }
   });
 });

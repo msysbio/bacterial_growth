@@ -11,7 +11,7 @@
   {% endif %}
 
   <div
-      class="subform-container js-subform-container js-experiment-container"
+      class="subform-container js-subform-container"
       data-index="{{ index if index is not none else '' }}">
     <h3>
       Experiment <span class="js-index">{{ index + 1 if index is not none else '' }}</span>
@@ -102,7 +102,7 @@
 
     <div class="form-row" style="margin-top: 10px;">
       <div class="no-label flex-right">
-        <a href="#" class="white-button flex-row js-remove">
+        <a href="#" class="white-button flex-row js-remove-trigger">
           <span class="icon icon-remove"></span> Remove
         </a>
       </div>
