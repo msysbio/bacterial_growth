@@ -64,12 +64,12 @@
     </div>
 
     <template class="compartment-form">
-      {% set subform = upload_form.get_compartment_template() %}
+      {% set subform = upload_form.get_template('CompartmentForm') %}
       {{ render_compartment_form(form=subform, index=None) }}
     </template>
 
     <template class="community-form">
-      {% set subform = upload_form.get_community_template() %}
+      {% set subform = upload_form.get_template('CommunityForm') %}
       {{ render_community_form(form=subform, submission_form=submission_form, index=None) }}
     </template>
   </form>

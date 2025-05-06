@@ -23,7 +23,12 @@ $(document).ready(function() {
             initializeExperimentForm($(this), index);
           });
 
-          addExperimentForm($addButton);
+          let $errorMessageList = $subformList.find('.error-message-list');
+          if ($errorMessageList.length == 0) {
+            addExperimentForm($addButton);
+          } else {
+            $(document).scrollTo($errorMessageList, 150);
+          }
         }
       })
     });
@@ -58,8 +63,8 @@ $(document).ready(function() {
       // Give it a different style:
       $newForm.addClass('new');
 
-      // Insert into DOM
-      $addButton.parents('.form-row').before($newForm);
+      // Insert into DOM right before the anchor
+      $addButton.parents('form').find('.js-experiment-subform-list').append($newForm);
 
       initializeExperimentForm($newForm, subformIndex);
     }
@@ -72,7 +77,7 @@ $(document).ready(function() {
         width: '100%',
         templateResult: select2Highlighter,
       })
-      // $select.trigger('change');
+      $select.trigger('change');
 
       $container.attr('data-index', index);
 
@@ -84,18 +89,13 @@ $(document).ready(function() {
         addBioreplicateForm($addButton);
       });
 
-      // if ($container.find('.js-bioreplicate-container').length == 0) {
-      //   // By default, add one form
-      //   addBioreplicateForm($container.find('.js-add-bioreplicate'));
-      // }
-
       function addBioreplicateForm($addButton) {
         let templateHtml = $container.find('template.bioreplicate-form').html();
 
         let parentFormIndex = $container.data('index');
-        let $subforms = $container.find('.js-bioreplicate-container');
-        let subformIndex = $subforms.length;
-        let $newForm = $(templateHtml);
+        let $subforms       = $container.find('.js-bioreplicate-container');
+        let subformIndex    = $subforms.length;
+        let $newForm        = $(templateHtml);
 
         // Modify names:
         $newForm.find('input,select,textarea').each(function() {

@@ -1,6 +1,6 @@
 import re
-import json
 
+import simplejson as json
 from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
 from sqlalchemy.orm import configure_mappers

@@ -58,9 +58,3 @@ class UploadStep4Form(FlaskForm):
 
     compartments = FieldList(FormField(CompartmentForm))
     communities  = FieldList(FormField(CommunityForm))
-
-    def get_compartment_template(self):
-        return self.__class__.CompartmentForm()
-
-    def get_community_template(self):
-        return self.__class__.CommunityForm()

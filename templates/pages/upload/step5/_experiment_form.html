@@ -1,4 +1,5 @@
 {% from 'pages/upload/step5/_bioreplicate_form.html' import render_bioreplicate_form %}
+{% from 'utils/_form_errors.html' import render_form_errors %}
 
 {% macro render_experiment_form(form, submission_form, index) %}
   {% set submission = submission_form.submission %}
@@ -45,6 +46,7 @@
         <div class="required">Compartments</div>
 
         <select
+            required
             multiple
             name="{{ prefix }}compartmentNames"
             class="js-compartment-select">
@@ -80,14 +82,20 @@
         </a>
       </div>
 
+      {{ render_form_errors(form.errors['bioreplicates']) }}
+
       {% for bioreplicate_form in form.bioreplicates: %}
-        {{ render_bioreplicate_form(form=bioreplicate_form, submission_form=submission_form, index=loop.index0) }}
+        {{ render_bioreplicate_form(
+          form=bioreplicate_form,
+          submission_form=submission_form,
+          index=loop.index0
+        ) }}
       {% endfor %}
 
       <template class="js-new-item-anchor"></template>
 
       <template class="bioreplicate-form">
-        {% set subform = form.get_bioreplicate_template() %}
+        {% set subform = form.get_template('BioreplicateForm') %}
         {{ render_bioreplicate_form(form=subform, submission_form=submission_form, index=None) }}
       </template>
     </div>

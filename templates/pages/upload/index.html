@@ -36,6 +36,8 @@
 {% block title %}: Upload{% endblock %}
 
 {% block content %}
+  {% set submission = submission_form.submission %}
+
   <header>
     <img height="100" src="{{ url_for('static', filename='images/upload_banner.png') }}" />
   </header>

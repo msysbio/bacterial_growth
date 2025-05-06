@@ -20,7 +20,7 @@
 
     <br>
 
-    <div class="js-subform-list">
+    <div class="js-subform-list js-experiment-subform-list flex-column flex-gap-10">
       {% include 'pages/upload/step5/_subform_list.html' %}
     </div>
 
@@ -38,7 +38,7 @@
     </div>
 
     <template class="experiment-form">
-      {% set subform = upload_form.get_experiment_template() %}
+      {% set subform = upload_form.get_template('ExperimentForm') %}
       {{ render_experiment_form(form=subform, submission_form=submission_form, index=None) }}
     </template>
   </form>

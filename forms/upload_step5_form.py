@@ -1,4 +1,3 @@
-from flask_wtf import FlaskForm
 from wtforms import (
     BooleanField,
     DecimalField,
@@ -12,14 +11,16 @@ from wtforms import (
 )
 from wtforms.validators import DataRequired
 
+from forms.base_form import BaseForm
 
-class UploadStep5Form(FlaskForm):
 
-    class ExperimentForm(FlaskForm):
+class UploadStep5Form(BaseForm):
+
+    class ExperimentForm(BaseForm):
         class Meta:
             csrf = False
 
-        class BioreplicateForm(FlaskForm):
+        class BioreplicateForm(BaseForm):
             class Meta:
                 csrf = False
 
@@ -36,15 +37,27 @@ class UploadStep5Form(FlaskForm):
             ('other',     "Other"),
         ])
 
-        communityName    = SelectField('communityName')
-        compartmentNames = SelectMultipleField('compartmentNames')
+        communityName = SelectField(
+            'communityName',
+            validators=[DataRequired()],
+            choices=[],
+            validate_choice=False,
+        )
+        compartmentNames = SelectMultipleField(
+            'compartmentNames',
+            validators=[DataRequired()],
+            choices=[],
+            validate_choice=False,
+        )
 
         bioreplicates = FieldList(FormField(BioreplicateForm))
 
-        def get_bioreplicate_template(self):
-            return self.__class__.BioreplicateForm()
+        def validate_bioreplicates(self, field):
+            names = [b['name'] for b in field.data]
+            self._validate_uniqueness("Bioreplicate names are not unique", names)
 
     experiments = FieldList(FormField(ExperimentForm))
 
-    def get_experiment_template(self):
-        return self.__class__.ExperimentForm()
+    def validate_experiments(self, field):
+        names = [e['name'] for e in field.data]
+        self._validate_uniqueness("Experiment names are not unique", names)
