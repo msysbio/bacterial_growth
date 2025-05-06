@@ -1,6 +1,13 @@
-{% macro render_new_strain_form(data, prefix) %}
+{% macro render_new_strain_form(form, submission_form, index) %}
+  {% set submission = submission_form.submission %}
 
-  <div class="subform-container new-strain-container js-new-strain-container">
+  {% if index is none: %}
+    {% set prefix = '' %}
+  {% else: %}
+    {% set prefix = 'new_strains-{}-'.format(index)  %}
+  {% endif %}
+
+  <div class="subform-container new-strain-container js-subform-container">
     {% if g.current_user: %}
       <input
           name="{{ prefix }}userUniqueID"
@@ -10,13 +17,8 @@
 
     <div class="form-row">
       <label style="width: 50%;">
-        <span>Name of the microbial strain:</span>
-        <input
-            name="{{ prefix }}name"
-            type="text"
-            class="form-input-full form-input-blue"
-            value="{{ data['name'] if data }}"
-            required />
+        <div class="required">Name of the microbial strain:</div>
+        {{ form['name'](class='form-input-blue form-input-full') }}
       </label>
 
       <label style="width: 50%;">
@@ -25,11 +27,11 @@
             name="{{ prefix }}species"
             class="form-input-full form-input-blue js-single-strain-select"
             required>
-          {% if data %}
-            <option value="{{ data['species'] }}">
-              {{ data['species_name'] }} (NCBI:{{ data['species'] }})
+          {% for new_strain_data in submission.studyDesign['new_strains'] %}
+            <option value="{{ new_strain_data['species'] }}">
+              {{ new_strain_data['species_name'] }} (NCBI:{{ new_strain_data['species'] }})
             </option>
-          {% endif %}
+          {% endfor %}
         </select>
       </label>
     </div>
@@ -37,15 +39,11 @@
     <div class="form-row">
       <label class="full">
         <div>Description</div>
-        <textarea
-            name="{{ prefix }}description"
-            class="form-input-full form-input-blue"
-            required
-            rows=2>{{ data['description'] if data }}</textarea>
+        {{ form['description'](class='form-input-blue form-input-full', rows=2) }}
       </label>
 
       <div class="no-label">
-        <a href="#" class="white-button flex-row js-remove-new-strain">
+        <a href="#" class="white-button flex-row js-remove-trigger">
           <span class="icon icon-remove"></span> Remove
         </a>
       </div>

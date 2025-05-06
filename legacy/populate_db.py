@@ -23,7 +23,7 @@ def save_study_design_to_database(conn, yml_dir, submission_form, data_template,
     submission = submission_form.submission
 
     list_microbial_strains = [t.tax_names for t in submission_form.fetch_taxa()]
-    list_microbial_strains += [strain['name'] for strain in submission_form.fetch_new_strains()]
+    list_microbial_strains += [strain['name'] for strain in submission.studyDesign['new_strains']]
 
     info_file_study       = os.path.join(yml_dir, 'STUDY.yaml')
     info_file_experiments = os.path.join(yml_dir, 'EXPERIMENTS.yaml')

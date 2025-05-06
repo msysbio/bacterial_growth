@@ -87,10 +87,13 @@ def upload_step1_page():
 
 def upload_step2_page():
     submission_form = _init_submission_form(step=2)
-    form = UploadStep2Form(request.form)
+    upload_form     = _init_upload_form(UploadStep2Form, submission_form.submission)
 
-    if request.method == 'POST':
-        submission_form.update_strains(form.data)
+    if _request_is_ajax():
+        return _step2_partial(upload_form, submission_form)
+
+    if request.method == 'POST' and upload_form.validate():
+        submission_form.update_strains(upload_form.data)
         session['submission_id'] = submission_form.save()
 
         return redirect(url_for('upload_step3_page'))
@@ -98,6 +101,19 @@ def upload_step2_page():
     return render_template(
         "pages/upload/index.html",
         submission_form=submission_form,
+        upload_form=upload_form,
+    )
+
+
+def _step2_partial(upload_form, submission_form):
+    if upload_form.validate():
+        submission_form.update_strains(upload_form.data)
+        session['submission_id'] = submission_form.save()
+
+    return render_template(
+        "pages/upload/step2/_subform_list.html",
+        submission_form=submission_form,
+        upload_form=upload_form,
     )
 
 
@@ -147,18 +163,13 @@ def upload_step4_page():
 
 def upload_step5_page():
     submission_form = _init_submission_form(step=5)
-    submission = submission_form.submission
-
-    if request.method == 'POST':
-        form = UploadStep5Form(request.form)
-    else:
-        form = UploadStep5Form(data=submission.studyDesign)
+    upload_form     = _init_upload_form(UploadStep5Form, submission_form.submission)
 
     if _request_is_ajax():
-        return _step5_partial(form, submission_form)
+        return _step5_partial(upload_form, submission_form)
 
-    if request.method == 'POST' and form.validate():
-        submission_form.update_study_design(form.data)
+    if request.method == 'POST' and upload_form.validate():
+        submission_form.update_study_design(upload_form.data)
         session['submission_id'] = submission_form.save()
 
         return redirect(url_for('upload_step6_page'))
@@ -166,7 +177,7 @@ def upload_step5_page():
     return render_template(
         "pages/upload/index.html",
         submission_form=submission_form,
-        upload_form=form,
+        upload_form=upload_form,
     )
 
 
@@ -222,7 +233,7 @@ def download_study_template_xlsx():
             'parent_taxon_id': strain['species'],
         }
         for (index, strain)
-        in enumerate(submission_form.fetch_new_strains())
+        in enumerate(submission.studyDesign['new_strains'])
     ]
 
     spreadsheet = study_spreadsheet.create_excel(
@@ -246,7 +257,7 @@ def download_data_template_xlsx():
 
     metabolite_names = [m.metabo_name for m in submission_form.fetch_all_metabolites()]
     strain_names = [t.tax_names for t in submission_form.fetch_taxa()]
-    strain_names += [s['name'] for s in submission_form.fetch_new_strains()]
+    strain_names += [s['name'] for s in submission.studyDesign['new_strains']]
 
     spreadsheet = data_spreadsheet.create_excel(
         submission,
@@ -296,6 +307,14 @@ def _init_submission_form(step):
         db_session=g.db_session,
         user_uuid=g.current_user.uuid,
     )
+
+
+def _init_upload_form(form_class, submission):
+    if request.method == 'POST':
+        return form_class(request.form)
+    else:
+        return form_class(data=submission.studyDesign)
+
 
 def _request_is_ajax():
     return request.headers.get('X-Requested-With', '') == 'XMLHttpRequest'

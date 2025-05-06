@@ -4,6 +4,7 @@ from wtforms import (
     StringField,
     FormField,
     FieldList,
+    TextAreaField,
 )
 from wtforms.validators import DataRequired
 
@@ -12,13 +13,17 @@ from forms.base_form import BaseForm
 
 class UploadStep2Form(BaseForm):
 
-    class NewStrainsForm(BaseForm):
+    class NewStrainForm(BaseForm):
         class Meta:
             csrf = False
 
         name        = StringField('name', validators=[DataRequired()])
-        description = StringField('description')
-        species     = SelectField('species')
+        description = TextAreaField('description')
+        species     = SelectField('species', choices=[], validate_choice=False)
 
-    strains     = SelectMultipleField('strains')
-    new_strains = FieldList(FormField(NewStrainsForm), min_entries=0)
+    strains     = SelectMultipleField('strains', choices=[], validate_choice=False)
+    new_strains = FieldList(FormField(NewStrainForm))
+
+    def validate_new_strains(self, field):
+        names = [s['name'] for s in field.data]
+        self._validate_uniqueness("Strain names are not unique", names)

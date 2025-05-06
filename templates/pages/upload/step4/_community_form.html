@@ -1,4 +1,6 @@
 {% macro render_community_form(form, submission_form, index) %}
+  {% set submission = submission_form.submission %}
+
   {% if index is none: %}
     {% set prefix = '' %}
   {% else: %}
@@ -32,7 +34,7 @@
             </option>
           {% endfor %}
 
-          {% for strain in submission_form.fetch_new_strains(): %}
+          {% for strain in submission.studyDesign['new_strains']: %}
             <option
                 value="custom|{{ strain['name'] }}"
                 {{ "selected" if strainIdentifiers and "custom|{}".format(strain['name']) in strainIdentifiers }}>

@@ -22,7 +22,7 @@
           <span class="icon"></span>
           {{ new_strain_count }} new strain(s) added:
           <span class="truncate">
-            <strong>{{ submission_form.fetch_new_strains()|map(attribute='name')|join('</strong>, <strong>')|safe }}</strong>
+            <strong>{{ submission.studyDesign['new_strains']|map(attribute='name')|join('</strong>, <strong>')|safe }}</strong>
           </span>
         {% else: %}
           <span class="icon"></span> No new strain(s) added

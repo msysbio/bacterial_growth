@@ -118,7 +118,21 @@ class SubmissionForm:
         self.type       = self._determine_project_type()
 
     def update_strains(self, data):
-        self.submission.studyDesign['strains']     = data['strains']
+        # Existing strains
+        self.submission.studyDesign['strains'] = data['strains']
+
+        # Add parent species name to new strain data:
+        for strain in data['new_strains']:
+            if 'species_name' in strain:
+                continue
+
+            strain['species_name'] = self.db_session.scalars(
+                sql.select(Taxon.tax_names)
+                .where(Taxon.tax_id == strain['species'])
+                .limit(1)
+            ).one_or_none()
+
+        # Save new strains
         self.submission.studyDesign['new_strains'] = data['new_strains']
 
         flag_modified(self.submission, 'studyDesign')
@@ -141,23 +155,6 @@ class SubmissionForm:
             sql.select(Taxon)
             .where(Taxon.tax_id.in_(strains))
         ).all()
-
-    def fetch_new_strains(self):
-        new_strains = []
-
-        for strain in self.submission.studyDesign['new_strains']:
-            if 'species_name' in strain:
-                continue
-
-            new_strains.append(copy.deepcopy(strain))
-
-            new_strains[-1]['species_name'] = self.db_session.scalars(
-                sql.select(Taxon.tax_names)
-                .where(Taxon.tax_id == strain['species'])
-                .limit(1)
-            ).one_or_none()
-
-        return new_strains
 
     def fetch_metabolites_for_technique(self, technique_index=None):
         if technique_index is None:
