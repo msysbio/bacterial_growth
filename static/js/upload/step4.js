@@ -91,6 +91,8 @@ $(document).ready(function() {
         width: '100%',
         templateResult: select2Highlighter,
       });
+
+      $select.trigger('change');
     }
 
   });

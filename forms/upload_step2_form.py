@@ -1,4 +1,3 @@
-from flask_wtf import FlaskForm
 from wtforms import (
     SelectField,
     SelectMultipleField,
@@ -8,16 +7,18 @@ from wtforms import (
 )
 from wtforms.validators import DataRequired
 
-
-class NewStrainsForm(FlaskForm):
-    class Meta:
-        csrf = False
-
-    name        = StringField('name', validators=[DataRequired()])
-    description = StringField('description')
-    species     = SelectField('species')
+from forms.base_form import BaseForm
 
 
-class UploadStep2Form(FlaskForm):
+class UploadStep2Form(BaseForm):
+
+    class NewStrainsForm(BaseForm):
+        class Meta:
+            csrf = False
+
+        name        = StringField('name', validators=[DataRequired()])
+        description = StringField('description')
+        species     = SelectField('species')
+
     strains     = SelectMultipleField('strains')
     new_strains = FieldList(FormField(NewStrainsForm), min_entries=0)

@@ -1,4 +1,3 @@
-from flask_wtf import FlaskForm
 from wtforms import (
     BooleanField,
     DecimalField,
@@ -12,10 +11,12 @@ from wtforms import (
 )
 from wtforms.validators import DataRequired
 
+from forms.base_form import BaseForm
 
-class UploadStep4Form(FlaskForm):
 
-    class CompartmentForm(FlaskForm):
+class UploadStep4Form(BaseForm):
+
+    class CompartmentForm(BaseForm):
         class Meta:
             csrf = False
 
@@ -49,7 +50,7 @@ class UploadStep4Form(FlaskForm):
 
         carbonSource = BooleanField('carbonSource')
 
-    class CommunityForm(FlaskForm):
+    class CommunityForm(BaseForm):
         class Meta:
             csrf = False
 

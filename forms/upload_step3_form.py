@@ -1,4 +1,3 @@
-from flask_wtf import FlaskForm
 from wtforms import (
     BooleanField,
     FieldList,
@@ -10,12 +9,14 @@ from wtforms import (
 )
 from wtforms.validators import DataRequired
 
+from forms.base_form import BaseForm
+
 # TODO (2024-09-30) Extract types of vessels etc into enums in the database for easy model lookup
 
 
-class UploadStep3Form(FlaskForm):
+class UploadStep3Form(BaseForm):
 
-    class TechniqueForm(FlaskForm):
+    class TechniqueForm(BaseForm):
         class Meta:
             csrf = False
 

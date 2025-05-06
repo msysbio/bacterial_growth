@@ -29,7 +29,7 @@
           {% for taxon in submission_form.fetch_taxa(): %}
             <option
                 value="existing|{{ taxon.tax_id }}"
-                {{ "selected" if strainIdentifiers and taxon.tax_id in strainIdentifiers }}>
+                {{ "selected" if strainIdentifiers and "existing|{}".format(taxon.tax_id) in strainIdentifiers }}>
               {{ taxon.tax_names }} (NCBI:{{ taxon.tax_id }})
             </option>
           {% endfor %}
@@ -37,7 +37,7 @@
           {% for strain in submission_form.fetch_new_strains(): %}
             <option
                 value="custom|{{ strain['name'] }}"
-                {{ "selected" if strainIdentifiers and strain['name'] in strainIdentifiers }}>
+                {{ "selected" if strainIdentifiers and "custom|{}".format(strain['name']) in strainIdentifiers }}>
             {{ strain['name'] }}
             </option>
           {% endfor %}
