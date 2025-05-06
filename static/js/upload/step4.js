@@ -21,6 +21,12 @@ $(document).ready(function() {
       $(e.currentTarget).parents('.js-compartment-container,.js-community-container').remove();
     });
 
+    $step4.on('click', '.js-duplicate', function(e) {
+      e.preventDefault();
+
+      console.log("Duplicate");
+    });
+
     function addCompartmentForm($addButton) {
       let templateHtml = $('template.compartment-form').html();
 

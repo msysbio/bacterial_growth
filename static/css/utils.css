@@ -368,3 +368,4 @@ form.simple-form {
 .icon.icon-chart          { background-image: url('/static/images/icons/chart-dots-2.svg'); }
 .icon.icon-tool           { background-image: url('/static/images/icons/tool.svg'); }
 .icon.icon-info           { background-image: url('/static/images/icons/info-circle.svg'); }
+.icon.icon-duplicate      { background-image: url('/static/images/icons/transition-bottom.svg'); }

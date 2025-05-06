@@ -16,9 +16,7 @@
         {# Note: Have to access the input using [], since there is an existing `.name` attribute #}
         {{ form['name'](class='form-input-blue form-input-full') }}
       </label>
-    </div>
 
-    <div class="form-row">
       <label class="full">
         <div>Strains</div>
 
@@ -47,8 +45,14 @@
           Leave empty to create a blank community for OD blanks or control experiments.
         </div>
       </label>
+    </div>
 
-      <div class="no-label flex-right">
+    <div class="flex-row">
+      <a href="#" class="white-button flex-row js-duplicate">
+        <span class="icon icon-duplicate"></span> Duplicate
+      </a>
+
+      <div class="no-label flex-right flex-row flex-gap-6">
         <a href="#" class="white-button flex-row js-remove">
           <span class="icon icon-remove"></span> Remove
         </a>
