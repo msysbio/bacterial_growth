@@ -12,7 +12,20 @@ $(document).ready(function() {
       e.preventDefault();
 
       let $addButton = $(e.currentTarget);
-      addExperimentForm($addButton);
+      let $form = $addButton.parents('form').first();
+
+      $form.ajaxSubmit({
+        success: function(response) {
+          let $subformList = $form.find('.js-subform-list');
+          $subformList.html(response);
+
+          $subformList.find('.js-subform-container').each(function(index) {
+            initializeExperimentForm($(this), index);
+          });
+
+          addExperimentForm($addButton);
+        }
+      })
     });
 
     if ($step5.find('.js-experiment-container').length == 0) {

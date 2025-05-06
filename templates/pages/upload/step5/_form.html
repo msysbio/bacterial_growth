@@ -20,9 +20,9 @@
 
     <br>
 
-    {% for experiment_form in upload_form.experiments: %}
-      {{ render_experiment_form(form=experiment_form, submission_form=submission_form, index=loop.index0) }}
-    {% endfor %}
+    <div class="js-subform-list">
+      {% include 'pages/upload/step5/_subform_list.html' %}
+    </div>
 
     <div class="form-row flex-right flex-row">
       <a href="#" class="white-button flex-row js-add-experiment">

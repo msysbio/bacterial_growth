@@ -160,7 +160,14 @@ def upload_step5_page():
         submission_form.update_study_design(form.data)
         session['submission_id'] = submission_form.save()
 
-        return redirect(url_for('upload_step6_page'))
+        if _request_is_ajax():
+            return render_template(
+                "pages/upload/step5/_subform_list.html",
+                submission_form=submission_form,
+                upload_form=form,
+            )
+        else:
+            return redirect(url_for('upload_step6_page'))
 
     else:
         upload_form = UploadStep5Form(data=submission.studyDesign)
@@ -289,3 +296,6 @@ def _init_submission_form(step):
         db_session=g.db_session,
         user_uuid=g.current_user.uuid,
     )
+
+def _request_is_ajax():
+    return request.headers.get('X-Requested-With', '') == 'XMLHttpRequest'

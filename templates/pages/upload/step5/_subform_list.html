@@ -1,0 +1,5 @@
+{% from 'pages/upload/step5/_experiment_form.html' import render_experiment_form %}
+
+{% for experiment_form in upload_form.experiments: %}
+  {{ render_experiment_form(form=experiment_form, submission_form=submission_form, index=loop.index0) }}
+{% endfor %}

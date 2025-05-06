@@ -12,7 +12,10 @@
   <div
       class="subform-container js-subform-container js-experiment-container"
       data-index="{{ index if index is not none else '' }}">
-    <h3>Experiment <span class="js-index">{{ index + 1 if index is not none else '' }}</span></h3>
+    <h3>
+      Experiment <span class="js-index">{{ index + 1 if index is not none else '' }}</span>
+      {%- if form.data['name']: -%}: {{ form.data['name'] }}{% endif %}
+    </h3>
 
     <div class="form-row">
       <label class="full">

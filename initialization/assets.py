@@ -5,18 +5,22 @@ def init_assets(app):
     assets = flask_assets.Environment(app)
 
     assets.register('app_js', flask_assets.Bundle(
+        # External libraries:
         'js/vendor/jquery-3.7.1.js',
         'js/vendor/select2-4.0.13.js',
         'js/vendor/moment-2.30.1.js',
         'js/vendor/popper-core-2.11.8.js',
         'js/vendor/tippy-6.3.7.js',
+        # Internal libraries:
+        'js/lib/forms.js',
+        'js/lib/util.js',
+        # Pages:
         'js/upload/step1.js',
         'js/upload/step2.js',
         'js/upload/step3.js',
         'js/upload/step4.js',
         'js/upload/step5.js',
         'js/upload/step6.js',
-        'js/util.js',
         'js/main.js',
         'js/search.js',
         'js/export.js',
