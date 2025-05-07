@@ -129,12 +129,16 @@ $.fn.initAjaxSubform = function(params) {
     let $form            = $duplicateButton.parents('form');
     let $currentSubform  = $(e.currentTarget).parents('.js-subform-container').first();
 
+    // Clear out select2 elements from the source subform (it'll be reloaded anyway):
+    $currentSubform.find('select.select2-hidden-accessible').each(function() {
+      $(this).select2('destroy');
+    });
+    let $newSubform = $currentSubform.clone();
+
     $form.ajaxSubmit({
       urlParams: params.urlParams,
       success: function(response) {
         loadResponse(response, function($subformList, subformCount) {
-          let $newSubform = $currentSubform.clone();
-
           let currentNameExample = $currentSubform.find('input,textarea,select').first().attr('name');
           let currentPrefixMatch = currentNameExample.match(params.prefixRegex);
 
@@ -151,11 +155,17 @@ $.fn.initAjaxSubform = function(params) {
           // Apply any post-processing:
           params.onDuplicate($newSubform);
 
+          // Add sequential number:
+          $newSubform.find('.js-index').text(`${subformCount + 1}`);
+
           // Give it a different style:
           $newSubform.addClass('new');
 
           // Add it to the end of the list:
           $subformList.append($newSubform);
+
+          // Trigger necessary javascript
+          params.initializeSubform($newSubform, subformCount);
         });
       }
     });

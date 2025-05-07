@@ -4,6 +4,10 @@ $(document).ready(function() {
 
     $step4.find('.js-compartment-section').initAjaxSubform({
       urlParams: { subform_type: 'compartment' },
+
+      prefixRegex:    /compartments-(\d+)-/,
+      prefixTemplate: 'compartments-{}-',
+
       buildSubform: function (index) {
         let templateHtml = $('template.compartment-form').html();
         let $newForm = $(templateHtml);
@@ -12,10 +16,19 @@ $(document).ready(function() {
 
         return $newForm;
       },
+
+      onDuplicate: function($newForm) {
+        // Reset name
+        $newForm.find('input[name$="name"]').val('');
+      },
     });
 
     $step4.find('.js-community-section').initAjaxSubform({
       urlParams: { subform_type: 'community' },
+
+      prefixRegex:    /communities-(\d+)-/,
+      prefixTemplate: 'communities-{}-',
+
       buildSubform: function (index) {
         let templateHtml = $('template.community-form').html();
         let $newForm = $(templateHtml);
@@ -36,6 +49,11 @@ $(document).ready(function() {
         });
 
         $select.trigger('change');
+      },
+
+      onDuplicate: function($newForm) {
+        // Reset name
+        $newForm.find('input[name$="name"]').val('');
       },
     });
   });

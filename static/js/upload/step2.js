@@ -67,7 +67,6 @@ $(document).ready(function() {
       initializeSubform: function($subform, index) {
         let $select = $subform.find('.js-single-strain-select');
         let $option = $select.find('option:selected');
-        console.log($option.text());
 
         $select.select2({
           placeholder: 'Select parent species',
