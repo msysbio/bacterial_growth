@@ -162,6 +162,7 @@ form.simple-form {
 
   .no-label {
     display: flex;
+    flex-direction: column;
     justify-content: flex-end;
   }
 
