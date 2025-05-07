@@ -129,16 +129,17 @@ $.fn.initAjaxSubform = function(params) {
     let $form            = $duplicateButton.parents('form');
     let $currentSubform  = $(e.currentTarget).parents('.js-subform-container').first();
 
-    // Clear out select2 elements from the source subform (it'll be reloaded anyway):
-    $currentSubform.find('select.select2-hidden-accessible').each(function() {
-      $(this).select2('destroy');
-    });
-    let $newSubform = $currentSubform.clone();
+    let currentSubformIndex = $currentSubform.parent().children().index($currentSubform[0]);
 
     $form.ajaxSubmit({
       urlParams: params.urlParams,
       success: function(response) {
         loadResponse(response, function($subformList, subformCount) {
+          // We load the subform after it's reloaded from the server, but
+          // before javascript changes have been applied to it:
+          let $currentSubform = $subformList.find('.js-subform-container').eq(currentSubformIndex);
+          let $newSubform     = $currentSubform.clone();
+
           let currentNameExample = $currentSubform.find('input,textarea,select').first().attr('name');
           let currentPrefixMatch = currentNameExample.match(params.prefixRegex);
 
@@ -212,15 +213,15 @@ $.fn.initAjaxSubform = function(params) {
     let $subforms = $subformList.find('.js-subform-container');
     let subformCount = $subforms.length;
 
-    $subforms.each(function(index) {
-      params.initializeSubform($(this), index);
-    });
-
     let $errorMessageList = $subformList.find('.error-message-list');
     if ($errorMessageList.length == 0) {
       callback($subformList, subformCount);
     } else {
       $(document).scrollTo($errorMessageList, 150);
     }
+
+    $subforms.each(function(index) {
+      params.initializeSubform($(this), index);
+    });
   }
 }

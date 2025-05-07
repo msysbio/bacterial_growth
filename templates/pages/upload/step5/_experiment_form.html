@@ -11,7 +11,7 @@
   {% endif %}
 
   <div
-      class="subform-container js-subform-container"
+      class="subform-container js-subform-container js-experiment-container"
       data-index="{{ index if index is not none else '' }}">
     <h3>
       Experiment <span class="js-index">{{ index + 1 if index is not none else '' }}</span>
@@ -35,7 +35,9 @@
 
         <select name="{{ prefix }}communityName" class="form-input-blue form-input-full js-community-select">
           {% for community_data in submission.studyDesign['communities']: %}
-            <option value="{{ community_data['name'] }}">
+            <option
+                value="{{ community_data['name'] }}"
+                {{ "selected" if form.data['communityName'] == community_data['name'] }}>
               {{ community_data['name'] }}
             </option>
           {% endfor %}
@@ -101,6 +103,12 @@
     </div>
 
     <div class="form-row" style="margin-top: 10px;">
+      <div class="no-label">
+        <a href="#" class="white-button flex-row js-duplicate-trigger">
+          <span class="icon icon-duplicate"></span> Duplicate
+        </a>
+      </div>
+
       <div class="no-label flex-right">
         <a href="#" class="white-button flex-row js-remove-trigger">
           <span class="icon icon-remove"></span> Remove
