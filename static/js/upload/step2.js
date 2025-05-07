@@ -47,17 +47,27 @@ $(document).ready(function() {
 
     // Initialize creation of new strains:
     $step2.initAjaxSubform({
+      prefixRegex:    /new_strains-(\d+)-/,
+      prefixTemplate: 'new_strains-{}-',
+
       buildSubform: function(index) {
         let templateHtml = $('template.new-strain-form').html();
         let $newForm = $(templateHtml);
 
-        $newForm.prefixInputNames(`new_strains-${index}-`);
+        $newForm.addPrefix(`new_strains-${index}-`);
 
         return $newForm;
       },
 
+      onDuplicate: function($newForm) {
+        // Reset name
+        $newForm.find('input[name$="name"]').val('');
+      },
+
       initializeSubform: function($subform, index) {
         let $select = $subform.find('.js-single-strain-select');
+        let $option = $select.find('option:selected');
+        console.log($option.text());
 
         $select.select2({
           placeholder: 'Select parent species',
@@ -74,8 +84,7 @@ $(document).ready(function() {
         });
 
         $select.on('change', function() { updateNewStrainParentPreview($select) });
-
-        updateNewStrainParentPreview($select);
+        $select.trigger('change');
       }
     })
 

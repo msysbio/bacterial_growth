@@ -8,7 +8,7 @@ $(document).ready(function() {
         let templateHtml = $('template.compartment-form').html();
         let $newForm = $(templateHtml);
 
-        $newForm.prefixInputNames(`compartments-${index}-`);
+        $newForm.addPrefix(`compartments-${index}-`);
 
         return $newForm;
       },
@@ -20,7 +20,7 @@ $(document).ready(function() {
         let templateHtml = $('template.community-form').html();
         let $newForm = $(templateHtml);
 
-        $newForm.prefixInputNames(`communities-${index}-`);
+        $newForm.addPrefix(`communities-${index}-`);
 
         return $newForm;
       },

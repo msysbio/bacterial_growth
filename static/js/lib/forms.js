@@ -37,13 +37,36 @@ $.fn.ajaxSubmit = function(params) {
 
 // Changes the name of all inputs in the given form to add the given prefix.
 //
-$.fn.prefixInputNames = function(prefix) {
+$.fn.addPrefix = function(prefix) {
   let $form = $(this);
 
   $form.find('input,select,textarea').each(function() {
     let $input = $(this);
+
     let name = $input.attr('name');
     $input.attr('name', `${prefix}${name}`);
+
+    let id = $input.attr('id');
+    $input.attr('id', `${prefix}${name}`);
+  });
+}
+
+// Changes the name of all inputs in the given form: sets the numeric index at
+// the end of the regex to the given value.
+//
+$.fn.replacePrefix = function(prefixRegex, prefixValue) {
+  let $form = $(this);
+
+  $form.find('input,select,textarea').each(function() {
+    let $input = $(this);
+
+    let name = $input.attr('name');
+    let newName = name.replace(prefixRegex, prefixValue)
+    $input.attr('name', newName);
+
+    let id = $input.attr('id');
+    let newId = name.replace(prefixRegex, prefixValue)
+    $input.attr('id', newName);
   });
 }
 
@@ -65,8 +88,18 @@ $.fn.initAjaxSubform = function(params) {
     // Dictionary of additional parameters to be attached to the form URL:
     urlParams: {},
 
+    // Name prefix to match when duplicating
+    prefixRegex: null,
+
+    // Name prefix template, {} is replaced with the new index
+    prefixTemplate: null,
+
     // Create and return a jquery element for the new form:
     buildSubform: function() {},
+
+    // Triggered after duplication is performed, useful to reset attributes
+    // that should be unique:
+    onDuplicate: function($subform) {},
 
     // Run any necessary javascript on the newly-created form:
     initializeSubform: function($subform, index) {},
@@ -84,6 +117,50 @@ $.fn.initAjaxSubform = function(params) {
     $(e.currentTarget).parents('.js-subform-container').first().remove();
   });
 
+  $container.on('click', '.js-duplicate-trigger', function(e) {
+    e.preventDefault();
+
+    if (!params.prefixRegex) {
+      console.error("No `prefixRegex` given, don't know how to rename new form");
+      return
+    }
+
+    let $duplicateButton = $(e.currentTarget);
+    let $form            = $duplicateButton.parents('form');
+    let $currentSubform  = $(e.currentTarget).parents('.js-subform-container').first();
+
+    $form.ajaxSubmit({
+      urlParams: params.urlParams,
+      success: function(response) {
+        loadResponse(response, function($subformList, subformCount) {
+          let $newSubform = $currentSubform.clone();
+
+          let currentNameExample = $currentSubform.find('input,textarea,select').first().attr('name');
+          let currentPrefixMatch = currentNameExample.match(params.prefixRegex);
+
+          if (!currentPrefixMatch) {
+            console.error(`Couldn't match ${currentNamePrefix} against ${currentNameExample}`);
+            return
+          }
+
+          let prefix      = currentPrefixMatch[0];
+          let prefixValue = params.prefixTemplate.replace('{}', subformCount);
+
+          $newSubform.replacePrefix(params.prefixRegex, prefixValue);
+
+          // Apply any post-processing:
+          params.onDuplicate($newSubform);
+
+          // Give it a different style:
+          $newSubform.addClass('new');
+
+          // Add it to the end of the list:
+          $subformList.append($newSubform);
+        });
+      }
+    });
+  });
+
   $container.on('click', '.js-add-trigger', function(e) {
     e.preventDefault();
 
@@ -93,23 +170,12 @@ $.fn.initAjaxSubform = function(params) {
     $form.ajaxSubmit({
       urlParams: params.urlParams,
       success: function(response) {
-        let $subformList = $container.find('.js-subform-list').first();
-        $subformList.html(response);
-
-        let $subforms = $subformList.find('.js-subform-container');
-        let newSubformIndex = $subforms.length;
-
-        $subforms.each(function(index) {
-          params.initializeSubform($(this), index);
-        });
-
-        let $errorMessageList = $subformList.find('.error-message-list');
-        if ($errorMessageList.length == 0) {
+        loadResponse(response, function($subformList, subformCount) {
           // Build up new form:
-          let $newSubform = params.buildSubform(newSubformIndex);
+          let $newSubform = params.buildSubform(subformCount);
 
           // Add sequential number:
-          $newSubform.find('.js-index').text(`${newSubformIndex + 1}`);
+          $newSubform.find('.js-index').text(`${subformCount + 1}`);
 
           // Give it a different style:
           $newSubform.addClass('new');
@@ -118,11 +184,33 @@ $.fn.initAjaxSubform = function(params) {
           $subformList.append($newSubform);
 
           // Trigger necessary javascript
-          params.initializeSubform($newSubform, $subforms.length);
-        } else {
-          $(document).scrollTo($errorMessageList, 150);
-        }
+          params.initializeSubform($newSubform, subformCount);
+        });
       }
     })
   });
+
+  // Load the HTML form response and then trigger the callback if the result
+  // did not contain validation errors.
+  //
+  // Implements common code used for both adding and duplicating elements.
+  //
+  function loadResponse(response, callback) {
+    let $subformList = $container.find('.js-subform-list').first();
+    $subformList.html(response);
+
+    let $subforms = $subformList.find('.js-subform-container');
+    let subformCount = $subforms.length;
+
+    $subforms.each(function(index) {
+      params.initializeSubform($(this), index);
+    });
+
+    let $errorMessageList = $subformList.find('.error-message-list');
+    if ($errorMessageList.length == 0) {
+      callback($subformList, subformCount);
+    } else {
+      $(document).scrollTo($errorMessageList, 150);
+    }
+  }
 }

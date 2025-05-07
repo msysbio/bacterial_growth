@@ -7,7 +7,7 @@ $(document).ready(function() {
         let templateHtml = $('template.experiment-form').html();
         let $newForm = $(templateHtml);
 
-        $newForm.prefixInputNames(`experiments-${index}-`);
+        $newForm.addPrefix(`experiments-${index}-`);
 
         return $newForm;
       },
@@ -42,7 +42,7 @@ $(document).ready(function() {
           let subformIndex    = $subforms.length;
           let $newForm        = $(templateHtml);
 
-          $newForm.prefixInputNames(`experiments-${parentFormIndex}-bioreplicates-${subformIndex}-`);
+          $newForm.addPrefix(`experiments-${parentFormIndex}-bioreplicates-${subformIndex}-`);
 
           // Add sequential number:
           $newForm.find('.js-index').text(`${subformIndex + 1}`)
