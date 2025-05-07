@@ -17,6 +17,9 @@
         class="simple-form"
         action="{{ url_for('upload_step2_page') }}"
         method="POST">
+
+      {{ upload_form.csrf_token }}
+
       <div class="form-row strain-select-wrapper">
         <label class="full">
           <span>Search microbial strain:</span>

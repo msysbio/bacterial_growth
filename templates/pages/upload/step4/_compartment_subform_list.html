@@ -1,0 +1,8 @@
+{% from 'pages/upload/step4/_compartment_form.html' import render_compartment_form %}
+{% from 'utils/_form_errors.html' import render_form_errors %}
+
+{{ render_form_errors(upload_form.errors['compartments']) }}
+
+{% for subform in upload_form.compartments: %}
+  {{ render_compartment_form(form=subform, index=loop.index0) }}
+{% endfor %}

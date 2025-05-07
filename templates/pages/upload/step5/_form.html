@@ -7,6 +7,8 @@
       action="{{ url_for('upload_step5_page') }}"
       method="POST">
 
+    {{ upload_form.csrf_token }}
+
     <p>
       Organize the data you've entered so far into experiments. Each experiment
       has a single community, but may have multiple separate compartments that

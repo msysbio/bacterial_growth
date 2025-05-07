@@ -141,25 +141,33 @@ def upload_step3_page():
 
 def upload_step4_page():
     submission_form = _init_submission_form(step=4)
-    submission = submission_form.submission
+    upload_form     = _init_upload_form(UploadStep4Form, submission_form.submission)
 
-    if request.method == 'POST':
-        form = UploadStep4Form(request.form)
+    if _request_is_ajax():
+        return _step4_partial(upload_form, submission_form, request.args['subform_type'])
 
-        submission_form.update_study_design(form.data)
+    if request.method == 'POST' and upload_form.validate():
+        submission_form.update_study_design(upload_form.data)
         session['submission_id'] = submission_form.save()
 
         return redirect(url_for('upload_step5_page'))
 
-    else:
-        upload_form = UploadStep4Form(data=submission.studyDesign)
+    return render_template(
+        "pages/upload/index.html",
+        submission_form=submission_form,
+        upload_form=upload_form,
+    )
 
-        return render_template(
-            "pages/upload/index.html",
-            submission_form=submission_form,
-            upload_form=upload_form,
-        )
+def _step4_partial(upload_form, submission_form, subform_type):
+    if upload_form.validate():
+        submission_form.update_study_design(upload_form.data)
+        session['submission_id'] = submission_form.save()
 
+    return render_template(
+        f"pages/upload/step4/_{subform_type}_subform_list.html",
+        submission_form=submission_form,
+        upload_form=upload_form,
+    )
 
 def upload_step5_page():
     submission_form = _init_submission_form(step=5)

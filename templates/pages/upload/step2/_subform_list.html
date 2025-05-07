@@ -1,8 +1,6 @@
 {% from 'pages/upload/step2/_new_strain_form.html' import render_new_strain_form %}
 {% from 'utils/_form_errors.html' import render_form_errors %}
 
-{{ upload_form.csrf_token }}
-
 {{ render_form_errors(upload_form.errors['new_strains']) }}
 
 {% for subform in upload_form.new_strains: %}

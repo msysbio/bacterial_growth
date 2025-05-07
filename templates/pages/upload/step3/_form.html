@@ -15,6 +15,8 @@
       action="{{ url_for('upload_step3_page') }}"
       method="POST">
 
+    {{ upload_form.csrf_token }}
+
     <div class="form-row full">
       <label>
         <div>Type of vessel used</div>

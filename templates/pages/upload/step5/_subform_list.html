@@ -1,8 +1,6 @@
 {% from 'pages/upload/step5/_experiment_form.html' import render_experiment_form %}
 {% from 'utils/_form_errors.html' import render_form_errors %}
 
-{{ upload_form.csrf_token }}
-
 {{ render_form_errors(upload_form.errors['experiments']) }}
 
 {% for experiment_form in upload_form.experiments: %}

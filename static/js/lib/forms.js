@@ -3,13 +3,23 @@
 //  let $form = $(...)
 //
 //  $form.ajaxSubmit({
-//    success: function(response) { ... }
+//    urlParams: { q: 'query' },
+//    success: function(response) { ... },
+//    ...
 //  })
 //
-// Parameters are provided to $.ajax: https://api.jquery.com/jQuery.ajax/
+// The `urlParams` value is appended to the form URL as a query. Other
+// parameters are provided to $.ajax: https://api.jquery.com/jQuery.ajax/
 //
 $.fn.ajaxSubmit = function(params) {
   let $form = $(this);
+
+  let urlParams = params.urlParams || {};
+  let urlQuery = '';
+
+  if (Object.keys(urlParams).length > 0) {
+    urlQuery = '?' + $.param(urlParams)
+  }
 
   if (!$form[0].checkValidity()) {
     $form[0].reportValidity();
@@ -17,7 +27,7 @@ $.fn.ajaxSubmit = function(params) {
   }
 
   return $.ajax({
-    url: $form.prop('action'),
+    url: $form.prop('action') + urlQuery,
     dataType: 'html',
     method: 'POST',
     data: $form.serializeArray(),
@@ -52,6 +62,9 @@ $.fn.initAjaxSubform = function(params) {
   let $container = $(this);
 
   params = {
+    // Dictionary of additional parameters to be attached to the form URL:
+    urlParams: {},
+
     // Create and return a jquery element for the new form:
     buildSubform: function() {},
 
@@ -78,6 +91,7 @@ $.fn.initAjaxSubform = function(params) {
     let $form      = $addButton.parents('form');
 
     $form.ajaxSubmit({
+      urlParams: params.urlParams,
       success: function(response) {
         let $subformList = $container.find('.js-subform-list').first();
         $subformList.html(response);

@@ -1,6 +1,9 @@
 {% macro render_compartment_form(form, index) %}
-  <div class="subform-container js-compartment-container">
-    <h3>Compartment <span class="js-index">{{ index + 1 if index is not none else '' }}</span></h3>
+  <div class="subform-container js-subform-container">
+    <h3>
+      Compartment <span class="js-index">{{ index + 1 if index is not none else '' }}</span>
+      {%- if form.data['name']: -%}: {{ form.data['name'] }}{% endif %}
+    </h3>
 
     <div class="form-row form-row-compact">
       <label>
@@ -95,7 +98,7 @@
       </label>
 
       <div class="no-label flex-right">
-        <a href="#" class="white-button flex-row js-remove">
+        <a href="#" class="white-button flex-row js-remove-trigger">
           <span class="icon icon-remove"></span> Remove
         </a>
       </div>
