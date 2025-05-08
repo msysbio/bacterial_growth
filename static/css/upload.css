@@ -70,12 +70,12 @@
   }
 
   .subform-container {
-    h3,h4 {
-      margin-top: 0;
-    }
-
-    border-radius: var(--border-radius);
+    h3,h4 { margin-top: 0; }
     padding: 10px;
+  }
+
+  .compact-subform-container {
+    h3,h4 { margin-top: 0; }
   }
 
   .step-1 {
