@@ -114,11 +114,14 @@ $.fn.initAjaxSubform = function(params) {
 
   $container.on('click', '.js-remove-trigger', function(e) {
     e.preventDefault();
+    e.stopPropagation();
+
     $(e.currentTarget).parents('.js-subform-container').first().remove();
   });
 
   $container.on('click', '.js-duplicate-trigger', function(e) {
     e.preventDefault();
+    e.stopPropagation();
 
     if (!params.prefixRegex) {
       console.error("No `prefixRegex` given, don't know how to rename new form");
@@ -174,6 +177,7 @@ $.fn.initAjaxSubform = function(params) {
 
   $container.on('click', '.js-add-trigger', function(e) {
     e.preventDefault();
+    e.stopPropagation();
 
     let $addButton = $(e.currentTarget);
     let $form      = $addButton.parents('form');
@@ -224,4 +228,66 @@ $.fn.initAjaxSubform = function(params) {
       params.initializeSubform($(this), index);
     });
   }
+}
+
+// Initializes controls to add subforms to a parent form, without making any
+// server-side requests. Unlike the ajax-based form, this one is more limited.
+//
+$.fn.initClientSideSubform = function(params) {
+  let $container = $(this);
+
+  params = {
+    // Create and return a jquery element for the new form:
+    buildSubform: function() {},
+
+    // Triggered after a new form is created, before it's actually added to the
+    // DOM, allows adding some placeholder data.
+    beforeAdd: function($subform) {},
+
+    // Run any necessary javascript on the newly-created form:
+    initializeSubform: function($subform, index) {},
+
+    ...params
+  };
+
+  // Run initialization function on all existing subforms:
+  $container.find('.js-subform-list').each(function(index) {
+    params.initializeSubform($(this), index);
+  });
+
+  $container.on('click', '.js-remove-trigger', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+
+    $(e.currentTarget).parents('.js-subform-container').first().remove();
+  });
+
+  $container.on('click', '.js-add-trigger', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+
+    let $addButton = $(e.currentTarget);
+    let $form      = $addButton.parents('form');
+
+    let $subformList = $container.find('.js-subform-list').first();
+    let subformCount = $subformList.find('.js-subform-container').length;
+
+    // Build up new form:
+    let $newSubform = params.buildSubform(subformCount);
+
+    // Add sequential number:
+    $newSubform.find('.js-index').text(`${subformCount + 1}`);
+
+    // Give it a different style:
+    $newSubform.addClass('new');
+
+    // Trigger pre-add callback
+    params.beforeAdd($newSubform);
+
+    // Add it to the end of the list:
+    $subformList.append($newSubform);
+
+    // Trigger necessary javascript
+    params.initializeSubform($newSubform, subformCount);
+  });
 }

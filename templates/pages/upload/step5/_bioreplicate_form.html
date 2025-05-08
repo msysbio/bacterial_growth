@@ -7,7 +7,7 @@
     {% set prefix = 'experiments-{}-'.format(index)  %}
   {% endif %}
 
-  <div class="subform-container js-subform-container js-bioreplicate-container">
+  <div class="subform-container js-subform-container">
     <div class="form-row">
       <label class="full">
         <div class="required">Name</div>
@@ -16,15 +16,17 @@
       </label>
 
       <label class="full">
+        <div>Biosample URL</div>
+        {{ form.biosampleUrl(class='form-input-blue form-input-full', placeholder="https://example.com") }}
+      </label>
+
+      <label class="full">
         <div>Note (optional)</div>
-        {{ form['description'](
-          class='form-input-blue form-input-full',
-          placeholder="e.g. replicate N/control/blank",
-        ) }}
+        {{ form['description'](class='form-input-blue form-input-full', placeholder="e.g. control/blank") }}
       </label>
 
       <div class="no-label flex-right">
-        <a href="#" class="white-button flex-row js-remove">
+        <a href="#" class="white-button flex-row js-remove-trigger">
           <span class="icon icon-remove"></span>
         </a>
       </div>

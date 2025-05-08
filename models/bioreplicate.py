@@ -18,6 +18,9 @@ class Bioreplicate(OrmBase):
     id:   Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(sql.String(100), nullable=False)
 
+    description: Mapped[str]  = mapped_column(sql.String)
+    biosampleUrl: Mapped[str] = mapped_column(sql.String)
+
     studyId: Mapped[str] = mapped_column(sql.ForeignKey('Study.studyId'), nullable=False)
     study: Mapped['Study'] = relationship(back_populates='bioreplicates')
 

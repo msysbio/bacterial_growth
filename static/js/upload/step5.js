@@ -6,18 +6,18 @@ $(document).ready(function() {
       prefixRegex:    /experiments-(\d+)-/,
       prefixTemplate: 'experiments-{}-',
 
-      buildSubform: function(index) {
+      buildSubform: function(experimentIndex) {
         let templateHtml = $('template.experiment-form').html();
         let $newForm = $(templateHtml);
 
-        $newForm.addPrefix(`experiments-${index}-`);
+        $newForm.addPrefix(`experiments-${experimentIndex}-`);
 
         return $newForm;
       },
 
-      initializeSubform: function($subform, index) {
+      initializeSubform: function($experimentForm, experimentIndex) {
         // Initialize compartments:
-        let $select = $subform.find('.js-compartment-select');
+        let $select = $experimentForm.find('.js-compartment-select');
         $select.select2({
           multiple: true,
           theme: 'custom',
@@ -26,41 +26,51 @@ $(document).ready(function() {
         })
         $select.trigger('change');
 
-        // Accessed by javascript later
-        $subform.attr('data-index', index);
+        $experimentForm.initClientSideSubform({
+          buildSubform: function(bioreplicateIndex) {
+            let templateHtml = $experimentForm.find('template.bioreplicate-form').html();
+            let $bioreplicateForm = $(templateHtml);
 
-        // Initialize bioreplicate forms (nested under experiments):
-        $subform.on('click', '.js-add-bioreplicate', function(e) {
-          e.preventDefault();
+            $bioreplicateForm.addPrefix(`experiments-${experimentIndex}-bioreplicates-${bioreplicateIndex}-`);
 
-          let $addButton = $(e.currentTarget);
-          addBioreplicateForm($addButton);
+            return $bioreplicateForm;
+          },
+
+          beforeAdd: function($bioreplicateForm) {
+            // Find a previous bioreplicate's name to increment its numeric suffix
+            let lastName = $experimentForm.
+              find('.js-bioreplicate-subform-list .js-subform-container input[name$="-name"]').
+              last().
+              val();
+
+            if (!lastName || lastName == '') {
+              // Find the experiment name, we can take it and add a numeric suffix
+              let experimentName = $experimentForm.
+                find('input[name$="-name"]').
+                last().
+                val();
+
+              if (experimentName && experimentName != '') {
+                lastName = `${experimentName}_0`;
+              }
+            }
+
+            if (!lastName || lastName == '') {
+              // No previous name found, leave it blank
+              return;
+            }
+
+            let newName = lastName.replace(/\d+$/, function(m) {
+              return parseInt(m[0], 10) + 1
+            });
+
+            if (newName == lastName) {
+              newName += '_1';
+            }
+
+            $bioreplicateForm.find('input[name$="-name"]').val(newName);
+          }
         });
-
-        function addBioreplicateForm($addButton) {
-          let templateHtml = $subform.find('template.bioreplicate-form').html();
-
-          let parentFormIndex = $subform.data('index');
-          let $subforms       = $subform.find('.js-bioreplicate-container');
-          let subformIndex    = $subforms.length;
-          let $newForm        = $(templateHtml);
-
-          $newForm.addPrefix(`experiments-${parentFormIndex}-bioreplicates-${subformIndex}-`);
-
-          // Add sequential number:
-          $newForm.find('.js-index').text(`${subformIndex + 1}`)
-
-          // Give it a different style:
-          $newForm.addClass('new');
-
-          // Insert into DOM
-          $subform.find('.js-new-item-anchor').before($newForm);
-        }
-      },
-
-      onDuplicate: function($newForm) {
-        // Reset name
-        $newForm.find('input[name$="name"]').val('');
       },
     })
 

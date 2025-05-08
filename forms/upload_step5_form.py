@@ -24,8 +24,9 @@ class UploadStep5Form(BaseForm):
             class Meta:
                 csrf = False
 
-            name        = StringField('name', validators=[DataRequired()])
-            description = StringField('description')
+            name         = StringField('name', validators=[DataRequired()])
+            description  = StringField('description')
+            biosampleUrl = URLField('biosampleUrl')
 
         name        = StringField('name', validators=[DataRequired()])
         description = TextAreaField('description', validators=[DataRequired()])
