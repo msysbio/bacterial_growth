@@ -226,42 +226,9 @@ def upload_step6_page():
     )
 
 
-def download_study_template_xlsx():
-    submission_form = _init_submission_form(step=7)
-    submission = submission_form.submission
-
-    taxa_ids   = submission.studyDesign['strains']
-    taxa_names = [t.tax_names for t in submission_form.fetch_taxa()]
-
-    new_strains = [
-        {
-            'case_number':     index,
-            'name':            strain['name'],
-            'description':     strain['description'],
-            'parent_taxon_id': strain['species'],
-        }
-        for (index, strain)
-        in enumerate(submission.studyDesign['new_strains'])
-    ]
-
-    spreadsheet = study_spreadsheet.create_excel(
-        taxa_names,
-        taxa_ids,
-        new_strains,
-        submission.projectUniqueID,
-        submission.studyUniqueID,
-    )
-
-    return send_file(
-        io.BytesIO(spreadsheet),
-        as_attachment=True,
-        download_name="template_study.xlsx",
-    )
-
-
 def download_data_template_xlsx():
-    submission_form = _init_submission_form(step=3)
-    submission = submission_form.submission
+    submission_form = _init_submission_form(step=6)
+    submission      = submission_form.submission
 
     metabolite_names = [m.metabo_name for m in submission_form.fetch_all_metabolites()]
     strain_names = [t.tax_names for t in submission_form.fetch_taxa()]
@@ -284,7 +251,7 @@ def upload_spreadsheet_preview_fragment():
     excel_file = ExcelFile.from_upload(request.files['file'])
 
     return render_template(
-        "pages/upload/step4/spreadsheet_preview.html",
+        "pages/upload/step6/spreadsheet_preview.html",
         excel_file=excel_file,
     )
 

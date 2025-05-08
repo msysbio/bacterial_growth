@@ -102,6 +102,34 @@
     }
   }
 
+  .step-6 {
+    .middle-column {
+      display: flex;
+      flex-orientation: row;
+      justify-content: center;
+      align-items: center;
+
+      img {
+        width: 100%;
+      }
+    }
+
+    .preview {
+      max-height: 300px;
+
+      .header {
+        display: flex;
+        flex-orientation: row;
+        gap: 10px;
+        align-items: center;
+      }
+
+      .dataframe-table {
+        width: 100%;
+      }
+    }
+  }
+
   .submission-forms {
     margin-top: 20px;
   }

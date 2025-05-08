@@ -42,7 +42,6 @@ $(document).ready(function() {
 
     function submitExcelForm($container) {
       let url        = $container.prop('action')
-      let $preview   = $container.find('.js-preview');
       let $fileInput = $container.find('input[type=file]');
       let formData   = new FormData();
       let file       = $fileInput[0].files[0];
@@ -57,6 +56,8 @@ $(document).ready(function() {
         contentType: false,
         processData: false,
         success: function(response) {
+          let $preview = $step6.find('.js-preview');
+
           $preview.html(response);
           $preview.find('select').trigger('change');
         }

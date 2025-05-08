@@ -44,7 +44,6 @@ def init_routes(app):
         methods=["POST"],
     )
 
-    app.add_url_rule("/upload/study_template.xlsx", view_func=upload_pages.download_study_template_xlsx, methods=["POST"])
     app.add_url_rule("/upload/data_template.xlsx", view_func=upload_pages.download_data_template_xlsx, methods=["POST"])
     app.add_url_rule(
         "/upload/spreadsheet_preview/",

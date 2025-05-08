@@ -276,6 +276,11 @@ form.simple-form {
   line-height: 1.1;
   white-space: nowrap;
 
+  &.flex-row {
+    display: flex;
+    gap: 6px;
+  }
+
   &:hover {
     background-color: rgb(7, 110, 126);
     color: white;
