@@ -3,6 +3,7 @@ from wtforms import (
     DecimalField,
     FieldList,
     FormField,
+    IntegerField,
     SelectField,
     SelectMultipleField,
     StringField,
@@ -27,6 +28,13 @@ class UploadStep5Form(BaseForm):
             name         = StringField('name', validators=[DataRequired()])
             description  = StringField('description')
             biosampleUrl = URLField('biosampleUrl')
+
+        class PerturbationForm(BaseForm):
+            class Meta:
+                csrf = False
+
+            startTime = IntegerField('startTime', validators=[DataRequired()])
+            endTime   = IntegerField('endTime',   validators=[DataRequired()])
 
         name        = StringField('name', validators=[DataRequired()])
         description = TextAreaField('description', validators=[DataRequired()])

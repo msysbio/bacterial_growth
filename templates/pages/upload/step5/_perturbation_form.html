@@ -1,0 +1,30 @@
+{% macro render_perturbation_form(form, submission_form, index, experimentIndex) %}
+  {% set submission = submission_form.submission %}
+
+  {% if index is none: %}
+    {% set prefix = '' %}
+  {% else: %}
+    {% set prefix = 'experiments-{}-perturbations-{}'.format(experimentIndex, index)  %}
+  {% endif %}
+
+  <div class="subform-container js-subform-container">
+    <div class="form-row">
+      <label class="full">
+        <div class="required">Start time</div>
+        {{ form.startTime(class='form-input-blue form-input-full') }}
+      </label>
+
+      <label class="full">
+        <div class="required">End time</div>
+        {{ form.startTime(class='form-input-blue form-input-full') }}
+      </label>
+
+      <div class="no-label flex-right">
+        <a href="#" class="white-button flex-row js-remove-trigger">
+          <span class="icon icon-remove"></span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+{% endmacro %}

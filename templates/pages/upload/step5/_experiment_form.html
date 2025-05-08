@@ -1,4 +1,5 @@
 {% from 'pages/upload/step5/_bioreplicate_form.html' import render_bioreplicate_form %}
+{% from 'pages/upload/step5/_perturbation_form.html' import render_perturbation_form %}
 {% from 'utils/_form_errors.html' import render_form_errors %}
 
 {% macro render_experiment_form(form, submission_form, index) %}
@@ -76,12 +77,17 @@
       </label>
     </div>
 
-    <div class="form-row flex-column flex-gap-10">
+    <div class="form-row flex-column flex-gap-10 js-bioreplicate-form-row">
       <div class="form-row flex-row" style="align-items: center; margin-top: 10px;">
         <h4>Biological replicates</h4>
+
         <a href="#" class="white-button small-button flex-row js-add-trigger">
           <span class="icon icon-add"></span>
         </a>
+
+        <div class="help">
+          At least one replicate is required
+        </div>
       </div>
 
       {{ render_form_errors(form.errors['bioreplicates']) }}
@@ -89,9 +95,9 @@
       <div class="js-subform-list js-bioreplicate-subform-list flex-column flex-gap-10">
         {% for bioreplicate_form in form.bioreplicates: %}
           {{ render_bioreplicate_form(
-            form=bioreplicate_form,
-            submission_form=submission_form,
-            index=loop.index0
+          form=bioreplicate_form,
+          submission_form=submission_form,
+          index=loop.index0
           ) }}
         {% endfor %}
       </div>
@@ -99,6 +105,40 @@
       <template class="bioreplicate-form">
         {% set subform = form.get_template('BioreplicateForm') %}
         {{ render_bioreplicate_form(form=subform, submission_form=submission_form, index=None) }}
+      </template>
+    </div>
+
+    <div class="form-row flex-column flex-gap-10 js-perturbation-form-row">
+      <div class="form-row flex-row" style="align-items: center; margin-top: 10px;">
+        <h4>Perturbations</h4>
+
+        <a href="#" class="white-button small-button flex-row js-add-trigger">
+          <span class="icon icon-add"></span>
+        </a>
+
+        <div class="help">
+          Changes to the composition of the experiment over time
+        </div>
+      </div>
+
+      {{ render_form_errors(form.errors['perturbations']) }}
+
+      <div class="js-subform-list js-perturbation-subform-list flex-column flex-gap-10">
+        {% set experimentIndex = index %}
+
+        {% for perturbation_form in form.perturbations: %}
+          {{ render_perturbation_form(
+          form=perturbation_form,
+          submission_form=submission_form,
+          index=loop.index0,
+          experimentIndex=experimentIndex,
+          ) }}
+        {% endfor %}
+      </div>
+
+      <template class="perturbation-form">
+        {% set subform = form.get_template('PerturbationForm') %}
+        {{ render_perturbation_form(form=subform, submission_form=submission_form, index=None) }}
       </template>
     </div>
 

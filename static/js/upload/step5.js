@@ -26,7 +26,8 @@ $(document).ready(function() {
         })
         $select.trigger('change');
 
-        $experimentForm.initClientSideSubform({
+        // Initialize bioreplicate subforms:
+        $experimentForm.find('.js-bioreplicate-form-row').initClientSideSubform({
           buildSubform: function(bioreplicateIndex) {
             let templateHtml = $experimentForm.find('template.bioreplicate-form').html();
             let $bioreplicateForm = $(templateHtml);
@@ -70,6 +71,18 @@ $(document).ready(function() {
 
             $bioreplicateForm.find('input[name$="-name"]').val(newName);
           }
+        });
+
+        // Initialize perturbation subforms:
+        $experimentForm.find('.js-perturbation-form-row').initClientSideSubform({
+          buildSubform: function(perturbationIndex) {
+            let templateHtml = $experimentForm.find('template.perturbation-form').html();
+            let $perturbationForm = $(templateHtml);
+
+            $perturbationForm.addPrefix(`experiments-${experimentIndex}-perturbations-${perturbationIndex}-`);
+
+            return $perturbationForm;
+          },
         });
       },
     })

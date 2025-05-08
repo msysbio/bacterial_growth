@@ -1,12 +1,6 @@
 {% macro render_bioreplicate_form(form, submission_form, index) %}
   {% set submission = submission_form.submission %}
 
-  {% if index is none: %}
-    {% set prefix = '' %}
-  {% else: %}
-    {% set prefix = 'experiments-{}-'.format(index)  %}
-  {% endif %}
-
   <div class="subform-container js-subform-container">
     <div class="form-row">
       <label class="full">

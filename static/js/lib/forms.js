@@ -108,7 +108,10 @@ $.fn.initAjaxSubform = function(params) {
   };
 
   // Run initialization function on all existing subforms:
-  $container.find('.js-subform-list').each(function(index) {
+  // - Find only outer subform list
+  // - Find its direct "container" children
+  //
+  $container.find('.js-subform-list').first().children('.js-subform-container').each(function(index) {
     params.initializeSubform($(this), index);
   });
 
