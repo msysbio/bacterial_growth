@@ -32,37 +32,16 @@ TECHNIQUE_DESCRIPTIONS = {
 def create_excel(submission, metabolite_names, strain_names):
     workbook = Workbook()
 
-    metadata_sheet = workbook.active
-    workbook.active.title = "Replicate metadata"
-
-    headers_info = {
-        'Biological_Replicate_id': 'Pick unique identifiers of individual samples: a bottle, a well in a well-plate or mini-bioreactor',
-        'Biosample_link': 'Provide the biosample link if available.',
-        'Description': 'Provide an informative description for the biological replicate',
-    }
-
-    for index, (title, description) in enumerate(headers_info.items(), start=1):
-        if index == 1:
-            _add_header(metadata_sheet, index, title, description, fill_color=RED)
-        else:
-            _add_header(metadata_sheet, index, title, description, fill_color=WHITE)
-
     # Populate raw data template based on user's input
-    positions = _generate_positions(
-        submission.studyDesign['vessel_type'],
-        submission.studyDesign['vessel_count'],
-        submission.studyDesign['column_count'],
-        submission.studyDesign['row_count'],
-        submission.studyDesign['timepoint_count'],
-    )
+    positions = _generate_positions(submission)
 
     short_time_units = submission.studyDesign['time_units']
     long_time_units = TIME_UNITS[short_time_units]
 
     headers_common = {
-        'Position':                'Predetermine position based on the type of vessel specified before.',
-        'Biological_Replicate_id': 'Unique IDs of individual samples: a bottle, a well in a well-plate or mini-bioreactor.',
-        'Time':                    f"Measurement time-points in {long_time_units} ({short_time_units}).",
+        'Position':             'Predetermine position based on the type of vessel specified before.',
+        'Biological Replicate': 'Unique names of individual samples: a bottle, a well in a well-plate, or a mini-bioreactor.',
+        'Time':                 f"Measurement time-points in {long_time_units} ({short_time_units}).",
     }
 
     headers_bioreplicates = {**headers_common}
@@ -140,7 +119,12 @@ def _add_header(sheet, index, title, description, fill_color):
 
 
 def _fill_sheet(workbook, sheet_title, headers, positions):
-    sheet = workbook.create_sheet(title=sheet_title)
+    if workbook.sheetnames == ['Sheet']:
+        # Then we have a brand new workbook, use its first sheet
+        sheet = workbook.active
+        workbook.active.title = sheet_title
+    else:
+        sheet = workbook.create_sheet(title=sheet_title)
 
     # Add headers and descriptions to the first row and modify the width of each columns
     for index, (title, description) in enumerate(headers.items(), start=1):
@@ -157,18 +141,27 @@ def _fill_sheet(workbook, sheet_title, headers, positions):
 
 
 def _generate_positions(type_vessel, number_vessels, number_columns, number_rows, number_timepoints):
-    positions = []
-    if type_vessel == 'bottles' or type_vessel == 'agar_plates':
-        if number_vessels and number_timepoints:
-            for vessel_num in range(1, int(number_vessels) + 1):
-                for _ in range(int(number_timepoints)):
-                    positions.append(f"{type_vessel}{vessel_num}")
+    vessel_type     = submission.studyDesign['vessel_type']
+    vessel_count    = submission.studyDesign['vessel_count']
+    column_count    = submission.studyDesign['column_count']
+    row_count       = submission.studyDesign['row_count']
+    timepoint_count = submission.studyDesign['timepoint_count']
 
-    if type_vessel == 'well_plates' or type_vessel == 'mini_react':
-        if number_columns and number_rows and number_timepoints:
-            for row in range(1, int(number_rows) + 1):
-                for col in range(1, int(number_columns) + 1):
-                    for _ in range(int(number_timepoints)):
+    # TODO (2025-05-08) Iterate by bioreplicates in the submission, get a
+    # biorep => compartments list through experiments
+
+    positions = []
+    if vessel_type == 'bottles' or vessel_type == 'agar_plates':
+        if vessel_count and timepoint_count:
+            for vessel_num in range(1, int(vessel_count) + 1):
+                for _ in range(int(timepoint_count)):
+                    positions.append(f"{vessel_type}{vessel_num}")
+
+    if vessel_type == 'well_plates' or vessel_type == 'mini_react':
+        if column_count and row_count and timepoint_count:
+            for row in range(1, int(row_count) + 1):
+                for col in range(1, int(column_count) + 1):
+                    for _ in range(int(timepoint_count)):
                         positions.append(f"{get_column_letter(col)}{row}")
 
     return positions

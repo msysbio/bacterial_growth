@@ -26,8 +26,7 @@ from forms.upload_step4_form import UploadStep4Form
 from forms.upload_step5_form import UploadStep5Form
 from lib.submission_process import persist_submission_to_database
 
-import legacy.study_spreadsheet as study_spreadsheet
-import legacy.data_spreadsheet as data_spreadsheet
+import lib.data_spreadsheet as data_spreadsheet
 
 
 def upload_status_page():
