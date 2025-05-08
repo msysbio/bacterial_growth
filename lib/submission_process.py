@@ -48,24 +48,13 @@ def persist_submission_to_database(submission_form):
 
             _save_compartments(db_trans_session, submission_form, study)
             _save_communities(db_trans_session, submission_form, study, user_uuid)
-            _save_experiments(db_trans_session, submission_form, study, user_uuid)
+            _save_experiments(db_trans_session, submission_form, study)
 
             db_trans_session.flush()
 
+            # TODO (2025-05-08) Errors
             if errors:
                 return errors
-
-            (errors, errors_logic) = save_study_design_to_database(
-                db_trans_session,
-                yml_dir,
-                submission_form,
-                submission.dataFile.content,
-                study,
-                project,
-            )
-
-            if errors or errors_logic:
-                return [*errors, *errors_logic]
 
             _save_chart_data_to_database(db_trans_session, study, submission)
             submission_form.save()

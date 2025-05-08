@@ -20,8 +20,7 @@ class UploadStep4Form(BaseForm):
         class Meta:
             csrf = False
 
-        name        = StringField('name', validators=[DataRequired()])
-        description = TextAreaField('description')
+        name = StringField('name', validators=[DataRequired()])
 
         mediumName = StringField('mediumName')
         mediumUrl  = URLField('mediumUrl')

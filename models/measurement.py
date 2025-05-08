@@ -185,7 +185,7 @@ def _iterate_over_measurement_csv(db_session, study, csv_string):
     find_bioreplicate_uuid = functools.cache(Bioreplicate.find_for_study)
 
     for row in reader:
-        bioreplicate_id = row['Biological_Replicate_id']
+        bioreplicate_id = row['Biological Replicate']
         bioreplicate_uuid = find_bioreplicate_uuid(db_session, study.studyId, bioreplicate_id)
         time_in_seconds = convert_time(row['Time'], source=study.timeUnits, target='s')
 
