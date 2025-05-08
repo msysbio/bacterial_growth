@@ -34,9 +34,6 @@ def persist_submission_to_database(submission_form):
     if submission_form.submission.dataFile is None:
         errors.append("Data file has not been uploaded")
 
-    if submission_form.submission.studyFile is None:
-        errors.append("Study file has not been uploaded")
-
     if errors:
         return errors
 
@@ -45,10 +42,6 @@ def persist_submission_to_database(submission_form):
     with tempfile.TemporaryDirectory() as yml_dir:
         with get_transaction() as db_transaction:
             db_trans_session = get_session(db_transaction)
-            errors = validate_upload(yml_dir, submission)
-
-            if errors:
-                return errors
 
             study   = _save_study(db_trans_session, submission_form)
             project = _save_project(db_trans_session, submission_form)

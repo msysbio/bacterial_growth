@@ -34,8 +34,6 @@
             you'll be able to see a preview and inspect it for issues.
           </p>
 
-          {{ render_form_errors(errors) }}
-
           <div class="js-upload-container">
             <div class="form-row full">
               <div class="file-upload-container full js-file-upload">
@@ -49,9 +47,8 @@
                   <span class="hint">Limit 200MB per file</span>
                 </div>
 
-                <label class="upload-button white-button">
+                <label class="upload-button white-button" for="data-template-input">
                   Browse files
-                  <input type="file" name="data-template" class="hidden" accept=".xls,.xlsx" />
                 </label>
               </div>
             </div>
@@ -59,6 +56,8 @@
         </div>
       </div>
     </div>
+
+    {{ render_form_errors(errors) }}
 
     <div class="preview js-preview">
       {% if submission_form.submission.dataFileId: %}
@@ -79,6 +78,9 @@
         enctype="multipart/form-data"
         method="POST"
         action="{{ url_for('upload_step6_page') }}">
+
+      <input id="data-template-input" type="file" name="data-template" class="hidden" accept=".xls,.xlsx" />
+
       <div class="form-row">
         <input type="submit" class="green-button" value="Next" />
       </div>

@@ -13,15 +13,15 @@ $(document).ready(function() {
     $step6.on('drop', '.js-file-upload', function(e) {
       e.preventDefault();
 
-      let $container = $(this).parents('.js-upload-container');
-      let $input = $container.find('input[type=file]')
+      let $container = $step6.find('.js-upload-container');
+      let $input = $('#data-template-input');
       $input[0].files = e.originalEvent.dataTransfer.files;
 
       $(this).removeClass('drop-hover');
       submitExcelForm($container);
     });
     $step6.on('change', 'input[type=file]', function(e) {
-      let $container = $(this).parents('.js-upload-container');
+      let $container = $step6.find('.js-upload-container');
       submitExcelForm($container);
     });
 
@@ -42,7 +42,7 @@ $(document).ready(function() {
 
     function submitExcelForm($container) {
       let url        = $container.prop('action')
-      let $fileInput = $container.find('input[type=file]');
+      let $fileInput = $('#data-template-input');
       let formData   = new FormData();
       let file       = $fileInput[0].files[0];
 
