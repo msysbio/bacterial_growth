@@ -206,8 +206,6 @@ def upload_step6_page():
     errors = []
 
     if request.method == 'POST':
-        if request.files['study-template']:
-            submission.studyFile = ExcelFile.from_upload(request.files['study-template'])
         if request.files['data-template']:
             submission.dataFile  = ExcelFile.from_upload(request.files['data-template'])
 
