@@ -1,5 +1,5 @@
 {% macro render_compartment_form(form, index) %}
-  <div class="subform-container js-subform-container">
+  <div class="subform-container box js-subform-container">
     <h3>
       Compartment <span class="js-index">{{ index + 1 if index is not none else '' }}</span>
       {%- if form.data['name']: -%}: {{ form.data['name'] }}{% endif %}

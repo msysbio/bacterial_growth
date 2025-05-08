@@ -7,7 +7,7 @@
     {% set prefix = 'new_strains-{}-'.format(index)  %}
   {% endif %}
 
-  <div class="subform-container flex-column flex-gap-10 js-subform-container">
+  <div class="subform-container box flex-column flex-gap-10 js-subform-container">
     {% if g.current_user: %}
       <input
           name="{{ prefix }}userUniqueID"
@@ -28,10 +28,12 @@
               name="{{ prefix }}species"
               class="form-input-full form-input-blue js-single-strain-select"
               required>
-            {% set new_strain_data = submission.studyDesign['new_strains'][index] %}
-            <option value="{{ new_strain_data['species'] }}">
+            {% if submission.studyDesign['new_strains']|length > 0 and index is not none: %}
+              {% set new_strain_data = submission.studyDesign['new_strains'][index] %}
+              <option value="{{ new_strain_data['species'] }}">
               {{ new_strain_data['species_name'] }} (NCBI:{{ new_strain_data['species'] }})
-            </option>
+              </option>
+            {% endif %}
           </select>
         </label>
       </div>

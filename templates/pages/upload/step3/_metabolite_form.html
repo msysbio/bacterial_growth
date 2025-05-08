@@ -5,7 +5,7 @@
     {% set prefix = 'techniques-{}-'.format(index)  %}
   {% endif %}
 
-  <div class="subform-container technique-container js-technique-container" data-subject-type="metabolite">
+  <div class="subform-container box technique-container js-technique-container" data-subject-type="metabolite">
     <img
         width="110"
         class="form-icon"
@@ -25,7 +25,7 @@
       <a href="https://www.ebi.ac.uk/chebi">ChEBI website</a>.
     </p>
 
-    <hr>
+    <br>
 
     <input type="hidden" name="{{ prefix }}type" value="metabolite" />
     <input type="hidden" name="{{ prefix }}subjectType" value="metabolite" />
