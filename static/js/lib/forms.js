@@ -84,7 +84,7 @@ $.fn.replacePrefix = function(prefixRegex, prefixValue) {
 $.fn.initAjaxSubform = function(params) {
   let $container = $(this);
 
-  params = {
+  let defaultParams = {
     // Dictionary of additional parameters to be attached to the form URL:
     urlParams: {},
 
@@ -103,9 +103,9 @@ $.fn.initAjaxSubform = function(params) {
 
     // Run any necessary javascript on the newly-created form:
     initializeSubform: function($subform, index) {},
-
-    ...params
   };
+
+  params = {...defaultParams, ...params}
 
   // Run initialization function on all existing subforms:
   // - Find only outer subform list
@@ -239,7 +239,7 @@ $.fn.initAjaxSubform = function(params) {
 $.fn.initClientSideSubform = function(params) {
   let $container = $(this);
 
-  params = {
+  let defaultParams = {
     // Create and return a jquery element for the new form:
     buildSubform: function() {},
 
@@ -252,6 +252,8 @@ $.fn.initClientSideSubform = function(params) {
 
     ...params
   };
+
+  params = {...defaultParams, ...params};
 
   // Run initialization function on all existing subforms:
   $container.find('.js-subform-list').each(function(index) {
