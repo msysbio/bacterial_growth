@@ -57,7 +57,7 @@ class Study(OrmBase):
 
     studyMetabolites: Mapped[List['StudyMetabolite']] = owner_relationship()
     metabolites: Mapped[List['Metabolite']] = relationship(
-        secondary='MetabolitePerExperiment',
+        secondary='StudyMetabolites',
         viewonly=True,
     )
 

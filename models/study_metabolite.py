@@ -9,13 +9,12 @@ from models.orm_base import OrmBase
 
 
 class StudyMetabolite(OrmBase):
-    __tablename__ = 'MetabolitePerExperiment'
+    __tablename__ = 'StudyMetabolites'
 
-    studyId:            Mapped[str] = mapped_column(sql.ForeignKey("Study"),          primary_key=True)
-    chebi_id:           Mapped[str] = mapped_column(sql.ForeignKey('Metabolites'),    primary_key=True)
-    experimentUniqueId: Mapped[int] = mapped_column(sql.ForeignKey('Experiments.id'), primary_key=True)
+    id: Mapped[int] = mapped_column(primary_key=True)
 
-    bioreplicateUniqueId: Mapped[int] = mapped_column(sql.ForeignKey('Bioreplicates.id'), nullable=False)
+    studyId:  Mapped[str] = mapped_column(sql.ForeignKey('Study.studyId'),        primary_key=True)
+    chebi_id: Mapped[str] = mapped_column(sql.ForeignKey('Metabolites.chebi_id'), primary_key=True)
 
     study:      Mapped['Study']      = relationship(back_populates="studyMetabolites")
     metabolite: Mapped['Metabolite'] = relationship(back_populates="studyMetabolites")

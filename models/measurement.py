@@ -28,7 +28,6 @@ class Measurement(OrmBase):
     studyId: Mapped[str] = mapped_column(sql.ForeignKey('Study.studyId'), nullable=False)
     study: Mapped['Study'] = relationship(back_populates="measurements")
 
-    position:      Mapped[str] = mapped_column(sql.String(100), nullable=False)
     timeInSeconds: Mapped[int] = mapped_column(sql.Integer,     nullable=False)
     unit:          Mapped[str] = mapped_column(sql.String(100), nullable=False)
 
@@ -85,7 +84,7 @@ class Measurement(OrmBase):
     def insert_from_bioreplicates_csv(Self, db_session, study, csv_string):
         measurements = []
 
-        for row, time, bioreplicate_uuid, technique in _iterate_over_measurement_csv(db_session, study, csv_string):
+        for row, time, bioreplicate_id, technique in _iterate_over_measurement_csv(db_session, study, csv_string):
             if technique.subjectType != 'bioreplicate':
                 continue
 
@@ -95,14 +94,13 @@ class Measurement(OrmBase):
 
             measurement = Self(
                 studyId=study.studyId,
-                bioreplicateUniqueId=bioreplicate_uuid,
-                position=row['Position'],
+                bioreplicateUniqueId=bioreplicate_id,
                 timeInSeconds=time,
                 unit=technique.units,
                 techniqueId=technique.id,
                 technique=_generate_technique_name(technique.type, technique.subjectType),
                 value=value,
-                subjectId=bioreplicate_uuid,
+                subjectId=bioreplicate_id,
                 subjectType='bioreplicate',
             )
             measurements.append(measurement)
@@ -116,7 +114,7 @@ class Measurement(OrmBase):
     def insert_from_strain_csv(Self, db_session, study, csv_string):
         measurements = []
 
-        for row, time, bioreplicate_uuid, technique in _iterate_over_measurement_csv(db_session, study, csv_string):
+        for row, time, bioreplicate_id, technique in _iterate_over_measurement_csv(db_session, study, csv_string):
             if technique.subjectType != 'strain':
                 continue
 
@@ -128,8 +126,7 @@ class Measurement(OrmBase):
 
                 measurement = Self(
                     studyId=study.studyId,
-                    bioreplicateUniqueId=bioreplicate_uuid,
-                    position=row['Position'],
+                    bioreplicateUniqueId=bioreplicate_id,
                     timeInSeconds=time,
                     unit=technique.units,
                     technique=_generate_technique_name(technique.type, technique.subjectType),
@@ -149,7 +146,10 @@ class Measurement(OrmBase):
     def insert_from_metabolites_csv(Self, db_session, study, csv_string):
         measurements = []
 
-        for row, time, bioreplicate_uuid, technique in _iterate_over_measurement_csv(db_session, study, csv_string):
+        # TODO Compartment id
+        # TODO Create "MeasurementTarget" in the _iterate method? or here?
+
+        for row, time, bioreplicate_id, technique in _iterate_over_measurement_csv(db_session, study, csv_string):
             if technique.subjectType != 'metabolite':
                 continue
 
@@ -160,8 +160,7 @@ class Measurement(OrmBase):
 
                 measurement = Self(
                     studyId=study.studyId,
-                    bioreplicateUniqueId=bioreplicate_uuid,
-                    position=row['Position'],
+                    bioreplicateUniqueId=bioreplicate_id,
                     timeInSeconds=time,
                     unit=technique.units,
                     techniqueId=technique.id,
@@ -182,19 +181,19 @@ def _iterate_over_measurement_csv(db_session, study, csv_string):
     from models import Bioreplicate
 
     reader = csv.DictReader(StringIO(csv_string), dialect='unix')
-    find_bioreplicate_uuid = functools.cache(Bioreplicate.find_for_study)
+    find_bioreplicate_id = functools.cache(Bioreplicate.find_for_study)
 
     for row in reader:
-        bioreplicate_id = row['Biological Replicate']
-        bioreplicate_uuid = find_bioreplicate_uuid(db_session, study.studyId, bioreplicate_id)
+        bioreplicate_name = row['Biological Replicate']
+        bioreplicate_id = find_bioreplicate_id(db_session, study.studyId, bioreplicate_name)
         time_in_seconds = convert_time(row['Time'], source=study.timeUnits, target='s')
 
-        if bioreplicate_uuid is None:
+        if bioreplicate_id is None:
             # Missing bioreplicate, skip
             continue
 
         for technique in study.measurementTechniques:
-            yield (row, time_in_seconds, bioreplicate_uuid, technique)
+            yield (row, time_in_seconds, bioreplicate_id, technique)
 
 
 def _generate_technique_name(technique_type, subject_type):

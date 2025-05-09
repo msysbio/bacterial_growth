@@ -65,13 +65,13 @@ def dynamical_query(all_advance_query):
             elif query_dict['option'] == 'Metabolites':
                 metabo = query_dict['value'].strip().lower()
                 where_clause = f"""
-                FROM MetabolitePerExperiment
+                FROM StudyMetabolites
                 WHERE LOWER(metabo_name) LIKE '%{metabo}%'
                 """
             elif query_dict['option'] == 'chEBI ID':
                 chebi_id = query_dict['value']
                 where_clause = f"""
-                FROM MetabolitePerExperiment
+                FROM StudyMetabolites
                 WHERE chebi_id = '{chebi_id}'
                 """
             elif query_dict['option'] == 'pH':
@@ -133,8 +133,8 @@ def get_general_info(studyId, conn):
         SELECT DISTINCT
             Metabolites.metabo_name as metabo_name,
             Metabolites.chebi_id
-        FROM MetabolitePerExperiment
-          INNER JOIN Metabolites on MetabolitePerExperiment.chebi_id = Metabolites.chebi_id
+        FROM StudyMetabolites
+          INNER JOIN Metabolites on StudyMetabolites.chebi_id = Metabolites.chebi_id
         WHERE studyId = :studyId
         ORDER BY metabo_name ASC
     """

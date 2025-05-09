@@ -46,7 +46,7 @@ class TestStudyDsf(unittest.TestCase):
             WHERE LOWER(studyName) LIKE '%human%'
             AND studyId IN (
                 SELECT DISTINCT studyId
-                FROM MetabolitePerExperiment
+                FROM StudyMetabolites
                 WHERE LOWER(metabo_name) LIKE '%acetyl%'
             )
         """)

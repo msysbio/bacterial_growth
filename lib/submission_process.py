@@ -22,6 +22,7 @@ from models import (
     ProjectUser,
     Strain,
     Study,
+    StudyMetabolite,
     StudyUser,
     Taxon,
 )
@@ -47,9 +48,21 @@ def persist_submission_to_database(submission_form):
             study   = _save_study(db_trans_session, submission_form)
             project = _save_project(db_trans_session, submission_form)
 
-            _save_compartments(db_trans_session, submission_form, study)
-            _save_communities(db_trans_session, submission_form, study, user_uuid)
-            _save_experiments(db_trans_session, submission_form, study)
+            # First, clear out existing relationships
+            study.experimentCompartments = []
+            study.compartments           = []
+            study.communities            = []
+            study.experiments            = []
+            study.bioreplicates          = []
+            study.perturbations          = []
+            study.measurementTechniques  = []
+            study.measurements           = []
+            study.studyMetabolites       = []
+
+            compartments = _save_compartments(db_trans_session, submission_form, study)
+            communities  = _save_communities(db_trans_session, submission_form, study, user_uuid)
+            _save_experiments(db_trans_session, submission_form, study, compartments, communities)
+            _save_measurement_techniques(db_trans_session, submission_form, study)
 
             db_trans_session.flush()
 
@@ -57,7 +70,7 @@ def persist_submission_to_database(submission_form):
             if errors:
                 return errors
 
-            _save_chart_data_to_database(db_trans_session, study, submission)
+            _save_measurements(db_trans_session, study, submission)
             submission_form.save()
 
             db_trans_session.commit()
@@ -185,30 +198,14 @@ def _save_communities(db_session, submission_form, study, user_uuid):
     return communities
 
 
-def _save_experiments(db_session, submission_form, study):
+def _save_experiments(db_session, submission_form, study, compartments, communities):
     submission = submission_form.submission
     experiments = []
 
     # Fetch previously-created communities:
-    community_names = [c['name'] for c in submission.studyDesign['communities']]
-    communities = db_session.scalars(
-        sql.select(Community)
-        .where(
-            Community.studyId == study.publicId,
-            Community.name.in_(community_names)
-        )
-    )
     communities_by_name = { k: next(g) for (k, g) in itertools.groupby(communities, lambda c: c.name) }
 
     # Fetch previously-created compartments:
-    compartment_names = [c['name'] for c in submission.studyDesign['compartments']]
-    compartments = db_session.scalars(
-        sql.select(Compartment)
-        .where(
-            Compartment.studyId == study.publicId,
-            Compartment.name.in_(compartment_names)
-        )
-    )
     compartments_by_name = { k: next(g) for (k, g) in itertools.groupby(compartments, lambda c: c.name) }
 
     for experiment_data in submission.studyDesign['experiments']:
@@ -221,16 +218,15 @@ def _save_experiments(db_session, submission_form, study):
 
         experiment = Experiment(
             **experiment_data,
-            communityId=communities_by_name[community_name].id,
+            community=communities_by_name[community_name],
         )
         db_session.add(experiment)
-        db_session.flush()
 
         for compartment_name in compartment_names:
             experiment_compartment = ExperimentCompartment(
                 studyId=study.publicId,
-                experimentId=experiment.id,
-                compartmentId=compartments_by_name[compartment_name].id,
+                experiment=experiment,
+                compartment=compartments_by_name[compartment_name],
             )
             db_session.add(experiment_compartment)
 
@@ -238,18 +234,17 @@ def _save_experiments(db_session, submission_form, study):
             bioreplicate = Bioreplicate(
                 **bioreplicate_data,
                 studyId=study.publicId,
-                experimentId=experiment.id,
+                experiment=experiment,
             )
 
             db_session.add(bioreplicate)
-            db_session.flush()
 
         for perturbation_data in perturbations:
             perturbation_data = copy.deepcopy(perturbation_data)
 
             perturbation = Perturbation(
                 studyId=study.publicId,
-                experimentId=experiment.id,
+                experiment=experiment,
                 startTimepoint=perturbation_data.pop('startTimepoint'),
                 description=perturbation_data.pop('description'),
             )
@@ -271,7 +266,6 @@ def _save_experiments(db_session, submission_form, study):
                 perturbation.newCommunityId = communities_by_name[name].id
 
             db_session.add(perturbation)
-            db_session.flush()
 
         experiments.append(experiment)
 
@@ -281,17 +275,35 @@ def _save_experiments(db_session, submission_form, study):
     return experiments
 
 
-def _save_chart_data_to_database(db_session, study, submission):
+def _save_measurement_techniques(db_session, submission_form, study):
+    submission = submission_form.submission
+
+    for technique in submission.techniques:
+        technique.study = study
+
+        # TODO (2025-05-09) test method
+
+        if technique.metaboliteIds:
+            for chebiId in technique.metaboliteIds:
+                db_session.add(StudyMetabolite(
+                    chebi_id=chebiId,
+                    study=study,
+                ))
+
+        db_session.add(technique)
+
+
+def _save_measurements(db_session, study, submission):
     data_xls = submission.dataFile.content
     sheets = pd.read_excel(io.BytesIO(data_xls), sheet_name=None)
 
-    if 'Growth data per community' in sheets:
-        df = sheets['Growth data per community']
-        Measurement.insert_from_bioreplicates_csv(db_session, study, df.to_csv(index=False))
+    # if 'Growth data per community' in sheets:
+    #     df = sheets['Growth data per community']
+    #     Measurement.insert_from_bioreplicates_csv(db_session, study, df.to_csv(index=False))
 
-    if 'Growth data per strain' in sheets:
-        df = sheets['Growth data per strain']
-        Measurement.insert_from_strain_csv(db_session, study, df.to_csv(index=False))
+    # if 'Growth data per strain' in sheets:
+    #     df = sheets['Growth data per strain']
+    #     Measurement.insert_from_strain_csv(db_session, study, df.to_csv(index=False))
 
     if 'Growth data per metabolite' in sheets:
         df = sheets['Growth data per metabolite']

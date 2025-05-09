@@ -285,7 +285,6 @@ CREATE TABLE Measurements (
   id int NOT NULL AUTO_INCREMENT,
   bioreplicateUniqueId int NOT NULL,
   studyId varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
-  position varchar(100) NOT NULL,
   timeInSeconds int NOT NULL,
   pH varchar(100) DEFAULT NULL,
   unit varchar(100) DEFAULT NULL,
@@ -301,28 +300,6 @@ CREATE TABLE Measurements (
   CONSTRAINT bioreplicateUniqueId FOREIGN KEY (bioreplicateUniqueId) REFERENCES Bioreplicates (id) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT studyId FOREIGN KEY (studyId) REFERENCES Study (studyId) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `MetabolitePerExperiment`
---
-
-DROP TABLE IF EXISTS MetabolitePerExperiment;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE MetabolitePerExperiment (
-  studyId varchar(100) COLLATE utf8mb4_bin DEFAULT NULL,
-  experimentUniqueId int NOT NULL,
-  bioreplicateUniqueId int NOT NULL,
-  chebi_id varchar(255) COLLATE utf8mb4_bin NOT NULL,
-  PRIMARY KEY (experimentUniqueId,bioreplicateUniqueId,chebi_id),
-  KEY fk_1 (chebi_id),
-  KEY fk_2 (experimentUniqueId),
-  KEY fk_3 (studyId),
-  CONSTRAINT MetabolitePerExperiment_fk_1 FOREIGN KEY (chebi_id) REFERENCES Metabolites (chebi_id) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT MetabolitePerExperiment_fk_2 FOREIGN KEY (experimentUniqueId) REFERENCES Experiments (id) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT MetabolitePerExperiment_fk_3 FOREIGN KEY (studyId) REFERENCES Study (studyId) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -465,6 +442,25 @@ CREATE TABLE Study (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `StudyMetabolites`
+--
+
+DROP TABLE IF EXISTS StudyMetabolites;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE StudyMetabolites (
+  studyId varchar(100) COLLATE utf8mb4_bin DEFAULT NULL,
+  chebi_id varchar(255) COLLATE utf8mb4_bin NOT NULL,
+  id bigint unsigned NOT NULL AUTO_INCREMENT,
+  PRIMARY KEY (id),
+  KEY fk_1 (chebi_id),
+  KEY fk_3 (studyId),
+  CONSTRAINT MetabolitePerExperiment_fk_1 FOREIGN KEY (chebi_id) REFERENCES Metabolites (chebi_id) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT MetabolitePerExperiment_fk_3 FOREIGN KEY (studyId) REFERENCES Study (studyId) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `StudyUsers`
 --
 
@@ -578,5 +574,7 @@ INSERT INTO MigrationVersions VALUES
 (46,'2025_05_05_130725_fix_experiment_compartments','2025-05-05 11:21:15'),
 (53,'2025_05_05_201613_fix_bioreplicate_columns','2025-05-05 18:36:14'),
 (56,'2025_05_05_204021_remove_bioreplicate_metadata','2025-05-05 18:44:24'),
-(67,'2025_05_09_143613_fix_perturbation_columns','2025-05-09 16:16:48');
+(67,'2025_05_09_143613_fix_perturbation_columns','2025-05-09 16:16:48'),
+(69,'2025_05_09_185956_remove_position_from_measurements','2025-05-09 17:00:56'),
+(74,'2025_05_09_194730_fix_study_metabolite_columns','2025-05-09 17:59:54');
 

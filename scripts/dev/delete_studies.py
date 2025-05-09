@@ -13,7 +13,7 @@ with get_transaction() as conn:
         # Clear out previous data by studyId, in reverse insertion order:
         data_tables = [
             "Measurements",
-            "MetabolitePerExperiment",
+            "StudyMetabolites",
             "Bioreplicates",
             "TechniquesPerExperiment",
             "CompartmentsPerExperiment",

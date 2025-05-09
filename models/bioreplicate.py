@@ -38,10 +38,11 @@ class Bioreplicate(OrmBase):
     )
 
     @staticmethod
-    def find_for_study(db_conn, study_id, name):
-        return execute_text(db_conn, """
-            SELECT id
-            FROM Bioreplicates
-            WHERE studyId = :study_id
-              AND name = :name
-        """, study_id=study_id, name=name).scalar()
+    def find_for_study(db_session, study_id, name):
+        return db_session.scalars(
+            sql.select(Bioreplicate.id)
+            .where(
+                Bioreplicate.studyId == study_id,
+                Bioreplicate.name == name,
+            )
+        ).one()
