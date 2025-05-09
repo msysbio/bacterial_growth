@@ -31,7 +31,7 @@ class UploadStep5Form(BaseForm):
             class Meta:
                 csrf = False
 
-            startTimeIndex = IntegerField('startTimeIndex', validators=[DataRequired()])
+            startTimepoint = IntegerField('startTimepoint', validators=[DataRequired()])
             description = TextAreaField('description', validators=[DataRequired()])
 
             removedCompartmentName = SelectField('removedCompartmentName', choices=[], validate_choice=False)

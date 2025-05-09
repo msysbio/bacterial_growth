@@ -370,7 +370,7 @@ CREATE TABLE Perturbations (
   addedCompartmentId int DEFAULT NULL,
   oldCommunityId int DEFAULT NULL,
   newCommunityId int DEFAULT NULL,
-  startTimeInSeconds int NOT NULL,
+  startTimepoint int NOT NULL,
   PRIMARY KEY (id),
   KEY fk_1 (experimentId),
   KEY fk_2 (studyId),
@@ -578,5 +578,5 @@ INSERT INTO MigrationVersions VALUES
 (46,'2025_05_05_130725_fix_experiment_compartments','2025-05-05 11:21:15'),
 (53,'2025_05_05_201613_fix_bioreplicate_columns','2025-05-05 18:36:14'),
 (56,'2025_05_05_204021_remove_bioreplicate_metadata','2025-05-05 18:44:24'),
-(65,'2025_05_09_143613_fix_perturbation_columns','2025-05-09 12:56:58');
+(67,'2025_05_09_143613_fix_perturbation_columns','2025-05-09 16:16:48');
 

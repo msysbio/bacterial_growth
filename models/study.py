@@ -53,6 +53,7 @@ class Study(OrmBase):
     calculationTechniques:  Mapped[List['CalculationTechnique']]  = owner_relationship()
     experimentCompartments: Mapped[List['ExperimentCompartment']] = owner_relationship()
     bioreplicates:          Mapped[List['Bioreplicate']]          = owner_relationship()
+    perturbations:          Mapped[List['Perturbation']]          = owner_relationship()
 
     studyMetabolites: Mapped[List['StudyMetabolite']] = owner_relationship()
     metabolites: Mapped[List['Metabolite']] = relationship(

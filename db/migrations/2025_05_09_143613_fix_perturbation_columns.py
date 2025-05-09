@@ -22,7 +22,7 @@ def up(conn):
         ADD addedCompartmentId int DEFAULT NULL,
         ADD oldCommunityId int DEFAULT NULL,
         ADD newCommunityId int DEFAULT NULL,
-        ADD startTimeInSeconds int NOT NULL
+        ADD startTimepoint int NOT NULL
         ;
     """
     conn.execute(sql.text(query))
@@ -52,7 +52,7 @@ def down(conn):
     query = """
         ALTER TABLE Perturbation
 
-        DROP startTimeInSeconds,
+        DROP startTimepoint,
         DROP newCommunityId,
         DROP oldCommunityId,
         DROP addedCompartmentId,

@@ -16,7 +16,7 @@
 
       <label class="full">
         <div class="required">Start timepoint</div>
-        {{ form.startTimeIndex(class='form-input-blue form-input-full', min=1, max=submission.studyDesign['timepoint_count']) }}
+        {{ form.startTimepoint(class='form-input-blue form-input-full', min=1, max=submission.studyDesign['timepoint_count']) }}
         <div class="help">
           Timepoint of the change, from 1 to {{ submission.studyDesign['timepoint_count'] }}.
         </div>

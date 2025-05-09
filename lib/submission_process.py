@@ -17,6 +17,7 @@ from models import (
     Experiment,
     ExperimentCompartment,
     Measurement,
+    Perturbation,
     Project,
     ProjectUser,
     Strain,
@@ -216,6 +217,7 @@ def _save_experiments(db_session, submission_form, study):
         community_name    = experiment_data.pop('communityName')
         compartment_names = experiment_data.pop('compartmentNames')
         bioreplicates     = experiment_data.pop('bioreplicates')
+        perturbations     = experiment_data.pop('perturbations')
 
         experiment = Experiment(
             **experiment_data,
@@ -240,6 +242,35 @@ def _save_experiments(db_session, submission_form, study):
             )
 
             db_session.add(bioreplicate)
+            db_session.flush()
+
+        for perturbation_data in perturbations:
+            perturbation_data = copy.deepcopy(perturbation_data)
+
+            perturbation = Perturbation(
+                studyId=study.publicId,
+                experimentId=experiment.id,
+                startTimepoint=perturbation_data.pop('startTimepoint'),
+                description=perturbation_data.pop('description'),
+            )
+
+            name = perturbation_data.pop('removedCompartmentName', '')
+            if name != '':
+                perturbation.removedCompartmentId = compartments_by_name[name].id
+
+            name = perturbation_data.pop('addedCompartmentName', '')
+            if name != '':
+                perturbation.addedCompartmentId = compartments_by_name[name].id
+
+            name = perturbation_data.pop('oldCommunityName', '')
+            if name != '':
+                perturbation.oldCommunityId = communities_by_name[name].id
+
+            name = perturbation_data.pop('newCommunityName', '')
+            if name != '':
+                perturbation.newCommunityId = communities_by_name[name].id
+
+            db_session.add(perturbation)
             db_session.flush()
 
         experiments.append(experiment)

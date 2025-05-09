@@ -9,6 +9,7 @@ from .experiment_compartment import ExperimentCompartment
 from .measurement import Measurement
 from .measurement_technique import MeasurementTechnique
 from .metabolite import Metabolite
+from .perturbation import Perturbation
 from .project import Project
 from .project_user import ProjectUser
 from .strain import Strain

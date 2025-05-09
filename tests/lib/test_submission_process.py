@@ -224,7 +224,7 @@ class TestSubmissionProcess(DatabaseTest):
                 'study':   {'name': 'Test study'},
 
                 'compartments': [
-                    {'name': 'WC', 'mediumName': 'WC'},
+                    {'name': 'WC',    'mediumName': 'WC'},
                     {'name': 'MUCIN', 'mediumName': 'WC'}
                 ],
                 'communities': [
@@ -241,7 +241,15 @@ class TestSubmissionProcess(DatabaseTest):
                         {'name': 'RI_1'},
                         {'name': 'RI_2'},
                         {'name': 'RI_3'},
-                    ]
+                    ],
+                    'perturbations': [{
+                        'description': 'Change everything',
+                        'startTimepoint': 3,
+                        'removedCompartmentName': 'MUCIN',
+                        'addedCompartmentName': '',
+                        'newCommunityName': 'RI',
+                        'oldCommunityName': '',
+                    }]
                 }]
             }
         )
@@ -267,6 +275,10 @@ class TestSubmissionProcess(DatabaseTest):
         self.assertEqual(experiment.community, communities[0])
         self.assertEqual(len(experiment.compartments), 2)
         self.assertEqual(experiment.compartments, compartments)
+
+        self.assertEqual(len(experiment.perturbations), 1)
+        self.assertEqual(experiment.perturbations, study.perturbations)
+        self.assertEqual(experiment.perturbations[0].newCommunityId, communities[0].id)
 
         self.assertEqual(len(experiment.bioreplicates), 3)
         self.assertEqual(len(study.bioreplicates), 3)
