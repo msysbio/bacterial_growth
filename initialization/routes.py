@@ -58,6 +58,20 @@ def init_routes(app):
     app.add_url_rule("/study/<string:studyId>/visualize",       view_func=study_pages.study_visualize_page)
     app.add_url_rule("/study/<string:studyId>/visualize/chart", view_func=study_pages.study_chart_fragment)
 
+    app.add_url_rule(
+        "/study/<string:studyId>/calculations",
+        view_func=study_pages.study_calculations_action,
+        methods=["POST"],
+    )
+    app.add_url_rule(
+        "/study/<string:studyId>/calculations/<string:calculationTechniqueId>.json",
+        view_func=study_pages.study_calculations_check_json,
+    )
+    app.add_url_rule(
+        "/study/<string:studyId>/calculations/edit",
+        view_func=study_pages.study_calculations_edit_fragment,
+    )
+
     app.add_url_rule("/project/<string:projectId>", view_func=project_pages.project_show_page)
 
     app.add_url_rule("/strain/<int:id>",     view_func=strain_pages.strain_show_page)
@@ -68,7 +82,7 @@ def init_routes(app):
 
     app.add_url_rule("/comparison/",      view_func=comparison_pages.comparison_show_page)
     app.add_url_rule("/comparison/chart", view_func=comparison_pages.comparison_chart_fragment)
-    app.add_url_rule("/comparison/clear", view_func=comparison_pages.comparison_clear_action,   methods=["POST"])
+    app.add_url_rule("/comparison/clear", view_func=comparison_pages.comparison_clear_action, methods=["POST"])
     app.add_url_rule(
         "/comparison/update/<action>.json",
         view_func=comparison_pages.comparison_update_json,

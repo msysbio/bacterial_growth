@@ -7,7 +7,7 @@ from flask import (
 )
 import sqlalchemy.exc as sql_exceptions
 
-from db import get_connection, get_session
+from db import get_connection, get_session, FLASK_DB
 
 
 def init_global_handlers(app):
@@ -33,8 +33,11 @@ def _make_session_permanent():
 
 def _open_db_connection():
     if 'db_conn' not in g:
-        g.db_conn    = get_connection()
-        g.db_session = get_session(g.db_conn)
+        g.db_conn = get_connection()
+
+    if 'db_session' not in g:
+        g.db_session = FLASK_DB.session
+
 
 
 def _fetch_user():

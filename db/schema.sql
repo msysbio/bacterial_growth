@@ -89,6 +89,57 @@ CREATE TABLE BioReplicatesPerExperiment (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `CalculationTechniques`
+--
+
+DROP TABLE IF EXISTS CalculationTechniques;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE CalculationTechniques (
+  id int NOT NULL AUTO_INCREMENT,
+  `type` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  studyUniqueId varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  jobUuid varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  state varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  `error` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  createdAt datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updatedAt datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (id),
+  KEY CalculationTechniques_studyUniqueId (studyUniqueId),
+  CONSTRAINT CalculationTechniques_studyUniqueId FOREIGN KEY (studyUniqueId) REFERENCES Study (studyUniqueID) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `Calculations`
+--
+
+DROP TABLE IF EXISTS Calculations;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE Calculations (
+  id int NOT NULL AUTO_INCREMENT,
+  `type` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  subjectId varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  subjectType varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  calculationTechniqueId int NOT NULL,
+  measurementTechniqueId int NOT NULL,
+  bioreplicateUniqueId int NOT NULL,
+  coefficients json DEFAULT (json_object()),
+  state varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  `error` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  createdAt datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updatedAt datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  calculatedAt datetime DEFAULT NULL,
+  PRIMARY KEY (id),
+  KEY Calculations_measurementTechniqueId (measurementTechniqueId),
+  KEY Calculations_calculationTechniqueId (calculationTechniqueId),
+  CONSTRAINT Calculations_calculationTechniqueId FOREIGN KEY (calculationTechniqueId) REFERENCES CalculationTechniques (id) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT Calculations_measurementTechniqueId FOREIGN KEY (measurementTechniqueId) REFERENCES MeasurementTechniques (id) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `Community`
 --
 
@@ -533,25 +584,27 @@ CREATE TABLE TechniquesPerExperiment (
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
 INSERT INTO MigrationVersions VALUES
-(1,'2024_11_11_160324_initial_schema','2025-04-23 11:11:57'),
-(2,'2024_11_11_164726_remove_unique_study_description_index','2025-04-23 11:11:57'),
-(3,'2024_11_21_115349_allow_null_medialink','2025-04-23 11:11:58'),
-(4,'2024_11_21_120444_fix_unique_primary_keys','2025-04-23 11:11:58'),
-(5,'2025_01_30_152951_fix_bioreplicates_metadata_unique_id','2025-04-23 11:11:58'),
-(6,'2025_02_04_134239_rename-chebi-id','2025-04-23 11:11:58'),
-(7,'2025_02_05_134203_make-project-and-study-uuids-unique','2025-04-23 11:11:58'),
-(8,'2025_02_12_170210_add-assembly-id-to-strains','2025-04-23 11:11:58'),
-(9,'2025_02_13_114748_increase_experiment_id_size','2025-04-23 11:11:58'),
-(10,'2025_02_13_120609_rename_comunity_to_community','2025-04-23 11:11:59'),
-(11,'2025_02_13_121409_rename_comunity_to_community_2','2025-04-23 11:11:59'),
-(12,'2025_02_13_163206_create_measurements','2025-04-23 11:11:59'),
-(13,'2025_02_17_161750_remove_duplicated_columns_from_metabolite_per_experiment','2025-04-23 11:11:59'),
-(14,'2025_03_11_113040_create_submissions_and_excel_files','2025-04-23 11:11:59'),
-(15,'2025_03_21_112110_create_project_and_study_user_join_tables','2025-04-23 11:11:59'),
-(16,'2025_03_25_133231_add_user_id_to_new_strains','2025-04-23 11:11:59'),
-(17,'2025_03_28_181930_create_measurement_techniques','2025-04-23 11:11:59'),
-(18,'2025_03_30_160720_add_technique_id_to_measurements','2025-04-23 11:11:59'),
-(19,'2025_04_03_121425_add_time_units_to_study','2025-04-23 11:11:59'),
-(20,'2025_04_03_125243_add_timestamps_to_study_and_project','2025-04-23 11:12:00'),
-(21,'2025_04_15_112546_add_publishing_related_states_to_studies','2025-04-23 11:12:00');
+(1,'2024_11_11_160324_initial_schema','2025-04-25 09:06:52'),
+(2,'2024_11_11_164726_remove_unique_study_description_index','2025-04-25 09:06:52'),
+(3,'2024_11_21_115349_allow_null_medialink','2025-04-25 09:06:52'),
+(4,'2024_11_21_120444_fix_unique_primary_keys','2025-04-25 09:06:53'),
+(5,'2025_01_30_152951_fix_bioreplicates_metadata_unique_id','2025-04-25 09:06:53'),
+(6,'2025_02_04_134239_rename-chebi-id','2025-04-25 09:06:53'),
+(7,'2025_02_05_134203_make-project-and-study-uuids-unique','2025-04-25 09:06:53'),
+(8,'2025_02_12_170210_add-assembly-id-to-strains','2025-04-25 09:06:53'),
+(9,'2025_02_13_114748_increase_experiment_id_size','2025-04-25 09:06:53'),
+(10,'2025_02_13_120609_rename_comunity_to_community','2025-04-25 09:06:53'),
+(11,'2025_02_13_121409_rename_comunity_to_community_2','2025-04-25 09:06:53'),
+(12,'2025_02_13_163206_create_measurements','2025-04-25 09:06:53'),
+(13,'2025_02_17_161750_remove_duplicated_columns_from_metabolite_per_experiment','2025-04-25 09:06:53'),
+(14,'2025_03_11_113040_create_submissions_and_excel_files','2025-04-25 09:06:54'),
+(15,'2025_03_21_112110_create_project_and_study_user_join_tables','2025-04-25 09:06:54'),
+(16,'2025_03_25_133231_add_user_id_to_new_strains','2025-04-25 09:06:54'),
+(17,'2025_03_28_181930_create_measurement_techniques','2025-04-25 09:06:54'),
+(18,'2025_03_30_160720_add_technique_id_to_measurements','2025-04-25 09:06:54'),
+(19,'2025_04_03_121425_add_time_units_to_study','2025-04-25 09:06:54'),
+(20,'2025_04_03_125243_add_timestamps_to_study_and_project','2025-04-25 09:06:54'),
+(21,'2025_04_15_112546_add_publishing_related_states_to_studies','2025-04-25 09:06:54'),
+(24,'2025_04_24_095808_create_calculation_techniques','2025-04-25 10:19:28'),
+(26,'2025_04_25_103658_create_calculations','2025-04-27 10:02:53');
 

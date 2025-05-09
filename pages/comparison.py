@@ -9,8 +9,6 @@ from flask import (
 )
 import sqlalchemy as sql
 from sqlalchemy.sql.expression import literal
-import plotly.graph_objects as go
-from plotly.subplots import make_subplots
 
 from models import (
     Bioreplicate,
@@ -18,8 +16,7 @@ from models import (
     MeasurementTechnique,
 )
 from lib.db import execute_into_df
-
-PLOTLY_TEMPLATE = 'plotly_white'
+from lib.figures import make_figure_with_secondary_axis
 
 
 def comparison_show_page():
@@ -99,9 +96,8 @@ def comparison_chart_fragment():
         df = execute_into_df(g.db_conn, measurement_query)
         target_data.append((direction, df))
 
-    fig = _render_figure(target_data)
+    fig = make_figure_with_secondary_axis(target_data)
     fig.update_layout(
-        template=PLOTLY_TEMPLATE,
         margin=dict(l=0, r=0, t=60, b=40),
         title=dict(x=0)
     )
@@ -119,23 +115,3 @@ def comparison_chart_fragment():
 
 def _init_compare_data():
     return session.get('compareData', {'targets': []})
-
-
-def _render_figure(data, **params):
-    fig = make_subplots(specs=[[{"secondary_y": True}]])
-
-    for direction, df in data:
-        if direction == 'left':
-            fig.add_trace(
-                go.Scatter(x=df['time'], y=df['value'], name=df['name'][0]),
-                secondary_y=False,
-            )
-        elif direction == 'right':
-            fig.add_trace(
-                go.Scatter(x=df['time'], y=df['value'], name=df['name'][0], line={'dash': 'dot'}),
-                secondary_y=True,
-            )
-        else:
-            raise ValueError(f"Unexpected direction received: {direction}")
-
-    return fig

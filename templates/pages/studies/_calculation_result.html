@@ -1,0 +1,30 @@
+{% macro render_param_input(name, description) %}
+
+  {% if name in calculation.coefficients: %}
+    <div class="form-row">
+      <label>
+        <span>{{ name }}: <span class="help">{{ description }}</span></span>
+        <input
+            type="text"
+            name="param-{{ name }}"
+            class="form-input-blue form-input-full"
+            value="{{ calculation and calculation.coefficients[name] or '' }}"
+            {{ 'readonly' if calculation is none }} />
+      </label>
+    </div>
+  {% endif %}
+
+{% endmacro %}
+
+<div class="chart-container js-chart-preview">
+  {% for fig_html in fig_htmls %}
+    {{ fig_html|safe }}
+  {% endfor %}
+</div>
+
+{{ render_param_input("y0",    "initial value of abundance") }}
+{{ render_param_input("y0_lm", "the intersection of the fit with the abscissa") }}
+{{ render_param_input("mumax", "maximum growth rate (1/time)") }}
+{{ render_param_input("K",     "carrying capacity (max. abundance)") }}
+{{ render_param_input("lag",   "lag phase") }}
+{{ render_param_input("h0",    "parameter specifying the initial physiological state of organisms (e.g. cells) and in consequence the lag phase (h0 = max growth rate * lag phase)") }}

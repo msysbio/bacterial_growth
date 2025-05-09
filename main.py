@@ -3,6 +3,7 @@ import os
 from flask import Flask
 
 from initialization.config import init_config
+from initialization.flask_db import init_flask_db
 from initialization.assets import init_assets
 from initialization.routes import init_routes, dump_routes
 from initialization.plotly import init_plotly
@@ -10,6 +11,7 @@ from initialization.timing import init_timing
 from initialization.global_handlers import init_global_handlers
 from initialization.template_filters import init_template_filters
 from initialization.admin import init_admin
+from initialization.celery import init_celery
 
 
 def create_app():
@@ -17,11 +19,13 @@ def create_app():
     app = Flask(__name__)
 
     app = init_config(app)
+    app = init_flask_db(app)
     app = init_assets(app)
     app = init_routes(app)
     app = init_global_handlers(app)
     app = init_template_filters(app)
     app = init_admin(app)
+    app = init_celery(app)
 
     init_plotly()
 

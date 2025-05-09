@@ -34,14 +34,5 @@
       width: 70%;
       overflow-x: hidden;
     }
-
-    .chart-placeholder {
-      height: 100%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-size: 52px;
-      opacity: 0.5;
-    }
   }
 }

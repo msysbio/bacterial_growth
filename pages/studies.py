@@ -6,14 +6,23 @@ from flask import (
 )
 from werkzeug.exceptions import Forbidden
 import sqlalchemy as sql
+from sqlalchemy.sql.expression import literal
+from celery.result import AsyncResult as CeleryResult
 
 import models.study_dfs as study_dfs
 from models import (
     Study,
     Experiment,
+    Measurement,
+    MeasurementTechnique,
+    CalculationTechnique,
+    Calculation,
 )
 from forms.experiment_export_form import ExperimentExportForm
 from forms.experiment_chart_form import ExperimentChartForm
+from lib.calculation_tasks import update_calculation_technique
+from lib.figures import make_figure_with_traces
+from lib.db import execute_into_df
 import lib.util as util
 
 
@@ -140,6 +149,147 @@ def study_chart_fragment(studyId):
         'pages/studies/_figs.html',
         fig_htmls=fig_htmls,
         show_log_toggle=show_log_toggle
+    )
+
+
+def study_calculations_action(studyId):
+    args = request.form.to_dict()
+
+    study = _fetch_study(studyId)
+    calculation_type = args['type']
+
+    target_param_list = []
+    for target_identifier in args.keys():
+        if not target_identifier.startswith('target|'):
+            continue
+
+        (
+            _label,
+            bioreplicate_uuid,
+            measurement_technique_id,
+            subject_type,
+            subject_id,
+        ) = target_identifier.split('|')
+
+        target_param_list.append({
+            'bioreplicate_uuid':        bioreplicate_uuid,
+            'measurement_technique_id': measurement_technique_id,
+            'subject_type':             subject_type,
+            'subject_id':               subject_id,
+        })
+
+    calculation_technique = g.db_session.scalars(
+        sql.select(CalculationTechnique)
+        .where(
+            CalculationTechnique.type == calculation_type,
+            CalculationTechnique.studyUniqueID == study.uuid
+        )
+    ).one_or_none()
+    if calculation_technique is None:
+        calculation_technique = CalculationTechnique(
+            type=calculation_type,
+            studyUniqueID=study.uuid,
+        )
+        g.db_session.add(calculation_technique)
+        g.db_session.commit()
+
+    result = update_calculation_technique.delay(calculation_technique.id, target_param_list)
+    calculation_technique.jobUuid = result.task_id
+    g.db_session.commit()
+
+    return {'calculationTechniqueId': calculation_technique.id}
+
+
+def study_calculations_check_json(studyId, calculationTechniqueId):
+    calculation_technique = g.db_session.get(CalculationTechnique, calculationTechniqueId)
+
+    return {
+        "ready":      calculation_technique.state in ('ready', 'error'),
+        "successful": calculation_technique.state != 'error',
+    }
+
+
+def study_calculations_edit_fragment(studyId):
+    args = request.args.to_dict()
+
+    calculation_type = args.pop('calculationType')
+    biorep_uuid      = args.pop('bioreplicateUniqueId')
+    subject_type     = args.pop('subjectType')
+    subject_id       = args.pop('subjectId')
+    technique_id     = args.pop('techniqueId')
+
+    width  = args.pop('width')
+    height = args.pop('height')
+
+    measurement_technique = g.db_session.get(MeasurementTechnique, technique_id)
+    subject = Measurement.get_subject(g.db_session, subject_id, subject_type)
+
+    measurement_df = execute_into_df(
+        g.db_session,
+        sql.select(
+            Measurement.timeInHours.label("time"),
+            Measurement.value.label("value"),
+            (literal(subject.name) + ' ' + literal(measurement_technique.short_name)).label("name"),
+        )
+        .where(
+            Measurement.bioreplicateUniqueId == biorep_uuid,
+            Measurement.subjectType == subject_type,
+            Measurement.subjectId == subject_id,
+            Measurement.techniqueId == technique_id,
+        )
+    )
+
+    query = (
+        sql.select(Calculation)
+        .where(
+            Calculation.type == calculation_type,
+            Calculation.bioreplicateUniqueId == biorep_uuid,
+            Calculation.subjectType == subject_type,
+            Calculation.subjectId == subject_id,
+            Calculation.measurementTechniqueId == measurement_technique.id,
+            Calculation.state.in_(('ready', 'error')),
+        )
+    )
+    calculation = g.db_session.scalars(query).one_or_none()
+
+    if calculation:
+        calculation_df = calculation.generate_chart_df(measurement_df)
+        fig_dfs = [measurement_df, calculation_df]
+    else:
+        fig_dfs = [measurement_df]
+
+    fig = make_figure_with_traces(
+        fig_dfs,
+        labels={
+            'time': 'Hours',
+            'value': measurement_technique.units,
+        },
+    )
+
+    max_y = measurement_df['value'].max()
+    std_y = measurement_df['value'].std()
+
+    fig.update_layout(
+        margin=dict(l=0, r=0, t=0, b=0),
+        title=dict(x=0),
+        legend=dict(
+            yanchor="bottom",
+            xanchor="right",
+        ),
+        yaxis_range=[-std_y / 10, max_y + std_y / 2]
+    )
+
+    fig_html = fig.to_html(
+        full_html=False,
+        include_plotlyjs=False,
+        default_width=f"{width}px",
+        default_height=f"{height}px",
+    )
+
+    return render_template(
+        'pages/studies/_calculation_result.html',
+        calculation=calculation,
+        fig_htmls=[fig_html],
     )
 
 

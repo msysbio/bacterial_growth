@@ -1,0 +1,26 @@
+.study-manage-page {
+  .measurement-subjects .box {
+    width: 100%;
+    max-height: 300px;
+    overflow-y: auto;
+  }
+
+  .chart-placeholder {
+    height: 300px;
+  }
+
+  .measurement-subjects {
+    .box {
+      padding-left: 0;
+      padding-right: 0;
+
+      > .flex-row {
+        padding: 3px 10px;
+      }
+    }
+
+    .highlight {
+      background-color: var(--light-blue);
+    }
+  }
+}

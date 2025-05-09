@@ -1,11 +1,12 @@
 {% from 'utils/_post_button.html' import post_button %}
+{% from 'pages/studies/_calculation_form.html' import render_calculation_form %}
 
 {% extends '_layout.html' %}
 
 {% block title %}: Manage study {{ study.studyId }}{% endblock %}
 
 {% block content %}
-  <div class="container study-page">
+  <div class="container study-page study-manage-page" data-study-id="{{ study.studyId }}">
     {% include 'pages/studies/_header.html' %}
 
     <article>
@@ -55,6 +56,30 @@
           {{ post_button("Edit submission", url_for('edit_submission_action', id=lastSubmission.id)) }}
         </p>
       {% endif %}
+
+      <h2>Models and other calculations</h2>
+
+      <p>
+        Select a type of calculation to perform on the study's measurements.
+        The results will be available for visualization once the calculation is
+        finished.
+      </p>
+
+      <h2>Easy linear model</h2>
+
+      <br>
+
+      {{ render_calculation_form(study=study, type="easy_linear") }}
+
+      <h2>Baranyi-Roberts model</h2>
+
+      <br>
+
+      {{ render_calculation_form(study=study, type="baranyi_roberts") }}
     </article>
   </div>
+
+  {% assets "plotly_js" %}
+  <script src="{{ ASSET_URL }}" type="text/javascript"></script>
+  {% endassets %}
 {% endblock %}

@@ -41,6 +41,12 @@ class Study(OrmBase):
     measurementTechniques: Mapped[List['MeasurementTechnique']] = relationship(
         back_populates="study"
     )
+    measurements: Mapped[List['Measurement']] = relationship(
+        back_populates="study"
+    )
+    calculationTechniques: Mapped[List['CalculationTechnique']] = relationship(
+        back_populates="study"
+    )
     studyMetabolites: Mapped[List['StudyMetabolite']] = relationship(
         back_populates="study"
     )

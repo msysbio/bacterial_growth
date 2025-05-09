@@ -13,10 +13,23 @@ To exploit the resource, feel free to
 
 ## Setup
 
-Given a working python environment, dependencies can be installed using:
+To set up a working python environment, it's recommended to use [micromamba](https://mamba.readthedocs.io/en/latest/installation/micromamba-installation.html) with the given environment file:
+
+```
+micromamba create -f micromamba_env.yml
+micromamba activate mgrowthdb
+```
+
+This will install python version 3.12 and R and activate the environment by name in the current shell. Python dependencies can now be installed using:
 
 ```
 pip install -r requirements.txt
+```
+
+There are a few R dependencies, most notably the package [growthrates](https://cran.r-project.org/package=growthrates), which you can install using `Rscript`:
+
+```
+Rscript -e 'install.packages(c("growthrates", "jsonlite"), repos="https://cloud.r-project.org")'
 ```
 
 In the database config directory, the file [`db/config.toml.example`](db/config.toml.example) contains a template for the database configuration. Copy this file to `db/config.toml` and update it with the correct credentials to access a running mysql database. On linux, you may have to add a `unix_socket = ` field as well.

@@ -2,6 +2,7 @@ from datetime import datetime
 from typing import List
 import itertools
 
+import sqlalchemy as sql
 from sqlalchemy import (
     String,
     Boolean,
@@ -15,6 +16,7 @@ from sqlalchemy.orm import (
 )
 from sqlalchemy.schema import FetchedValue
 from sqlalchemy_utc.sqltypes import UtcDateTime
+from lib.db import execute_into_df
 
 from models.orm_base import OrmBase
 
@@ -62,6 +64,9 @@ class MeasurementTechnique(OrmBase):
     measurements: Mapped[List['Measurement']] = relationship(
         back_populates="techniqueRecord"
     )
+    calculations: Mapped[List['Calculation']] = relationship(
+        back_populates="measurementTechnique"
+    )
 
     @property
     def short_name(self):
@@ -77,6 +82,47 @@ class MeasurementTechnique(OrmBase):
             case 'bioreplicate': return 'community'
             case 'strain': return 'strain'
             case 'metabolite': return 'metabolite'
+
+    @property
+    def is_growth(self):
+        return self.type not in ('ph', 'metabolite')
+
+    def get_bioreplicates(self, db_session):
+        from models import Bioreplicate, Measurement
+
+        return db_session.scalars(
+            sql.select(Bioreplicate)
+            .distinct()
+            .join(Measurement)
+            .where(Measurement.techniqueId == self.id)
+        ).all()
+
+    def get_subjects_for_bioreplicate(self, db_session, bioreplicate):
+        from models import Study, Measurement
+
+        match self.subjectType:
+            case 'bioreplicate':
+                from models import Bioreplicate
+                subject_class = Bioreplicate
+            case 'strain':
+                from models import Strain
+                subject_class = Strain
+            case 'metabolite':
+                from models import Metabolite
+                subject_class = Metabolite
+
+        return db_session.scalars(
+            sql.select(subject_class)
+            .where(subject_class.id.in_(
+                sql.select(Measurement.subjectId)
+                .distinct()
+                .where(
+                    Measurement.techniqueId == self.id,
+                    Measurement.bioreplicateUniqueId == bioreplicate.uuid,
+                    Measurement.value.is_not(None),
+                )
+            ))
+        ).all()
 
     def csv_column_name(self, subject_name=None):
         if self.subjectType == 'bioreplicate':
@@ -134,3 +180,28 @@ class MeasurementTechnique(OrmBase):
             subject = Measurement.get_subject(db_session, subject_id, subject_type)
 
             yield (subject, measurements)
+
+    def get_subject_df(self, db_session, bioreplicate_uuid, subject_id, subject_type):
+        from models import Measurement, Bioreplicate
+
+        subjectName, subjectJoin = Measurement.subject_join(subject_type)
+
+        query = (
+            sql.select(
+                Measurement.timeInHours.label("time"),
+                Measurement.value,
+                Measurement.std,
+                subjectName,
+            )
+            .join(Bioreplicate)
+            .join(*subjectJoin)
+            .where(
+                Measurement.techniqueId == self.id,
+                Measurement.bioreplicateUniqueId == bioreplicate_uuid,
+                Measurement.subjectId == subject_id,
+                Measurement.subjectType == subject_type,
+            )
+            .order_by(Measurement.timeInSeconds)
+        )
+
+        return execute_into_df(db_session, query)

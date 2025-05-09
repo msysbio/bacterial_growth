@@ -1,7 +1,9 @@
 $(document).ready(function() {
   $('.study-page').each(function() {
-    let $page = $(this);
+    let $page       = $(this);
     let $compareBox = $(document).find('.js-compare-box')
+
+    let studyId     = $page.data('studyId');
     let compareData = $compareBox.data('value');
 
     // TODO: a timestamp with a check on update?

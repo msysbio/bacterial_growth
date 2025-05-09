@@ -1,0 +1,112 @@
+{% macro render_calculation_form(study, type) %}
+
+  <form
+      action="{{ url_for('study_calculations_action', studyId=study.publicId) }}"
+      class="simple-form js-calculation-form"
+      method="POST">
+    <input type="hidden" name="type" value="{{ type }}" />
+
+    <div class="flex-row flex-gap-10">
+      <div class="column full flex-column flex-gap-10">
+        <div class="form-row">
+          <label class="full">
+            <span>Measurement technique</span>
+            <select
+                name="measurementTechniqueId"
+                class="form-input-blue form-input-full js-technique-type">
+              {% for technique in study.measurementTechniques if technique.is_growth: %}
+                <option value="{{ technique.id }}">
+                {{ technique.long_name }}
+
+                {% if technique.subjectType != 'metabolite': %}
+                  per {{ technique.subject_short_name }}
+                {% endif %}
+                </option>
+              {% endfor %}
+            </select>
+          </label>
+        </div>
+
+        <div class="form-row">
+          <h3>Measurement subjects:</h3>
+        </div>
+
+        <div class="form-row measurement-subjects">
+          {% for technique in study.measurementTechniques if technique.is_growth: %}
+            <div class="box hidden flex-column flex-gap-6 js-technique-box" data-technique-id="{{ technique.id }}">
+              {% for bioreplicate in technique.get_bioreplicates(g.db_session): %}
+                {% if technique.subjectType != 'bioreplicate': %}
+                  <div class="flex-row">
+                    <strong>
+                      Bioreplicate: {{ bioreplicate.bioreplicateId }}
+                    </strong>
+                  </div>
+                {% endif %}
+
+                {% for subject in technique.get_subjects_for_bioreplicate(g.db_session, bioreplicate): %}
+                  {% set target_identifier = [
+                    bioreplicate.bioreplicateUniqueId,
+                    technique.id,
+                    technique.subjectType,
+                    subject.id,
+                  ]|join('|')%}
+
+                  <div class="flex-row flex-gap-10 js-subject-row" style="align-items: center">
+                    <label>
+                      <input
+                          type="checkbox"
+                          name="target|{{ target_identifier }}" />
+                      {{ subject.name }}
+                    </label>
+
+                    {% set edit_url = url_for(
+                      "study_calculations_edit_fragment",
+                      studyId=study.publicId,
+                      bioreplicateUniqueId=bioreplicate.uuid,
+                      subjectType=technique.subjectType,
+                      subjectId=subject.id,
+                      techniqueId=technique.id
+                    ) %}
+
+                    <a href="{{ edit_url }}" class="flex-right js-edit-trigger">
+                      <div class="icon icon-edit"></div>
+                    </a>
+                  </div>
+                {% endfor %}
+              {% endfor %}
+            </div>
+          {% endfor %}
+        </div>
+
+        <h3>Calculation status</h3>
+
+        <div class="help">
+          <div class="js-calculation-result">
+            Pending, submit the form to start calculation process.
+          </div>
+        </div>
+
+        <div class="flex-column flex-gap-10">
+          <input type="submit" class="flex-end" value="Calculate" />
+        </div>
+      </div>
+
+      <div class="column full flex-column flex-gap-10">
+        <h3>Result</h3>
+
+        <div class="box js-result-container">
+          <div class="chart-container js-chart-preview">
+            <div class="chart-placeholder">
+              📊
+            </div>
+          </div>
+
+          <div class="form-row help">
+            Pick a measurement target to see its calculation results.
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+
+{% endmacro %}
