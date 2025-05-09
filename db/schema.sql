@@ -355,31 +355,26 @@ CREATE TABLE MigrationVersions (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `Perturbation`
+-- Table structure for table `Perturbations`
 --
 
-DROP TABLE IF EXISTS Perturbation;
+DROP TABLE IF EXISTS Perturbations;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE Perturbation (
+CREATE TABLE Perturbations (
   studyId varchar(100) COLLATE utf8mb4_bin DEFAULT NULL,
-  perturbationUniqueid int NOT NULL AUTO_INCREMENT,
-  perturbationId varchar(100) COLLATE utf8mb4_bin NOT NULL,
-  experimentUniqueId int DEFAULT NULL,
-  experimentId varchar(100) COLLATE utf8mb4_bin NOT NULL,
-  OLDCompartmentId varchar(100) COLLATE utf8mb4_bin DEFAULT NULL,
-  OLDComunityId varchar(100) COLLATE utf8mb4_bin DEFAULT NULL,
-  NEWCompartmentId varchar(100) COLLATE utf8mb4_bin DEFAULT NULL,
-  NEWComunityId varchar(100) COLLATE utf8mb4_bin DEFAULT NULL,
-  perturbationDescription text COLLATE utf8mb4_bin,
-  perturbationMinimumValue decimal(10,2) DEFAULT NULL,
-  perturbationMaximumValue decimal(10,2) DEFAULT NULL,
-  perturbationStartTime time DEFAULT NULL,
-  perturbationEndTime time DEFAULT NULL,
-  PRIMARY KEY (perturbationUniqueid),
-  KEY fk_1 (experimentUniqueId),
+  id int NOT NULL AUTO_INCREMENT,
+  experimentId int NOT NULL,
+  `description` text COLLATE utf8mb4_bin,
+  removedCompartmentId int DEFAULT NULL,
+  addedCompartmentId int DEFAULT NULL,
+  oldCommunityId int DEFAULT NULL,
+  newCommunityId int DEFAULT NULL,
+  startTimeInSeconds int NOT NULL,
+  PRIMARY KEY (id),
+  KEY fk_1 (experimentId),
   KEY fk_2 (studyId),
-  CONSTRAINT Perturbation_fk_1 FOREIGN KEY (experimentUniqueId) REFERENCES Experiments (id) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT Perturbation_fk_1 FOREIGN KEY (experimentId) REFERENCES Experiments (id) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT Perturbation_fk_2 FOREIGN KEY (studyId) REFERENCES Study (studyId) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -582,5 +577,6 @@ INSERT INTO MigrationVersions VALUES
 (41,'2025_05_05_104555_fix_experiment_columns','2025-05-05 09:24:08'),
 (46,'2025_05_05_130725_fix_experiment_compartments','2025-05-05 11:21:15'),
 (53,'2025_05_05_201613_fix_bioreplicate_columns','2025-05-05 18:36:14'),
-(56,'2025_05_05_204021_remove_bioreplicate_metadata','2025-05-05 18:44:24');
+(56,'2025_05_05_204021_remove_bioreplicate_metadata','2025-05-05 18:44:24'),
+(65,'2025_05_09_143613_fix_perturbation_columns','2025-05-09 12:56:58');
 

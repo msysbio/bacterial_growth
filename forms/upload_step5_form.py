@@ -1,6 +1,4 @@
 from wtforms import (
-    BooleanField,
-    DecimalField,
     FieldList,
     FormField,
     IntegerField,
@@ -33,8 +31,13 @@ class UploadStep5Form(BaseForm):
             class Meta:
                 csrf = False
 
-            startTime = IntegerField('startTime', validators=[DataRequired()])
-            endTime   = IntegerField('endTime',   validators=[DataRequired()])
+            startTimeIndex = IntegerField('startTimeIndex', validators=[DataRequired()])
+            description = TextAreaField('description', validators=[DataRequired()])
+
+            removedCompartmentName = SelectField('removedCompartmentName', choices=[], validate_choice=False)
+            addedCompartmentName   = SelectField('addedCompartmentName',   choices=[], validate_choice=False)
+            oldCommunityName       = SelectField('oldCommunityName',       choices=[], validate_choice=False)
+            newCommunityName       = SelectField('newCommunityName',       choices=[], validate_choice=False)
 
         name        = StringField('name', validators=[DataRequired()])
         description = TextAreaField('description', validators=[DataRequired()])
@@ -60,6 +63,7 @@ class UploadStep5Form(BaseForm):
         )
 
         bioreplicates = FieldList(FormField(BioreplicateForm))
+        perturbations = FieldList(FormField(PerturbationForm))
 
         def validate_bioreplicates(self, field):
             names = [b['name'] for b in field.data]

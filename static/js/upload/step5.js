@@ -80,6 +80,14 @@ Page('.upload-page .step-content.step-5.active', function($step5) {
 
           return $perturbationForm;
         },
+
+        initializeSubform: function($perturbationForm) {
+          $perturbationForm.find('.js-single-select').select2({
+            theme: 'custom',
+            width: '100%',
+            templateResult: select2Highlighter,
+          })
+        }
       });
     },
   })

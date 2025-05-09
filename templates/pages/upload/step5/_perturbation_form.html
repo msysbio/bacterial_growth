@@ -10,13 +10,16 @@
   <div class="compact-subform-container js-subform-container">
     <div class="form-row">
       <label class="full">
-        <div class="required">Start time</div>
-        {{ form.startTime(class='form-input-blue form-input-full') }}
+        <div class="required">Description</div>
+        {{ form['description'](class='form-input-blue form-input-full', rows=3) }}
       </label>
 
       <label class="full">
-        <div class="required">End time</div>
-        {{ form.startTime(class='form-input-blue form-input-full') }}
+        <div class="required">Start timepoint</div>
+        {{ form.startTimeIndex(class='form-input-blue form-input-full', min=1, max=submission.studyDesign['timepoint_count']) }}
+        <div class="help">
+          Timepoint of the change, from 1 to {{ submission.studyDesign['timepoint_count'] }}.
+        </div>
       </label>
 
       <div class="no-label flex-right">
@@ -24,6 +27,110 @@
           <span class="icon icon-remove"></span>
         </a>
       </div>
+    </div>
+
+    <div class="form-row">
+      <div class="no-label full">
+        <h4>Compartment replacement</h4>
+
+        <div class="help" style="font-size: 14px">
+          Change in environmental conditions replacing one type of compartment with another
+        </div>
+      </div>
+
+      <label class="full">
+        <div>Removed compartment</div>
+        <select
+            name="{{ prefix }}removedCompartmentName"
+            class="js-single-select">
+          <option value="">
+          ---
+          </option>
+
+          {% set compartment_name = form.data['removedCompartmentName'] %}
+
+          {% for compartment_data in submission.studyDesign['compartments']: %}
+            <option
+                value="{{ compartment_data['name'] }}"
+                {{ "selected" if compartment_name == compartment_data['name'] }}>
+              {{ compartment_data['name'] }}
+            </option>
+          {% endfor %}
+        </select>
+      </label>
+
+      <label class="full">
+        <div>Added compartment</div>
+        <select
+            name="{{ prefix }}addedCompartmentName"
+            class="js-single-select">
+          <option value="">
+          ---
+          </option>
+
+          {% set compartment_name = form.data['addedCompartmentName'] %}
+
+          {% for compartment_data in submission.studyDesign['compartments']: %}
+            <option
+                value="{{ compartment_data['name'] }}"
+                {{ "selected" if compartment_name == compartment_data['name'] }}>
+              {{ compartment_data['name'] }}
+            </option>
+          {% endfor %}
+        </select>
+      </label>
+    </div>
+
+    <div class="form-row">
+      <div class="no-label full" data-tippy-content="">
+        <h4>Change in community</h4>
+
+        <div class="help" style="font-size: 14px">
+          Adding or removing strains in the compartment
+        </div>
+      </div>
+
+      <label class="full">
+        <div>Old community</div>
+        <select
+            name="{{ prefix }}oldCommunityName"
+            class="js-single-select">
+          <option value="">
+          ---
+          </option>
+
+          {% set community_name = form.data['oldCommunityName'] %}
+
+          {% for community_data in submission.studyDesign['communities']: %}
+            <option
+                value="{{ community_data['name'] }}"
+                {{ "selected" if community_name == community_data['name'] }}>
+              {{ community_data['name'] }}
+            </option>
+          {% endfor %}
+        </select>
+      </label>
+
+      <label class="full">
+        <div>New community</div>
+        <select
+            name="{{ prefix }}newCommunityName"
+            class="js-single-select">
+          <option value="">
+          ---
+          </option>
+
+          {% set community_name = form.data['newCommunityName'] %}
+
+          {% for community_data in submission.studyDesign['communities']: %}
+            <option
+                value="{{ community_data['name'] }}"
+                {{ "selected" if community_name == community_data['name'] }}>
+              {{ community_data['name'] }}
+            </option>
+          {% endfor %}
+        </select>
+      </label>
     </div>
   </div>
 
