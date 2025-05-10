@@ -8,6 +8,7 @@ from lib.db import execute_text
 from models import (
     Bioreplicate,
     CalculationTechnique,
+    Compartment,
     Experiment,
     Measurement,
     MeasurementTechnique,
@@ -105,6 +106,20 @@ class DatabaseTest(unittest.TestCase):
 
         return self._create_orm_record(StudyUser, params)
 
+    def create_compartment(self, **params):
+        self.compartment_sequence = getattr(self, 'compartment_sequence', 0) + 1
+
+        study_id = self._get_or_create_dependency(params, 'studyId', 'study')
+
+        params = {
+            'studyId':    study_id,
+            'name':       f"Compartment {self.compartment_sequence}",
+            'mediumName': 'WC anaerobe broth',
+            **params,
+        }
+
+        return self._create_orm_record(Compartment, params)
+
     def create_experiment(self, **params):
         self.experiment_sequence = getattr(self, 'experiment_sequence', 0) + 1
 
@@ -151,16 +166,12 @@ class DatabaseTest(unittest.TestCase):
         return self._create_orm_record(Strain, params)
 
     def create_study_metabolite(self, **params):
-        study_id          = self._get_or_create_dependency(params, 'studyId', 'study')
-        experiment_uuid   = self._get_or_create_dependency(params, 'experimentUniqueId', ('experiment', 'id'), studyId=study_id)
-        chebi_id          = self._get_or_create_dependency(params, 'chebi_id', 'metabolite')
-        bioreplicate_uuid = self._get_or_create_dependency(params, 'bioreplicateUniqueId', ('bioreplicate', 'id'))
+        study_id = self._get_or_create_dependency(params, 'studyId', 'study')
+        chebi_id = self._get_or_create_dependency(params, 'chebi_id', 'metabolite')
 
         params = {
-            'studyId':              study_id,
-            'experimentUniqueId':   experiment_uuid,
-            'bioreplicateUniqueId': bioreplicate_uuid,
-            'chebi_id':             chebi_id,
+            'studyId':  study_id,
+            'chebi_id': chebi_id,
             **params,
         }
 
@@ -169,6 +180,7 @@ class DatabaseTest(unittest.TestCase):
     def create_measurement(self, **params):
         study_id          = self._get_or_create_dependency(params, 'studyId', 'study')
         bioreplicate_uuid = self._get_or_create_dependency(params, 'bioreplicateUniqueId', ('bioreplicate', 'id'))
+        compartment_id    = self._get_or_create_dependency(params, 'compartmentId', ('compartment', 'id'))
         technique_id      = self._get_or_create_dependency(params, 'id', 'measurement_technique')
 
         subject_id   = params['subjectId']
@@ -177,8 +189,8 @@ class DatabaseTest(unittest.TestCase):
         params = {
             'studyId':              study_id,
             'bioreplicateUniqueId': bioreplicate_uuid,
+            'compartmentId':        compartment_id,
             'techniqueId':          technique_id,
-            'position':             'A1',
             'timeInSeconds':        3600,
             'unit':                 'unknown',
             'value':                Decimal('100.000'),

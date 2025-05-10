@@ -294,10 +294,13 @@ CREATE TABLE Measurements (
   subjectType varchar(100) NOT NULL,
   subjectId varchar(100) NOT NULL,
   techniqueId int DEFAULT NULL,
+  compartmentId int NOT NULL,
   PRIMARY KEY (id),
   KEY bioreplicateUniqueId (bioreplicateUniqueId),
   KEY studyId (studyId),
+  KEY Measurements_fk_1 (compartmentId),
   CONSTRAINT bioreplicateUniqueId FOREIGN KEY (bioreplicateUniqueId) REFERENCES Bioreplicates (id) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT Measurements_fk_1 FOREIGN KEY (compartmentId) REFERENCES Compartments (id) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT studyId FOREIGN KEY (studyId) REFERENCES Study (studyId) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -576,5 +579,6 @@ INSERT INTO MigrationVersions VALUES
 (56,'2025_05_05_204021_remove_bioreplicate_metadata','2025-05-05 18:44:24'),
 (67,'2025_05_09_143613_fix_perturbation_columns','2025-05-09 16:16:48'),
 (69,'2025_05_09_185956_remove_position_from_measurements','2025-05-09 17:00:56'),
-(74,'2025_05_09_194730_fix_study_metabolite_columns','2025-05-09 17:59:54');
+(74,'2025_05_09_194730_fix_study_metabolite_columns','2025-05-09 17:59:54'),
+(76,'2025_05_10_112933_add_compartment_id_to_measurements','2025-05-10 09:32:30');
 

@@ -46,3 +46,5 @@ class Compartment(OrmBase):
         secondary="ExperimentCompartments",
         viewonly=True
     )
+
+    measurements: Mapped[List['Measurement']] = relationship(back_populates='compartment')

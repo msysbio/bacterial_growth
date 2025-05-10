@@ -67,16 +67,16 @@
                 <th>Measurements</th>
               </tr>
 
-              {% for bioreplicate, bioreplicate_measurements in technique.measurements_by_bioreplicate(g.db_session): %}
+              {% for (bioreplicate, compartment), measurement_group in technique.measurements_by_compartment(g.db_session): %}
                 {% if technique.subjectType != 'bioreplicate': %}
                   <tr class="js-table-row">
                     <th colspan="4" align="center">
-                      Bioreplicate: {{ bioreplicate.name }}
+                      Bioreplicate: {{ bioreplicate.name }}, Compartment: {{ compartment.name }}
                     </th>
                   </tr>
                 {% endif %}
 
-                {% for subject, measurements in technique.measurements_by_subject(g.db_session, bioreplicate_measurements): %}
+                {% for subject, measurements in technique.measurements_by_subject(g.db_session, measurement_group): %}
                   {% set subjectClass = subject.__class__.__name__ %}
 
                   <tr class="js-table-row">

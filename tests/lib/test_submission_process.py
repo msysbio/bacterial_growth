@@ -263,7 +263,7 @@ class TestSubmissionProcess(DatabaseTest):
         communities = _save_communities(self.db_session, submission_form, study, user_uuid='user1')
         compartments = _save_compartments(self.db_session, submission_form, study)
 
-        experiments = _save_experiments(self.db_session, submission_form, study, compartments, communities)
+        experiments = _save_experiments(self.db_session, submission_form, study)
 
         self.db_session.flush()
 
@@ -285,49 +285,8 @@ class TestSubmissionProcess(DatabaseTest):
         self.assertEqual({'RI_1', 'RI_2', 'RI_3'}, {b.name for b in study.bioreplicates})
 
     def test_measurement_technique_creation(self):
-        t_ri = self.create_taxon(tax_names='Roseburia intestinalis')
-
-        submission = self.create_submission(
-            studyDesign={
-                'project': {'name': 'Test project'},
-                'study':   {'name': 'Test study'},
-
-                'techniques': [
-                    {'type': 'fc', 'units': 'Cells/mL', 'subjectType': 'bioreplicate'},
-                    {'name': 'MUCIN', 'mediumName': 'WC'}
-                ],
-            }
-        )
-        self.db_session.add(submission)
-        self.db_session.flush()
-
-        submission_form = SubmissionForm(submission_id=submission.id, db_session=self.db_session)
-
-        # Create dependencies
-        study       = _save_study(self.db_session, submission_form)
-        communities = _save_communities(self.db_session, submission_form, study, user_uuid='user1')
-        compartments = _save_compartments(self.db_session, submission_form, study)
-
-        experiments = _save_experiments(self.db_session, submission_form, study, compartments, communities)
-
-        self.db_session.flush()
-
-        self.assertEqual(len(experiments), 1)
-        self.assertEqual(experiments, study.experiments)
-
-        experiment = experiments[0]
-
-        self.assertEqual(experiment.community, communities[0])
-        self.assertEqual(len(experiment.compartments), 2)
-        self.assertEqual(experiment.compartments, compartments)
-
-        self.assertEqual(len(experiment.perturbations), 1)
-        self.assertEqual(experiment.perturbations, study.perturbations)
-        self.assertEqual(experiment.perturbations[0].newCommunityId, communities[0].id)
-
-        self.assertEqual(len(experiment.bioreplicates), 3)
-        self.assertEqual(len(study.bioreplicates), 3)
-        self.assertEqual({'RI_1', 'RI_2', 'RI_3'}, {b.name for b in study.bioreplicates})
+        # TODO (2025-05-10) Implement
+        pass
 
 
 if __name__ == '__main__':

@@ -14,6 +14,7 @@ from sqlalchemy.ext.hybrid import hybrid_property
 
 from models.orm_base import OrmBase
 from lib.conversion import convert_time
+from lib.util import group_by_unique_name
 
 
 class Measurement(OrmBase):
@@ -23,6 +24,9 @@ class Measurement(OrmBase):
 
     bioreplicateUniqueId: Mapped[int] = mapped_column(sql.ForeignKey('Bioreplicates.id'))
     bioreplicate: Mapped['Bioreplicate'] = relationship(back_populates='measurements')
+
+    compartmentId: Mapped[int] = mapped_column(sql.ForeignKey('Compartments.id'))
+    compartment: Mapped['Compartment'] = relationship(back_populates='measurements')
 
     # TODO (2025-04-24) Use unique id
     studyId: Mapped[str] = mapped_column(sql.ForeignKey('Study.studyId'), nullable=False)
@@ -81,119 +85,70 @@ class Measurement(OrmBase):
         return (name, join)
 
     @classmethod
-    def insert_from_bioreplicates_csv(Self, db_session, study, csv_string):
+    def insert_from_csv_string(Self, db_session, study, csv_string, subject_type):
+        reader = csv.DictReader(StringIO(csv_string), dialect='unix')
+
+        bioreplicates_by_name = group_by_unique_name(study.bioreplicates)
+        compartments_by_name  = group_by_unique_name(study.compartments)
+
         measurements = []
 
-        for row, time, bioreplicate_id, technique in _iterate_over_measurement_csv(db_session, study, csv_string):
-            if technique.subjectType != 'bioreplicate':
+        for row in reader:
+            bioreplicate = bioreplicates_by_name[row['Biological Replicate'].strip()]
+            compartment  = compartments_by_name[row['Compartment'].strip()]
+
+            if bioreplicate is None or compartment is None:
+                # Missing entry, skip
                 continue
 
-            value = row[technique.csv_column_name()]
-            if value == '':
-                value = None
+            time_in_seconds = convert_time(row['Time'], source=study.timeUnits, target='s')
 
-            measurement = Self(
-                studyId=study.studyId,
-                bioreplicateUniqueId=bioreplicate_id,
-                timeInSeconds=time,
-                unit=technique.units,
-                techniqueId=technique.id,
-                technique=_generate_technique_name(technique.type, technique.subjectType),
-                value=value,
-                subjectId=bioreplicate_id,
-                subjectType='bioreplicate',
-            )
-            measurements.append(measurement)
+            for technique in study.measurementTechniques:
+                if technique.subjectType != subject_type:
+                    continue
+
+                if subject_type == 'bioreplicate':
+                    subjects = [bioreplicate]
+                elif subject_type == 'strain':
+                    subjects = study.strains
+                elif subject_type == 'metabolite':
+                    subjects = study.metabolites
+                else:
+                    raise KeyError(f"Unexpected subject type: {subject_type}")
+
+                for subject in subjects:
+                    value_column_name = technique.csv_column_name(subject.name)
+
+                    value = row[value_column_name]
+                    if value == '':
+                        value = None
+
+                    std = row.get(f"{value_column_name} STD", None)
+                    if std == '':
+                        std = None
+
+                    measurement = Measurement(
+                        # Relationships:
+                        study=study,
+                        bioreplicate=bioreplicate,
+                        compartment=compartment,
+                        # Subject:
+                        subjectId=subject.id,
+                        subjectType=subject_type,
+                        # Technique:
+                        techniqueId=technique.id,
+                        technique=_generate_technique_name(technique.type, technique.subjectType),
+                        # Data:
+                        timeInSeconds=time_in_seconds,
+                        value=value,
+                        std=std,
+                    )
+                    measurements.append(measurement)
 
         db_session.add_all(measurements)
         db_session.commit()
 
         return measurements
-
-    @classmethod
-    def insert_from_strain_csv(Self, db_session, study, csv_string):
-        measurements = []
-
-        for row, time, bioreplicate_id, technique in _iterate_over_measurement_csv(db_session, study, csv_string):
-            if technique.subjectType != 'strain':
-                continue
-
-            for subject in study.strains:
-                value = row[technique.csv_column_name(subject.name)]
-
-                if value == '':
-                    value = None
-
-                measurement = Self(
-                    studyId=study.studyId,
-                    bioreplicateUniqueId=bioreplicate_id,
-                    timeInSeconds=time,
-                    unit=technique.units,
-                    technique=_generate_technique_name(technique.type, technique.subjectType),
-                    techniqueId=technique.id,
-                    value=value,
-                    subjectId=subject.id,
-                    subjectType='strain',
-                )
-                measurements.append(measurement)
-
-        db_session.add_all(measurements)
-        db_session.commit()
-
-        return measurements
-
-    @classmethod
-    def insert_from_metabolites_csv(Self, db_session, study, csv_string):
-        measurements = []
-
-        # TODO Compartment id
-        # TODO Create "MeasurementTarget" in the _iterate method? or here?
-
-        for row, time, bioreplicate_id, technique in _iterate_over_measurement_csv(db_session, study, csv_string):
-            if technique.subjectType != 'metabolite':
-                continue
-
-            for subject in study.metabolites:
-                value = row[technique.csv_column_name(subject.name)]
-                if value == '':
-                    value = None
-
-                measurement = Self(
-                    studyId=study.studyId,
-                    bioreplicateUniqueId=bioreplicate_id,
-                    timeInSeconds=time,
-                    unit=technique.units,
-                    techniqueId=technique.id,
-                    technique=_generate_technique_name(technique.type, technique.subjectType),
-                    value=value,
-                    subjectId=subject.id,
-                    subjectType='metabolite',
-                )
-                measurements.append(measurement)
-
-        db_session.add_all(measurements)
-        db_session.commit()
-
-        return measurements
-
-
-def _iterate_over_measurement_csv(db_session, study, csv_string):
-    from models import Bioreplicate
-
-    reader = csv.DictReader(StringIO(csv_string), dialect='unix')
-    find_bioreplicate_id = functools.cache(Bioreplicate.find_for_study)
-
-    for row in reader:
-        bioreplicate_name = row['Biological Replicate']
-        bioreplicate_id = find_bioreplicate_id(db_session, study.studyId, bioreplicate_name)
-        time_in_seconds = convert_time(row['Time'], source=study.timeUnits, target='s')
-
-        if bioreplicate_id is None:
-            # Missing bioreplicate, skip
-            continue
-
-        for technique in study.measurementTechniques:
-            yield (row, time_in_seconds, bioreplicate_id, technique)
 
 
 def _generate_technique_name(technique_type, subject_type):
