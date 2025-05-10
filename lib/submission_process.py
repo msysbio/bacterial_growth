@@ -65,6 +65,8 @@ def persist_submission_to_database(submission_form):
             _save_communities(db_trans_session, submission_form, study, user_uuid)
             _save_experiments(db_trans_session, submission_form, study)
             _save_measurement_techniques(db_trans_session, submission_form, study)
+
+            db_trans_session.flush()
             _save_measurements(db_trans_session, study, submission)
 
             submission_form.save()
