@@ -95,7 +95,10 @@ $(document).ready(function() {
   });
 
   // Initialize tippy popups:
-  tippy('[data-tippy-content]', {
-    theme: 'light-border',
+  tippy('[data-tooltip]', {
+    interactive: true,
+    content: function(element) {
+      return element.getAttribute('data-tooltip');
+    }
   })
 });

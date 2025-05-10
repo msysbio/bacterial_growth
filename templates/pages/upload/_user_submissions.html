@@ -27,19 +27,19 @@
         <tr class="{{ "current" if isCurrent }} {{ "published" if isPublished }}">
           <td align="center">
             {% if isPublished: %}
-              <span data-tippy-content="Published submission">
+              <span data-tooltip="Published submission">
                 ✅
               </span>
             {% elif user_submission.project is none: %}
-              <span data-tippy-content="New study in a new project">
+              <span data-tooltip="New study in a new project">
                 📚
               </span>
             {% elif user_submission.study is none: %}
-              <span data-tippy-content="New study in an existing project">
+              <span data-tooltip="New study in an existing project">
                 📋
               </span>
             {% else %}
-              <span data-tippy-content="Update study in an existing project">
+              <span data-tooltip="Update study in an existing project">
                 🔃
               </span>
             {% endif %}
@@ -51,9 +51,9 @@
             {% if user_submission.project: %}
               [<a
                    href="{{ url_for('project_show_page', projectId=user_submission.project.projectId) }}"
-                   data-tippy-content="{{ project_name }}">{{ user_submission.project.projectId }}</a>]
+                   data-tooltip="{{ project_name }}">{{ user_submission.project.projectId }}</a>]
             {% else: %}
-              <span data-tippy-content="{{ project_name }}">
+              <span data-tooltip="{{ project_name }}">
                 [New] {{ project_name|truncate(20) }}
               </span>
             {% endif %}
@@ -64,9 +64,9 @@
             {% if user_submission.study: %}
               [<a
                    href="{{ url_for('study_show_page', studyId=user_submission.study.studyId) }}"
-                   data-tippy-content="{{ study_name }}">{{ user_submission.study.studyId }}</a>]
+                   data-tooltip="{{ study_name }}">{{ user_submission.study.studyId }}</a>]
             {% else: %}
-              <span data-tippy-content="{{ study_name }}">
+              <span data-tooltip="{{ study_name }}">
                 [New] {{ study_name|truncate(20) }}
               </span>
             {% endif %}
@@ -77,14 +77,14 @@
             {{ user_submission.completed_step_count }}/7
           </td>
           <td align="center">
-            <span data-tippy-content="Edit">
+            <span data-tooltip="Edit">
               {{ post_icon_button(
               "edit",
               url_for('edit_submission_action', id=user_submission.id)
               ) }}
             </span>
             |
-            <span data-tippy-content="Delete">
+            <span data-tooltip="Delete">
               {{ post_icon_button(
                 "delete",
                 url_for('delete_submission_action', id=user_submission.id),
