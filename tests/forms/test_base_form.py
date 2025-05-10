@@ -12,6 +12,11 @@ class TestBaseForm(unittest.TestCase):
         messages = list(_iterate_error_messages(prefixes=[], errors=errors))
         self.assertEqual(messages, ["Name: is required"])
 
+        # Name formatting
+        errors = {"compartmentName": "is required"}
+        messages = list(_iterate_error_messages(prefixes=[], errors=errors))
+        self.assertEqual(messages, ["Compartment name: is required"])
+
         # List of errors:
         errors = {"object": ["foo is bar", "bar is baz"]}
         messages = list(_iterate_error_messages(prefixes=[], errors=errors))

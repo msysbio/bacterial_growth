@@ -34,7 +34,10 @@
       <label class="full">
         <div class="required">Community</div>
 
-        <select name="{{ prefix }}communityName" class="form-input-blue form-input-full js-community-select">
+        <select
+            required
+            name="{{ prefix }}communityName"
+            class="form-input-blue form-input-full js-community-select">
           {% for community_data in submission.studyDesign['communities']: %}
             <option
                 value="{{ community_data['name'] }}"

@@ -8,7 +8,7 @@ from wtforms import (
     TextAreaField,
     URLField,
 )
-from wtforms.validators import DataRequired
+from wtforms.validators import DataRequired, ValidationError
 
 from forms.base_form import BaseForm
 
@@ -68,6 +68,9 @@ class UploadStep5Form(BaseForm):
         def validate_bioreplicates(self, field):
             names = [b['name'] for b in field.data]
             self._validate_uniqueness("names are not unique", names)
+
+            if len(names) == 0:
+                raise ValidationError("at least one is required")
 
     experiments = FieldList(FormField(ExperimentForm))
 

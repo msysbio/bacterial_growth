@@ -48,6 +48,10 @@
   gap: 6px;
 }
 
+.margin-top-10 {
+  margin-top: 10px;
+}
+
 code.inline {
   font-family: monospace;
   font-size: 16px;

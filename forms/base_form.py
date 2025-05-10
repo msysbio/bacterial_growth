@@ -1,6 +1,8 @@
 from flask_wtf import FlaskForm
 from wtforms.validators import ValidationError
 
+from lib.util import humanize_camelcased_string
+
 
 class BaseForm(FlaskForm):
     def get_template(self, subclass_name):
@@ -38,7 +40,7 @@ def _iterate_error_messages(prefixes, errors):
             yield from _iterate_error_messages(new_prefixes, error)
     elif isinstance(errors, dict):
         for field_name, error in errors.items():
-            new_prefixes = [*prefixes, field_name]
+            new_prefixes = [*prefixes, humanize_camelcased_string(field_name)]
 
             yield from _iterate_error_messages(new_prefixes, error)
     else:

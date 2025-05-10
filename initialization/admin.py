@@ -1,5 +1,3 @@
-import re
-
 import simplejson as json
 from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
@@ -21,6 +19,7 @@ from models import (
     Submission,
     Taxon,
 )
+from lib.util import humanize_camelcased_string
 
 
 def json_formatter(_view, data, _name):
@@ -41,7 +40,7 @@ class AppView(ModelView):
     can_view_details = True
 
     def _prettify_name(self, name):
-        return re.sub(r'([a-z])([A-Z])', r'\1 \2', name).title()
+        return humanize_camelcased_string(name).title()
 
     column_type_formatters = {
         dict: json_formatter,

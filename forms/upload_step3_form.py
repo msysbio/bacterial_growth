@@ -35,7 +35,6 @@ class UploadStep3Form(BaseForm):
     ], validators=[DataRequired()])
 
     time_units = SelectField('time_units', choices=[
-        ('d', 'Days (d)'),
         ('h', 'Hours (h)'),
         ('m', 'Minutes (m)'),
         ('s', 'Seconds (s)'),

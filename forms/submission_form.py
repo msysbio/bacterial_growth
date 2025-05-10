@@ -255,6 +255,14 @@ class SubmissionForm:
         else:
             return ''
 
+    def has_valid_project_data(self):
+        if self.submission.studyDesign['project']['name'] is None:
+            return False
+        return self._validate_unique_project_names()
+
+    def has_valid_study_data(self):
+        return self.submission.studyDesign['study']['name'] is not None
+
     def _find_project_id(self):
         if self.submission.projectUniqueID is None:
             return None

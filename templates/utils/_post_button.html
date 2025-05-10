@@ -1,14 +1,17 @@
-{% macro post_button(text, url, confirm=None, class='', button_class='') %}
+{% macro post_button(text, url, confirm=None, disabled=False, class='', button_class='') %}
 
   <form
-    action="{{ url }}"
-    class="simple-form {{ class }}"
-    style="display: inline-block; {{ style }}"
-    {% if confirm: %}
-      onSubmit="return confirm('{{ confirm | replace("'", "\\'") }}')"
-    {% endif %}
-    method="POST">
-    <button type="submit" class="flex-row flex-gap-6 {{ button_class }}">
+      action="{{ url }}"
+      class="simple-form {{ class }}"
+      style="display: inline-block; {{ style }}"
+      {% if confirm: %}
+        onSubmit="return confirm('{{ confirm|replace("'", "\\'") }}')"
+      {% endif %}
+      method="POST">
+    <button
+        type="submit"
+        {{ "disabled" if disabled }}
+        class="flex-row flex-gap-6 {{ button_class }}">
       {{ text|safe }}
     </button>
   </form>

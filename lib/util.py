@@ -1,3 +1,4 @@
+import re
 import itertools
 import zipfile
 from io import BytesIO
@@ -28,6 +29,9 @@ def group_by_unique_name(collection):
         for (name, group) in itertools.groupby(collection, lambda c: c.name)
     }
 
+
+def humanize_camelcased_string(string):
+    return re.sub(r'([a-z])([A-Z])', r'\1 \2', string)
 
 def _one_or_error(key, iterator):
     value = next(iterator)
