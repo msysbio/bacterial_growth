@@ -271,11 +271,10 @@ def _save_experiments(db_session, submission_form, study):
 
 def _save_measurement_techniques(db_session, submission_form, study):
     submission = submission_form.submission
+    techniques = []
 
     for technique in submission.techniques:
         technique.study = study
-
-        # TODO (2025-05-09) test method
 
         if technique.metaboliteIds:
             for chebiId in technique.metaboliteIds:
@@ -283,8 +282,10 @@ def _save_measurement_techniques(db_session, submission_form, study):
                     chebi_id=chebiId,
                     study=study,
                 ))
+        techniques.append(technique)
 
-        db_session.add(technique)
+    db_session.add_all(techniques)
+    return techniques
 
 
 def _save_measurements(db_session, study, submission):
