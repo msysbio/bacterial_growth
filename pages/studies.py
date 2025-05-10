@@ -117,7 +117,7 @@ def study_chart_fragment(studyId):
     width = args.pop('width')
     show_log_toggle = False
 
-    experiment_id = args.pop('experimentUniqueId')
+    experiment_id = args.pop('experimentId')
     technique     = args.pop('technique')
 
     experiment = g.db_session.get(Experiment, experiment_id)
