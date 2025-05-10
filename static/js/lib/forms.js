@@ -133,8 +133,9 @@ $.fn.initAjaxSubform = function(params) {
 
     let $duplicateButton = $(e.currentTarget);
     let $form            = $duplicateButton.parents('form');
-    let $currentSubform  = $(e.currentTarget).parents('.js-subform-container').first();
 
+    // Find the location of the duplicated subform in the list:
+    let $currentSubform     = $(e.currentTarget).parents('.js-subform-container').first();
     let currentSubformIndex = $currentSubform.parent().children().index($currentSubform[0]);
 
     $form.ajaxSubmit({
@@ -143,7 +144,7 @@ $.fn.initAjaxSubform = function(params) {
         loadResponse(response, function($subformList, subformCount) {
           // We load the subform after it's reloaded from the server, but
           // before javascript changes have been applied to it:
-          let $currentSubform = $subformList.find('.js-subform-container').eq(currentSubformIndex);
+          let $currentSubform = $subformList.children('.js-subform-container').eq(currentSubformIndex);
           let $newSubform     = $currentSubform.clone();
 
           let currentNameExample = $currentSubform.find('input,textarea,select').first().attr('name');

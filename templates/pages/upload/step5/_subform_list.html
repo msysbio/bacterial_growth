@@ -1,7 +1,7 @@
 {% from 'pages/upload/step5/_experiment_form.html' import render_experiment_form %}
 {% from 'utils/_form_errors.html' import render_form_errors %}
 
-{{ render_form_errors(upload_form.errors['experiments']) }}
+{{ render_form_errors(upload_form.error_messages) }}
 
 {% for experiment_form in upload_form.experiments: %}
   {{ render_experiment_form(form=experiment_form, submission_form=submission_form, index=loop.index0) }}

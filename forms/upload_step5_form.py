@@ -67,10 +67,10 @@ class UploadStep5Form(BaseForm):
 
         def validate_bioreplicates(self, field):
             names = [b['name'] for b in field.data]
-            self._validate_uniqueness("Bioreplicate names are not unique", names)
+            self._validate_uniqueness("names are not unique", names)
 
     experiments = FieldList(FormField(ExperimentForm))
 
     def validate_experiments(self, field):
         names = [e['name'] for e in field.data]
-        self._validate_uniqueness("Experiment names are not unique", names)
+        self._validate_uniqueness("names are not unique", names)

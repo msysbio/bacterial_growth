@@ -1,9 +1,9 @@
 # Core
 pandas
-humanize
 pyyaml
 openpyxl
 simplejson
+humanize
 
 # Web
 Flask
