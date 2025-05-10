@@ -5,8 +5,9 @@ from sqlalchemy.sql.expression import literal_column
 import pandas as pd
 
 from models import (
-    Experiment,
     Bioreplicate,
+    Compartment,
+    Experiment,
     Measurement,
 )
 from lib.db import execute_into_df
@@ -135,7 +136,7 @@ class ExperimentExportForm:
                 experiment_df = experiment_df.merge(
                     df,
                     how='left',
-                    on=['Time (hours)', 'Biological Replicate ID'],
+                    on=['Time (hours)', 'Biological Replicate', 'Compartment'],
                     validate='one_to_one',
                     suffixes=(None, None),
                 )
@@ -151,16 +152,22 @@ class ExperimentExportForm:
         return (
             sql.select(
                 Measurement.timeInHours.label("Time (hours)"),
-                Bioreplicate.name.label("Biological Replicate ID"),
+                Bioreplicate.name.label("Biological Replicate"),
+                Compartment.name.label("Compartment"),
                 Measurement.value.label(value_label),
             )
             .join(Bioreplicate)
+            .join(Compartment)
             .join(Experiment)
             .where(
                 Experiment.id == experiment.id,
                 Bioreplicate.id.in_(self.bioreplicate_uuids),
             )
-            .order_by(Bioreplicate.name, Measurement.timeInSeconds)
+            .order_by(
+                Bioreplicate.name,
+                Compartment.name,
+                Measurement.timeInSeconds,
+            )
         )
 
     def _base_average_query(self, experiment, value_label):
