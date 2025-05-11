@@ -1,9 +1,0 @@
-[server]
-enableXsrfProtection=false
-
-[theme]
-primaryColor="#088395"
-backgroundColor="#ffffff"
-secondaryBackgroundColor="#caeaea"
-textColor="#071952"
-
