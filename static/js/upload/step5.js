@@ -90,6 +90,11 @@ Page('.upload-page .step-content.step-5.active', function($step5) {
         }
       });
     },
+
+    onDuplicate: function($newForm) {
+      // Reset names (including for bioreplicates
+      $newForm.find('input[name$="name"]').val('');
+    },
   })
 
   if ($step5.find('.js-experiment-container').length == 0) {

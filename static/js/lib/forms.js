@@ -134,6 +134,8 @@ $.fn.initAjaxSubform = function(params) {
     let $duplicateButton = $(e.currentTarget);
     let $form            = $duplicateButton.parents('form');
 
+    // TODO: Bug with experiment duplicate -> save -> remove -> duplicate
+
     // Find the location of the duplicated subform in the list:
     let $currentSubform     = $(e.currentTarget).parents('.js-subform-container').first();
     let currentSubformIndex = $currentSubform.parent().children().index($currentSubform[0]);
@@ -174,6 +176,11 @@ $.fn.initAjaxSubform = function(params) {
 
           // Trigger necessary javascript
           params.initializeSubform($newSubform, subformCount);
+
+          setTimeout(function() {
+            // Scroll to container:
+            $(document).scrollTo($newSubform, 150, {offset: -20});
+          }, 1);
         });
       }
     });

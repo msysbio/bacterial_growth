@@ -75,5 +75,14 @@ class UploadStep5Form(BaseForm):
     experiments = FieldList(FormField(ExperimentForm))
 
     def validate_experiments(self, field):
+        # Local validation:
         names = [e['name'] for e in field.data]
         self._validate_uniqueness("names are not unique", names)
+
+        # Global bioreplicate validation:
+        names = [
+            bioreplicate['name']
+            for experiment in field.data
+            for bioreplicate in experiment['bioreplicates']
+        ]
+        self._validate_uniqueness("bioreplicate names are not globally unique", names)
