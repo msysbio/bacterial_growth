@@ -109,4 +109,3 @@ Page('.upload-page .step-content.step-2.active', function($page2) {
     });
   }
 });
-});

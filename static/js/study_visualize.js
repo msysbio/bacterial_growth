@@ -1,5 +1,4 @@
 Page('.study-visualize-page', function($page) {
-  let $page = $(this);
   let studyId = $page.data('studyId')
 
   $page.find('.experiment-container').each(function(e) {
