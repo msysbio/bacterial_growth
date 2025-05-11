@@ -1,5 +1,4 @@
 import io
-import tempfile
 import copy
 import itertools
 from datetime import datetime, timedelta, UTC
@@ -40,37 +39,36 @@ def persist_submission_to_database(submission_form):
 
     # TODO (2025-04-15) Simpler transaction handling
 
-    with tempfile.TemporaryDirectory() as yml_dir:
-        with get_transaction() as db_transaction:
-            db_trans_session = get_session(db_transaction)
+    with get_transaction() as db_transaction:
+        db_trans_session = get_session(db_transaction)
 
-            study   = _save_study(db_trans_session, submission_form)
-            project = _save_project(db_trans_session, submission_form)
+        study   = _save_study(db_trans_session, submission_form)
+        project = _save_project(db_trans_session, submission_form)
 
-            # First, clear out existing relationships
-            study.measurements           = []
-            study.strains                = []
-            study.experimentCompartments = []
-            study.compartments           = []
-            study.communities            = []
-            study.experiments            = []
-            study.bioreplicates          = []
-            study.perturbations          = []
-            study.measurementTechniques  = []
-            study.studyMetabolites       = []
+        # First, clear out existing relationships
+        study.measurements           = []
+        study.strains                = []
+        study.experimentCompartments = []
+        study.compartments           = []
+        study.communities            = []
+        study.experiments            = []
+        study.bioreplicates          = []
+        study.perturbations          = []
+        study.measurementTechniques  = []
+        study.studyMetabolites       = []
 
-            _save_compartments(db_trans_session, submission_form, study)
-            _save_communities(db_trans_session, submission_form, study, user_uuid)
-            _save_experiments(db_trans_session, submission_form, study)
-            _save_measurement_techniques(db_trans_session, submission_form, study)
+        _save_compartments(db_trans_session, submission_form, study)
+        _save_communities(db_trans_session, submission_form, study, user_uuid)
+        _save_experiments(db_trans_session, submission_form, study)
+        _save_measurement_techniques(db_trans_session, submission_form, study)
 
-            db_trans_session.flush()
-            _save_measurements(db_trans_session, study, submission)
+        db_trans_session.flush()
+        _save_measurements(db_trans_session, study, submission)
 
-            submission_form.save()
-            db_trans_session.commit()
+        submission_form.save()
+        db_trans_session.commit()
 
-            return []
+        return []
 
 
 # TODO (2025-05-11) Test (separate read_data_file, operate on dfs)
