@@ -98,7 +98,7 @@ class MeasurementTechnique(OrmBase):
         ).all()
 
     def get_subjects_for_bioreplicate(self, db_session, bioreplicate):
-        from models import Study, Measurement
+        from models import Measurement
 
         match self.subjectType:
             case 'bioreplicate':

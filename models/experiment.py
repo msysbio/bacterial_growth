@@ -1,16 +1,11 @@
 from typing import List
 
 import sqlalchemy as sql
-from sqlalchemy import (
-    String,
-    ForeignKey,
-)
 from sqlalchemy.orm import (
     Mapped,
     mapped_column,
     relationship,
 )
-from sqlalchemy.ext.hybrid import hybrid_property
 
 from models.orm_base import OrmBase
 
@@ -20,8 +15,8 @@ class Experiment(OrmBase):
 
     id: Mapped[int] = mapped_column(primary_key=True)
 
-    name:        Mapped[str] = mapped_column(String(100), nullable=False)
-    description: Mapped[str] = mapped_column(String)
+    name:        Mapped[str] = mapped_column(sql.String(100), nullable=False)
+    description: Mapped[str] = mapped_column(sql.String)
 
     bioreplicates: Mapped[List['Bioreplicate']] = relationship(
         order_by="Bioreplicate.id",
@@ -29,13 +24,13 @@ class Experiment(OrmBase):
         cascade="all, delete-orphan"
     )
 
-    communityId: Mapped[int] = mapped_column(ForeignKey('Communities.id'))
+    communityId: Mapped[int] = mapped_column(sql.ForeignKey('Communities.id'))
     community: Mapped['Community'] = relationship(back_populates='experiments')
 
-    studyId: Mapped[str] = mapped_column(ForeignKey('Study'), nullable=False)
+    studyId: Mapped[str] = mapped_column(sql.ForeignKey('Study'), nullable=False)
     study: Mapped['Study'] = relationship(back_populates='experiments')
 
-    cultivationMode: Mapped[str] = mapped_column(String(50))
+    cultivationMode: Mapped[str] = mapped_column(sql.String(50))
 
     experimentCompartments: Mapped[List['ExperimentCompartment']] = relationship(back_populates='experiment')
     compartments: Mapped[List['Compartment']] = relationship(

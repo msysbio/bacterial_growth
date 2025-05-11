@@ -113,7 +113,7 @@ class Calculation(OrmBase):
             raise ValueError(f"Don't know how to predict values for calculation type: {repr(self.type)}")
 
     def _predict_easy_linear(self, time):
-        y0    = self.coefficients['y0']
+        # y0    = self.coefficients['y0']
         y0_lm = self.coefficients['y0_lm']
         mumax = self.coefficients['mumax']
         # lag   = self.coefficients['lag']

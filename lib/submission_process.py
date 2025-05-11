@@ -1,11 +1,9 @@
 import io
 import copy
-import itertools
 from datetime import datetime, timedelta, UTC
 from db import get_session, get_transaction
 
 import pandas as pd
-import sqlalchemy as sql
 
 from models import (
     Bioreplicate,
@@ -42,8 +40,9 @@ def persist_submission_to_database(submission_form):
     with get_transaction() as db_transaction:
         db_trans_session = get_session(db_transaction)
 
-        study   = _save_study(db_trans_session, submission_form)
-        project = _save_project(db_trans_session, submission_form)
+        _save_project(db_trans_session, submission_form)
+
+        study = _save_study(db_trans_session, submission_form)
 
         # First, clear out existing relationships
         study.measurements           = []

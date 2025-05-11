@@ -1,4 +1,3 @@
-import copy
 import itertools
 from uuid import uuid4
 

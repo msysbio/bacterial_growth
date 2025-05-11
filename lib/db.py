@@ -1,5 +1,4 @@
 import sqlalchemy as sql
-import sqlalchemy.orm as orm
 import sqlalchemy.dialects.mysql as mysql
 import pandas as pd
 

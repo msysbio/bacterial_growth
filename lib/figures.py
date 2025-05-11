@@ -16,6 +16,7 @@ def make_figure_with_traces(data_dfs, **params):
 
     return fig
 
+
 def make_figure_with_secondary_axis(data, **params):
     fig = make_subplots(specs=[[{"secondary_y": True}]])
     fig.update_layout(

@@ -6,10 +6,8 @@ from sqlalchemy.orm import (
     mapped_column,
     relationship,
 )
-from sqlalchemy.ext.hybrid import hybrid_property
 
 from models.orm_base import OrmBase
-from lib.db import execute_text
 
 
 class Bioreplicate(OrmBase):

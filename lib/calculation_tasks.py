@@ -1,4 +1,3 @@
-import time
 import tempfile
 from datetime import datetime, UTC
 
@@ -72,7 +71,7 @@ def _update_calculation_technique(db_session, calculation_technique_id, target_p
                 rscript.write_csv('input.csv', data)
 
                 script_name = f"scripts/modeling/{calculation_technique.type}.R"
-                output = rscript.run(script_name, 'input.csv', 'coefficients.json')
+                rscript.run(script_name, 'input.csv', 'coefficients.json')
 
                 calculation.coefficients = rscript.read_json('coefficients.json')
 

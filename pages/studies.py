@@ -7,7 +7,6 @@ from flask import (
 from werkzeug.exceptions import Forbidden
 import sqlalchemy as sql
 from sqlalchemy.sql.expression import literal
-from celery.result import AsyncResult as CeleryResult
 
 import models.study_dfs as study_dfs
 from models import (
@@ -55,7 +54,7 @@ def study_export_page(studyId):
 
 def study_export_preview_fragment(studyId):
     # We only need the id here, but we call it to apply visibility checks:
-    _study = _fetch_study(studyId)
+    _fetch_study(studyId)
 
     csv_previews = []
     export_form = ExperimentExportForm(g.db_session, request.args)

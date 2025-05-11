@@ -5,6 +5,7 @@ import unittest
 from models import Calculation
 from tests.database_test import DatabaseTest
 
+
 class TestCalculation(DatabaseTest):
     def test_successful_creation(self):
         bioreplicate          = self.create_bioreplicate()
