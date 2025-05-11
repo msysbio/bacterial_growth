@@ -206,6 +206,7 @@ def _step5_partial(upload_form, submission_form):
 def upload_step6_page():
     submission_form = _init_submission_form(step=6)
     submission = submission_form.submission
+    errors = []
 
     if request.method == 'POST':
         if request.files['data-template']:

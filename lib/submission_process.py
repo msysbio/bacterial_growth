@@ -187,7 +187,7 @@ def _save_study(db_session, submission_form):
     }
 
     if submission_form.type != 'update_study':
-        study = Study(**params)
+        study = Study(**Study.filter_keys(params))
 
         study.studyId = Study.generate_public_id(db_session)
         study.publishableAt = datetime.now(UTC) + timedelta(hours=24)
@@ -198,7 +198,7 @@ def _save_study(db_session, submission_form):
         ))
     else:
         study = db_session.get(Study, submission.studyUniqueID)
-        study.update(**params)
+        study.update(**Study.filter_keys(params))
 
     db_session.add(study)
 
@@ -216,7 +216,7 @@ def _save_project(db_session, submission_form):
     }
 
     if submission_form.type == 'new_project':
-        project = Project(**params)
+        project = Project(**Project.filter_keys(params))
         project.projectId = Project.generate_public_id(db_session)
         db_session.add(ProjectUser(
             projectUniqueID=submission.projectUniqueID,
@@ -224,7 +224,7 @@ def _save_project(db_session, submission_form):
         ))
     else:
         project = db_session.get(Project, submission.projectUniqueID)
-        project.update(**params)
+        project.update(**Project.filter_keys(params))
 
     db_session.add(project)
 
@@ -236,7 +236,8 @@ def _save_compartments(db_session, submission_form, study):
     compartments = []
 
     for compartment_data in submission.studyDesign['compartments']:
-        compartments.append(Compartment(**compartment_data))
+        compartment = Compartment(**Compartment.filter_keys(compartment_data))
+        compartments.append(compartment)
 
     study.compartments = compartments
     db_session.add_all(compartments)
@@ -252,7 +253,7 @@ def _save_communities(db_session, submission_form, study, user_uuid):
         community_data = copy.deepcopy(community_data)
         strain_identifiers = community_data.pop('strainIdentifiers')
 
-        community = Community(**community_data)
+        community = Community(**Community.filter_keys(community_data))
         community.strainIds = []
 
         for identifier in strain_identifiers:
@@ -309,7 +310,7 @@ def _save_experiments(db_session, submission_form, study):
         perturbations     = experiment_data.pop('perturbations')
 
         experiment = Experiment(
-            **experiment_data,
+            **Experiment.filter_keys(experiment_data),
             community=communities_by_name[community_name],
         )
         db_session.add(experiment)
@@ -324,7 +325,7 @@ def _save_experiments(db_session, submission_form, study):
 
         for bioreplicate_data in bioreplicates:
             bioreplicate = Bioreplicate(
-                **bioreplicate_data,
+                **Bioreplicate.filter_keys(bioreplicate_data),
                 study=study,
                 experiment=experiment,
             )
