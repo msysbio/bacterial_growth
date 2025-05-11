@@ -24,7 +24,10 @@ from forms.upload_step2_form import UploadStep2Form
 from forms.upload_step3_form import UploadStep3Form
 from forms.upload_step4_form import UploadStep4Form
 from forms.upload_step5_form import UploadStep5Form
-from lib.submission_process import persist_submission_to_database
+from lib.submission_process import (
+    persist_submission_to_database,
+    validate_data_file,
+)
 
 import lib.data_spreadsheet as data_spreadsheet
 
@@ -203,18 +206,21 @@ def _step5_partial(upload_form, submission_form):
 def upload_step6_page():
     submission_form = _init_submission_form(step=6)
     submission = submission_form.submission
-    errors = []
 
     if request.method == 'POST':
         if request.files['data-template']:
-            submission.dataFile  = ExcelFile.from_upload(request.files['data-template'])
-
+            submission.dataFile = ExcelFile.from_upload(request.files['data-template'])
         submission_form.save()
 
-        errors = persist_submission_to_database(submission_form)
+        errors = validate_data_file(submission_form)
+
+        if not errors:
+            errors = persist_submission_to_database(submission_form)
 
         if not errors:
             return redirect(url_for('upload_step7_page'))
+    else:
+        errors = validate_data_file(submission_form)
 
     return render_template(
         "pages/upload/index.html",
@@ -245,11 +251,15 @@ def download_data_template_xlsx():
 
 
 def upload_spreadsheet_preview_fragment():
+    submission_form = _init_submission_form(step=6)
+
     excel_file = ExcelFile.from_upload(request.files['file'])
+    errors = validate_data_file(submission_form, excel_file)
 
     return render_template(
         "pages/upload/step6/spreadsheet_preview.html",
         excel_file=excel_file,
+        errors=errors,
     )
 
 

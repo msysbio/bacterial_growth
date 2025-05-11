@@ -1,6 +1,9 @@
 {% from 'utils/_dataframe.html' import render_dataframe %}
+{% from 'utils/_form_errors.html' import render_form_errors %}
 
-{% macro render_spreadsheet_preview(excel_file) %}
+{% macro render_spreadsheet_preview(excel_file, errors) %}
+
+  {{ render_form_errors(errors) }}
 
   {% set sheets = excel_file.extract_sheets() %}
 

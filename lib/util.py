@@ -1,7 +1,19 @@
 import re
+import math
 import itertools
 import zipfile
 from io import BytesIO
+
+
+def is_non_negative_float(string, *, isnan_check):
+    try:
+        value = float(string)
+        if isnan_check:
+            return not math.isnan(value) and value >= 0.0
+        else:
+            return math.isnan(value) or value >= 0.0
+    except ValueError:
+        return False
 
 
 def trim_lines(string):
@@ -32,6 +44,7 @@ def group_by_unique_name(collection):
 
 def humanize_camelcased_string(string):
     return re.sub(r'([a-z])([A-Z])', r'\1 \2', string)
+
 
 def _one_or_error(key, iterator):
     value = next(iterator)

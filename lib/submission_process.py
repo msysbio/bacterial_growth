@@ -26,7 +26,7 @@ from models import (
     StudyUser,
     Taxon,
 )
-from lib.util import group_by_unique_name
+from lib.util import group_by_unique_name, is_non_negative_float
 
 
 def persist_submission_to_database(submission_form):
@@ -74,6 +74,103 @@ def persist_submission_to_database(submission_form):
 
             return []
 
+
+# TODO (2025-05-11) Test (separate read_data_file, operate on dfs)
+#
+def validate_data_file(submission_form, data_file=None):
+    submission = submission_form.submission
+    data_file = data_file or submission.dataFile
+    errors = []
+
+    if not data_file:
+        return []
+
+    data_xls = data_file.content
+    sheets = pd.read_excel(io.BytesIO(data_xls), sheet_name=None)
+
+    # Validate columns:
+    expected_value_columns = _get_expected_column_names(submission_form)
+
+    for sheet_name, column_set in expected_value_columns.items():
+        if sheet_name in sheets:
+            df = sheets[sheet_name]
+
+            column_set = {*column_set, 'Biological Replicate', 'Compartment', 'Time'}
+
+            for missing_column in column_set.difference(set(df.columns)):
+                errors.append(f"{sheet_name}: Missing column {missing_column}")
+        else:
+            errors.append(f"Missing data sheet: {sheet_name}")
+
+    # Validate row keys:
+    expected_bioreplicates = {
+        bioreplicate['name']
+        for experiment in submission.studyDesign['experiments']
+        for bioreplicate in experiment['bioreplicates']
+    }
+    expected_compartments = {c['name'] for c in submission.studyDesign['compartments']}
+
+    for sheet_name in expected_value_columns.keys():
+        if sheet_name not in sheets:
+            continue
+
+        df = sheets[sheet_name]
+
+        if 'Biological Replicate' in df:
+            uploaded_bioreplicates = set(df['Biological Replicate'])
+
+            if missing_bioreplicates := expected_bioreplicates.difference(uploaded_bioreplicates):
+                bioreplicate_description = ', '.join(missing_bioreplicates)
+                errors.append(f"{sheet_name}: Missing biological replicate(s): {bioreplicate_description}")
+
+            if extra_bioreplicates := uploaded_bioreplicates.difference(expected_bioreplicates):
+                bioreplicate_description = ', '.join(extra_bioreplicates)
+                errors.append(f"{sheet_name}: Unexpected biological replicate(s): {bioreplicate_description}")
+
+        if 'Compartment' in df:
+            uploaded_compartments = set(df['Compartment'])
+
+            if missing_compartments := expected_compartments.difference(set(df['Compartment'])):
+                compartment_description = ', '.join(missing_compartments)
+                errors.append(f"{sheet_name}: Missing compartment(s): {compartment_description}")
+
+            if extra_compartments := uploaded_compartments.difference(expected_compartments):
+                compartment_description = ', '.join(extra_compartments)
+                errors.append(f"{sheet_name}: Unexpected compartment(s): {compartment_description}")
+
+    # Validate values:
+    for sheet_name, df in sheets.items():
+        if sheet_name not in expected_value_columns.keys():
+            continue
+
+        missing_time_rows = []
+        missing_values = {}
+
+        # Time must be present
+        if 'Time' in df:
+            for index, time in enumerate(df['Time']):
+                if not is_non_negative_float(time, isnan_check=True):
+                    missing_time_rows.append(str(index + 1))
+
+        if missing_time_rows:
+            row_description = _format_row_list_error(missing_time_rows)
+            errors.append(f"{sheet_name}: Missing or invalid time values on row(s) {row_description}")
+
+        # For the other rows, we're looking for non-negative numbers or blanks
+        value_columns = expected_value_columns[sheet_name].intersection(set(df.columns))
+
+        for column in value_columns:
+            for index, value in enumerate(df[column]):
+                if not is_non_negative_float(value, isnan_check=False):
+                    if column not in missing_values:
+                        missing_values[column] = []
+                    missing_values[column].append(str(index + 1))
+
+            if column in missing_values:
+                row_description = _format_row_list_error(missing_values[column])
+                errors.append(f"{sheet_name}: Invalid values in column \"{column}\" on row(s) {row_description}")
+
+    return errors
 
 def _save_study(db_session, submission_form):
     submission = submission_form.submission
@@ -273,7 +370,7 @@ def _save_measurement_techniques(db_session, submission_form, study):
     submission = submission_form.submission
     techniques = []
 
-    for technique in submission.techniques:
+    for technique in submission.build_techniques():
         technique.study = study
 
         if technique.metaboliteIds:
@@ -291,8 +388,6 @@ def _save_measurement_techniques(db_session, submission_form, study):
 def _save_measurements(db_session, study, submission):
     data_xls = submission.dataFile.content
     sheets = pd.read_excel(io.BytesIO(data_xls), sheet_name=None)
-
-    # TODO (2025-05-10) Validate keys
 
     if 'Growth data per community' in sheets:
         df = sheets['Growth data per community']
@@ -313,3 +408,55 @@ def _find_new_strain(submission, identifier):
             return new_strain_data
     else:
         raise IndexError(f"New strain with name {repr(identifier)} not found in submission")
+
+def _get_expected_column_names(submission_form):
+    submission = submission_form.submission
+
+    community_columns  = set()
+    strain_columns     = set()
+    metabolite_columns = set()
+
+    # Validate column presence:
+    for technique in submission.build_techniques():
+        if technique.subjectType == 'bioreplicate':
+            column = technique.csv_column_name()
+            community_columns.add(column)
+            if technique.includeStd:
+                community_columns.add(f"{column} STD")
+
+        elif technique.subjectType == 'strain':
+            for taxon in submission_form.fetch_taxa():
+                column = technique.csv_column_name(taxon.name)
+                strain_columns.add(column)
+                if technique.includeStd:
+                    strain_columns.add(f"{column} STD")
+
+            for strain in submission.studyDesign['new_strains']:
+                column = technique.csv_column_name(strain['name'])
+                strain_columns.add(column)
+                if technique.includeStd:
+                    strain_columns.add(f"{column} STD")
+
+        elif technique.subjectType == 'metabolite':
+            for metabolite in submission_form.fetch_all_metabolites():
+                column = technique.csv_column_name(metabolite.name)
+                metabolite_columns.add(column)
+                if technique.includeStd:
+                    metabolite_columns.add(f"{column} STD")
+
+        else:
+            raise ValueError(f"Unexpected technique subjectType: {technique.subjectType}")
+
+    return {
+        'Growth data per community':  community_columns,
+        'Growth data per strain':     strain_columns,
+        'Growth data per metabolite': metabolite_columns,
+    }
+
+
+def _format_row_list_error(row_list):
+    description = ', '.join(row_list[0:3])
+    if len(row_list) > 3:
+        description += f", and {len(row_list) - 3} more"
+
+    return description

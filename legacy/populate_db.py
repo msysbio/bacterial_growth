@@ -339,7 +339,7 @@ def save_study_design_to_database(conn, yml_dir, submission_form, data_template,
             if len(biorep_metadata_filtered)>0:
                 db.addRecord(conn, 'BioReplicatesMetadata', biorep_metadata_filtered)
 
-    for technique in submission.techniques:
+    for technique in submission.build_techniques():
         technique.studyUniqueID = study_uuid
         conn.add(technique)
 

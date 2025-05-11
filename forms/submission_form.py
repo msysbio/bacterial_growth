@@ -237,7 +237,7 @@ class SubmissionForm:
 
     def technique_descriptions(self):
         ordering = ('bioreplicate', 'strain', 'metabolite')
-        techniques = sorted(self.submission.techniques, key=lambda t: ordering.index(t.subjectType))
+        techniques = sorted(self.submission.build_techniques(), key=lambda t: ordering.index(t.subjectType))
 
         for (subject_type, techniques) in itertools.groupby(techniques, lambda t: t.subjectType):
             match subject_type:

@@ -115,13 +115,15 @@
     }
 
     .preview {
-      max-height: 300px;
-
       .header {
         display: flex;
         flex-orientation: row;
         gap: 10px;
         align-items: center;
+      }
+
+      .dataframe-container {
+        max-height: 300px;
       }
 
       .dataframe-table {

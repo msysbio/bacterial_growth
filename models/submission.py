@@ -65,7 +65,6 @@ class Submission(OrmBase):
             1 if self.study and self.study.isPublished else 0,
         ])
 
-    @property
-    def techniques(self):
+    def build_techniques(self):
         from models import MeasurementTechnique
         return [MeasurementTechnique(**m) for m in self.studyDesign['techniques']]

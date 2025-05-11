@@ -48,7 +48,7 @@ def create_excel(submission, metabolite_names, strain_names):
     headers_strains       = {**headers_common}
     headers_metabolites   = {**headers_common}
 
-    for technique in submission.techniques:
+    for technique in submission.build_techniques():
         subject_type   = technique.subjectType
         technique_type = technique.type
         units          = technique.units
