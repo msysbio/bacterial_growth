@@ -1,60 +1,56 @@
-$(document).ready(function() {
-  $('.upload-page .step-content.step-4.active').each(function() {
-    let $step4 = $(this);
+Page('.upload-page .step-content.step-4.active', function($page4) {
+  $step4.find('.js-compartment-section').initAjaxSubform({
+    urlParams: { subform_type: 'compartment' },
 
-    $step4.find('.js-compartment-section').initAjaxSubform({
-      urlParams: { subform_type: 'compartment' },
+    prefixRegex:    /compartments-(\d+)-/,
+    prefixTemplate: 'compartments-{}-',
 
-      prefixRegex:    /compartments-(\d+)-/,
-      prefixTemplate: 'compartments-{}-',
+    buildSubform: function (index) {
+      let templateHtml = $('template.compartment-form').html();
+      let $newForm = $(templateHtml);
 
-      buildSubform: function (index) {
-        let templateHtml = $('template.compartment-form').html();
-        let $newForm = $(templateHtml);
+      $newForm.addPrefix(`compartments-${index}-`);
 
-        $newForm.addPrefix(`compartments-${index}-`);
+      return $newForm;
+    },
 
-        return $newForm;
-      },
+    onDuplicate: function($newForm) {
+      // Reset name
+      $newForm.find('input[name$="name"]').val('');
+    },
+  });
 
-      onDuplicate: function($newForm) {
-        // Reset name
-        $newForm.find('input[name$="name"]').val('');
-      },
-    });
+  $step4.find('.js-community-section').initAjaxSubform({
+    urlParams: { subform_type: 'community' },
 
-    $step4.find('.js-community-section').initAjaxSubform({
-      urlParams: { subform_type: 'community' },
+    prefixRegex:    /communities-(\d+)-/,
+    prefixTemplate: 'communities-{}-',
 
-      prefixRegex:    /communities-(\d+)-/,
-      prefixTemplate: 'communities-{}-',
+    buildSubform: function (index) {
+      let templateHtml = $('template.community-form').html();
+      let $newForm = $(templateHtml);
 
-      buildSubform: function (index) {
-        let templateHtml = $('template.community-form').html();
-        let $newForm = $(templateHtml);
+      $newForm.addPrefix(`communities-${index}-`);
 
-        $newForm.addPrefix(`communities-${index}-`);
+      return $newForm;
+    },
 
-        return $newForm;
-      },
+    initializeSubform: function($subform, index) {
+      let $select = $subform.find('.js-strain-select');
 
-      initializeSubform: function($subform, index) {
-        let $select = $subform.find('.js-strain-select');
+      $select.select2({
+        multiple: true,
+        theme: 'custom',
+        width: '100%',
+        templateResult: select2Highlighter,
+      });
 
-        $select.select2({
-          multiple: true,
-          theme: 'custom',
-          width: '100%',
-          templateResult: select2Highlighter,
-        });
+      $select.trigger('change');
+    },
 
-        $select.trigger('change');
-      },
-
-      onDuplicate: function($newForm) {
-        // Reset name
-        $newForm.find('input[name$="name"]').val('');
-      },
-    });
+    onDuplicate: function($newForm) {
+      // Reset name
+      $newForm.find('input[name$="name"]').val('');
+    },
   });
 });
