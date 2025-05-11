@@ -99,6 +99,8 @@
   <div class="preview js-preview">
     {% if submission_form.submission.dataFileId: %}
       {{ render_spreadsheet_preview(submission_form.submission.dataFile, errors) }}
+    {% else: %}
+      {{ render_form_errors(errors) }}
     {% endif %}
   </div>
 

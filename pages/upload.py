@@ -212,7 +212,11 @@ def upload_step6_page():
             submission.dataFile = ExcelFile.from_upload(request.files['data-template'])
         submission_form.save()
 
-        errors = validate_data_file(submission_form)
+        if not submission.dataFile:
+            errors = ["No data file uploaded"]
+
+        if not errors:
+            errors = validate_data_file(submission_form)
 
         if not errors:
             errors = persist_submission_to_database(submission_form)

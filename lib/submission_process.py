@@ -172,6 +172,7 @@ def validate_data_file(submission_form, data_file=None):
 
     return errors
 
+
 def _save_study(db_session, submission_form):
     submission = submission_form.submission
 
@@ -408,6 +409,7 @@ def _find_new_strain(submission, identifier):
             return new_strain_data
     else:
         raise IndexError(f"New strain with name {repr(identifier)} not found in submission")
+
 
 def _get_expected_column_names(submission_form):
     submission = submission_form.submission
