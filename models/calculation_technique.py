@@ -1,10 +1,7 @@
 from datetime import datetime
 from typing import List
 
-from sqlalchemy import (
-    String,
-    ForeignKey,
-)
+import sqlalchemy as sql
 from sqlalchemy.orm import (
     Mapped,
     mapped_column,
@@ -38,14 +35,14 @@ class CalculationTechnique(OrmBase):
     __tablename__ = "CalculationTechniques"
 
     id:   Mapped[int] = mapped_column(primary_key=True)
-    type: Mapped[str] = mapped_column(String(100), nullable=False)
+    type: Mapped[str] = mapped_column(sql.String(100), nullable=False)
 
-    studyUniqueID: Mapped[str] = mapped_column(ForeignKey('Study.studyUniqueID'), nullable=False)
+    studyUniqueID: Mapped[str] = mapped_column(sql.ForeignKey('Study.studyUniqueID'), nullable=False)
     study: Mapped['Study'] = relationship(back_populates="calculationTechniques")
 
-    jobUuid: Mapped[str] = mapped_column(String(100))
-    state:   Mapped[str] = mapped_column(String(100), default='pending')
-    error:   Mapped[str] = mapped_column(String(100))
+    jobUuid: Mapped[str] = mapped_column(sql.String(100))
+    state:   Mapped[str] = mapped_column(sql.String(100), default='pending')
+    error:   Mapped[str] = mapped_column(sql.String(100))
 
     createdAt: Mapped[datetime] = mapped_column(UtcDateTime, server_default=FetchedValue())
     updatedAt: Mapped[datetime] = mapped_column(UtcDateTime, server_default=FetchedValue())

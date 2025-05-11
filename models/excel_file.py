@@ -1,11 +1,7 @@
 from datetime import datetime
 from io import BytesIO
 
-from sqlalchemy import (
-    String,
-    LargeBinary,
-    Integer,
-)
+import sqlalchemy as sql
 from sqlalchemy.orm import (
     Mapped,
     mapped_column,
@@ -23,9 +19,9 @@ class ExcelFile(OrmBase):
 
     id: Mapped[int] = mapped_column(primary_key=True)
 
-    filename: Mapped[str]   = mapped_column(String(255))
-    size:     Mapped[int]   = mapped_column(Integer)
-    content:  Mapped[bytes] = mapped_column(LargeBinary)
+    filename: Mapped[str]   = mapped_column(sql.String(255))
+    size:     Mapped[int]   = mapped_column(sql.Integer)
+    content:  Mapped[bytes] = mapped_column(sql.LargeBinary)
 
     createdAt: Mapped[datetime] = mapped_column(UtcDateTime, server_default=FetchedValue())
 

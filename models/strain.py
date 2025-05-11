@@ -12,7 +12,7 @@ from models.orm_base import OrmBase
 class Strain(OrmBase):
     __tablename__ = 'Strains'
 
-    id: Mapped[int] = mapped_column(primary_key=True)
+    id: Mapped[int] = mapped_column(sql.Integer, primary_key=True)
 
     name:        Mapped[str]  = mapped_column(sql.String(100))
     description: Mapped[str]  = mapped_column(sql.String)

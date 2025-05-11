@@ -2,7 +2,6 @@ import re
 from typing import List
 
 import sqlalchemy as sql
-from sqlalchemy import String
 from sqlalchemy.orm import (
     Mapped,
     mapped_column,
@@ -16,11 +15,11 @@ from models.orm_base import OrmBase
 class Project(OrmBase):
     __tablename__ = 'Project'
 
-    projectUniqueID: Mapped[str] = mapped_column(String(100), primary_key=True)
+    projectUniqueID: Mapped[str] = mapped_column(sql.String(100), primary_key=True)
 
-    projectId:          Mapped[str] = mapped_column(String(100), nullable=False)
-    projectName:        Mapped[str] = mapped_column(String(100), nullable=False)
-    projectDescription: Mapped[str] = mapped_column(String,      nullable=False)
+    projectId:          Mapped[str] = mapped_column(sql.String(100), nullable=False)
+    projectName:        Mapped[str] = mapped_column(sql.String(100), nullable=False)
+    projectDescription: Mapped[str] = mapped_column(sql.String,      nullable=False)
 
     projectUsers: Mapped[List['ProjectUser']] = relationship(back_populates="project")
     studies:      Mapped[List['Study']]       = relationship(back_populates="project")

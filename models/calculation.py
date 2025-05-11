@@ -2,11 +2,7 @@ from datetime import datetime
 
 import numpy as np
 import pandas as pd
-from sqlalchemy import (
-    String,
-    ForeignKey,
-    JSON,
-)
+import sqlalchemy as sql
 from sqlalchemy.orm import (
     Mapped,
     mapped_column,
@@ -39,12 +35,12 @@ class Calculation(OrmBase):
     __tablename__ = "Calculations"
 
     id:          Mapped[int] = mapped_column(primary_key=True)
-    type:        Mapped[str] = mapped_column(String(100), nullable=False)
-    subjectId:   Mapped[str] = mapped_column(String(100), nullable=False)
-    subjectType: Mapped[str] = mapped_column(String(100), nullable=False)
+    type:        Mapped[str] = mapped_column(sql.String(100), nullable=False)
+    subjectId:   Mapped[str] = mapped_column(sql.String(100), nullable=False)
+    subjectType: Mapped[str] = mapped_column(sql.String(100), nullable=False)
 
     measurementTechniqueId: Mapped[int] = mapped_column(
-        ForeignKey('MeasurementTechniques.id'),
+        sql.ForeignKey('MeasurementTechniques.id'),
         nullable=False,
     )
     measurementTechnique: Mapped['MeasurementTechnique'] = relationship(
@@ -52,20 +48,20 @@ class Calculation(OrmBase):
     )
 
     calculationTechniqueId: Mapped[int] = mapped_column(
-        ForeignKey('CalculationTechniques.id'),
+        sql.ForeignKey('CalculationTechniques.id'),
         nullable=False,
     )
     calculationTechnique: Mapped['CalculationTechnique'] = relationship(
         back_populates="calculations",
     )
 
-    bioreplicateUniqueId: Mapped[int] = mapped_column(ForeignKey('Bioreplicates.id'), nullable=False)
+    bioreplicateUniqueId: Mapped[int] = mapped_column(sql.ForeignKey('Bioreplicates.id'), nullable=False)
     bioreplicate: Mapped['Bioreplicate'] = relationship(back_populates='calculations')
 
-    coefficients: Mapped[JSON] = mapped_column(JSON, nullable=False)
+    coefficients: Mapped[sql.JSON] = mapped_column(sql.JSON, nullable=False)
 
-    state: Mapped[str] = mapped_column(String(100), default='pending')
-    error: Mapped[str] = mapped_column(String(100))
+    state: Mapped[str] = mapped_column(sql.String(100), default='pending')
+    error: Mapped[str] = mapped_column(sql.String(100))
 
     createdAt:    Mapped[datetime] = mapped_column(UtcDateTime, server_default=FetchedValue())
     updatedAt:    Mapped[datetime] = mapped_column(UtcDateTime, server_default=FetchedValue())

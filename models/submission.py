@@ -1,9 +1,6 @@
 from datetime import datetime
 
-from sqlalchemy import (
-    String,
-    ForeignKey,
-)
+import sqlalchemy as sql
 from sqlalchemy.orm import (
     Mapped,
     mapped_column,
@@ -21,9 +18,9 @@ class Submission(OrmBase):
 
     id: Mapped[int] = mapped_column(primary_key=True)
 
-    projectUniqueID: Mapped[str] = mapped_column(String(100), nullable=False)
-    studyUniqueID:   Mapped[str] = mapped_column(String(100), nullable=False)
-    userUniqueID:    Mapped[str] = mapped_column(String(100), nullable=False)
+    projectUniqueID: Mapped[str] = mapped_column(sql.String(100), nullable=False)
+    studyUniqueID:   Mapped[str] = mapped_column(sql.String(100), nullable=False)
+    userUniqueID:    Mapped[str] = mapped_column(sql.String(100), nullable=False)
 
     project: Mapped['Project'] = relationship(
         foreign_keys=[projectUniqueID],
@@ -36,8 +33,8 @@ class Submission(OrmBase):
 
     studyDesign: Mapped[JSON] = mapped_column(JSON, nullable=False)
 
-    studyFileId: Mapped[int] = mapped_column(ForeignKey('ExcelFiles.id'))
-    dataFileId:  Mapped[int] = mapped_column(ForeignKey('ExcelFiles.id'))
+    studyFileId: Mapped[int] = mapped_column(sql.ForeignKey('ExcelFiles.id'))
+    dataFileId:  Mapped[int] = mapped_column(sql.ForeignKey('ExcelFiles.id'))
 
     studyFile: Mapped['ExcelFile'] = relationship(
         foreign_keys=[studyFileId],
