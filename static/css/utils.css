@@ -83,6 +83,10 @@ hr {
   }
 }
 
+.box-light {
+  border-color: var(--light-border-color);
+}
+
 .error-message,
 .flash-error {
   display: block;
