@@ -8,8 +8,6 @@ from db import get_session, get_transaction
 import pandas as pd
 import sqlalchemy as sql
 
-from legacy.upload_validation import validate_upload
-from legacy.populate_db import save_study_design_to_database
 from models import (
     Bioreplicate,
     Community,
