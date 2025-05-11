@@ -218,7 +218,7 @@ $.fn.initAjaxSubform = function(params) {
     let $subformList = $container.find('.js-subform-list').first();
     $subformList.html(response);
 
-    let $subforms = $subformList.find('.js-subform-container');
+    let $subforms = $subformList.children('.js-subform-container');
     let subformCount = $subforms.length;
 
     let $errorMessageList = $subformList.find('.error-message-list');
