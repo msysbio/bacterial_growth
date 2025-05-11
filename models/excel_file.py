@@ -47,7 +47,7 @@ class ExcelFile(OrmBase):
         excel = pd.ExcelFile(BytesIO(self.content))
 
         sheets = {
-            name: pd.read_excel(excel, engine='openpyxl', sheet_name=name)
+            name: pd.read_excel(excel, sheet_name=name)
             for name in excel.sheet_names
         }
 
