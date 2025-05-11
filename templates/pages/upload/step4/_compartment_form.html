@@ -13,12 +13,12 @@
 
       <label>
         <div>Medium name</div>
-        {{ form.mediumName(class='form-input-blue form-input-full', placeholder='e.g. Wilkins-Chalgren') }}
+        {{ form.mediumName(class="form-input-blue form-input-full", placeholder="e.g. Wilkins-Chalgren") }}
       </label>
 
-      <label>
+      <label data-tooltip="A link to a URL with information about the medium. MediaDive is recommended">
         <div>Medium URL</div>
-        {{ form.mediumUrl(class='form-input-blue form-input-full', placeholder='https://example.com') }}
+        {{ form.mediumUrl(class="form-input-blue form-input-full", placeholder="https://mediadive.dsmz.de/medium/339") }}
       </label>
     </div>
 
@@ -64,6 +64,16 @@
         <div>N<sub>2</sub>%</div>
         {{ form.N2(class='form-input-blue') }}
       </label>
+
+      <label>
+        <div>Initial pH</div>
+        {{ form.initialPh(class='form-input-blue') }}
+      </label>
+
+      <label>
+        <div>Initial temp. (&deg;C)</div>
+        {{ form.initialTemperature(class='form-input-blue') }}
+      </label>
     </div>
 
     <div class="form-row">
@@ -75,26 +85,6 @@
       <label>
         <div>Inoculum volume (mL)</div>
         {{ form.inoculumVolume(class='form-input-blue') }}
-      </label>
-
-      <label class="flex-end">
-        {{ form.carbonSource(class='form-input-blue') }}
-        <span>Carbon source</span>
-        <div class="help">
-          Does the compartment have a source of carbon?
-        </div>
-      </label>
-    </div>
-
-    <div class="form-row">
-      <label>
-        <div>Initial pH</div>
-        {{ form.initialPh(class='form-input-blue') }}
-      </label>
-
-      <label>
-        <div>Initial temperature (&deg;C)</div>
-        {{ form.initialTemperature(class='form-input-blue') }}
       </label>
 
       <a href="#" class="white-button flex-row flex-end js-duplicate-trigger">

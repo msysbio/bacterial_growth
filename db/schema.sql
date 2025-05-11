@@ -52,8 +52,10 @@ CREATE TABLE Bioreplicates (
   id int NOT NULL AUTO_INCREMENT,
   `name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
   experimentId int NOT NULL,
-  `description` text COLLATE utf8mb4_bin,
   biosampleUrl text COLLATE utf8mb4_bin,
+  position varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  isControl tinyint(1) NOT NULL DEFAULT '0',
+  isBlank tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (id),
   UNIQUE KEY studyId (studyId,`name`),
   KEY fk_1 (experimentId),
@@ -580,5 +582,6 @@ INSERT INTO MigrationVersions VALUES
 (67,'2025_05_09_143613_fix_perturbation_columns','2025-05-09 16:16:48'),
 (69,'2025_05_09_185956_remove_position_from_measurements','2025-05-09 17:00:56'),
 (74,'2025_05_09_194730_fix_study_metabolite_columns','2025-05-09 17:59:54'),
-(76,'2025_05_10_112933_add_compartment_id_to_measurements','2025-05-10 09:32:30');
+(76,'2025_05_10_112933_add_compartment_id_to_measurements','2025-05-10 09:32:30'),
+(78,'2025_05_11_154801_add_fields_to_bioreplicates','2025-05-11 13:52:06');
 

@@ -1,4 +1,5 @@
 from wtforms import (
+    BooleanField,
     FieldList,
     FormField,
     IntegerField,
@@ -24,8 +25,11 @@ class UploadStep5Form(BaseForm):
                 csrf = False
 
             name         = StringField('name', validators=[DataRequired()])
-            description  = StringField('description')
+            position     = StringField('position')
             biosampleUrl = URLField('biosampleUrl')
+
+            isControl = BooleanField('isControl')
+            isBlank   = BooleanField('isBlank')
 
         class PerturbationForm(BaseForm):
             class Meta:
