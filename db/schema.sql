@@ -16,31 +16,6 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `Abundances`
---
-
-DROP TABLE IF EXISTS Abundances;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE Abundances (
-  studyId varchar(100) COLLATE utf8mb4_bin DEFAULT NULL,
-  experimentUniqueId int NOT NULL,
-  experimentId varchar(100) COLLATE utf8mb4_bin NOT NULL,
-  bioreplicateUniqueId int NOT NULL,
-  bioreplicateId varchar(100) COLLATE utf8mb4_bin NOT NULL,
-  strainId int DEFAULT NULL,
-  memberId varchar(255) COLLATE utf8mb4_bin NOT NULL,
-  PRIMARY KEY (experimentUniqueId,bioreplicateUniqueId,memberId),
-  KEY fk_1 (experimentUniqueId),
-  KEY fk_2 (strainId),
-  KEY fk_3 (studyId),
-  CONSTRAINT Abundances_fk_1 FOREIGN KEY (experimentUniqueId) REFERENCES Experiments (id) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT Abundances_fk_2 FOREIGN KEY (strainId) REFERENCES Strains (id) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT Abundances_fk_3 FOREIGN KEY (studyId) REFERENCES Study (studyId) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
 -- Table structure for table `Bioreplicates`
 --
 
@@ -223,31 +198,6 @@ CREATE TABLE Experiments (
   KEY Experiment_fk_1 (communityId),
   CONSTRAINT Experiment_fk_1 FOREIGN KEY (communityId) REFERENCES Communities (id) ON DELETE SET NULL ON UPDATE CASCADE,
   CONSTRAINT Experiments_fk_1 FOREIGN KEY (studyId) REFERENCES Study (studyId) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `FC_Counts`
---
-
-DROP TABLE IF EXISTS FC_Counts;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE FC_Counts (
-  studyId varchar(100) COLLATE utf8mb4_bin DEFAULT NULL,
-  experimentUniqueId int DEFAULT NULL,
-  experimentId varchar(100) COLLATE utf8mb4_bin NOT NULL,
-  bioreplicateUniqueId int DEFAULT NULL,
-  bioreplicateId varchar(100) COLLATE utf8mb4_bin NOT NULL,
-  strainId int DEFAULT NULL,
-  memberId varchar(255) COLLATE utf8mb4_bin NOT NULL,
-  PRIMARY KEY (experimentId,bioreplicateId,memberId),
-  KEY fk_1 (experimentUniqueId),
-  KEY fk_2 (strainId),
-  KEY fk_3 (studyId),
-  CONSTRAINT FC_Counts_fk_1 FOREIGN KEY (experimentUniqueId) REFERENCES Experiments (id) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT FC_Counts_fk_2 FOREIGN KEY (strainId) REFERENCES Strains (id) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT FC_Counts_fk_3 FOREIGN KEY (studyId) REFERENCES Study (studyId) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -517,26 +467,6 @@ CREATE TABLE Taxa (
   PRIMARY KEY (tax_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `TechniquesPerExperiment`
---
-
-DROP TABLE IF EXISTS TechniquesPerExperiment;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE TechniquesPerExperiment (
-  studyId varchar(100) COLLATE utf8mb4_bin DEFAULT NULL,
-  experimentUniqueId int NOT NULL,
-  experimentId varchar(100) COLLATE utf8mb4_bin NOT NULL,
-  technique varchar(100) COLLATE utf8mb4_bin NOT NULL,
-  techniqueUnit varchar(100) COLLATE utf8mb4_bin NOT NULL,
-  PRIMARY KEY (experimentUniqueId,technique,techniqueUnit),
-  KEY fk_2 (studyId),
-  CONSTRAINT TechniquesPerExperiment_fk_1 FOREIGN KEY (experimentUniqueId) REFERENCES Experiments (id) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT TechniquesPerExperiment_fk_2 FOREIGN KEY (studyId) REFERENCES Study (studyId) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
-/*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -583,5 +513,6 @@ INSERT INTO MigrationVersions VALUES
 (69,'2025_05_09_185956_remove_position_from_measurements','2025-05-09 17:00:56'),
 (74,'2025_05_09_194730_fix_study_metabolite_columns','2025-05-09 17:59:54'),
 (76,'2025_05_10_112933_add_compartment_id_to_measurements','2025-05-10 09:32:30'),
-(78,'2025_05_11_154801_add_fields_to_bioreplicates','2025-05-11 13:52:06');
+(78,'2025_05_11_154801_add_fields_to_bioreplicates','2025-05-11 13:52:06'),
+(82,'2025_05_13_172421_drop_unused_tables','2025-05-13 16:10:28');
 
