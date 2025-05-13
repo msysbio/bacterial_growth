@@ -71,8 +71,8 @@
               </span>
             {% endif %}
           </td>
-          <td>{{ time_tag(user_submission.updatedAt, class="js-relative") }}</td>
-          <td>{{ time_tag(user_submission.createdAt, class="js-relative") }}</td>
+          <td>{{ time_tag(user_submission.updatedAt, relative=True) }}</td>
+          <td>{{ time_tag(user_submission.createdAt, relative=True) }}</td>
           <td align="center">
             {{ user_submission.completed_step_count }}/7
           </td>

@@ -86,14 +86,6 @@ $(document).ready(function() {
     }, 200);
   });
 
-  // Replace relative timestamps using moment.js
-  $(document).find('time.js-relative').each(function() {
-    let $time = $(this);
-    let time = moment.utc($time.attr('datetime'));
-
-    $time.text(time.fromNow());
-  });
-
   // Initialize tippy popups:
   tippy('[data-tooltip]', {
     content: function(element) {

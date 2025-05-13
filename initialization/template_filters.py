@@ -1,7 +1,13 @@
 import statistics
 
+import humanize
+
 
 def init_template_filters(app):
+    @app.template_filter('relative_time')
+    def _relative_time(timestamp):
+        return humanize.naturaltime(timestamp)
+
     @app.template_filter('map_scientific')
     def _map_scientific(values):
         return ["{:.2E}".format(v) for v in values if v is not None]
