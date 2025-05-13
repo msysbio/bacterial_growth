@@ -2,6 +2,13 @@ import sqlalchemy as sql
 
 
 def up(conn):
+    print("")
+    print("[Warning] This migration deletes measurements, they need to be regenerated")
+    print("")
+
+    query = "DELETE FROM Measurements"
+    conn.execute(sql.text(query))
+
     query = """
         ALTER TABLE Measurements
         ADD compartmentId int NOT NULL,

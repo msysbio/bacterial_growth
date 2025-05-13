@@ -1,0 +1,24 @@
+#! /usr/bin/env python3
+
+import os
+from datetime import datetime
+
+from db import get_cli_connection_params
+
+connection_params = get_cli_connection_params()
+
+timestamp = datetime.now().strftime("%Y-%m-%d-%H:%M:%S")
+
+# Redirect stdout before exec-ing
+fdout = os.open(f"{timestamp}_backup.sql", os.O_WRONLY | os.O_CREAT)
+STDOUT = 1
+os.dup2(fdout, STDOUT)
+
+os.execv(
+    '/usr/bin/mysqldump', [
+        '/usr/bin/mysqldump',
+        *connection_params,
+        '-u',
+        'root',
+    ]
+)
