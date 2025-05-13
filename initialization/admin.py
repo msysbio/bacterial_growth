@@ -1,10 +1,11 @@
-import re
-
+import simplejson as json
 from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
 from sqlalchemy.orm import configure_mappers
+from markupsafe import Markup
 
-from db import get_session, FLASK_DB
+from db import FLASK_DB
+from models.orm_base import OrmBase
 from models import (
     Calculation,
     CalculationTechnique,
@@ -12,11 +13,26 @@ from models import (
     MeasurementTechnique,
     Metabolite,
     ProjectUser,
+    Strain,
     Study,
     StudyUser,
     Submission,
     Taxon,
 )
+from lib.util import humanize_camelcased_string
+
+
+def json_formatter(_view, data, _name):
+    return Markup(f"<pre>{json.dumps(data, indent=2)}</pre>")
+
+
+def record_formatter(_view, record, _name):
+    if hasattr(record, 'publicId'):
+        return record.publicId
+    elif hasattr(record, 'name'):
+        return record.name
+    else:
+        return str(record)
 
 
 class AppView(ModelView):
@@ -24,7 +40,12 @@ class AppView(ModelView):
     can_view_details = True
 
     def _prettify_name(self, name):
-        return re.sub(r'([a-z])([A-Z])', r'\1 \2', name).title()
+        return humanize_camelcased_string(name).title()
+
+    column_type_formatters = {
+        dict: json_formatter,
+        OrmBase: record_formatter,
+    }
 
 
 def init_admin(app):
@@ -39,6 +60,7 @@ def init_admin(app):
 
     admin.add_view(StudyView(Study,    db_session, category="Studies"))
     admin.add_view(AppView(Submission, db_session, category="Studies"))
+    admin.add_view(AppView(Strain,     db_session, category="Studies"))
 
     admin.add_view(AppView(MeasurementTechnique, db_session, category="Measurements"))
     admin.add_view(AppView(Measurement,          db_session, category="Measurements"))

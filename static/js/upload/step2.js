@@ -2,20 +2,10 @@ $(document).ready(function() {
   $('.upload-page .step-content.step-2.active').each(function() {
     let $step2 = $(this);
 
-    $step2.on('click', '.js-add-strain', function(e) {
-      e.preventDefault();
-      addNewStrainForm($(e.currentTarget), {});
-    });
-
-    $step2.on('click', '.js-remove-new-strain', function(e) {
-      e.preventDefault();
-      $(e.currentTarget).parents('.js-new-strain-container').remove();
-    });
-
-    let $multipleStrainSelect = $step2.find('.js-multiple-strain-select');
-
-    $multipleStrainSelect.select2({
-      multiple: true,
+    // Initialize selection of existing strains
+    let $existingStrainSelect = $step2.find('.js-existing-strain-select');
+    $existingStrainSelect.select2({
+      existing: true,
       width: '100%',
       theme: 'custom',
       minimumInputLength: 1,
@@ -28,11 +18,11 @@ $(document).ready(function() {
       templateResult: select2Highlighter,
     });
 
-    $multipleStrainSelect.on('change', function() {
-      let $form       = $multipleStrainSelect.parents('form');
+    $existingStrainSelect.on('change', function() {
+      let $form       = $existingStrainSelect.parents('form');
       let $strainList = $form.find('.strain-list');
       let template    = $form.find('template.strain-list-item').html();
-      let selectedIds = new Set($multipleStrainSelect.val());
+      let selectedIds = new Set($existingStrainSelect.val());
 
       $strainList.html('');
 
@@ -53,80 +43,73 @@ $(document).ready(function() {
       });
     });
 
-    $multipleStrainSelect.trigger('change');
+    $existingStrainSelect.trigger('change');
 
-    function addNewStrainForm($addStrainButton) {
-      // We need to prepend all names and ids with "new-strain-N" for uniqueness:
+    // Initialize creation of new strains:
+    $step2.initAjaxSubform({
+      prefixRegex:    /new_strains-(\d+)-/,
+      prefixTemplate: 'new_strains-{}-',
 
-      let newStrainIndex = $step2.find('.js-new-strain-container').length;
-      let templateHtml = $step2.find('template.new-strain').html();
-      let $newForm = $(templateHtml);
+      buildSubform: function(index) {
+        let templateHtml = $('template.new-strain-form').html();
+        let $newForm = $(templateHtml);
 
-      // Modify names:
-      $newForm.find('input,select,textarea').each(function() {
-        let $input = $(this);
-        let name = $input.attr('name');
-        $input.attr('name', `new_strains-${newStrainIndex}-${name}`);
-      });
+        $newForm.addPrefix(`new_strains-${index}-`);
 
-      // Give it a different style:
-      $newForm.addClass('new');
+        return $newForm;
+      },
 
-      // Insert into DOM
-      $addStrainButton.parents('.form-row').before($newForm);
+      onDuplicate: function($newForm) {
+        // Reset name
+        $newForm.find('input[name$="name"]').val('');
+      },
 
-      // Initialize single-strain selection:
-      let $strainSelect = $newForm.find('.js-single-strain-select');
-      initializeSingleStrainSelect($strainSelect);
-    }
+      initializeSubform: function($subform, index) {
+        let $select = $subform.find('.js-single-strain-select');
+        let $option = $select.find('option:selected');
 
-    function initializeSingleStrainSelect($select) {
-      $select.select2({
-        placeholder: 'Select parent species',
-        theme: 'custom',
-        width: '100%',
-        minimumInputLength: 1,
-        ajax: {
-          url: '/strains/completion/',
-          dataType: 'json',
-          delay: 100,
-          cache: true,
-        },
-        templateResult: select2Highlighter,
-      });
-
-      $select.on('change', function() { updateParentPreview($select) });
-
-      function updateParentPreview($select) {
-        let $container     = $select.parents('.js-new-strain-container');
-        let $parentPreview = $container.find('.js-parent-preview');
-        let template       = $('template.new-strain-parent-preview').html();
-        let selectedId     = $select.val();
-
-        $parentPreview.html('');
-
-        $select.find('option').each(function() {
-          let $option = $(this);
-          let name    = $option.text().replace(/\s*\(NCBI:.*\)/, '');
-          let id      = $option.val();
-
-          if (selectedId != id) {
-            return;
-          }
-
-          let previewHtml = template.
-            replaceAll('${id}', id).
-            replaceAll('${name}', name);
-
-          $parentPreview.append($(previewHtml));
+        $select.select2({
+          placeholder: 'Select parent species',
+          theme: 'custom',
+          width: '100%',
+          minimumInputLength: 1,
+          ajax: {
+            url: '/strains/completion/',
+            dataType: 'json',
+            delay: 100,
+            cache: true,
+          },
+          templateResult: select2Highlighter,
         });
+
+        $select.on('change', function() { updateNewStrainParentPreview($select) });
+        $select.trigger('change');
       }
+    })
 
-      updateParentPreview($select);
-    };
+    function updateNewStrainParentPreview($select) {
+      let $container     = $select.parents('.js-new-strain-container');
+      let $parentPreview = $container.find('.js-parent-preview');
+      let template       = $('template.new-strain-parent-preview').html();
+      let selectedId     = $select.val();
 
-    $step2.find('.js-single-strain-select').each(function() {
-      initializeSingleStrainSelect($(this));
-    });
+      $parentPreview.html('');
+
+      $select.find('option').each(function() {
+        let $option = $(this);
+        let name    = $option.text().replace(/\s*\(NCBI:.*\)/, '');
+        let id      = $option.val();
+
+        if (selectedId != id) {
+          return;
+        }
+
+        let previewHtml = template.
+          replaceAll('${id}', id).
+          replaceAll('${name}', name);
+
+        $parentPreview.append($(previewHtml));
+      });
+    }
   });
 });

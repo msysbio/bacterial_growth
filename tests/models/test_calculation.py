@@ -14,7 +14,7 @@ class TestCalculation(DatabaseTest):
 
         calculation = Calculation(
             type='baranyi_roberts',
-            bioreplicateUniqueId=bioreplicate.uuid,
+            bioreplicateUniqueId=bioreplicate.id,
             calculationTechniqueId=calculation_technique.id,
             measurementTechniqueId=measurement_technique.id,
             subjectId=strain.id,

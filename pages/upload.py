@@ -22,10 +22,14 @@ from models import (
 from forms.submission_form import SubmissionForm
 from forms.upload_step2_form import UploadStep2Form
 from forms.upload_step3_form import UploadStep3Form
-from lib.submission_process import persist_submission_to_database
+from forms.upload_step4_form import UploadStep4Form
+from forms.upload_step5_form import UploadStep5Form
+from lib.submission_process import (
+    persist_submission_to_database,
+    validate_data_file,
+)
 
-import legacy.study_spreadsheet as study_spreadsheet
-import legacy.data_spreadsheet as data_spreadsheet
+import lib.data_spreadsheet as data_spreadsheet
 
 
 def upload_status_page():
@@ -43,7 +47,6 @@ def upload_status_page():
     return render_template(
         "pages/upload/index.html",
         submission_form=submission_form,
-        submission=submission_form.submission,
         user_submissions=user_submissions,
     )
 
@@ -79,7 +82,6 @@ def upload_step1_page():
     return render_template(
         "pages/upload/index.html",
         submission_form=submission_form,
-        submission=submission_form.submission,
         projects=projects,
         studies=studies,
     )
@@ -87,10 +89,13 @@ def upload_step1_page():
 
 def upload_step2_page():
     submission_form = _init_submission_form(step=2)
-    form = UploadStep2Form(request.form)
+    upload_form     = _init_upload_form(UploadStep2Form, submission_form.submission)
 
-    if request.method == 'POST':
-        submission_form.update_strains(form.data)
+    if _request_is_ajax():
+        return _step2_partial(upload_form, submission_form)
+
+    if request.method == 'POST' and upload_form.validate():
+        submission_form.update_strains(upload_form.data)
         session['submission_id'] = submission_form.save()
 
         return redirect(url_for('upload_step3_page'))
@@ -98,7 +103,19 @@ def upload_step2_page():
     return render_template(
         "pages/upload/index.html",
         submission_form=submission_form,
-        submission=submission_form.submission,
+        upload_form=upload_form,
+    )
+
+
+def _step2_partial(upload_form, submission_form):
+    if upload_form.validate():
+        submission_form.update_strains(upload_form.data)
+        session['submission_id'] = submission_form.save()
+
+    return render_template(
+        "pages/upload/step2/_subform_list.html",
+        submission_form=submission_form,
+        upload_form=upload_form,
     )
 
 
@@ -120,51 +137,110 @@ def upload_step3_page():
         return render_template(
             "pages/upload/index.html",
             submission_form=submission_form,
-            submission=submission_form.submission,
             upload_form=upload_form
         )
 
 
-def download_study_template_xlsx():
-    submission_form = _init_submission_form(step=3)
-    submission = submission_form.submission
+def upload_step4_page():
+    submission_form = _init_submission_form(step=4)
+    upload_form     = _init_upload_form(UploadStep4Form, submission_form.submission)
 
-    taxa_ids   = submission.studyDesign['strains']
-    taxa_names = [t.tax_names for t in submission_form.fetch_taxa()]
+    if _request_is_ajax():
+        return _step4_partial(upload_form, submission_form, request.args['subform_type'])
 
-    new_strains = [
-        {
-            'case_number':     index,
-            'name':            strain['name'],
-            'description':     strain['description'],
-            'parent_taxon_id': strain['species'],
-        }
-        for (index, strain)
-        in enumerate(submission_form.fetch_new_strains())
-    ]
+    if request.method == 'POST' and upload_form.validate():
+        submission_form.update_study_design(upload_form.data)
+        session['submission_id'] = submission_form.save()
 
-    spreadsheet = study_spreadsheet.create_excel(
-        taxa_names,
-        taxa_ids,
-        new_strains,
-        submission.projectUniqueID,
-        submission.studyUniqueID,
+        return redirect(url_for('upload_step5_page'))
+
+    return render_template(
+        "pages/upload/index.html",
+        submission_form=submission_form,
+        upload_form=upload_form,
     )
 
-    return send_file(
-        io.BytesIO(spreadsheet),
-        as_attachment=True,
-        download_name="template_study.xlsx",
+def _step4_partial(upload_form, submission_form, subform_type):
+    if upload_form.validate():
+        submission_form.update_study_design(upload_form.data)
+        session['submission_id'] = submission_form.save()
+
+    return render_template(
+        f"pages/upload/step4/_{subform_type}_subform_list.html",
+        submission_form=submission_form,
+        upload_form=upload_form,
+    )
+
+def upload_step5_page():
+    submission_form = _init_submission_form(step=5)
+    upload_form     = _init_upload_form(UploadStep5Form, submission_form.submission)
+
+    if _request_is_ajax():
+        return _step5_partial(upload_form, submission_form)
+
+    if request.method == 'POST' and upload_form.validate():
+        submission_form.update_study_design(upload_form.data)
+        session['submission_id'] = submission_form.save()
+
+        return redirect(url_for('upload_step6_page'))
+
+    return render_template(
+        "pages/upload/index.html",
+        submission_form=submission_form,
+        upload_form=upload_form,
+    )
+
+
+def _step5_partial(upload_form, submission_form):
+    if upload_form.validate():
+        submission_form.update_study_design(upload_form.data)
+        session['submission_id'] = submission_form.save()
+
+    return render_template(
+        "pages/upload/step5/_subform_list.html",
+        submission_form=submission_form,
+        upload_form=upload_form,
+    )
+
+
+def upload_step6_page():
+    submission_form = _init_submission_form(step=6)
+    submission = submission_form.submission
+    errors = []
+
+    if request.method == 'POST':
+        if request.files['data-template']:
+            submission.dataFile = ExcelFile.from_upload(request.files['data-template'])
+        submission_form.save()
+
+        if not submission.dataFile:
+            errors = ["No data file uploaded"]
+
+        if not errors:
+            errors = validate_data_file(submission_form)
+
+        if not errors:
+            errors = persist_submission_to_database(submission_form)
+
+        if not errors:
+            return redirect(url_for('upload_step7_page'))
+    else:
+        errors = validate_data_file(submission_form)
+
+    return render_template(
+        "pages/upload/index.html",
+        submission_form=submission_form,
+        errors=errors,
     )
 
 
 def download_data_template_xlsx():
-    submission_form = _init_submission_form(step=3)
-    submission = submission_form.submission
+    submission_form = _init_submission_form(step=6)
+    submission      = submission_form.submission
 
     metabolite_names = [m.metabo_name for m in submission_form.fetch_all_metabolites()]
     strain_names = [t.tax_names for t in submission_form.fetch_taxa()]
-    strain_names += [s['name'] for s in submission_form.fetch_new_strains()]
+    strain_names += [s['name'] for s in submission.studyDesign['new_strains']]
 
     spreadsheet = data_spreadsheet.create_excel(
         submission,
@@ -179,43 +255,21 @@ def download_data_template_xlsx():
     )
 
 
-def upload_step4_page():
-    submission_form = _init_submission_form(step=4)
-    submission = submission_form.submission
-    errors = []
+def upload_spreadsheet_preview_fragment():
+    submission_form = _init_submission_form(step=6)
 
-    if request.method == 'POST':
-        if request.files['study-template']:
-            submission.studyFile = ExcelFile.from_upload(request.files['study-template'])
-        if request.files['data-template']:
-            submission.dataFile  = ExcelFile.from_upload(request.files['data-template'])
-
-        submission_form.save()
-
-        errors = persist_submission_to_database(submission_form)
-
-        if not errors:
-            return redirect(url_for('upload_step5_page'))
+    excel_file = ExcelFile.from_upload(request.files['file'])
+    errors = validate_data_file(submission_form, excel_file)
 
     return render_template(
-        "pages/upload/index.html",
-        submission_form=submission_form,
-        submission=submission_form.submission,
+        "pages/upload/step6/spreadsheet_preview.html",
+        excel_file=excel_file,
         errors=errors,
     )
 
 
-def upload_spreadsheet_preview_fragment():
-    excel_file = ExcelFile.from_upload(request.files['file'])
-
-    return render_template(
-        "pages/upload/step4/spreadsheet_preview.html",
-        excel_file=excel_file,
-    )
-
-
-def upload_step5_page():
-    submission_form = _init_submission_form(step=5)
+def upload_step7_page():
+    submission_form = _init_submission_form(step=7)
 
     if request.method == 'POST':
         study = submission_form.submission.study
@@ -230,7 +284,6 @@ def upload_step5_page():
     return render_template(
         "pages/upload/index.html",
         submission_form=submission_form,
-        submission=submission_form.submission,
     )
 
 
@@ -241,3 +294,14 @@ def _init_submission_form(step):
         db_session=g.db_session,
         user_uuid=g.current_user.uuid,
     )
+
+
+def _init_upload_form(form_class, submission):
+    if request.method == 'POST':
+        return form_class(request.form)
+    else:
+        return form_class(data=submission.studyDesign)
+
+
+def _request_is_ajax():
+    return request.headers.get('X-Requested-With', '') == 'XMLHttpRequest'

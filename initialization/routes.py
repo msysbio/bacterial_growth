@@ -25,6 +25,8 @@ def init_routes(app):
     app.add_url_rule("/upload/3", view_func=upload_pages.upload_step3_page, methods=["GET", "POST"])
     app.add_url_rule("/upload/4", view_func=upload_pages.upload_step4_page, methods=["GET", "POST"])
     app.add_url_rule("/upload/5", view_func=upload_pages.upload_step5_page, methods=["GET", "POST"])
+    app.add_url_rule("/upload/6", view_func=upload_pages.upload_step6_page, methods=["GET", "POST"])
+    app.add_url_rule("/upload/7", view_func=upload_pages.upload_step7_page, methods=["GET", "POST"])
 
     app.add_url_rule(
         "/upload/new_submission/",
@@ -42,7 +44,6 @@ def init_routes(app):
         methods=["POST"],
     )
 
-    app.add_url_rule("/upload/study_template.xlsx", view_func=upload_pages.download_study_template_xlsx, methods=["POST"])
     app.add_url_rule("/upload/data_template.xlsx", view_func=upload_pages.download_data_template_xlsx, methods=["POST"])
     app.add_url_rule(
         "/upload/spreadsheet_preview/",

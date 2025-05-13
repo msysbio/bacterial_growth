@@ -38,14 +38,14 @@
                 {% if technique.subjectType != 'bioreplicate': %}
                   <div class="flex-row">
                     <strong>
-                      Bioreplicate: {{ bioreplicate.bioreplicateId }}
+                      Bioreplicate: {{ bioreplicate.name }}
                     </strong>
                   </div>
                 {% endif %}
 
                 {% for subject in technique.get_subjects_for_bioreplicate(g.db_session, bioreplicate): %}
                   {% set target_identifier = [
-                    bioreplicate.bioreplicateUniqueId,
+                    bioreplicate.id,
                     technique.id,
                     technique.subjectType,
                     subject.id,
@@ -62,7 +62,7 @@
                     {% set edit_url = url_for(
                       "study_calculations_edit_fragment",
                       studyId=study.publicId,
-                      bioreplicateUniqueId=bioreplicate.uuid,
+                      bioreplicateUniqueId=bioreplicate.id,
                       subjectType=technique.subjectType,
                       subjectId=subject.id,
                       techniqueId=technique.id

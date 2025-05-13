@@ -14,14 +14,15 @@ class TestMeasurement(DatabaseTest):
         study = self.create_study()
         study_id = study.studyId
 
-        bioreplicate_uuid = self.create_bioreplicate(studyId=study_id).bioreplicateUniqueId
-        strain_id         = self.create_strain(studyId=study_id).NCBId
-        technique         = self.create_measurement_technique(type='fc', subjectType='bioreplicate', studyUniqueID=study.studyUniqueID)
+        bioreplicate_id = self.create_bioreplicate(studyId=study_id).id
+        compartment_id  = self.create_compartment(studyId=study_id).id
+        strain_id       = self.create_strain(studyId=study_id).NCBId
+        technique       = self.create_measurement_technique(type='fc', subjectType='bioreplicate', studyUniqueID=study.studyUniqueID)
 
         measurement = Measurement(
             studyId=study.studyId,
-            bioreplicateUniqueId=bioreplicate_uuid,
-            position='A1',
+            bioreplicateUniqueId=bioreplicate_id,
+            compartmentId=compartment_id,
             timeInSeconds=60 * 3600,
             unit=technique.units,
             techniqueId=technique.id,
@@ -43,35 +44,37 @@ class TestMeasurement(DatabaseTest):
         study_id = study.studyId
         study_uuid = study.studyUniqueID
 
-        b1 = self.create_bioreplicate(studyId=study_id, bioreplicateId='b1')
-        b2 = self.create_bioreplicate(studyId=study_id, bioreplicateId='b2')
+        b1 = self.create_bioreplicate(studyId=study_id, name='b1')
+        b2 = self.create_bioreplicate(studyId=study_id, name='b2')
+        c1 = self.create_compartment(studyId=study_id, name='c1')
 
         t_fc = self.create_measurement_technique(studyUniqueID=study_uuid, subjectType='bioreplicate', type='fc')
         t_od = self.create_measurement_technique(studyUniqueID=study_uuid, subjectType='bioreplicate', type='od')
         t_ph = self.create_measurement_technique(studyUniqueID=study_uuid, subjectType='bioreplicate', type='ph')
 
         growth_data = util.trim_lines("""
-            Position,Biological_Replicate_id,Time,Community FC,Community OD,Community pH
-            p1,b1,2,1234567890.0,0.9,7.4
-            p1,b1,4,234567890.0,0.8,7.5
-            p1,b2,2,4567890.0,0.7,7.6
-            p1,b2,4,4567890.0,0.7,7.6
+            Biological Replicate,Compartment,Time,Community FC,Community OD,Community pH
+            b1,c1,2,1234567890.0,0.9,7.4
+            b1,c1,4,234567890.0,0.8,7.5
+            b2,c1,2,4567890.0,0.7,7.6
+            b2,c1,4,4567890.0,0.7,7.6
         """)
 
-        measurements = Measurement.insert_from_bioreplicates_csv(
+        measurements = Measurement.insert_from_csv_string(
             self.db_session,
             study,
-            growth_data
+            growth_data,
+            subject_type='bioreplicate',
         )
 
         # FC measurement
         self.assertEqual(
             [(m.timeInHours, m.subjectId, m.value) for m in measurements if m.techniqueId == t_fc.id],
             [
-                (2.0, str(b1.bioreplicateUniqueId), Decimal('1234567890.000')),
-                (4.0, str(b1.bioreplicateUniqueId), Decimal('234567890.000')),
-                (2.0, str(b2.bioreplicateUniqueId), Decimal('4567890.000')),
-                (4.0, str(b2.bioreplicateUniqueId), Decimal('4567890.000')),
+                (2.0, str(b1.id), Decimal('1234567890.000')),
+                (4.0, str(b1.id), Decimal('234567890.000')),
+                (2.0, str(b2.id), Decimal('4567890.000')),
+                (4.0, str(b2.id), Decimal('4567890.000')),
             ]
         )
 
@@ -79,10 +82,10 @@ class TestMeasurement(DatabaseTest):
         self.assertEqual(
             [(m.timeInHours, m.subjectId, m.value) for m in measurements if m.techniqueId == t_od.id],
             [
-                (2.0, str(b1.bioreplicateUniqueId), Decimal('0.900')),
-                (4.0, str(b1.bioreplicateUniqueId), Decimal('0.800')),
-                (2.0, str(b2.bioreplicateUniqueId), Decimal('0.700')),
-                (4.0, str(b2.bioreplicateUniqueId), Decimal('0.700')),
+                (2.0, str(b1.id), Decimal('0.900')),
+                (4.0, str(b1.id), Decimal('0.800')),
+                (2.0, str(b2.id), Decimal('0.700')),
+                (4.0, str(b2.id), Decimal('0.700')),
             ]
         )
 
@@ -98,16 +101,15 @@ class TestMeasurement(DatabaseTest):
         study_id = study.studyId
         study_uuid = study.studyUniqueID
 
-        b1 = self.create_bioreplicate(studyId=study_id, bioreplicateId='b1')
+        b1 = self.create_bioreplicate(studyId=study_id, name='b1')
+        c1 = self.create_compartment(studyId=study_id, name='c1')
 
         glucose_id = self.create_study_metabolite(
             studyId=study_id,
-            bioreplicateUniqueId=b1.bioreplicateUniqueId,
             metabolite={'metabo_name': 'glucose'},
         ).chebi_id
         trehalose_id = self.create_study_metabolite(
             studyId=study_id,
-            bioreplicateUniqueId=b1.bioreplicateUniqueId,
             metabolite={'metabo_name': 'trehalose'},
         ).chebi_id
 
@@ -121,16 +123,17 @@ class TestMeasurement(DatabaseTest):
 
         # Note: missing trehalose measurement at t=75
         metabolite_data = util.trim_lines("""
-            Position,Biological_Replicate_id,Time,glucose,trehalose
-            p1,b1,60,50.0,70.0
-            p1,b1,75,30.0,
-            p1,b1,90,10.0,10.0
+            Biological Replicate,Compartment,Time,glucose,trehalose
+            b1,c1,60,50.0,70.0
+            b1,c1,75,30.0,
+            b1,c1,90,10.0,10.0
         """)
 
-        measurements = Measurement.insert_from_metabolites_csv(
+        measurements = Measurement.insert_from_csv_string(
             self.db_session,
             study,
-            metabolite_data
+            metabolite_data,
+            subject_type='metabolite',
         )
 
         # Metabolite measurements
@@ -149,14 +152,12 @@ class TestMeasurement(DatabaseTest):
         study_id = study.studyId
         study_uuid = study.studyUniqueID
 
-        self.create_bioreplicate(
-            studyId=study_id,
-            bioreplicateId='b1',
-        )
+        self.create_bioreplicate(studyId=study_id, name='b1')
+        self.create_compartment(studyId=study_id, name='c1')
 
-        s1_id = self.create_strain(memberName='B. thetaiotaomicron', studyId=study_id).strainId
-        s2_id = self.create_strain(memberName='R. intestinalis', studyId=study_id).strainId
-        strain_ids = [s1_id, s2_id]
+        s1 = self.create_strain(name='B. thetaiotaomicron', studyId=study_id)
+        s2 = self.create_strain(name='R. intestinalis', studyId=study_id)
+        strain_ids = [s1.id, s2.id]
 
         t_fc = self.create_measurement_technique(
             studyUniqueID=study_uuid,
@@ -175,8 +176,8 @@ class TestMeasurement(DatabaseTest):
         )
 
         header = ",".join([
-            'Position',
-            'Biological_Replicate_id',
+            'Biological Replicate',
+            'Compartment',
             'Time',
             'B. thetaiotaomicron FC counts',
             'R. intestinalis FC counts',
@@ -190,15 +191,16 @@ class TestMeasurement(DatabaseTest):
         # Note: missing R. intestinalis reads_std at t=90
         strain_data = util.trim_lines(f"""
             {header}
-            p1,b1,3600,100,200,100.234,10.23,200.456,20.45
-            p1,b1,4500,200,400,,,400.456,40.45
-            p1,b1,5400,300,600,300.234,30.23,600.456,
+            b1,c1,3600,100,200,100.234,10.23,200.456,20.45
+            b1,c1,4500,200,400,,,400.456,40.45
+            b1,c1,5400,300,600,300.234,30.23,600.456,
         """)
 
-        measurements = Measurement.insert_from_strain_csv(
+        measurements = Measurement.insert_from_csv_string(
             self.db_session,
             study,
-            strain_data
+            strain_data,
+            subject_type='strain',
         )
 
         # 16s reads
@@ -209,9 +211,9 @@ class TestMeasurement(DatabaseTest):
                 if m.techniqueId == t_16s.id
             ],
             [
-                (3600, s1_id, Decimal('100.234')), (3600, s2_id, Decimal('200.456')),
-                (4500, s1_id, None),               (4500, s2_id, Decimal('400.456')),
-                (5400, s1_id, Decimal('300.234')), (5400, s2_id, Decimal('600.456')),
+                (3600, s1.id, Decimal('100.234')), (3600, s2.id, Decimal('200.456')),
+                (4500, s1.id, None),               (4500, s2.id, Decimal('400.456')),
+                (5400, s1.id, Decimal('300.234')), (5400, s2.id, Decimal('600.456')),
             ]
         )
 
@@ -223,9 +225,9 @@ class TestMeasurement(DatabaseTest):
                 if m.techniqueId == t_fc.id
             ],
             [
-                (3600, s1_id, Decimal('100.00')), (3600, s2_id, Decimal('200.00')),
-                (4500, s1_id, Decimal('200.00')), (4500, s2_id, Decimal('400.00')),
-                (5400, s1_id, Decimal('300.00')), (5400, s2_id, Decimal('600.00')),
+                (3600, s1.id, Decimal('100.00')), (3600, s2.id, Decimal('200.00')),
+                (4500, s1.id, Decimal('200.00')), (4500, s2.id, Decimal('400.00')),
+                (5400, s1.id, Decimal('300.00')), (5400, s2.id, Decimal('600.00')),
             ]
         )
 

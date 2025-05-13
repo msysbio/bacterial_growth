@@ -1,21 +1,22 @@
-from flask_wtf import FlaskForm
 from wtforms import (
-    SelectField,
-    SelectMultipleField,
-    IntegerField,
-    StringField,
     BooleanField,
     FieldList,
     FormField,
+    IntegerField,
+    SelectField,
+    SelectMultipleField,
+    StringField,
 )
 from wtforms.validators import DataRequired
+
+from forms.base_form import BaseForm
 
 # TODO (2024-09-30) Extract types of vessels etc into enums in the database for easy model lookup
 
 
-class UploadStep3Form(FlaskForm):
+class UploadStep3Form(BaseForm):
 
-    class TechniqueForm(FlaskForm):
+    class TechniqueForm(BaseForm):
         class Meta:
             csrf = False
 
@@ -34,7 +35,6 @@ class UploadStep3Form(FlaskForm):
     ], validators=[DataRequired()])
 
     time_units = SelectField('time_units', choices=[
-        ('d', 'Days (d)'),
         ('h', 'Hours (h)'),
         ('m', 'Minutes (m)'),
         ('s', 'Seconds (s)'),

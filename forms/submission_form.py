@@ -33,9 +33,13 @@ DEFAULT_STUDY_DESIGN = {
     'row_count':       None,
     'timepoint_count': None,
     'time_units':      None,
-    'strains':         [],
-    'new_strains':     [],
-    'techniques':      [],
+
+    'strains':      [],
+    'new_strains':  [],
+    'techniques':   [],
+    'compartments': [],
+    'communities':  [],
+    'experiments':  [],
 }
 
 
@@ -114,7 +118,21 @@ class SubmissionForm:
         self.type       = self._determine_project_type()
 
     def update_strains(self, data):
-        self.submission.studyDesign['strains']     = data['strains']
+        # Existing strains
+        self.submission.studyDesign['strains'] = data['strains']
+
+        # Add parent species name to new strain data:
+        for strain in data['new_strains']:
+            if 'species_name' in strain:
+                continue
+
+            strain['species_name'] = self.db_session.scalars(
+                sql.select(Taxon.tax_names)
+                .where(Taxon.tax_id == strain['species'])
+                .limit(1)
+            ).one_or_none()
+
+        # Save new strains
         self.submission.studyDesign['new_strains'] = data['new_strains']
 
         flag_modified(self.submission, 'studyDesign')
@@ -123,9 +141,9 @@ class SubmissionForm:
         study_design = {**self.submission.studyDesign, **data}
 
         if study_design['vessel_type'] == 'bottles':
-            study_design['vessel_count'] = data['bottle_count']
+            study_design['vessel_count'] = study_design['bottle_count']
         elif study_design['vessel_type'] == 'agar_plates':
-            study_design['vessel_count'] = data['plate_count']
+            study_design['vessel_count'] = study_design['plate_count']
 
         self.submission.studyDesign = study_design
         flag_modified(self.submission, 'studyDesign')
@@ -137,23 +155,6 @@ class SubmissionForm:
             sql.select(Taxon)
             .where(Taxon.tax_id.in_(strains))
         ).all()
-
-    def fetch_new_strains(self):
-        new_strains = []
-
-        for strain in self.submission.studyDesign['new_strains']:
-            if 'species_name' in strain:
-                continue
-
-            new_strains.append(copy.deepcopy(strain))
-
-            new_strains[-1]['species_name'] = self.db_session.scalars(
-                sql.select(Taxon.tax_names)
-                .where(Taxon.tax_id == strain['species'])
-                .limit(1)
-            ).one_or_none()
-
-        return new_strains
 
     def fetch_metabolites_for_technique(self, technique_index=None):
         if technique_index is None:
@@ -236,7 +237,7 @@ class SubmissionForm:
 
     def technique_descriptions(self):
         ordering = ('bioreplicate', 'strain', 'metabolite')
-        techniques = sorted(self.submission.techniques, key=lambda t: ordering.index(t.subjectType))
+        techniques = sorted(self.submission.build_techniques(), key=lambda t: ordering.index(t.subjectType))
 
         for (subject_type, techniques) in itertools.groupby(techniques, lambda t: t.subjectType):
             match subject_type:
@@ -253,6 +254,14 @@ class SubmissionForm:
             return 'active'
         else:
             return ''
+
+    def has_valid_project_data(self):
+        if self.submission.studyDesign['project']['name'] is None:
+            return False
+        return self._validate_unique_project_names()
+
+    def has_valid_study_data(self):
+        return self.submission.studyDesign['study']['name'] is not None
 
     def _find_project_id(self):
         if self.submission.projectUniqueID is None:

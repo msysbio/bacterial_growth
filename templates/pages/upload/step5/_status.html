@@ -1,25 +1,34 @@
-{% from 'utils/_time_tag.html' import time_tag %}
-
-{% macro render_step5_status(submission_form) %}
-
-  {% set study = submission_form.submission.study %}
+{% macro render_step5_status(submission_form, submission) %}
 
   <ul class="upload-status">
-    {% if study and study.isPublished: %}
+    {% set experiments = submission.studyDesign['experiments'] %}
+    {% set bioreplicates = submission.studyDesign['experiments']|sum(attribute='bioreplicates', start=[]) %}
+
+    {% if experiments|length > 0: %}
       <li class="complete">
-        <span class="icon"></span> Data published
+        <span class="icon"></span>
+        <span>{{ experiments|length }} experiment(s):</span>
+        <span class="truncate">
+          <strong>{{ experiments|map(attribute='name')|join('</strong>, <strong>')|safe }}</strong>
+        </span>
       </li>
     {% else %}
       <li class="incomplete">
+        <span class="icon"></span> No experiments defined
+      </li>
+    {% endif %}
+
+    {% if bioreplicates|length > 0: %}
+      <li class="complete">
         <span class="icon"></span>
-        Data not yet published
-        {% if study and study.isPublishable: %}
-          (publishable)
-        {% elif study and study.publishableAt: %}
-          <span>
-            (publishable {{ time_tag(study.publishableAt, class="js-relative") }})
-          </span>
-        {% endif %}
+        <span>{{ bioreplicates|length }} bioreplicate(s):</span>
+        <span class="truncate">
+          <strong>{{ bioreplicates|map(attribute='name')|join('</strong>, <strong>')|safe }}</strong>
+        </span>
+      </li>
+    {% else %}
+      <li class="incomplete">
+        <span class="icon"></span> No biological replicates defined
       </li>
     {% endif %}
   </ul>

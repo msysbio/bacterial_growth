@@ -1,5 +1,5 @@
 from openpyxl import Workbook
-from openpyxl.styles import Font
+from openpyxl.styles import Font, Border, Side
 from openpyxl.comments import Comment
 from openpyxl.utils import get_column_letter
 from openpyxl.styles import PatternFill
@@ -32,44 +32,23 @@ TECHNIQUE_DESCRIPTIONS = {
 def create_excel(submission, metabolite_names, strain_names):
     workbook = Workbook()
 
-    metadata_sheet = workbook.active
-    workbook.active.title = "Replicate metadata"
-
-    headers_info = {
-        'Biological_Replicate_id': 'Pick unique identifiers of individual samples: a bottle, a well in a well-plate or mini-bioreactor',
-        'Biosample_link': 'Provide the biosample link if available.',
-        'Description': 'Provide an informative description for the biological replicate',
-    }
-
-    for index, (title, description) in enumerate(headers_info.items(), start=1):
-        if index == 1:
-            _add_header(metadata_sheet, index, title, description, fill_color=RED)
-        else:
-            _add_header(metadata_sheet, index, title, description, fill_color=WHITE)
-
-    # Populate raw data template based on user's input
-    positions = _generate_positions(
-        submission.studyDesign['vessel_type'],
-        submission.studyDesign['vessel_count'],
-        submission.studyDesign['column_count'],
-        submission.studyDesign['row_count'],
-        submission.studyDesign['timepoint_count'],
-    )
+    # positions = _generate_positions(submission)
 
     short_time_units = submission.studyDesign['time_units']
     long_time_units = TIME_UNITS[short_time_units]
 
     headers_common = {
-        'Position':                'Predetermine position based on the type of vessel specified before.',
-        'Biological_Replicate_id': 'Unique IDs of individual samples: a bottle, a well in a well-plate or mini-bioreactor.',
-        'Time':                    f"Measurement time-points in {long_time_units} ({short_time_units}).",
+        # 'Position':           'Predetermine position based on the type of vessel specified before.',
+        'Biological Replicate': 'Unique names of individual samples: a bottle, a well in a well-plate, or a mini-bioreactor.',
+        'Compartment':          'A compartment within the vessel where growth is measured.',
+        'Time':                 f"Measurement time-points in {long_time_units} ({short_time_units}).",
     }
 
     headers_bioreplicates = {**headers_common}
     headers_strains       = {**headers_common}
     headers_metabolites   = {**headers_common}
 
-    for technique in submission.techniques:
+    for technique in submission.build_techniques():
         subject_type   = technique.subjectType
         technique_type = technique.type
         units          = technique.units
@@ -95,7 +74,7 @@ def create_excel(submission, metabolite_names, strain_names):
                 headers_strains[title] = description
 
                 if technique.includeStd:
-                    title = ' '.join([strain_name, technique_name, 'STD'])
+                    title = ' '.join([title, 'STD'])
                     headers_strains[title] = TECHNIQUE_DESCRIPTIONS['STD']
 
         elif subject_type == 'metabolite':
@@ -116,13 +95,13 @@ def create_excel(submission, metabolite_names, strain_names):
 
     # Create sheets for each category of measurement:
     if len(headers_bioreplicates) > 3:
-        _fill_sheet(workbook, "Growth data per community", headers_bioreplicates, positions)
+        _fill_sheet(workbook, "Growth data per community", headers_bioreplicates, submission)
 
     if len(headers_strains) > 3:
-        _fill_sheet(workbook, "Growth data per strain", headers_strains, positions)
+        _fill_sheet(workbook, "Growth data per strain", headers_strains, submission)
 
     if len(headers_metabolites) > 3:
-        _fill_sheet(workbook, "Growth data per metabolite", headers_metabolites, positions)
+        _fill_sheet(workbook, "Growth data per metabolite", headers_metabolites, submission)
 
     return export_to_xlsx(workbook)
 
@@ -130,17 +109,28 @@ def create_excel(submission, metabolite_names, strain_names):
 def _add_header(sheet, index, title, description, fill_color):
     cell         = sheet.cell(row=1, column=index, value=title)
     cell.comment = Comment(description, author="μGrowthDB")
-    cell.font    = Font(bold=True)
-    cell.fill    = PatternFill(start_color=fill_color, end_color=fill_color, fill_type="solid")
+
+    # cell.font    = Font(bold=True)
+    # cell.fill    = PatternFill(start_color=fill_color, end_color=fill_color, fill_type="solid")
+
+    # Built-in styles:
+    # <https://openpyxl.readthedocs.io/en/stable/styles.html#using-builtin-styles>
+    #
+    cell.style = 'Headline 3'
 
     # Calculate column width based on the length of the title text, plus some extra space
     column_width = len(title)
     column_letter = get_column_letter(index)
-    sheet.column_dimensions[column_letter].width = column_width + 3
+    sheet.column_dimensions[column_letter].width = column_width + 1
 
 
-def _fill_sheet(workbook, sheet_title, headers, positions):
-    sheet = workbook.create_sheet(title=sheet_title)
+def _fill_sheet(workbook, sheet_title, headers, submission):
+    if workbook.sheetnames == ['Sheet']:
+        # Then we have a brand new workbook, use its first sheet
+        sheet = workbook.active
+        workbook.active.title = sheet_title
+    else:
+        sheet = workbook.create_sheet(title=sheet_title)
 
     # Add headers and descriptions to the first row and modify the width of each columns
     for index, (title, description) in enumerate(headers.items(), start=1):
@@ -151,24 +141,53 @@ def _fill_sheet(workbook, sheet_title, headers, positions):
 
         _add_header(sheet, index, title, description, fill_color=fill_color)
 
-    # Fill the position column with generated positions
-    for idx, position in enumerate(positions, start=2):
-        sheet.cell(row=idx, column=1, value=position)
+    # # Fill the position column with generated positions
+    # for idx, position in enumerate(positions, start=2):
+    #     sheet.cell(row=idx, column=1, value=position)
+
+    bottom_border = Border(bottom=Side(style="thin", color="000000"))
+    # workbook.add_named_style(bottom_border)
+
+    # TODO (2025-05-08) Iterate over bioreplicates and their compartments, fill them in
+    row_index = 2
+    for experiment in submission.studyDesign['experiments']:
+        for bioreplicate in experiment['bioreplicates']:
+            for compartment_name in experiment['compartmentNames']:
+                for _ in range(submission.studyDesign['timepoint_count']):
+                    sheet.cell(row=row_index, column=1, value=bioreplicate['name'])
+                    sheet.cell(row=row_index, column=2, value=compartment_name)
+
+                    row_index += 1
+
+                # Apply border after every group of time points
+                for column in range(1, len(headers.keys()) + 1):
+                    cell = sheet.cell(row=(row_index - 1), column=column)
+                    cell.border = bottom_border
+
+    # Freeze header and label columns
+    sheet.freeze_panes = "D2"
 
 
-def _generate_positions(type_vessel, number_vessels, number_columns, number_rows, number_timepoints):
+# TODO (2025-05-08) Probably needs to be deleted
+def _generate_positions(submission):
+    vessel_type     = submission.studyDesign['vessel_type']
+    vessel_count    = submission.studyDesign['vessel_count']
+    column_count    = submission.studyDesign['column_count']
+    row_count       = submission.studyDesign['row_count']
+    timepoint_count = submission.studyDesign['timepoint_count']
+
     positions = []
-    if type_vessel == 'bottles' or type_vessel == 'agar_plates':
-        if number_vessels and number_timepoints:
-            for vessel_num in range(1, int(number_vessels) + 1):
-                for _ in range(int(number_timepoints)):
-                    positions.append(f"{type_vessel}{vessel_num}")
+    if vessel_type == 'bottles' or vessel_type == 'agar_plates':
+        if vessel_count and timepoint_count:
+            for vessel_num in range(1, int(vessel_count) + 1):
+                for _ in range(int(timepoint_count)):
+                    positions.append(f"{vessel_type}{vessel_num}")
 
-    if type_vessel == 'well_plates' or type_vessel == 'mini_react':
-        if number_columns and number_rows and number_timepoints:
-            for row in range(1, int(number_rows) + 1):
-                for col in range(1, int(number_columns) + 1):
-                    for _ in range(int(number_timepoints)):
+    if vessel_type == 'well_plates' or vessel_type == 'mini_react':
+        if column_count and row_count and timepoint_count:
+            for row in range(1, int(row_count) + 1):
+                for col in range(1, int(column_count) + 1):
+                    for _ in range(int(timepoint_count)):
                         positions.append(f"{get_column_letter(col)}{row}")
 
     return positions

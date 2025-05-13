@@ -3,14 +3,14 @@
   {% set experiment = form.experiment %}
 
   <div class="experiment-container">
-    <h3>{{ experiment.experimentId }}</h3>
+    <h3>{{ experiment.name }}</h3>
 
     <form class="chart-form">
-      <input type="hidden" name="experimentUniqueId" value="{{ experiment.experimentUniqueId }}" />
+      <input type="hidden" name="experimentId" value="{{ experiment.id }}" />
 
       <div class="experiment">
         <div class="controls-column">
-          <p>{{ experiment.experimentDescription }}</p>
+          <p>{{ experiment.description }}</p>
 
           <div class="form-row">
             <select name="technique" class="form-input-blue">
@@ -21,21 +21,20 @@
           </div>
 
           {% for bioreplicate in experiment.bioreplicates %}
-            {% set key = "bioreplicate:{}".format(bioreplicate.bioreplicateUniqueId) %}
+            {% set key = "bioreplicate:{}".format(bioreplicate.id) %}
 
             <div class="form-row">
               <input
                   type="checkbox"
                   name="{{ key }}"
-                  value="{{ bioreplicateUniqueId }}"
                   id="{{ key }}" />
               <label for="{{ key }}">
-                {{ bioreplicate.bioreplicateId }}
+                {{ bioreplicate.name }}
               </label>
             </div>
           {% endfor %}
 
-          {% set key = "bioreplicate:{}:_average".format(form.experiment.experimentId) %}
+          {% set key = "bioreplicate:{}:_average".format(form.experiment.name) %}
           <div class="form-row">
             <input
               type="checkbox"
@@ -43,7 +42,7 @@
               value="_average"
               id="{{ key }}" />
             <label for="{{ key }}">
-              Average {{ experiment.experimentId }}
+              Average {{ experiment.name }}
             </label>
           </div>
 

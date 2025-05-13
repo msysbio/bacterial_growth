@@ -23,7 +23,7 @@ def save_study_design_to_database(conn, yml_dir, submission_form, data_template,
     submission = submission_form.submission
 
     list_microbial_strains = [t.tax_names for t in submission_form.fetch_taxa()]
-    list_microbial_strains += [strain['name'] for strain in submission_form.fetch_new_strains()]
+    list_microbial_strains += [strain['name'] for strain in submission.studyDesign['new_strains']]
 
     info_file_study       = os.path.join(yml_dir, 'STUDY.yaml')
     info_file_experiments = os.path.join(yml_dir, 'EXPERIMENTS.yaml')
@@ -85,9 +85,8 @@ def save_study_design_to_database(conn, yml_dir, submission_form, data_template,
         # Clear out previous data by studyId, in reverse insertion order:
         data_tables = [
             "Measurements",
-            "BioReplicatesMetadata",
             "MetabolitePerExperiment",
-            "BioReplicatesPerExperiment",
+            "Bioreplicates",
             "TechniquesPerExperiment",
             "CompartmentsPerExperiment",
             "Perturbation",
@@ -121,12 +120,11 @@ def save_study_design_to_database(conn, yml_dir, submission_form, data_template,
             mem_id = info_mem['Member_ID'][i]
             members = {
                 'studyId': study_id,
-                'memberId' : info_mem['Member_ID'][i],
                 'defined': info_mem['Defined'][i],
-                'memberName': info_mem['Member_Name'][i],
+                'name': info_mem['Member_Name'][i],
                 'NCBId': info_mem['NCBI_ID'][i],
                 'assemblyGenBankId': info_mem['Assembly_GenBank_ID'][i],
-                'descriptionMember': info_mem['Description'][i],
+                'description': info_mem['Description'][i],
                 'userUniqueID': submission.userUniqueID,
             }
             members_filtered = {k: v for k, v in members.items() if v is not None}
@@ -267,11 +265,8 @@ def save_study_design_to_database(conn, yml_dir, submission_form, data_template,
                 comp_per_biorep={
                     'studyId': study_id,
                     'experimentUniqueId': search_id(info_experiments['Experiment_ID'][i],biorep_id_list),
-                    'experimentId': info_experiments['Experiment_ID'][i],
                     'compartmentUniqueId': search_id(j, compartments_id_list),
-                    'compartmentId': j,
                     'communityUniqueId': community_unique_id,
-                    'communityId': k
                 }
                 comp_per_biorep_filtered = {t: v for t, v in comp_per_biorep.items() if v is not None}
                 if len(comp_per_biorep_filtered)>0:
@@ -344,7 +339,7 @@ def save_study_design_to_database(conn, yml_dir, submission_form, data_template,
             if len(biorep_metadata_filtered)>0:
                 db.addRecord(conn, 'BioReplicatesMetadata', biorep_metadata_filtered)
 
-    for technique in submission.techniques:
+    for technique in submission.build_techniques():
         technique.studyUniqueID = study_uuid
         conn.add(technique)
 

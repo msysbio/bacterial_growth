@@ -59,11 +59,12 @@ class Submission(OrmBase):
             1 if self.projectUniqueID and self.studyUniqueID else 0,
             1 if len(self.studyDesign.get('strains', [])) + len(self.studyDesign.get('new_strains', [])) > 0 else 0,
             1 if len(self.studyDesign.get('techniques', [])) > 0 and self.studyDesign.get('timepoint_count', 0) else 0,
-            1 if self.studyFileId and self.dataFileId else 0,
+            1 if len(self.studyDesign.get('compartments', [])) > 0 and len(self.studyDesign.get('communities', [])) > 0 else 0,
+            1 if len(self.studyDesign.get('experiments', [])) > 0 else 0,
+            1 if self.dataFileId else 0,
             1 if self.study and self.study.isPublished else 0,
         ])
 
-    @property
-    def techniques(self):
+    def build_techniques(self):
         from models import MeasurementTechnique
         return [MeasurementTechnique(**m) for m in self.studyDesign['techniques']]

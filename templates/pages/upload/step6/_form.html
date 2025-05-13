@@ -1,0 +1,128 @@
+{% from 'utils/_form_errors.html' import render_form_errors %}
+{% from 'utils/_post_button.html' import post_button %}
+{% from 'pages/upload/step6/_spreadsheet_preview.html' import render_spreadsheet_preview %}
+
+{% macro render_step6_form(submission_form, errors) %}
+  {% set submission = submission_form.submission %}
+
+  {% set valid_project = submission_form.has_valid_project_data() %}
+  {% set valid_study   = submission_form.has_valid_study_data() %}
+
+  {% set experiment_count = submission.studyDesign['experiments']|length %}
+  {% set technique_count  = submission.studyDesign['techniques']|length %}
+
+  {% set download_disabled = not valid_project or not valid_study or experiment_count == 0 or technique_count == 0 %}
+
+  {% if download_disabled: %}
+    <div class="warning-message margin-top-10">
+      To download the data template, you need to go through the previous steps:
+
+      <ul>
+        {% if not valid_project or not valid_study: %}
+          <li>
+            <strong>Step 1</strong>:
+            Describe your project and study.
+          </li>
+        {% endif %}
+
+        {% if technique_count == 0: %}
+          <li>
+            <strong>Step 3</strong>:
+            Add measurement techniques that will be added as columns.
+          </li>
+        {% endif %}
+
+        {% if experiment_count == 0: %}
+          <li>
+            <strong>Step 5</strong>:
+            Describe your experiments to define the rows of the data sheet.
+          </li>
+        {% endif %}
+      </ul>
+    </div>
+  {% endif %}
+
+  <div class="columns">
+    <div class="column" style="width: 40%">
+      <h3>Download Data Template</h3>
+
+      <p>
+        The <strong>data template</strong> is where you'll share your actual
+        growth data. The columns are types of measurement (Flow Cytometry,
+        16S-rRNA reads, metabolite concentrations, etc) and each row represents a
+        single time point for a particular bioreplicate.
+      </p>
+
+      <p>
+        {% set text = "<span class=\"icon icon-download-white\"></span> Download Template" %}
+        {{ post_button(text, url_for('download_data_template_xlsx'), disabled=download_disabled) }}
+      </p>
+    </div>
+
+    <div class="column middle-column" style="width: 10%">
+      <img src="/static/images/icons/arrow-big-right-lines.svg" />
+    </div>
+
+    <div class="column" style="width: 50%;">
+      <div>
+        <h3>Upload Completed Spreadsheet</h3>
+
+        <p>
+          You can drag and drop the spreadsheet onto the upload area, or
+          click on "Browse" to open a file picker. Once you upload a file,
+          you'll be able to see a preview and inspect it for issues.
+        </p>
+
+        <div class="js-upload-container">
+          <div class="form-row full">
+            <div class="file-upload-container full js-file-upload">
+              <img
+                  src="{{ url_for('static', filename='images/icons/cloud-upload.svg') }}"
+                  height="40"
+                  title="Upload" />
+
+              <div class="instructions">
+                <span>Drag and drop file</span>
+                <span class="hint">Limit 200MB per file</span>
+              </div>
+
+              <label class="upload-button white-button" for="data-template-input">
+                Browse files
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="preview js-preview">
+    {% if submission_form.submission.dataFileId: %}
+      {{ render_spreadsheet_preview(submission_form.submission.dataFile, errors) }}
+    {% else: %}
+      {{ render_form_errors(errors) }}
+    {% endif %}
+  </div>
+
+  <p>
+    When you click "Next", your file will be validated and your study will
+    be created. You will get a link to see the processed data and you'll be
+    able to publish it after a period of 24 hours.
+  </p>
+
+  <br>
+
+  <form
+      class="simple-form"
+      enctype="multipart/form-data"
+      method="POST"
+      action="{{ url_for('upload_step6_page') }}">
+
+    <input id="data-template-input" type="file" name="data-template" class="hidden" accept=".xls,.xlsx,.ods" />
+
+    <div class="form-row">
+      <input type="submit" class="green-button" value="Next" />
+    </div>
+  </form>
+
+{% endmacro %}

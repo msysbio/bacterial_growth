@@ -1,8 +1,10 @@
 # Core
 pandas
-humanize
 pyyaml
 openpyxl
+odfpy
+simplejson
+humanize
 
 # Web
 Flask

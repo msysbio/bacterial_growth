@@ -118,7 +118,7 @@ class MeasurementTechnique(OrmBase):
                 .distinct()
                 .where(
                     Measurement.techniqueId == self.id,
-                    Measurement.bioreplicateUniqueId == bioreplicate.uuid,
+                    Measurement.bioreplicateUniqueId == bioreplicate.id,
                     Measurement.value.is_not(None),
                 )
             ))
@@ -143,24 +143,28 @@ class MeasurementTechnique(OrmBase):
 
             return f"{subject_name} {suffix}"
 
-    def measurements_by_bioreplicate(self, db_session, measurements=None):
-        from models import Bioreplicate
+    def measurements_by_compartment(self, db_session, measurements=None):
+        from models import (
+            Bioreplicate,
+            Compartment
+        )
 
         if measurements is None:
             measurements = self.measurements
 
-        grouper = lambda m: m.bioreplicateUniqueId
+        grouper = lambda m: (m.bioreplicateUniqueId, m.compartmentId)
 
         ordered_measurements = sorted(self.measurements, key=grouper)
-        for (bioreplicate_uuid, group) in itertools.groupby(ordered_measurements, grouper):
+        for ((bioreplicate_uuid, compartment_id), group) in itertools.groupby(ordered_measurements, grouper):
             measurements = list(group)
 
             if len([m for m in measurements if m.value is not None]) == 0:
                 continue
 
             bioreplicate = db_session.get(Bioreplicate, bioreplicate_uuid)
+            compartment  = db_session.get(Compartment, compartment_id)
 
-            yield (bioreplicate, measurements)
+            yield ((bioreplicate, compartment), measurements)
 
     def measurements_by_subject(self, db_session, measurements=None):
         from models import Measurement

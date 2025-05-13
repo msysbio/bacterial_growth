@@ -1,21 +1,23 @@
 import json
 
-from flask import render_template, request
+from flask import (
+    g,
+    render_template,
+    request,
+)
 import sqlalchemy as sql
 
 from db import get_connection
-from models import Taxon
+from models import (
+    Taxon,
+    Strain,
+)
 
 
 def strain_show_page(id):
-    with get_connection() as conn:
-        query = "SELECT * FROM Strains WHERE strainId = :id LIMIT 1"
-        strain = conn.execute(sql.text(query), {'id': id}).one()._asdict()
+    strain = g.db_session.get_one(Strain, id)
 
-        query = "SELECT studyId, studyName FROM Study WHERE studyId = :studyId LIMIT 1"
-        study = conn.execute(sql.text(query), {'studyId': strain['studyId']}).one()._asdict()
-
-        return render_template("pages/strains/show.html", strain=strain, study=study)
+    return render_template("pages/strains/show.html", strain=strain)
 
 
 def taxa_completion_json():

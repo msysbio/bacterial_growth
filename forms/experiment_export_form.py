@@ -5,8 +5,9 @@ from sqlalchemy.sql.expression import literal_column
 import pandas as pd
 
 from models import (
-    Experiment,
     Bioreplicate,
+    Compartment,
+    Experiment,
     Measurement,
 )
 from lib.db import execute_into_df
@@ -31,11 +32,11 @@ class ExperimentExportForm:
             .join(Bioreplicate)
             .where(
                 sql.or_(
-                    Bioreplicate.bioreplicateUniqueId.in_(self.bioreplicate_uuids),
-                    Experiment.experimentUniqueId.in_(self.averaged_experiments),
+                    Bioreplicate.id.in_(self.bioreplicate_uuids),
+                    Experiment.id.in_(self.averaged_experiments),
                 ),
             )
-            .group_by(Experiment.experimentUniqueId)
+            .group_by(Experiment.id)
         ).all()
 
     def get_experiment_data(self):
@@ -85,7 +86,7 @@ class ExperimentExportForm:
                 query = self._base_bioreplicate_query(experiment, value_label).where(*condition)
                 measurement_dfs.append(execute_into_df(self.db_session, query))
 
-                if str(experiment.experimentUniqueId) in self.averaged_experiments:
+                if str(experiment.id) in self.averaged_experiments:
                     query = self._base_average_query(experiment, value_label).where(*condition)
                     average_df = execute_into_df(self.db_session, query)
                     measurement_dfs[-1] = pd.concat((measurement_dfs[-1], average_df))
@@ -105,7 +106,7 @@ class ExperimentExportForm:
                 query = self._base_bioreplicate_query(experiment, value_label).where(*condition)
                 measurement_dfs.append(execute_into_df(self.db_session, query))
 
-                if str(experiment.experimentUniqueId) in self.averaged_experiments:
+                if str(experiment.id) in self.averaged_experiments:
                     query = self._base_average_query(experiment, value_label).where(*condition)
                     average_df = execute_into_df(self.db_session, query)
                     measurement_dfs[-1] = pd.concat((measurement_dfs[-1], average_df))
@@ -121,7 +122,7 @@ class ExperimentExportForm:
                 query = self._base_bioreplicate_query(experiment, value_label).where(*condition)
                 measurement_dfs.append(execute_into_df(self.db_session, query))
 
-                if str(experiment.experimentUniqueId) in self.averaged_experiments:
+                if str(experiment.id) in self.averaged_experiments:
                     query = self._base_average_query(experiment, value_label).where(*condition)
                     average_df = execute_into_df(self.db_session, query)
                     measurement_dfs[-1] = pd.concat((measurement_dfs[-1], average_df))
@@ -135,7 +136,7 @@ class ExperimentExportForm:
                 experiment_df = experiment_df.merge(
                     df,
                     how='left',
-                    on=['Time (hours)', 'Biological Replicate ID'],
+                    on=['Time (hours)', 'Biological Replicate', 'Compartment'],
                     validate='one_to_one',
                     suffixes=(None, None),
                 )
@@ -151,28 +152,34 @@ class ExperimentExportForm:
         return (
             sql.select(
                 Measurement.timeInHours.label("Time (hours)"),
-                Bioreplicate.bioreplicateId.label("Biological Replicate ID"),
+                Bioreplicate.name.label("Biological Replicate"),
+                Compartment.name.label("Compartment"),
                 Measurement.value.label(value_label),
             )
             .join(Bioreplicate)
+            .join(Compartment)
             .join(Experiment)
             .where(
-                Experiment.experimentUniqueId == experiment.experimentUniqueId,
-                Bioreplicate.bioreplicateUniqueId.in_(self.bioreplicate_uuids),
+                Experiment.id == experiment.id,
+                Bioreplicate.id.in_(self.bioreplicate_uuids),
             )
-            .order_by(Bioreplicate.bioreplicateId, Measurement.timeInSeconds)
+            .order_by(
+                Bioreplicate.name,
+                Compartment.name,
+                Measurement.timeInSeconds,
+            )
         )
 
     def _base_average_query(self, experiment, value_label):
         return (
             sql.select(
                 Measurement.timeInHours.label("Time (hours)"),
-                literal_column(f"'Average {experiment.experimentId}'").label("Biological Replicate ID"),
+                literal_column(f"'Average {experiment.name}'").label("Biological Replicate ID"),
                 sql.func.avg(Measurement.value).label(value_label),
             )
             .join(Bioreplicate)
             .join(Experiment)
-            .where(Experiment.experimentUniqueId == experiment.experimentUniqueId)
+            .where(Experiment.id == experiment.id)
             .group_by(Measurement.timeInSeconds)
             .order_by(Measurement.timeInSeconds)
         )

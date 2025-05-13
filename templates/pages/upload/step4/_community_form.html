@@ -1,0 +1,68 @@
+{% macro render_community_form(form, submission_form, index) %}
+  {% set submission = submission_form.submission %}
+
+  {% if index is none: %}
+    {% set prefix = '' %}
+  {% else: %}
+    {% set prefix = 'communities-{}-'.format(index)  %}
+  {% endif %}
+
+  {% set strainIdentifiers = form.data['strainIdentifiers'] %}
+
+  <div class="subform-container box js-subform-container">
+    <h3>
+      Community <span class="js-index">{{ index + 1 if index is not none else '' }}</span>
+      {%- if form.data['name']: -%}: {{ form.data['name'] }}{% endif %}
+    </h3>
+
+    <div class="form-row">
+      <label>
+        <div class="required">Name</div>
+        {# Note: Have to access the input using [], since there is an existing `.name` attribute #}
+        {{ form['name'](class='form-input-blue form-input-full') }}
+      </label>
+
+      <label class="full">
+        <div>Strains</div>
+
+        <select
+            multiple
+            name="{{ prefix }}strainIdentifiers"
+            class="form-input-blue form-input-full js-strain-select">
+          {% for taxon in submission_form.fetch_taxa(): %}
+            <option
+                value="existing|{{ taxon.tax_id }}"
+                {{ "selected" if strainIdentifiers and "existing|{}".format(taxon.tax_id) in strainIdentifiers }}>
+              {{ taxon.tax_names }} (NCBI:{{ taxon.tax_id }})
+            </option>
+          {% endfor %}
+
+          {% for strain in submission.studyDesign['new_strains']: %}
+            <option
+                value="custom|{{ strain['name'] }}"
+                {{ "selected" if strainIdentifiers and "custom|{}".format(strain['name']) in strainIdentifiers }}>
+            {{ strain['name'] }}
+            </option>
+          {% endfor %}
+        </select>
+
+        <div class="help">
+          Leave empty to create a blank community for OD blanks or control experiments.
+        </div>
+      </label>
+    </div>
+
+    <div class="flex-row">
+      <a href="#" class="white-button flex-row js-duplicate-trigger">
+        <span class="icon icon-duplicate"></span> Duplicate
+      </a>
+
+      <div class="no-label flex-right flex-row flex-gap-6">
+        <a href="#" class="white-button flex-row js-remove-trigger">
+          <span class="icon icon-remove"></span> Remove
+        </a>
+      </div>
+    </div>
+  </div>
+
+{% endmacro %}

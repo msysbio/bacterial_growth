@@ -2,65 +2,59 @@ $(document).ready(function() {
   $('.upload-page .step-content.step-4.active').each(function() {
     let $step4 = $(this);
 
-    $step4.on('dragover', '.js-file-upload', function(e) {
-      e.preventDefault();
-      $(this).addClass('drop-hover');
-    });
-    $step4.on('dragleave', '.js-file-upload', function(e) {
-      e.preventDefault();
-      $(this).removeClass('drop-hover');
-    });
-    $step4.on('drop', '.js-file-upload', function(e) {
-      e.preventDefault();
+    $step4.find('.js-compartment-section').initAjaxSubform({
+      urlParams: { subform_type: 'compartment' },
 
-      let $container = $(this).parents('.js-upload-container');
-      let $input = $container.find('input[type=file]')
-      $input[0].files = e.originalEvent.dataTransfer.files;
+      prefixRegex:    /compartments-(\d+)-/,
+      prefixTemplate: 'compartments-{}-',
 
-      $(this).removeClass('drop-hover');
-      submitExcelForm($container);
-    });
-    $step4.on('change', 'input[type=file]', function(e) {
-      let $container = $(this).parents('.js-upload-container');
-      submitExcelForm($container);
+      buildSubform: function (index) {
+        let templateHtml = $('template.compartment-form').html();
+        let $newForm = $(templateHtml);
+
+        $newForm.addPrefix(`compartments-${index}-`);
+
+        return $newForm;
+      },
+
+      onDuplicate: function($newForm) {
+        // Reset name
+        $newForm.find('input[name$="name"]').val('');
+      },
     });
 
-    $step4.on('change', '.js-preview select', function() {
-      let $select       = $(this);
-      let selectedSheet = $select.val().replaceAll(' ', '-');
+    $step4.find('.js-community-section').initAjaxSubform({
+      urlParams: { subform_type: 'community' },
 
-      $sheets = $(this).parents('.js-preview').find('.js-sheet');
-      $sheets.addClass('hidden');
+      prefixRegex:    /communities-(\d+)-/,
+      prefixTemplate: 'communities-{}-',
 
-      if (selectedSheet != '') {
-        $sheets.filter(`.js-sheet-${selectedSheet}`).removeClass('hidden');
-      }
+      buildSubform: function (index) {
+        let templateHtml = $('template.community-form').html();
+        let $newForm = $(templateHtml);
+
+        $newForm.addPrefix(`communities-${index}-`);
+
+        return $newForm;
+      },
+
+      initializeSubform: function($subform, index) {
+        let $select = $subform.find('.js-strain-select');
+
+        $select.select2({
+          multiple: true,
+          theme: 'custom',
+          width: '100%',
+          templateResult: select2Highlighter,
+        });
+
+        $select.trigger('change');
+      },
+
+      onDuplicate: function($newForm) {
+        // Reset name
+        $newForm.find('input[name$="name"]').val('');
+      },
     });
-
-    // Trigger initial sheet preview
-    $('.js-preview select').trigger('change');
-
-    function submitExcelForm($container) {
-      let url        = $container.prop('action')
-      let $preview   = $container.find('.js-preview');
-      let $fileInput = $container.find('input[type=file]');
-      let formData   = new FormData();
-      let file       = $fileInput[0].files[0];
-
-      formData.append("file", file, file.name);
-
-      $.ajax({
-        type: 'POST',
-        url: '/upload/spreadsheet_preview',
-        data: formData,
-        cache: false,
-        contentType: false,
-        processData: false,
-        success: function(response) {
-          $preview.html(response);
-          $preview.find('select').trigger('change');
-        }
-      })
-    }
   });
 });

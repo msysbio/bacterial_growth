@@ -1,85 +1,48 @@
-{% from 'utils/_time_tag.html' import time_tag %}
+{% from 'pages/upload/step5/_experiment_form.html' import render_experiment_form %}
 
-{% macro render_step5_form(submission_form, submission) %}
+{% macro render_step5_form(submission_form, upload_form) %}
 
   <form
       class="simple-form"
-      method="POST"
-      action="{{ url_for('upload_step5_page') }}">
+      action="{{ url_for('upload_step5_page') }}"
+      method="POST">
 
-    {% if not submission.study: %}
+    {{ upload_form.csrf_token }}
 
-      <p>
-        Your study information has not been filled in. Please go back to the previous steps.
-      </p>
+    <p>
+      Organize the data you've entered so far into experiments. Each experiment
+      has a single community, but may have multiple separate compartments that
+      are being measured.
+    </p>
 
-    {% elif submission.study.isPublished: %}
-
-      <p>
-        Your study has been published on
-        <strong>{{ time_tag(submission.study.publishedAt, format="%A, %B %d at %H:%M:%S") }}</strong>
-      </p>
-
-      <p>
-        You can click the "Update" button to apply your current submission to
-        it, for example if you have discovered issues you need to fix. The
-        study will show a timestamp of the last update that was applied to it.
-      </p>
-
-    {% else: %}
-
-      <p>
-        A study is publishable <strong>24 hours</strong> after submission,
-        which {{ 'was' if submission.study.isPublishable else 'is' }}
-        approximately
-        <u>{{ time_tag(submission.study.publishableAt, class='js-relative') }}</u>.
-      </p>
-
-      {% if submission.study.isPublishable: %}
-        <p>
-          You can now click the "Publish" button to make your study visible in
-          search results and make its data accessible to other people.
-        </p>
-      {% else: %}
-        <p>
-          At that time, the button below will be enabled and will allow you to
-          make your data visible to other people. You can find the study on the
-          following page, whose data is only visible to you at this time:
-        </p>
-      {% endif %}
-
-      <p>
-        <a href="{{ url_for('study_show_page', studyId=submission_form.study_id) }}">
-          [{{ submission_form.study_id }}] {{ submission.studyDesign['study']['name'] }}
-        </a>
-      </p>
-
-      <p>
-        Before publishing, visitors will be able to see the study and project
-        title, but none of the data or experimental design. The study will also
-        not show up in search results.
-      </p>
-
-      <p>
-        You are free to explore the data and validate that it matches your
-        expectations. If you see any issues, you can update the study using this
-        form.
-      </p>
-
-    {% endif %}
+    <p>
+      For each experiment, name the biological replicates of the experimental
+      design. These will show up as rows in the data spreadsheet.
+    </p>
 
     <br>
 
-    <button
-        type="submit"
-        class="form-input-full"
-        {{ "disabled" if submission.study is none or not submission.study.isPublishable }}>
-      {% if submission.study and submission.study.isPublished: %}
-        Update
-      {% elif submission.study.publishableAt is not none: %}
-        Publish
-      {% endif %}
-    </button>
+    <div class="js-subform-list flex-column flex-gap-10">
+      {% include 'pages/upload/step5/_subform_list.html' %}
+    </div>
+
+    <div class="form-row flex-right flex-row">
+      <a href="#" class="white-button flex-row js-add-trigger js-add-experiment">
+        <span class="icon icon-add"></span> Experiment
+      </a>
+    </div>
+
+    <div class="form-row">
+      <input
+          type="submit"
+          class="form-input-blue"
+          value="Next" />
+    </div>
+
+    <template class="experiment-form">
+      {% set subform = upload_form.get_template('ExperimentForm') %}
+      {{ render_experiment_form(form=subform, submission_form=submission_form, index=None) }}
+    </template>
   </form>
 
 {% endmacro %}

@@ -1,9 +1,4 @@
-from sqlalchemy import (
-    String,
-    ForeignKey,
-    Boolean,
-    Integer,
-)
+import sqlalchemy as sql
 from sqlalchemy.orm import (
     Mapped,
     mapped_column,
@@ -18,30 +13,21 @@ from models.orm_base import OrmBase
 class Strain(OrmBase):
     __tablename__ = 'Strains'
 
-    strainId: Mapped[int] = mapped_column(primary_key=True)
+    id: Mapped[int] = mapped_column(primary_key=True)
 
-    memberId:          Mapped[str]  = mapped_column(String(50))
-    memberName:        Mapped[str]  = mapped_column(String)
-    descriptionMember: Mapped[str]  = mapped_column(String)
+    name:        Mapped[str]  = mapped_column(sql.String(100))
+    description: Mapped[str]  = mapped_column(sql.String)
 
-    defined: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
-    NCBId:   Mapped[int]  = mapped_column(Integer)
+    defined: Mapped[bool] = mapped_column(sql.Boolean, nullable=False, default=True)
+    NCBId:   Mapped[int]  = mapped_column(sql.Integer)
 
-    studyId: Mapped[str] = mapped_column(ForeignKey('Study'), nullable=False)
+    studyId: Mapped[str] = mapped_column(sql.ForeignKey('Study'), nullable=False)
     study: Mapped['Study'] = relationship(back_populates="strains")
 
-    userUniqueID: Mapped[str] = mapped_column(String(100))
+    userUniqueID: Mapped[str] = mapped_column(sql.String(100))
 
     def __lt__(self, other):
-        return self.memberName < other.memberName
-
-    @hybrid_property
-    def id(self):
-        return self.strainId
-
-    @hybrid_property
-    def name(self):
-        return self.memberName
+        return self.name < other.name
 
     @staticmethod
     def find_for_study(db_conn, study_id, strain_name):
@@ -49,5 +35,5 @@ class Strain(OrmBase):
             SELECT strainId
             FROM Strains
             WHERE studyId = :study_id
-              AND memberName = :strain_name
+              AND name = :strain_name
         """, study_id=study_id, strain_name=strain_name).scalar()

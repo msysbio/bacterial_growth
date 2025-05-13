@@ -4,6 +4,15 @@ from sqlalchemy import LargeBinary
 
 
 class OrmBase(DeclarativeBase):
+    @classmethod
+    def filter_keys(Self, data: dict):
+        return {k: v for k, v in data.items() if hasattr(Self, k)}
+
+    def update(self, **kwargs):
+        for key, value in kwargs.items():
+            if hasattr(self, key):
+                setattr(self, key, value)
+
     def _asdict(self):
         return {
             c.name: "<BLOB>" if isinstance(c.type, LargeBinary) else getattr(self, c.name)
@@ -17,8 +26,3 @@ class OrmBase(DeclarativeBase):
         if value not in valid_values:
             raise ValueError(f"Invalid value for {key}: {repr(value)}, must be one of {repr(valid_values)}")
         return value
-
-    def update(self, **kwargs):
-        for key, value in kwargs.items():
-            if hasattr(self, key):
-                setattr(self, key, value)

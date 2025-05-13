@@ -7,7 +7,7 @@
 ## Exported experiments
 
 {% for experiment in experiments: -%}
-- {{ experiment.experimentId }}: {{ experiment.experimentDescription }}
+- {{ experiment.name }}: {{ experiment.description }}
 {% endfor %}
 ## More information
 

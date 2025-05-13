@@ -64,7 +64,7 @@ def study_export_preview_fragment(studyId):
     for experiment, experiment_df in experiment_data.items():
         csv = experiment_df[:5].to_csv(index=False, sep=export_form.csv_separator)
         csv_previews.append(f"""
-            <h3>{experiment.experimentId}.csv ({len(experiment_df)} rows)</h3>
+            <h3>{experiment.name}.csv ({len(experiment_df)} rows)</h3>
             <pre>{csv}</pre>
         """)
 
@@ -79,7 +79,7 @@ def study_download_zip(studyId):
 
     for experiment, experiment_df in experiment_data.items():
         csv_bytes = experiment_df.to_csv(index=False, sep=export_form.csv_separator)
-        csv_name = f"{experiment.experimentId}.csv"
+        csv_name = f"{experiment.name}.csv"
 
         csv_data.append((csv_name, csv_bytes))
 
@@ -117,10 +117,10 @@ def study_chart_fragment(studyId):
     width = args.pop('width')
     show_log_toggle = False
 
-    experimentUniqueId = args.pop('experimentUniqueId')
-    technique          = args.pop('technique')
+    experiment_id = args.pop('experimentId')
+    technique     = args.pop('technique')
 
-    experiment = g.db_session.get(Experiment, experimentUniqueId)
+    experiment = g.db_session.get(Experiment, experiment_id)
     form       = ExperimentChartForm(experiment)
 
     if technique in ('16S rRNA-seq', 'FC counts per species'):

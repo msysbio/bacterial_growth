@@ -1,131 +1,91 @@
-{% from 'utils/_form_errors.html' import render_form_errors %}
-{% from 'utils/_post_button.html' import post_button %}
-{% from 'pages/upload/step4/_spreadsheet_preview.html' import render_spreadsheet_preview %}
+{% from 'pages/upload/step4/_compartment_form.html' import render_compartment_form %}
+{% from 'pages/upload/step4/_community_form.html' import render_community_form %}
 
-{% macro render_step4_form(submission_form, errors) %}
-
-  <div>
-    <h3>Download Templates</h3>
-
-    <div class="columns">
-      <div class="column" style="width: 50%;">
-        <p>
-          The <strong>study template</strong> is an Excel file that should be filled in with
-          additional information about your study. The first sheet of the file
-          labelled <strong>README</strong> contains instructions on how to describe
-          the experiments in your study. Some cells will be filled in automatically
-          based on the information you've entered so far.
-        </p>
-      </div>
-
-      <div class="column" style="width: 50%;">
-        <p>
-          The <strong>data template</strong> is where you'll share your actual
-          growth data. The columns are types of measurement (Flow Cytometry,
-          16S-rRNA reads, metabolite concentrations, etc) and each row represents a
-          single time point for a particular bioreplicate.
-        </p>
-      </div>
-    </div>
-
-    <div class="columns" style="margin-top: 10px;">
-      <div class="column" style="width: 50%;">
-        {% set text = "<span class=\"icon icon-download-white\"></span> Download Study Template" %}
-        {{ post_button(text, url_for('download_study_template_xlsx')) }}
-      </div>
-
-      <div class="column" style="width: 50%;">
-        {% set text = "<span class=\"icon icon-download-white\"></span> Download Data Template" %}
-        {{ post_button(text, url_for('download_data_template_xlsx')) }}
-      </div>
-    </div>
-  </div>
-
-  <br>
+{% macro render_step4_form(submission_form, upload_form) %}
 
   <form
       class="simple-form"
-      enctype="multipart/form-data"
-      method="POST"
-      action="{{ url_for('upload_step4_page') }}">
+      action="{{ url_for('upload_step4_page') }}"
+      method="POST">
+    {{ upload_form.csrf_token }}
 
-    <div>
-      <h3>Upload Completed Spreadsheets</h3>
+    <section class="js-compartment-section flex-column flex-gap-10">
+      <div>
+        <p>
+          Describe the physical containers of microbial communities as
+          "compartments". For each different combination of environmental conditions,
+          assign them a name and you'll associate these compartments to experiments
+          in the next step.
+        </p>
 
-      <p>
-        You can drag and drop the spreadsheets onto the upload areas, or click
-        on "Browse" to open a file picker. Once you upload a file, you'll be
-        able to see a preview and inspect it for issues.
-      </p>
+        <p>
+          You might have a single compartment per vessel, but it's also possible to
+          define e.g. broth and mucin beads floating inside as separate
+          "compartments" that you measure separately as well.
+        </p>
 
-      <p>
-        When you click "Next", your files will be validated and your study will
-        be created. You will get a link to see the processed data and you'll be
-        able to publish it after a period of 24 hours.
-      </p>
-
-      {{ render_form_errors(errors) }}
-
-      <div class="columns" style="margin-top: 10px;">
-        <div class="column js-upload-container" style="width: 50%;">
-          <div class="form-row full">
-            <div class="file-upload-container full js-file-upload">
-              <img
-                  src="{{ url_for('static', filename='images/icons/cloud-upload.svg') }}"
-                  height="40"
-                  title="Upload" />
-
-              <div class="instructions">
-                <span>Drag and drop <strong>Study</strong> file</span>
-                <span class="hint">Limit 200MB per file</span>
-              </div>
-
-              <label class="upload-button white-button">
-                Browse files
-                <input type="file" name="study-template" class="hidden" accept=".xls,.xlsx" />
-              </label>
-            </div>
-          </div>
-
-          <div class="preview js-preview">
-            {% if submission_form.submission.studyFileId: %}
-              {{ render_spreadsheet_preview(submission_form.submission.studyFile) }}
-            {% endif %}
-          </div>
-        </div>
-
-        <div class="column js-upload-container" style="width: 50%;">
-          <div class="form-row full">
-            <div class="file-upload-container full js-file-upload">
-              <img
-                  src="{{ url_for('static', filename='images/icons/cloud-upload.svg') }}"
-                  height="40"
-                  title="Upload" />
-
-              <div class="instructions">
-                <span>Drag and drop <strong>Data</strong> file</span>
-                <span class="hint">Limit 200MB per file</span>
-              </div>
-
-              <label class="upload-button white-button">
-                Browse files
-                <input type="file" name="data-template" class="hidden" accept=".xls,.xlsx" />
-              </label>
-            </div>
-          </div>
-
-          <div class="preview js-preview">
-            {% if submission_form.submission.dataFileId: %}
-              {{ render_spreadsheet_preview(submission_form.submission.dataFile) }}
-            {% endif %}
-          </div>
-        </div>
+        <p>
+          To describe the medium, it is recommended to provide a link to
+          <a target="_blank" href="https://mediadive.dsmz.de/media">MediaDive</a>.
+          You can define a custom medium via their
+          <a target="_blank" href="https://mediadive.dsmz.de/docs/medium-builder">medium builder</a>.
+        </p>
       </div>
-    </div>
 
-    <div class="form-row">
-      <input type="submit" value="Next" />
-    </div>
+      <div class="js-subform-list flex-column flex-gap-10">
+        {% include 'pages/upload/step4/_compartment_subform_list.html' %}
+      </div>
+
+      <div class="form-row flex-right flex-row">
+        <a href="#" class="white-button flex-row js-add-trigger">
+          <span class="icon icon-add"></span> Compartment
+        </a>
+      </div>
+    </section>
+
+    <section class="js-community-section flex-column flex-gap-10">
+      <div>
+        <p>
+          Define all communities included in your experiments based on the strains
+          you entered in step 2. If you've missed a strain you use, you can go back
+          to that step and add it.
+        </p>
+
+        <p>
+          Each experiment will be defined with a single community. If your
+          experiment involves changing the species composition (e.g. adding a new
+          strain) during the experiment, you will be able to describe that by
+          adding a perturbation from one defined community to another.
+        </p>
+      </div>
+
+      <div class="js-subform-list flex-column flex-gap-10">
+        {% include 'pages/upload/step4/_community_subform_list.html' %}
+      </div>
+
+      <div class="form-row flex-right flex-row">
+        <a href="#" class="white-button flex-row js-add-trigger">
+          <span class="icon icon-add"></span> Community
+        </a>
+      </div>
+
+      <div class="form-row">
+        <input
+            type="submit"
+            class="form-input-blue"
+            value="Next" />
+      </div>
+    </section>
+
+    <template class="compartment-form">
+      {% set subform = upload_form.get_template('CompartmentForm') %}
+      {{ render_compartment_form(form=subform, index=None) }}
+    </template>
+
+    <template class="community-form">
+      {% set subform = upload_form.get_template('CommunityForm') %}
+      {{ render_community_form(form=subform, submission_form=submission_form, index=None) }}
+    </template>
   </form>
 
 {% endmacro %}

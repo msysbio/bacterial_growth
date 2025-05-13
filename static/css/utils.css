@@ -28,6 +28,10 @@
   flex-grow: 1;
 }
 
+.flex-1 {
+  flex: 1;
+}
+
 .flex-right {
   margin-left: auto;
 }
@@ -42,6 +46,10 @@
 
 .flex-gap-6 {
   gap: 6px;
+}
+
+.margin-top-10 {
+  margin-top: 10px;
 }
 
 code.inline {
@@ -69,6 +77,14 @@ hr {
   border: 2px solid var(--border-color);
   border-radius: var(--border-radius);
   padding: 10px;
+
+  &.new {
+    border-style: dashed;
+  }
+}
+
+.box-light {
+  border-color: var(--light-border-color);
 }
 
 .error-message,
@@ -160,6 +176,11 @@ form.simple-form {
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
+  }
+
+  .required::after {
+    content: "* ";
+    color: red;
   }
 
   .form-row {
@@ -263,6 +284,11 @@ form.simple-form {
   line-height: 1.1;
   white-space: nowrap;
 
+  &.flex-row {
+    display: flex;
+    gap: 6px;
+  }
+
   &:hover {
     background-color: rgb(7, 110, 126);
     color: white;
@@ -363,3 +389,4 @@ form.simple-form {
 .icon.icon-chart          { background-image: url('/static/images/icons/chart-dots-2.svg'); }
 .icon.icon-tool           { background-image: url('/static/images/icons/tool.svg'); }
 .icon.icon-info           { background-image: url('/static/images/icons/info-circle.svg'); }
+.icon.icon-duplicate      { background-image: url('/static/images/icons/transition-bottom.svg'); }

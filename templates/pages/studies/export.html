@@ -61,7 +61,7 @@
 
             {% for experiment in study.experiments: %}
               <div class="section-experiment">
-                <h4>Experiment: {{ experiment.experimentId }}</h4>
+                <h4>Experiment: {{ experiment.name }}</h4>
 
                 <p>
                   {{ experiment.description }}
@@ -73,9 +73,9 @@
                       <input
                           type="checkbox"
                           name="bioreplicates"
-                          value="{{ bioreplicate.bioreplicateUniqueId }}"
+                          value="{{ bioreplicate.id }}"
                           checked />
-                      {{ bioreplicate.bioreplicateId }}
+                      {{ bioreplicate.name }}
                     </label>
                   {% endfor %}
 
@@ -83,8 +83,8 @@
                     <input
                         type="checkbox"
                         name="bioreplicates"
-                        value="_average:{{ experiment.experimentUniqueId }}" />
-                    Average {{ experiment.experimentId }}
+                        value="_average:{{ experiment.id }}" />
+                    Average {{ experiment.name }}
                   </label>
                 </div>
               </div>

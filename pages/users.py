@@ -43,7 +43,7 @@ def user_show_page():
                 Strain.userUniqueID == g.current_user.uuid,
                 Strain.defined.is_(False),
             )
-            .order_by(Strain.memberName.desc())
+            .order_by(Strain.name.desc())
         ).all()
 
     return render_template(

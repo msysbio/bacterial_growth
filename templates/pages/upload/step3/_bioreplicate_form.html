@@ -5,9 +5,9 @@
     {% set prefix = 'techniques-{}-'.format(index)  %}
   {% endif %}
 
-  <div class="technique-container js-technique-container" data-subject-type="bioreplicate">
+  <div class="subform-container box technique-container js-technique-container" data-subject-type="bioreplicate">
     <img
-        width="120"
+        width="80"
         class="form-icon"
         alt="Community-level measurement"
         src="/static/images/large-icons/test-tube.png" />
@@ -22,7 +22,7 @@
       property of its environment (pH).
     </p>
 
-    <hr>
+    <br>
 
     <input type="hidden" name="{{ prefix }}subjectType" value="bioreplicate" />
 

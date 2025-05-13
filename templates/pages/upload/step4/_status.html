@@ -1,32 +1,34 @@
-{% macro render_step4_status(submission) %}
+{% macro render_step4_status(submission_form, submission) %}
 
   <ul class="upload-status">
-    {% if submission.studyFileId: %}
+    {% set compartments = submission.studyDesign['compartments'] %}
+    {% set communities = submission.studyDesign['communities'] %}
+
+    {% if compartments|length > 0: %}
       <li class="complete">
         <span class="icon"></span>
-        Study design uploaded:
-        <a href="{{ url_for('download_excel_file', id=submission.studyFile.id) }}">
-          {{ submission.studyFile.filename }}
-        </a>
+        <span>{{ compartments|length }} compartment(s):</span>
+        <span class="truncate">
+          <strong>{{ compartments|map(attribute='name')|join('</strong>, <strong>')|safe }}</strong>
+        </span>
       </li>
-    {% else %}
+    {% else: %}
       <li class="incomplete">
-        <span class="icon"></span> Study design not uploaded
+        <span class="icon"></span> No compartments defined
       </li>
     {% endif %}
 
-    {% if submission.dataFileId: %}
+    {% if communities|length > 0: %}
       <li class="complete">
         <span class="icon"></span>
-        Experimental data uploaded:
-
-        <a href="{{ url_for('download_excel_file', id=submission.dataFile.id) }}">
-          {{ submission.dataFile.filename }}
-        </a>
+        <span>{{ communities|length }} communities(s):</span>
+        <span class="truncate">
+          <strong>{{ communities|map(attribute='name')|join('</strong>, <strong>')|safe }}</strong>
+        </span>
       </li>
-    {% else %}
+    {% else: %}
       <li class="incomplete">
-        <span class="icon"></span> Experimental data not uploaded
+        <span class="icon"></span> No communities defined
       </li>
     {% endif %}
   </ul>

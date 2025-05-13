@@ -102,6 +102,7 @@ class TestSubmissionForm(DatabaseTest):
         self.assertEqual(submission_form.fetch_taxa(), [])
 
         submission_form.update_strains({'strains': [t1.tax_id], 'new_strains': []})
+        submission = submission_form.submission
 
         self.assertEqual(
             [t.tax_names for t in submission_form.fetch_taxa()],
@@ -117,7 +118,7 @@ class TestSubmissionForm(DatabaseTest):
         submission_form.update_strains({'strains': [], 'new_strains': new_strains})
 
         self.assertEqual(
-            sorted([(s['name'], s['species_name']) for s in submission_form.fetch_new_strains()]),
+            sorted([(s['name'], s['species_name']) for s in submission.studyDesign['new_strains']]),
             sorted([
                 ('R. intestinalis 2',     'R. intestinalis'),
                 ('R. intestinalis 3',     'R. intestinalis'),

@@ -1,0 +1,27 @@
+{% from 'utils/_time_tag.html' import time_tag %}
+
+{% macro render_step7_status(submission_form) %}
+
+  {% set study = submission_form.submission.study %}
+
+  <ul class="upload-status">
+    {% if study and study.isPublished: %}
+      <li class="complete">
+        <span class="icon"></span> Data published
+      </li>
+    {% else %}
+      <li class="incomplete">
+        <span class="icon"></span>
+        Data not yet published
+        {% if study and study.isPublishable: %}
+          (publishable)
+        {% elif study and study.publishableAt: %}
+          <span>
+            (publishable {{ time_tag(study.publishableAt, class="js-relative") }})
+          </span>
+        {% endif %}
+      </li>
+    {% endif %}
+  </ul>
+
+{% endmacro %}

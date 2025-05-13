@@ -1,4 +1,4 @@
-from sqlalchemy import ForeignKey
+import sqlalchemy as sql
 from sqlalchemy.orm import (
     Mapped,
     mapped_column,
@@ -9,16 +9,12 @@ from models.orm_base import OrmBase
 
 
 class StudyMetabolite(OrmBase):
-    __tablename__ = 'MetabolitePerExperiment'
+    __tablename__ = 'StudyMetabolites'
 
-    studyId:            Mapped[str] = mapped_column(ForeignKey("Study"),       primary_key=True)
-    chebi_id:           Mapped[str] = mapped_column(ForeignKey('Metabolites'), primary_key=True)
-    experimentUniqueId: Mapped[int] = mapped_column(ForeignKey('Experiments'), primary_key=True)
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
 
-    bioreplicateUniqueId: Mapped[int] = mapped_column(
-        ForeignKey('BioReplicatesPerExperiment'),
-        nullable=False,
-    )
+    studyId:  Mapped[str] = mapped_column(sql.ForeignKey('Study.studyId'),        primary_key=True)
+    chebi_id: Mapped[str] = mapped_column(sql.ForeignKey('Metabolites.chebi_id'), primary_key=True)
 
     study:      Mapped['Study']      = relationship(back_populates="studyMetabolites")
     metabolite: Mapped['Metabolite'] = relationship(back_populates="studyMetabolites")

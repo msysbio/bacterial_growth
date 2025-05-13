@@ -5,7 +5,9 @@
 {% macro render_step3_form(submission_form, upload_form) %}
   <p>
     Please describe the vessels (biological replicates) that you use in the
-    study and how many time points you measured.
+    study and how many time-points you measured. If your experiments have
+    different time-points, please count all <em>distinct</em> times you
+    measured in your entire study.
   </p>
 
   <br>
@@ -14,6 +16,8 @@
       class="simple-form"
       action="{{ url_for('upload_step3_page') }}"
       method="POST">
+
+    {{ upload_form.csrf_token }}
 
     <div class="form-row full">
       <label>
@@ -87,19 +91,19 @@
         <a
             href="#"
             class="white-button flex-row js-add js-add-bioreplicate"
-            data-tippy-content="Growth measurements of entire communities of cells within the same vessel compartment.">
+            data-tooltip="Growth measurements of entire communities of cells within the same vessel compartment.">
           <span class="icon icon-add"></span> Community
         </a>
         <a
           href="#"
           class="white-button flex-row js-add js-add-strains"
-          data-tippy-content="Growth measurements for individiual species within a compartment.">
+          data-tooltip="Growth measurements for individiual species within a compartment.">
           <span class="icon icon-add"></span> Strains
         </a>
         <a
           href="#"
           class="white-button flex-row js-add js-add-metabolites"
-          data-tippy-content="Measurements of metabolite concentrations during cell growth.">
+          data-tooltip="Measurements of metabolite concentrations during cell growth.">
           <span class="icon icon-add"></span> Metabolites
         </a>
       </div>

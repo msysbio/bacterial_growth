@@ -155,6 +155,5 @@ $(document).ready(function() {
 
       $container.find('.js-preview').html(previewLines.join("\n"));
     }
-
   });
 });

@@ -18,57 +18,35 @@ from models.orm_base import OrmBase
 class Experiment(OrmBase):
     __tablename__ = "Experiments"
 
-    experimentUniqueId: Mapped[int] = mapped_column(primary_key=True)
+    id: Mapped[int] = mapped_column(primary_key=True)
 
-    experimentId:          Mapped[str] = mapped_column(String(100), nullable=False)
-    experimentDescription: Mapped[str] = mapped_column(String)
+    name:        Mapped[str] = mapped_column(String(100), nullable=False)
+    description: Mapped[str] = mapped_column(String)
 
     bioreplicates: Mapped[List['Bioreplicate']] = relationship(
-        order_by="Bioreplicate.bioreplicateUniqueId",
+        order_by="Bioreplicate.id",
         back_populates='experiment',
         cascade="all, delete-orphan"
     )
 
+    communityId: Mapped[int] = mapped_column(ForeignKey('Communities.id'))
+    community: Mapped['Community'] = relationship(back_populates='experiments')
+
     studyId: Mapped[str] = mapped_column(ForeignKey('Study'), nullable=False)
     study: Mapped['Study'] = relationship(back_populates='experiments')
 
-    cultivationMode:    Mapped[str] = mapped_column(String(50))
-    controlDescription: Mapped[str] = mapped_column(String)
+    cultivationMode: Mapped[str] = mapped_column(String(50))
 
-    @hybrid_property
-    def id(self):
-        return self.experimentUniqueId
+    experimentCompartments: Mapped[List['ExperimentCompartment']] = relationship(back_populates='experiment')
+    compartments: Mapped[List['Compartment']] = relationship(
+        secondary='ExperimentCompartments',
+        viewonly=True,
+    )
 
-    @hybrid_property
-    def name(self):
-        return self.experimentId
-
-    @hybrid_property
-    def description(self):
-        return self.experimentDescription
+    perturbations: Mapped[List['Perturbation']] = relationship(back_populates='experiment')
 
     @property
     def measurements(self):
         for bioreplicate in self.bioreplicates:
             for measurement in bioreplicate.measurements:
                 yield measurement
-
-
-def get_experiment(experimentUniqueId, conn):
-    query = """
-        SELECT
-            E.experimentId,
-            E.experimentUniqueId,
-            E.experimentDescription,
-            GROUP_CONCAT(DISTINCT BRI.bioreplicateId) AS bioreplicateIds
-        FROM
-            Experiments AS E
-        LEFT JOIN
-            BioReplicatesPerExperiment AS BRI ON E.experimentUniqueId = BRI.experimentUniqueId
-        WHERE
-            E.experimentUniqueId = :experimentUniqueId
-        GROUP BY
-            E.experimentId,
-            E.experimentDescription
-    """
-    return conn.execute(sql.text(query), {'experimentUniqueId': experimentUniqueId}).one()._asdict()

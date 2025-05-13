@@ -5,9 +5,9 @@
     {% set prefix = 'techniques-{}-'.format(index)  %}
   {% endif %}
 
-  <div class="technique-container js-technique-container" data-subject-type="strain">
+  <div class="subform-container box technique-container js-technique-container" data-subject-type="strain">
     <img
-        width="150"
+        width="90"
         class="form-icon"
         alt="Strain-level measurement"
         src="/static/images/large-icons/bacteria.png" />
@@ -23,7 +23,7 @@
       measurements multiplied by total counts.
     </p>
 
-    <hr>
+    <br>
 
     <input type="hidden" name="{{ prefix }}subjectType" value="strain" />
 

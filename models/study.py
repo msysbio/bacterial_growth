@@ -3,11 +3,6 @@ from typing import List
 from datetime import datetime, UTC
 
 import sqlalchemy as sql
-from sqlalchemy import (
-    String,
-    ForeignKey,
-    FetchedValue,
-)
 from sqlalchemy.orm import (
     Mapped,
     mapped_column,
@@ -22,40 +17,49 @@ from models.orm_base import OrmBase
 class Study(OrmBase):
     __tablename__ = 'Study'
 
-    studyUniqueID: Mapped[str] = mapped_column(String(100), primary_key=True)
+    # A relationship representing ownership of these records. Clearing them out
+    # should directly delete them so they can be replaced.
+    owner_relationship = lambda: relationship(
+        back_populates='study',
+        cascade='all, delete-orphan',
+    )
 
-    studyId:          Mapped[str] = mapped_column(String(100))
-    studyName:        Mapped[str] = mapped_column(String(100))
-    studyDescription: Mapped[str] = mapped_column(String, nullable=True)
-    studyURL:         Mapped[str] = mapped_column(String, nullable=True)
-    timeUnits:        Mapped[str] = mapped_column(String(100))
+    studyUniqueID: Mapped[str] = mapped_column(sql.String(100), primary_key=True)
 
-    projectUniqueID: Mapped[str] = mapped_column(ForeignKey('Project.projectUniqueID'))
+    studyId:          Mapped[str] = mapped_column(sql.String(100))
+    studyName:        Mapped[str] = mapped_column(sql.String(100))
+    studyDescription: Mapped[str] = mapped_column(sql.String, nullable=True)
+    studyURL:         Mapped[str] = mapped_column(sql.String, nullable=True)
+    timeUnits:        Mapped[str] = mapped_column(sql.String(100))
 
+    projectUniqueID: Mapped[str] = mapped_column(sql.ForeignKey('Project.projectUniqueID'))
     project: Mapped['Project'] = relationship(back_populates="studies")
 
-    studyUsers:  Mapped[List['StudyUser']]  = relationship(back_populates="study")
-    experiments: Mapped[List['Experiment']] = relationship(back_populates='study')
-    strains:     Mapped[List['Strain']]     = relationship(back_populates='study')
-
-    measurementTechniques: Mapped[List['MeasurementTechnique']] = relationship(
-        back_populates="study"
-    )
-    measurements: Mapped[List['Measurement']] = relationship(
-        back_populates="study"
-    )
-    calculationTechniques: Mapped[List['CalculationTechnique']] = relationship(
-        back_populates="study"
-    )
-    studyMetabolites: Mapped[List['StudyMetabolite']] = relationship(
-        back_populates="study"
-    )
-
-    createdAt:        Mapped[datetime] = mapped_column(UtcDateTime, server_default=FetchedValue())
-    updatedAt:        Mapped[datetime] = mapped_column(UtcDateTime, server_default=FetchedValue())
+    createdAt:        Mapped[datetime] = mapped_column(UtcDateTime, server_default=sql.FetchedValue())
+    updatedAt:        Mapped[datetime] = mapped_column(UtcDateTime, server_default=sql.FetchedValue())
     publishableAt:    Mapped[datetime] = mapped_column(UtcDateTime, nullable=True)
     publishedAt:      Mapped[datetime] = mapped_column(UtcDateTime, nullable=True)
     embargoExpiresAt: Mapped[datetime] = mapped_column(UtcDateTime, nullable=True)
+
+    studyUsers:  Mapped[List['StudyUser']]  = owner_relationship()
+    experiments: Mapped[List['Experiment']] = owner_relationship()
+    strains:     Mapped[List['Strain']]     = owner_relationship()
+
+    communities:  Mapped[List['Community']]   = owner_relationship()
+    compartments: Mapped[List['Compartment']] = owner_relationship()
+
+    measurementTechniques:  Mapped[List['MeasurementTechnique']]  = owner_relationship()
+    measurements:           Mapped[List['Measurement']]           = owner_relationship()
+    calculationTechniques:  Mapped[List['CalculationTechnique']]  = owner_relationship()
+    experimentCompartments: Mapped[List['ExperimentCompartment']] = owner_relationship()
+    bioreplicates:          Mapped[List['Bioreplicate']]          = owner_relationship()
+    perturbations:          Mapped[List['Perturbation']]          = owner_relationship()
+
+    studyMetabolites: Mapped[List['StudyMetabolite']] = owner_relationship()
+    metabolites: Mapped[List['Metabolite']] = relationship(
+        secondary='StudyMetabolites',
+        viewonly=True,
+    )
 
     @hybrid_property
     def uuid(self):

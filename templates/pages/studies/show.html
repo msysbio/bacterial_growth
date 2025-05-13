@@ -36,7 +36,7 @@
 
       <div class="measurement-techniques">
         {% for technique in study.measurementTechniques: %}
-          <div class="technique-container">
+          <div class="subform-container technique-container">
             <h3>
               {{ loop.index }}) {{ technique.long_name }}
 
@@ -67,22 +67,22 @@
                 <th>Measurements</th>
               </tr>
 
-              {% for bioreplicate, bioreplicate_measurements in technique.measurements_by_bioreplicate(g.db_session): %}
+              {% for (bioreplicate, compartment), measurement_group in technique.measurements_by_compartment(g.db_session): %}
                 {% if technique.subjectType != 'bioreplicate': %}
                   <tr class="js-table-row">
                     <th colspan="4" align="center">
-                      Bioreplicate: {{ bioreplicate.bioreplicateId }}
+                      Bioreplicate: {{ bioreplicate.name }}, Compartment: {{ compartment.name }}
                     </th>
                   </tr>
                 {% endif %}
 
-                {% for subject, measurements in technique.measurements_by_subject(g.db_session, bioreplicate_measurements): %}
+                {% for subject, measurements in technique.measurements_by_subject(g.db_session, measurement_group): %}
                   {% set subjectClass = subject.__class__.__name__ %}
 
                   <tr class="js-table-row">
                     <td>
                       {% set targetIdentifier = "{}|{}|{}|{}".format(
-                        bioreplicate.bioreplicateUniqueId,
+                        bioreplicate.id,
                         technique.id,
                         subjectClass|lower,
                         subject.id
@@ -143,7 +143,7 @@
 
       <div class="calculation-techniques">
         {% for technique in study.calculationTechniques: %}
-          <div class="technique-container">
+          <div class="subform-container technique-container">
             <h3>
               {{ loop.index }}) {{ technique.long_name }}
             </h3>
@@ -161,7 +161,7 @@
                 {% if calculation.subjectType != 'bioreplicate': %}
                   <tr class="js-table-row">
                     <th colspan="3" align="center">
-                      Bioreplicate: {{ calculation.bioreplicate.bioreplicateId }}
+                      Bioreplicate: {{ calculation.bioreplicate.name }}
                     </th>
                   </tr>
                 {% endif %}
@@ -173,7 +173,7 @@
                 <tr class="js-table-row">
                   <td>
                     {% set targetIdentifier = "{}|{}|{}|{}".format(
-                      bioreplicate.bioreplicateUniqueId,
+                      bioreplicate.id,
                       technique.id,
                       subjectClass|lower,
                       subject.id

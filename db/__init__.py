@@ -2,6 +2,7 @@ import os
 import tomllib
 from pathlib import Path
 
+import simplejson as json
 import sqlalchemy as sql
 import sqlalchemy.orm as orm
 import flask_sqlalchemy
@@ -71,6 +72,8 @@ def _create_engine():
         uri,
         # Set echo=True for full query logging:
         echo=False,
+        json_serializer=lambda obj: json.dumps(obj, use_decimal=True),
+        json_deserializer=lambda obj: json.loads(obj, use_decimal=True),
     )
 
     return engine
