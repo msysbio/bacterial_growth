@@ -168,6 +168,7 @@ class ExperimentChartForm:
                 Measurement.bioreplicateUniqueId.in_(bioreplicate_uuids),
                 Measurement.technique == technique,
                 Measurement.subjectType == subject_type,
+                Measurement.value.is_not(None),
             )
             .order_by('subjectName', Measurement.timeInSeconds)
         )
