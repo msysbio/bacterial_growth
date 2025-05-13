@@ -1,5 +1,3 @@
-import json
-
 import pages.metabolites as metabolite_pages
 import pages.search as search_pages
 import pages.static as static_pages
@@ -108,6 +106,8 @@ def init_routes(app):
 
 
 def dump_routes(rules, filename):
+    import json
+
     mapping = {}
 
     for rule in rules:
