@@ -49,10 +49,9 @@ def search_index_page():
             .limit(5)
         ).all()
 
-    for studyId in studyIds:
-        result = study_dfs.get_general_info(studyId, g.db_conn)
-
-        results.append(result)
+    if studyIds:
+        query = sql.select(Study).where(Study.publicId.in_(studyIds))
+        results = g.db_session.scalars(query)
 
     return render_template(
         "pages/search/index.html",

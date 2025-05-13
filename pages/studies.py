@@ -73,7 +73,7 @@ def study_export_preview_fragment(studyId):
 def study_download_zip(studyId):
     csv_data = []
 
-    export_form = ExperimentExportForm(studyId, g.db_session, request.args)
+    export_form = ExperimentExportForm(g.db_session, request.args)
     experiment_data = export_form.get_experiment_data()
 
     for experiment, experiment_df in experiment_data.items():
@@ -82,12 +82,13 @@ def study_download_zip(studyId):
 
         csv_data.append((csv_name, csv_bytes))
 
-    study = study_dfs.get_general_info(studyId, g.db_session)
+    study = g.db_session.scalars(sql.select(Study).where(Study.studyId == studyId)).one()
     readme_text = render_template(
         'pages/studies/export_readme.md',
         study=study,
         experiments=experiment_data.keys(),
     )
+
     csv_data.append(('README.md', readme_text.encode('utf-8')))
 
     zip_file = util.createzip(csv_data)

@@ -3,25 +3,26 @@
 {% macro render_result(result) %}
   <div class="search-result">
     <h3>
-      <a href="{{ url_for('study_show_page', studyId=result['studyId']) }}">
-        [{{ result['studyId'] }}] {{ result['studyName'] }}
+      <a href="{{ url_for('study_show_page', studyId=result.publicId) }}">
+        [{{ result.publicId }}] {{ result.name }}
       </a>
     </h3>
 
-    {% if result['studyDescription']: %}
-      <p>{{ result['studyDescription'] }}</p>
+    {% if result.description: %}
+      <p>{{ result.description }}</p>
     {% endif %}
 
     <p>
       <strong>Project ID</strong>:
-      <a href="{{ url_for('project_show_page', projectId=result['projectId']) }}">
-        {{ result['projectId'] }}
+      <a href="{{ url_for('project_show_page', projectId=result.project.publicId) }}">
+        {{ result.project.publicId }}
       </a>
     </p>
 
-    {% if result['studyURL']: %}
+    {% if result.studyURL: %}
       <p>
-        <strong>URL</strong>: <a href="{{ result['studyURL'] }}">{{ result['studyURL'] }}</a>
+        <strong>URL</strong>:
+        <a target="_blank" href="{{ result.studyURL }}">{{ result.studyURL }}</a>
       </p>
     {% endif %}
 
@@ -38,17 +39,17 @@
         <tr>
           <td>
             <ul>
-              {% for name in result['techniques']: %}
-                <li>{{ name }}</li>
+              {% for technique_name in result.measurementTechniques|map(attribute="short_name")|unique: %}
+                <li>{{ technique_name }}</li>
               {% endfor %}
             </ul>
           </td>
 
           <td>
             <ul>
-              {% for (name, id) in result['members']: %}
+              {% for strain in result.strains: %}
                 <li>
-                  <a href="{{ url_for('strain_show_page', id=id) }}">{{ name }}</a>
+                  <a href="{{ url_for('strain_show_page', id=strain.id) }}">{{ strain.name }}</a>
                 </li>
               {% endfor %}
             </ul>
@@ -56,9 +57,11 @@
 
           <td>
             <ul>
-              {% for (name, chebi_id) in result['metabolites']: %}
+              {% for metabolite in result.metabolites: %}
                 <li>
-                  <a href="{{ url_for('metabolite_show_page', chebi_id=chebi_id) }}">{{ name }}</a>
+                  <a href="{{ url_for('metabolite_show_page', chebi_id=metabolite.chebi_id) }}">
+                    {{ metabolite.name }}
+                  </a>
                 </li>
               {% endfor %}
             </ul>
