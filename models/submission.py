@@ -33,14 +33,7 @@ class Submission(OrmBase):
 
     studyDesign: Mapped[JSON] = mapped_column(JSON, nullable=False)
 
-    studyFileId: Mapped[int] = mapped_column(sql.ForeignKey('ExcelFiles.id'))
-    dataFileId:  Mapped[int] = mapped_column(sql.ForeignKey('ExcelFiles.id'))
-
-    studyFile: Mapped['ExcelFile'] = relationship(
-        foreign_keys=[studyFileId],
-        cascade='all, delete-orphan',
-        single_parent=True,
-    )
+    dataFileId: Mapped[int] = mapped_column(sql.ForeignKey('ExcelFiles.id'))
     dataFile: Mapped['ExcelFile'] = relationship(
         foreign_keys=[dataFileId],
         cascade='all, delete-orphan',
