@@ -17,6 +17,7 @@ from models import (
     Measurement,
     MeasurementTechnique,
     Metabolite,
+    Project,
     ProjectUser,
     Strain,
     Study,
@@ -111,6 +112,7 @@ def init_admin(app):
     class SubmissionView(AppView):
         column_exclude_list = ['studyDesign', 'dataFile']
 
+    admin.add_view(AppView(Project,           db_session, category="Studies"))
     admin.add_view(StudyView(Study,           db_session, category="Studies"))
     admin.add_view(SubmissionView(Submission, db_session, category="Studies"))
     admin.add_view(AppView(Strain,            db_session, category="Studies"))
