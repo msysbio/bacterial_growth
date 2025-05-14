@@ -92,4 +92,23 @@ $(document).ready(function() {
       return element.getAttribute('data-tooltip');
     }
   })
+
+  // On click, smooth-scroll to the location:
+  $(document).on('click', '.js-smooth-scroll', function(e) {
+    let $link   = $(e.currentTarget);
+    let $target = $($link.attr('href'));
+
+    $(document).scrollTo($target, 150, {offset: -20});
+  })
+
+  // On click, smooth-scroll to the location:
+  $(document).on('click', '.js-scroll-top', function(e) {
+    e.preventDefault()
+    let $link = $(e.currentTarget);
+    $(document).scrollTo(0, 150);
+
+    if (window.history) {
+      window.history.pushState(null, null, ' ')
+    }
+  })
 });
