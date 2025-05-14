@@ -160,6 +160,7 @@ def upload_step4_page():
         upload_form=upload_form,
     )
 
+
 def _step4_partial(upload_form, submission_form, subform_type):
     if upload_form.validate():
         submission_form.update_study_design(upload_form.data)
@@ -170,6 +171,7 @@ def _step4_partial(upload_form, submission_form, subform_type):
         submission_form=submission_form,
         upload_form=upload_form,
     )
+
 
 def upload_step5_page():
     submission_form = _init_submission_form(step=5)

@@ -3,12 +3,6 @@ from typing import List
 import itertools
 
 import sqlalchemy as sql
-from sqlalchemy import (
-    String,
-    Boolean,
-    ForeignKey,
-    JSON,
-)
 from sqlalchemy.orm import (
     Mapped,
     mapped_column,
@@ -44,18 +38,18 @@ class MeasurementTechnique(OrmBase):
 
     id: Mapped[int] = mapped_column(primary_key=True)
 
-    type:  Mapped[str] = mapped_column(String(100), nullable=False)
-    units: Mapped[str] = mapped_column(String(100), nullable=False)
+    type:  Mapped[str] = mapped_column(sql.String(100), nullable=False)
+    units: Mapped[str] = mapped_column(sql.String(100), nullable=False)
 
-    subjectType: Mapped[str] = mapped_column(String(100), nullable=False)
+    subjectType: Mapped[str] = mapped_column(sql.String(100), nullable=False)
 
-    description: Mapped[str]  = mapped_column(String)
-    includeStd:  Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    description: Mapped[str]  = mapped_column(sql.String)
+    includeStd:  Mapped[bool] = mapped_column(sql.Boolean, nullable=False, default=False)
 
-    metaboliteIds: Mapped[JSON] = mapped_column(JSON, nullable=False)
-    strainIds:     Mapped[JSON] = mapped_column(JSON, nullable=False)
+    metaboliteIds: Mapped[sql.JSON] = mapped_column(sql.JSON, nullable=False)
+    strainIds:     Mapped[sql.JSON] = mapped_column(sql.JSON, nullable=False)
 
-    studyUniqueID: Mapped[str] = mapped_column(ForeignKey('Study.studyUniqueID'), nullable=False)
+    studyUniqueID: Mapped[str] = mapped_column(sql.ForeignKey('Study.studyUniqueID'), nullable=False)
     study: Mapped['Study'] = relationship(back_populates="measurementTechniques")
 
     createdAt: Mapped[datetime] = mapped_column(UtcDateTime, server_default=FetchedValue())
@@ -98,7 +92,7 @@ class MeasurementTechnique(OrmBase):
         ).all()
 
     def get_subjects_for_bioreplicate(self, db_session, bioreplicate):
-        from models import Study, Measurement
+        from models import Measurement
 
         match self.subjectType:
             case 'bioreplicate':

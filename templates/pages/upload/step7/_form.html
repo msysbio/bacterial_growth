@@ -32,7 +32,7 @@
         A study is publishable <strong>24 hours</strong> after submission,
         which {{ 'was' if submission.study.isPublishable else 'is' }}
         approximately
-        <u>{{ time_tag(submission.study.publishableAt, class='js-relative') }}</u>.
+        <u>{{ time_tag(submission.study.publishableAt, relative=True) }}</u>.
       </p>
 
       {% if submission.study.isPublishable: %}

@@ -5,6 +5,7 @@ import unittest
 from models import CalculationTechnique
 from tests.database_test import DatabaseTest
 
+
 class TestCalculationTechnique(DatabaseTest):
     def test_successful_creation(self):
         study  = self.create_study()

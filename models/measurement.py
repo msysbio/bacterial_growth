@@ -1,6 +1,5 @@
 from io import StringIO
 import csv
-import functools
 from decimal import Decimal
 
 import sqlalchemy as sql

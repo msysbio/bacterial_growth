@@ -1,7 +1,6 @@
 from typing import List
 
 import sqlalchemy as sql
-from sqlalchemy import String
 from sqlalchemy.orm import (
     Mapped,
     mapped_column,
@@ -16,7 +15,7 @@ class Metabolite(OrmBase):
     __tablename__ = 'Metabolites'
 
     chebi_id:    Mapped[str] = mapped_column(primary_key=True)
-    metabo_name: Mapped[str] = mapped_column(String(100), nullable=False)
+    metabo_name: Mapped[str] = mapped_column(sql.String(100), nullable=False)
 
     studyMetabolites: Mapped[List['StudyMetabolite']] = relationship(
         back_populates="metabolite"

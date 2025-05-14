@@ -1,3 +1,0 @@
-# Mets and taxa supported 
-
-

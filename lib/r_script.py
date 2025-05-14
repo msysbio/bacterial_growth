@@ -40,7 +40,7 @@ class RScript:
             for line in result.stderr.decode('utf-8').split("\n"):
                 LOGGER.error(line)
 
-            raise ValueError(f"Failed RScript call")
+            raise ValueError(f"Failed RScript call: {script_path}")
 
         for line in result.stderr.decode('utf-8').split("\n"):
             LOGGER.warning(line)

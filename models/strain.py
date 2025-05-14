@@ -4,7 +4,6 @@ from sqlalchemy.orm import (
     mapped_column,
     relationship,
 )
-from sqlalchemy.ext.hybrid import hybrid_property
 
 from lib.db import execute_text
 from models.orm_base import OrmBase
@@ -13,7 +12,7 @@ from models.orm_base import OrmBase
 class Strain(OrmBase):
     __tablename__ = 'Strains'
 
-    id: Mapped[int] = mapped_column(primary_key=True)
+    id: Mapped[int] = mapped_column(sql.Integer, primary_key=True)
 
     name:        Mapped[str]  = mapped_column(sql.String(100))
     description: Mapped[str]  = mapped_column(sql.String)

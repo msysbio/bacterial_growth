@@ -1,4 +1,3 @@
-from decimal import Decimal
 from typing import List
 
 import sqlalchemy as sql

@@ -7,6 +7,7 @@ import sqlalchemy as sql
 from lib.calculation_tasks import _update_calculation_technique
 from tests.database_test import DatabaseTest
 
+
 class TestCalculations(DatabaseTest):
     def test_calculation_technique_status_change(self):
         calculation_technique = self.create_calculation_technique(state='error')

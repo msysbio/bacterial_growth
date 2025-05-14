@@ -9,7 +9,6 @@ def init_assets(app):
         'js/vendor/jquery-3.7.1.js',
         'js/vendor/jquery.scrollTo-2.1.3.js',
         'js/vendor/select2-4.0.13.js',
-        'js/vendor/moment-2.30.1.js',
         'js/vendor/popper-core-2.11.8.js',
         'js/vendor/tippy-6.3.7.js',
         # Internal libraries:

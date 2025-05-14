@@ -5,6 +5,7 @@ from types import SimpleNamespace
 
 import lib.util as util
 
+
 class TestUtil(unittest.TestCase):
     def test_group_by_unique_name(self):
         foo = SimpleNamespace(name="foo")

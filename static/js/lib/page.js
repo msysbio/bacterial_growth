@@ -13,8 +13,8 @@ function Page(selector, callback) {
     if ($container.length > 1) {
       console.error("Page selector matched more than one element:", $container);
       return;
+    } else if ($container.length == 1) {
+      callback($container);
     }
-
-    callback($container);
   });
 }

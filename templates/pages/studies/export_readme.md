@@ -1,14 +1,16 @@
-# Data export of study {{ study['studyId'] }}
+# Data export of study {{ study.publicId }}
 
-## {{ study['studyName'] }}
+## {{ study.name }}
 
-{{ study['studyDescription'] }}
+{{ study.description }}
 
 ## Exported experiments
 
-{% for experiment in experiments: -%}
+{% for experiment in study.experiments: -%}
 - {{ experiment.name }}: {{ experiment.description }}
 {% endfor %}
+{% if study.studyURL: %}
 ## More information
 
-DOI: <{{ study['studyURL'] }}>
+URL: <{{ study.studyURL }}>
+{% endif %}

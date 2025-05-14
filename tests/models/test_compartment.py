@@ -1,11 +1,10 @@
 import tests.init  # noqa: F401
 
 import unittest
-from decimal import Decimal
 
 from models import Compartment
-
 from tests.database_test import DatabaseTest
+
 
 class TestCompartment(DatabaseTest):
     def test_successful_creation(self):

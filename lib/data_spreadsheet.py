@@ -1,13 +1,11 @@
 from openpyxl import Workbook
-from openpyxl.styles import Font, Border, Side
+from openpyxl.styles import Border, Side
 from openpyxl.comments import Comment
 from openpyxl.utils import get_column_letter
-from openpyxl.styles import PatternFill
 
 from lib.excel import export_to_xlsx
 
 TIME_UNITS = {
-    'd': 'days',
     'h': 'hours',
     'm': 'minutes',
     's': 'seconds',
@@ -31,8 +29,6 @@ TECHNIQUE_DESCRIPTIONS = {
 
 def create_excel(submission, metabolite_names, strain_names):
     workbook = Workbook()
-
-    # positions = _generate_positions(submission)
 
     short_time_units = submission.studyDesign['time_units']
     long_time_units = TIME_UNITS[short_time_units]
@@ -110,9 +106,6 @@ def _add_header(sheet, index, title, description, fill_color):
     cell         = sheet.cell(row=1, column=index, value=title)
     cell.comment = Comment(description, author="μGrowthDB")
 
-    # cell.font    = Font(bold=True)
-    # cell.fill    = PatternFill(start_color=fill_color, end_color=fill_color, fill_type="solid")
-
     # Built-in styles:
     # <https://openpyxl.readthedocs.io/en/stable/styles.html#using-builtin-styles>
     #
@@ -141,14 +134,8 @@ def _fill_sheet(workbook, sheet_title, headers, submission):
 
         _add_header(sheet, index, title, description, fill_color=fill_color)
 
-    # # Fill the position column with generated positions
-    # for idx, position in enumerate(positions, start=2):
-    #     sheet.cell(row=idx, column=1, value=position)
-
     bottom_border = Border(bottom=Side(style="thin", color="000000"))
-    # workbook.add_named_style(bottom_border)
 
-    # TODO (2025-05-08) Iterate over bioreplicates and their compartments, fill them in
     row_index = 2
     for experiment in submission.studyDesign['experiments']:
         for bioreplicate in experiment['bioreplicates']:
@@ -166,28 +153,3 @@ def _fill_sheet(workbook, sheet_title, headers, submission):
 
     # Freeze header and label columns
     sheet.freeze_panes = "D2"
-
-
-# TODO (2025-05-08) Probably needs to be deleted
-def _generate_positions(submission):
-    vessel_type     = submission.studyDesign['vessel_type']
-    vessel_count    = submission.studyDesign['vessel_count']
-    column_count    = submission.studyDesign['column_count']
-    row_count       = submission.studyDesign['row_count']
-    timepoint_count = submission.studyDesign['timepoint_count']
-
-    positions = []
-    if vessel_type == 'bottles' or vessel_type == 'agar_plates':
-        if vessel_count and timepoint_count:
-            for vessel_num in range(1, int(vessel_count) + 1):
-                for _ in range(int(timepoint_count)):
-                    positions.append(f"{vessel_type}{vessel_num}")
-
-    if vessel_type == 'well_plates' or vessel_type == 'mini_react':
-        if column_count and row_count and timepoint_count:
-            for row in range(1, int(row_count) + 1):
-                for col in range(1, int(column_count) + 1):
-                    for _ in range(int(timepoint_count)):
-                        positions.append(f"{get_column_letter(col)}{row}")
-
-    return positions

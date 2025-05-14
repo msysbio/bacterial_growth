@@ -5,7 +5,6 @@ from flask import (
     render_template,
     request,
 )
-import sqlalchemy as sql
 
 from db import get_connection
 from models import (

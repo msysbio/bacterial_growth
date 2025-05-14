@@ -1,11 +1,10 @@
 # Ignore __pycache__ globally:
 __pycache__
 
-# Ignore data files from uploads:
-tmp_data/*
-
-# Ignore route dump used for tooling purposes:
+# Ignore route dump used for tooling purposes and other Vim stuff:
 .routes.json
+.projections.json
+_project.vim
 
 # Ignore _build from readthedocs when run locally
 docs/_build/
@@ -25,15 +24,3 @@ static/.webassets-cache/*
 
 # Test coverage data
 .coverage
-
-# Streamlit ignores:
-# ==================
-
-# Database files
-streamlit/src/*.sql
-streamlit/.streamlit/secrets.toml
-
-streamlit/src/names.dmp
-streamlit/src/taxonomy_names.csv
-streamlit/src/filtered_names.json
-streamlit/.venv/

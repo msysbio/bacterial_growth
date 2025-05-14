@@ -17,7 +17,7 @@
           (publishable)
         {% elif study and study.publishableAt: %}
           <span>
-            (publishable {{ time_tag(study.publishableAt, class="js-relative") }})
+            (publishable {{ time_tag(study.publishableAt, relative=True) }})
           </span>
         {% endif %}
       </li>
