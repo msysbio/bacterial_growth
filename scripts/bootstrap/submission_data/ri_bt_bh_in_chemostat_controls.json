@@ -1,0 +1,154 @@
+{
+  "study": {
+    "url": "",
+    "name": "RI, BT and BH in chemostat: Controls",
+    "description": ""
+  },
+  "project": {
+    "name": "RI, BT and BH in chemostat",
+    "description": ""
+  },
+  "strains": [
+    "166486",
+    "53443",
+    "818"
+  ],
+  "row_count": null,
+  "column_count": null,
+  "plate_count": null,
+  "vessel_count": 6,
+  "vessel_type": "bottles",
+  "bottle_count": 6,
+  "timepoint_count": 9,
+  "time_units": "h",
+  "techniques": [
+    {
+      "type": "fc",
+      "units": "Cells/mL",
+      "includeStd": false,
+      "description": "",
+      "subjectType": "bioreplicate",
+      "metaboliteIds": []
+    },
+    {
+      "type": "16s",
+      "units": "reads",
+      "includeStd": false,
+      "description": "",
+      "subjectType": "strain",
+      "metaboliteIds": []
+    },
+    {
+      "type": "fc",
+      "units": "Cells/mL",
+      "includeStd": false,
+      "description": "We measured total FC and multiplied it by relative abundances based on 16S reads.",
+      "subjectType": "strain",
+      "metaboliteIds": []
+    },
+    {
+      "type": "metabolite",
+      "units": "g/L",
+      "includeStd": false,
+      "description": "",
+      "subjectType": "metabolite",
+      "metaboliteIds": [
+        "CHEBI:15366",
+        "CHEBI:15741",
+        "CHEBI:17234",
+        "CHEBI:27082",
+        "CHEBI:30751",
+        "CHEBI:30772",
+        "CHEBI:32816",
+        "CHEBI:422"
+      ]
+    }
+  ],
+  "communities": [
+    {
+      "name": "Full",
+      "strainIdentifiers": [
+        "existing|166486",
+        "existing|53443",
+        "existing|818"
+      ]
+    }
+  ],
+  "experiments": [
+    {
+      "name": "Control",
+      "description": "No perturbations",
+      "bioreplicates": [
+        {
+          "name": "C2V2",
+          "isBlank": false,
+          "position": "A1",
+          "isControl": false,
+          "biosampleUrl": ""
+        },
+        {
+          "name": "C2V4",
+          "isBlank": false,
+          "position": "B1",
+          "isControl": false,
+          "biosampleUrl": ""
+        },
+        {
+          "name": "C2V6",
+          "isBlank": false,
+          "position": "A2",
+          "isControl": false,
+          "biosampleUrl": ""
+        },
+        {
+          "name": "C2V7",
+          "isBlank": false,
+          "position": "B2",
+          "isControl": false,
+          "biosampleUrl": ""
+        },
+        {
+          "name": "C2V9",
+          "isBlank": false,
+          "position": "A3",
+          "isControl": false,
+          "biosampleUrl": ""
+        },
+        {
+          "name": "C2V11",
+          "isBlank": false,
+          "position": "B3",
+          "isControl": false,
+          "biosampleUrl": ""
+        }
+      ],
+      "communityName": "Full",
+      "perturbations": [],
+      "cultivationMode": "chemostat",
+      "compartmentNames": [
+        "WC"
+      ]
+    }
+  ],
+  "new_strains": [],
+  "compartments": [
+    {
+      "H2": null,
+      "N2": null,
+      "O2": null,
+      "CO2": null,
+      "name": "WC",
+      "volume": null,
+      "pressure": null,
+      "initialPh": null,
+      "mediumUrl": "https://mediadive.dsmz.de/medium/339",
+      "mediumName": "Wilkins-Chalgren Anaerobe Broth (WC)",
+      "carbonSource": false,
+      "stirringMode": "",
+      "stirringSpeed": null,
+      "inoculumVolume": null,
+      "initialTemperature": null,
+      "inoculumConcentration": null
+    }
+  ]
+}

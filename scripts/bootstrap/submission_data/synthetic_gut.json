@@ -1,0 +1,176 @@
+{
+  "study": {
+    "url": "https://doi.org/10.1080/19490976.2022.2155019",
+    "name": "Synthetic human gut bacterial community using an automated fermentation system",
+    "description": "We collected six biological replicates for a community initially consisting of five common gut bacterial species that fill different metabolic niches. After an initial 12 hours in batch mode, we switched to chemostat mode and observed the community to stabilize after 2– 3 days."
+  },
+  "project": {
+    "name": "Synthetic human gut bacterial community using an automated fermentation system",
+    "description": "Six biological replicates for a community initially consisting of five common gut bacterial species that fill different metabolic niches. After an initial 12 hours in batch mode, we switched to chemostat mode and observed the community to stabilize after 2-3 days."
+  },
+  "strains": [
+    "166486",
+    "476272",
+    "537011",
+    "74426",
+    "818"
+  ],
+  "row_count": null,
+  "plate_count": null,
+  "vessel_type": "bottles",
+  "bottle_count": 6,
+  "column_count": null,
+  "vessel_count": 6,
+  "timepoint_count": 6,
+  "techniques": [
+    {
+      "type": "fc",
+      "units": "Cells/mL",
+      "includeStd": false,
+      "description": "",
+      "subjectType": "bioreplicate",
+      "metaboliteIds": []
+    },
+    {
+      "type": "16s",
+      "units": "reads",
+      "includeStd": true,
+      "description": "",
+      "subjectType": "strain",
+      "metaboliteIds": []
+    },
+    {
+      "type": "metabolite",
+      "units": "mM",
+      "includeStd": false,
+      "description": "",
+      "subjectType": "metabolite",
+      "metaboliteIds": [
+        "CHEBI:15361",
+        "CHEBI:15740",
+        "CHEBI:16236",
+        "CHEBI:17234",
+        "CHEBI:17272",
+        "CHEBI:17418",
+        "CHEBI:17968",
+        "CHEBI:24996",
+        "CHEBI:26806",
+        "CHEBI:27082",
+        "CHEBI:30089"
+      ]
+    }
+  ],
+  "time_units": "h",
+  "communities": [
+    {
+      "name": "Full",
+      "strainIdentifiers": [
+        "existing|166486",
+        "existing|476272",
+        "existing|537011",
+        "existing|74426",
+        "existing|818"
+      ]
+    },
+    {
+      "name": "Blank",
+      "strainIdentifiers": []
+    }
+  ],
+  "experiments": [
+    {
+      "name": "Synthetic_Human_Gut",
+      "description": "6 bioreactors in chemostat mode, synthetic community: RI, BH, CA, BT, PC.",
+      "bioreplicates": [
+        {
+          "name": "biorep1",
+          "isBlank": false,
+          "position": "bottle1",
+          "isControl": false,
+          "biosampleUrl": ""
+        },
+        {
+          "name": "biorep2",
+          "isBlank": false,
+          "position": "bottle2",
+          "isControl": false,
+          "biosampleUrl": ""
+        },
+        {
+          "name": "biorep3",
+          "isBlank": false,
+          "position": "bottle3",
+          "isControl": false,
+          "biosampleUrl": ""
+        },
+        {
+          "name": "biorep4",
+          "isBlank": false,
+          "position": "bottle4",
+          "isControl": false,
+          "biosampleUrl": ""
+        },
+        {
+          "name": "biorep5",
+          "isBlank": false,
+          "position": "bottle5",
+          "isControl": false,
+          "biosampleUrl": ""
+        },
+        {
+          "name": "biorep6",
+          "isBlank": false,
+          "position": "bottle6",
+          "isControl": false,
+          "biosampleUrl": ""
+        }
+      ],
+      "communityName": "Full",
+      "perturbations": [],
+      "cultivationMode": "chemostat",
+      "compartmentNames": [
+        "WC"
+      ]
+    },
+    {
+      "name": "Control",
+      "description": "blank control",
+      "bioreplicates": [
+        {
+          "name": "biorepBlank",
+          "isBlank": true,
+          "position": "bottle7",
+          "isControl": true,
+          "biosampleUrl": ""
+        }
+      ],
+      "communityName": "Blank",
+      "perturbations": [],
+      "cultivationMode": "chemostat",
+      "compartmentNames": [
+        "WC"
+      ]
+    }
+  ],
+  "new_strains": [],
+  "compartments": [
+    {
+      "H2": 10.0,
+      "N2": 10.0,
+      "O2": null,
+      "CO2": 80.0,
+      "name": "WC",
+      "volume": 10.0,
+      "pressure": 1.0,
+      "initialPh": 6.5,
+      "mediumUrl": "",
+      "mediumName": "Wilkins-Chalgren Anerobe Broth (WC)",
+      "carbonSource": true,
+      "stirringMode": "",
+      "stirringSpeed": null,
+      "inoculumVolume": 1.0,
+      "initialTemperature": 37.0,
+      "inoculumConcentration": 1000000.0
+    }
+  ]
+}
