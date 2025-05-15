@@ -125,6 +125,7 @@ class Measurement(OrmBase):
                         value=value,
                         std=std,
                     )
+                    db_session.add(measurement)
                     measurements.append(measurement)
 
         db_session.add_all(measurements)

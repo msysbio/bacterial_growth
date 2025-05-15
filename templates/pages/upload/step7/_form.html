@@ -21,6 +21,12 @@
       </p>
 
       <p>
+        <a href="{{ url_for('study_show_page', studyId=submission_form.study_id) }}">
+          [{{ submission_form.study_id }}] {{ submission.studyDesign['study']['name'] }}
+        </a>
+      </p>
+
+      <p>
         You can click the "Update" button to apply your current submission to
         it, for example if you have discovered issues you need to fix. The
         study will show a timestamp of the last update that was applied to it.

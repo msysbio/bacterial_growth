@@ -46,6 +46,8 @@ def persist_submission_to_database(submission_form):
 
         # First, clear out existing relationships
         study.measurements           = []
+        study.measurementContexts    = []
+        study.measurementTechniques  = []
         study.strains                = []
         study.experimentCompartments = []
         study.compartments           = []
@@ -53,7 +55,6 @@ def persist_submission_to_database(submission_form):
         study.experiments            = []
         study.bioreplicates          = []
         study.perturbations          = []
-        study.measurementTechniques  = []
         study.studyMetabolites       = []
 
         _save_compartments(db_trans_session, submission_form, study)
@@ -243,6 +244,7 @@ def _save_compartments(db_session, submission_form, study):
 def _save_communities(db_session, submission_form, study, user_uuid):
     submission = submission_form.submission
     communities = []
+    identifier_cache = {}
 
     for community_data in submission.studyDesign['communities']:
         community_data = copy.deepcopy(community_data)
@@ -252,34 +254,36 @@ def _save_communities(db_session, submission_form, study, user_uuid):
         community.strainIds = []
 
         for identifier in strain_identifiers:
-            strain = Strain(
-                study=study,
-                userUniqueID=user_uuid,
-            )
+            if identifier not in identifier_cache:
+                strain = Strain(
+                    study=study,
+                    userUniqueID=user_uuid,
+                )
 
-            if identifier.startswith('existing|'):
-                taxon_id = identifier.removeprefix('existing|')
-                taxon = db_session.get_one(Taxon, taxon_id)
+                if identifier.startswith('existing|'):
+                    taxon_id = identifier.removeprefix('existing|')
+                    taxon = db_session.get_one(Taxon, taxon_id)
 
-                strain.name    = taxon.name
-                strain.NCBId   = taxon.id
-                strain.defined = True
+                    strain.name    = taxon.name
+                    strain.NCBId   = taxon.id
+                    strain.defined = True
 
-            elif identifier.startswith('custom|'):
-                identifier = identifier.removeprefix('custom|')
-                custom_strain_data = _find_new_strain(submission, identifier)
+                elif identifier.startswith('custom|'):
+                    identifier = identifier.removeprefix('custom|')
+                    custom_strain_data = _find_new_strain(submission, identifier)
 
-                strain.name        = custom_strain_data['name']
-                strain.description = custom_strain_data['description']
-                strain.NCBId       = custom_strain_data['species']
-                strain.defined     = False
-            else:
-                raise ValueError(f"Strain identifier {repr(identifier)} has an unexpected prefix")
+                    strain.name        = custom_strain_data['name']
+                    strain.description = custom_strain_data['description']
+                    strain.NCBId       = custom_strain_data['species']
+                    strain.defined     = False
+                else:
+                    raise ValueError(f"Strain identifier {repr(identifier)} has an unexpected prefix")
 
-            db_session.add(strain)
-            db_session.flush()
+                db_session.add(strain)
+                db_session.flush()
+                identifier_cache[identifier] = strain
 
-            community.strainIds.append(strain.id)
+            community.strainIds.append(identifier_cache[identifier].id)
 
         communities.append(community)
 

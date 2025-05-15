@@ -36,10 +36,16 @@ class MeasurementContext(OrmBase):
         back_populates="measurementContexts"
     )
 
-    measurements: Mapped[List['Measurement']] = relationship(back_populates="context")
+    measurements: Mapped[List['Measurement']] = relationship(
+        back_populates="context",
+        cascade='all, delete-orphan',
+    )
 
     subjectId:   Mapped[str] = mapped_column(sql.String(100), nullable=False)
     subjectType: Mapped[str] = mapped_column(sql.String(100), nullable=False)
+
+    def has_measurements(self):
+        return len([m for m in self.measurements if m.value is not None]) > 0
 
     @classmethod
     def get_subject(Self, db_session, subject_id, subject_type):

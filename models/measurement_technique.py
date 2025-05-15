@@ -55,7 +55,10 @@ class MeasurementTechnique(OrmBase):
     createdAt: Mapped[datetime] = mapped_column(UtcDateTime, server_default=FetchedValue())
     updatedAt: Mapped[datetime] = mapped_column(UtcDateTime, server_default=FetchedValue())
 
-    measurementContexts: Mapped[List['MeasurementContext']] = relationship(back_populates="technique")
+    measurementContexts: Mapped[List['MeasurementContext']] = relationship(
+        back_populates="technique",
+        order_by='MeasurementContext.bioreplicateId, MeasurementContext.compartmentId',
+    )
     measurements: Mapped[List['Measurement']] = relationship(
         secondary='MeasurementContexts',
         viewonly=True,
