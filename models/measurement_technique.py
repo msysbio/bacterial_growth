@@ -142,44 +142,13 @@ class MeasurementTechnique(OrmBase):
 
             return f"{subject_name} {suffix}"
 
-    def measurements_by_compartment(self, db_session, measurements=None):
-        from models import Bioreplicate, Compartment
+    def get_grouped_contexts(self):
+        grouper = lambda mc: (mc.bioreplicate, mc.compartment)
 
-        if measurements is None:
-            measurements = self.measurements
+        for ((bioreplicate, compartment), group) in itertools.groupby(self.measurementContexts, grouper):
+            contexts = list([mc for mc in group if mc.has_measurements()])
 
-        grouper = lambda m: (m.bioreplicateUniqueId, m.compartmentId)
-
-        ordered_measurements = sorted(self.measurements, key=grouper)
-        for ((bioreplicate_uuid, compartment_id), group) in itertools.groupby(ordered_measurements, grouper):
-            measurements = list(group)
-
-            if len([m for m in measurements if m.value is not None]) == 0:
-                continue
-
-            bioreplicate = db_session.get(Bioreplicate, bioreplicate_uuid)
-            compartment  = db_session.get(Compartment, compartment_id)
-
-            yield ((bioreplicate, compartment), measurements)
-
-    def measurements_by_subject(self, db_session, measurements=None):
-        from models import Measurement
-
-        if measurements is None:
-            measurements = self.measurements
-
-        grouper = lambda m: (m.subjectType, m.subjectId)
-
-        ordered_measurements = sorted(measurements, key=grouper)
-        for ((subject_type, subject_id), group) in itertools.groupby(ordered_measurements, grouper):
-            measurements = list(group)
-
-            if len([m for m in measurements if m.value is not None]) == 0:
-                continue
-
-            subject = Measurement.get_subject(db_session, subject_id, subject_type)
-
-            yield (subject, measurements)
+            yield ((bioreplicate, compartment), contexts)
 
     def get_subject_df(self, db_session, bioreplicate_uuid, subject_id, subject_type):
         from models import Measurement, MeasurementContext, Bioreplicate

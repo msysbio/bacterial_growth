@@ -69,28 +69,34 @@
                   <th>Measurements</th>
                 </tr>
 
-                {% for (bioreplicate, compartment), measurement_group in technique.measurements_by_compartment(g.db_session): %}
+                {% for (bioreplicate, compartment), contexts in technique.get_grouped_contexts(): %}
                   {% if technique.subjectType != 'bioreplicate': %}
                     <tr class="js-table-row">
                       <th colspan="4" align="center">
                         Bioreplicate: {{ bioreplicate.name }}, Compartment: {{ compartment.name }}
                       </th>
                     </tr>
+
+                    {% if contexts|length == 0: %}
+                      <tr class="js-table-row">
+                        <td colspan="4" align="center">
+                          <em>No measurements</em>
+                        </td>
+                      </tr>
+                    {% endif %}
                   {% endif %}
 
-                  {% for subject, measurements in technique.measurements_by_subject(g.db_session, measurement_group): %}
-                    {% set subjectClass = subject.__class__.__name__ %}
+                  {% for measurement_context in contexts: %}
+                    {% set subject = measurement_context.__class__.get_subject(
+                      g.db_session,
+                      measurement_context.subjectId,
+                      measurement_context.subjectType
+                    ) %}
+                    {% set measurements = measurement_context.measurements %}
 
                     <tr class="js-table-row">
                       <td>
-                        {% set targetIdentifier = "{}|{}|{}|{}".format(
-                        bioreplicate.id,
-                        technique.id,
-                        subjectClass|lower,
-                        subject.id
-                        ) %}
-
-                        <div class="js-compare-container" data-target-identifier="{{ targetIdentifier }}">
+                        <div class="js-compare-container" data-target-identifier="{{ measurement_context.id }}">
                           <span class="js-compare" data-tooltip="Compare">
                             <a
                                 href="#"
