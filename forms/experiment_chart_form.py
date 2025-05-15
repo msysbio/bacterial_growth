@@ -153,7 +153,7 @@ class ExperimentChartForm:
         return selected_bioreplicates, include_average, apply_log
 
     def get_df(self, bioreplicate_uuids, technique, subject_type):
-        subjectName, subjectJoin = Measurement.subject_join(subject_type)
+        subjectName, subjectJoin = MeasurementContext.subject_join(subject_type)
 
         query = (
             sql.select(

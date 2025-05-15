@@ -25,15 +25,15 @@ class TestExperimentChartForm(DatabaseTest):
             'bioreplicateUniqueId': bioreplicate_uuid,
             'value': 200.0,
             'technique': 'Metabolites',
-            'measurement_technique': {
+            'measurementTechnique': {
                 'type': 'metabolite',
                 'subjectType': 'metabolite',
             }
         }
-        self.create_measurement(subjectId='1', subjectType='metabolite', timeInSeconds=3600, **shared_params)
-        self.create_measurement(subjectId='1', subjectType='metabolite', timeInSeconds=7200, **shared_params)
-        self.create_measurement(subjectId='2', subjectType='metabolite', timeInSeconds=3600, **shared_params)
-        self.create_measurement(subjectId='2', subjectType='metabolite', timeInSeconds=7200, **shared_params)
+        self.create_measurement(context={'subjectId': '1', 'subjectType': 'metabolite'}, timeInSeconds=3600, **shared_params)
+        self.create_measurement(context={'subjectId': '1', 'subjectType': 'metabolite'}, timeInSeconds=7200, **shared_params)
+        self.create_measurement(context={'subjectId': '2', 'subjectType': 'metabolite'}, timeInSeconds=3600, **shared_params)
+        self.create_measurement(context={'subjectId': '2', 'subjectType': 'metabolite'}, timeInSeconds=7200, **shared_params)
 
         self.db_session.commit()
 
@@ -60,19 +60,21 @@ class TestExperimentChartForm(DatabaseTest):
 
         shared_params = {
             'studyId': study_id,
-            'bioreplicateUniqueId': bioreplicate_uuid,
-            'subjectType': 'strain',
             'value': 200.0,
-            'technique': '16S rRNA-seq',
+        }
+        shared_context = {
+            'studyId': study_id,
+            'bioreplicateId': bioreplicate_uuid,
+            'subjectType': 'strain',
             'measurement_technique': {
                 'type': '16s',
                 'subjectType': 'strain',
             }
         }
-        self.create_measurement(subjectId=s1.id, timeInSeconds=3600, **shared_params)
-        self.create_measurement(subjectId=s1.id, timeInSeconds=7200, **shared_params)
-        self.create_measurement(subjectId=s2.id, timeInSeconds=3600, **shared_params)
-        self.create_measurement(subjectId=s2.id, timeInSeconds=7200, **shared_params)
+        self.create_measurement(measurement_context={'subjectId': s1.id, **shared_context}, timeInSeconds=3600, **shared_params)
+        self.create_measurement(measurement_context={'subjectId': s1.id, **shared_context}, timeInSeconds=7200, **shared_params)
+        self.create_measurement(measurement_context={'subjectId': s2.id, **shared_context}, timeInSeconds=3600, **shared_params)
+        self.create_measurement(measurement_context={'subjectId': s2.id, **shared_context}, timeInSeconds=7200, **shared_params)
 
         self.db_session.commit()
 
@@ -108,7 +110,7 @@ class TestExperimentChartForm(DatabaseTest):
             'subjectType': 'strain',
             # TODO (2025-04-02) Remove technique, use id
             'technique': '16S rRNA-seq',
-            'measurement_technique': {
+            'measurementTechnique': {
                 'type': '16s',
                 'subjectType': 'strain',
             }
@@ -165,7 +167,7 @@ class TestExperimentChartForm(DatabaseTest):
         shared_params = {
             'studyId': study_id,
             'technique': '16S rRNA-seq',
-            'measurement_technique': {
+            'measurementTechnique': {
                 'type': '16s',
                 'subjectType': 'bioreplicate',
             }

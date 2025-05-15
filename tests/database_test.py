@@ -11,6 +11,7 @@ from models import (
     Compartment,
     Experiment,
     Measurement,
+    MeasurementContext,
     MeasurementTechnique,
     Metabolite,
     Project,
@@ -178,24 +179,14 @@ class DatabaseTest(unittest.TestCase):
         return self._create_orm_record(StudyMetabolite, params)
 
     def create_measurement(self, **params):
-        study_id          = self._get_or_create_dependency(params, 'studyId', 'study')
-        bioreplicate_uuid = self._get_or_create_dependency(params, 'bioreplicateUniqueId', ('bioreplicate', 'id'))
-        compartment_id    = self._get_or_create_dependency(params, 'compartmentId', ('compartment', 'id'))
-        technique_id      = self._get_or_create_dependency(params, 'id', 'measurement_technique')
-
-        subject_id   = params['subjectId']
-        subject_type = params['subjectType']
+        study_id   = self._get_or_create_dependency(params, 'studyId', 'study')
+        context_id = self._get_or_create_dependency(params, 'contextId', ('measurement_context', 'id'))
 
         params = {
-            'studyId':              study_id,
-            'bioreplicateUniqueId': bioreplicate_uuid,
-            'compartmentId':        compartment_id,
-            'techniqueId':          technique_id,
-            'timeInSeconds':        3600,
-            'unit':                 'unknown',
-            'value':                Decimal('100.000'),
-            'subjectId':            subject_id,
-            'subjectType':          subject_type,
+            'studyId':       study_id,
+            'contextId':     context_id,
+            'timeInSeconds': 3600,
+            'value':         Decimal('100.000'),
             **params,
         }
 
@@ -213,6 +204,22 @@ class DatabaseTest(unittest.TestCase):
         }
 
         return self._create_orm_record(MeasurementTechnique, params)
+
+    def create_measurement_context(self, **params):
+        study_id        = self._get_or_create_dependency(params, 'studyId', 'study')
+        bioreplicate_id = self._get_or_create_dependency(params, 'bioreplicateId', ('bioreplicate', 'id'))
+        compartment_id  = self._get_or_create_dependency(params, 'compartmentId', ('compartment', 'id'))
+        technique_id    = self._get_or_create_dependency(params, 'id', ('measurement_technique', 'id'))
+
+        params = {
+            'studyId':        study_id,
+            'bioreplicateId': bioreplicate_id,
+            'compartmentId':  compartment_id,
+            'techniqueId':    technique_id,
+            **params,
+        }
+
+        return self._create_orm_record(MeasurementContext, params)
 
     def create_submission(self, **params):
         """

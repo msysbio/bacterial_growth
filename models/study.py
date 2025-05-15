@@ -49,11 +49,17 @@ class Study(OrmBase):
     compartments: Mapped[List['Compartment']] = owner_relationship()
 
     measurementTechniques:  Mapped[List['MeasurementTechnique']]  = owner_relationship()
-    measurements:           Mapped[List['Measurement']]           = owner_relationship()
+    measurementContexts:    Mapped[List['MeasurementContext']]    = owner_relationship()
     calculationTechniques:  Mapped[List['CalculationTechnique']]  = owner_relationship()
     experimentCompartments: Mapped[List['ExperimentCompartment']] = owner_relationship()
     bioreplicates:          Mapped[List['Bioreplicate']]          = owner_relationship()
     perturbations:          Mapped[List['Perturbation']]          = owner_relationship()
+
+    measurements: Mapped[List['Measurement']] = relationship(
+        order_by='Measurement.timeInSeconds',
+        secondary='MeasurementContexts',
+        viewonly=True,
+    )
 
     studyMetabolites: Mapped[List['StudyMetabolite']] = owner_relationship()
     metabolites: Mapped[List['Metabolite']] = relationship(

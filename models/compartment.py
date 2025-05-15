@@ -47,4 +47,9 @@ class Compartment(OrmBase):
         viewonly=True
     )
 
-    measurements: Mapped[List['Measurement']] = relationship(back_populates='compartment')
+    measurementContexts: Mapped[List['MeasurementContext']] = relationship(back_populates='compartment')
+    measurements: Mapped[List['Measurement']] = relationship(
+        order_by='Measurement.timeInSeconds',
+        secondary='MeasurementContexts',
+        viewonly=True,
+    )

@@ -28,11 +28,16 @@ class Bioreplicate(OrmBase):
     experimentId: Mapped[int] = mapped_column(sql.ForeignKey('Experiments.id'), nullable=False)
     experiment: Mapped['Experiment'] = relationship(back_populates='bioreplicates')
 
-    measurements: Mapped[List["Measurement"]] = relationship(
-        order_by='Measurement.timeInSeconds',
+    measurementContexts: Mapped[List['MeasurementContext']] = relationship(
         back_populates='bioreplicate',
         cascade='all, delete-orphan'
     )
+    measurements: Mapped[List['Measurement']] = relationship(
+        order_by='Measurement.timeInSeconds',
+        secondary='MeasurementContexts',
+        viewonly=True,
+    )
+
     calculations: Mapped[List["Calculation"]] = relationship(
         back_populates='bioreplicate',
         cascade='all, delete-orphan'

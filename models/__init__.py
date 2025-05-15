@@ -7,6 +7,7 @@ from .excel_file import ExcelFile
 from .experiment import Experiment
 from .experiment_compartment import ExperimentCompartment
 from .measurement import Measurement
+from .measurement_context import MeasurementContext
 from .measurement_technique import MeasurementTechnique
 from .metabolite import Metabolite
 from .perturbation import Perturbation

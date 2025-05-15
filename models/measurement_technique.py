@@ -55,8 +55,10 @@ class MeasurementTechnique(OrmBase):
     createdAt: Mapped[datetime] = mapped_column(UtcDateTime, server_default=FetchedValue())
     updatedAt: Mapped[datetime] = mapped_column(UtcDateTime, server_default=FetchedValue())
 
+    measurementContexts: Mapped[List['MeasurementContext']] = relationship(back_populates="technique")
     measurements: Mapped[List['Measurement']] = relationship(
-        back_populates="techniqueRecord"
+        secondary='MeasurementContexts',
+        viewonly=True,
     )
     calculations: Mapped[List['Calculation']] = relationship(
         back_populates="measurementTechnique"
@@ -138,10 +140,7 @@ class MeasurementTechnique(OrmBase):
             return f"{subject_name} {suffix}"
 
     def measurements_by_compartment(self, db_session, measurements=None):
-        from models import (
-            Bioreplicate,
-            Compartment
-        )
+        from models import Bioreplicate, Compartment
 
         if measurements is None:
             measurements = self.measurements
@@ -180,9 +179,9 @@ class MeasurementTechnique(OrmBase):
             yield (subject, measurements)
 
     def get_subject_df(self, db_session, bioreplicate_uuid, subject_id, subject_type):
-        from models import Measurement, Bioreplicate
+        from models import Measurement, MeasurementContext, Bioreplicate
 
-        subjectName, subjectJoin = Measurement.subject_join(subject_type)
+        subjectName, subjectJoin = MeasurementContext.subject_join(subject_type)
 
         query = (
             sql.select(
@@ -191,13 +190,15 @@ class MeasurementTechnique(OrmBase):
                 Measurement.std,
                 subjectName,
             )
+            .join(MeasurementContext)
             .join(Bioreplicate)
             .join(*subjectJoin)
             .where(
-                Measurement.techniqueId == self.id,
-                Measurement.bioreplicateUniqueId == bioreplicate_uuid,
-                Measurement.subjectId == subject_id,
-                Measurement.subjectType == subject_type,
+                Measurement.contextId == MeasurementContext.id,
+                MeasurementContext.techniqueId == self.id,
+                MeasurementContext.bioreplicateId == bioreplicate_uuid,
+                MeasurementContext.subjectId == subject_id,
+                MeasurementContext.subjectType == subject_type,
             )
             .order_by(Measurement.timeInSeconds)
         )

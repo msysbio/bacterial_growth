@@ -41,8 +41,8 @@ class TestCalculations(DatabaseTest):
         bioreplicate          = self.create_bioreplicate(studyId=study.publicId)
         calculation_technique = self.create_calculation_technique()
 
-        params = {
-            'bioreplicateUniqueId': bioreplicate.id,
+        context_params = {
+            'bioreplicateId': bioreplicate.id,
             'techniqueId': measurement_technique.id,
             'subjectId': strain.id,
             'subjectType': 'strain',
@@ -67,7 +67,7 @@ class TestCalculations(DatabaseTest):
             (120.0, 967930.0),
         ]
         for (hours, value) in data:
-            self.create_measurement(**params, timeInSeconds=(hours * 3600), value=value)
+            self.create_measurement(measurement_context=context_params, timeInSeconds=(hours * 3600), value=value)
 
         _update_calculation_technique(self.db_session, calculation_technique.id, [{
             'bioreplicate_uuid':        bioreplicate.id,

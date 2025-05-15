@@ -1,0 +1,70 @@
+import csv
+from typing import List
+from io import StringIO
+from decimal import Decimal
+
+import sqlalchemy as sql
+from sqlalchemy.orm import (
+    Mapped,
+    mapped_column,
+    relationship,
+    aliased,
+)
+from sqlalchemy.ext.hybrid import hybrid_property
+
+from models.orm_base import OrmBase
+from lib.conversion import convert_time
+from lib.util import group_by_unique_name
+
+
+class MeasurementContext(OrmBase):
+    __tablename__ = "MeasurementContexts"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+
+    bioreplicateId: Mapped[int] = mapped_column(sql.ForeignKey('Bioreplicates.id'))
+    bioreplicate: Mapped['Bioreplicate'] = relationship(back_populates='measurementContexts')
+
+    compartmentId: Mapped[int] = mapped_column(sql.ForeignKey('Compartments.id'))
+    compartment: Mapped['Compartment'] = relationship(back_populates='measurementContexts')
+
+    studyId: Mapped[str] = mapped_column(sql.ForeignKey('Study.studyId'), nullable=False)
+    study: Mapped['Study'] = relationship(back_populates='measurementContexts')
+
+    techniqueId: Mapped[int] = mapped_column(sql.ForeignKey("MeasurementTechniques.id"))
+    technique: Mapped['MeasurementTechnique'] = relationship(
+        back_populates="measurementContexts"
+    )
+
+    measurements: Mapped[List['Measurement']] = relationship(back_populates="context")
+
+    subjectId:   Mapped[str] = mapped_column(sql.String(100), nullable=False)
+    subjectType: Mapped[str] = mapped_column(sql.String(100), nullable=False)
+
+    @classmethod
+    def get_subject(Self, db_session, subject_id, subject_type):
+        from models import Metabolite, Strain, Bioreplicate
+
+        if subject_type == 'metabolite':
+            return db_session.get(Metabolite, subject_id)
+        elif subject_type == 'strain':
+            return db_session.get(Strain, subject_id)
+        elif subject_type == 'bioreplicate':
+            return db_session.get(Bioreplicate, subject_id)
+        else:
+            raise ValueError(f"Unknown subject type: {subject_type}")
+
+    def subject_join(subject_type):
+        from models import Metabolite, Strain, Bioreplicate
+
+        if subject_type == 'metabolite':
+            Subject = Metabolite
+        elif subject_type == 'strain':
+            Subject = Strain
+        elif subject_type == 'bioreplicate':
+            Subject = aliased(Bioreplicate)
+
+        name = Subject.name.label("subjectName")
+        join = (Subject, MeasurementContext.subjectId == Subject.id)
+
+        return (name, join)
