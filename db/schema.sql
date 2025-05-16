@@ -534,7 +534,7 @@ INSERT INTO MigrationVersions VALUES
 (76,'2025_05_10_112933_add_compartment_id_to_measurements','2025-05-10 09:32:30'),
 (78,'2025_05_11_154801_add_fields_to_bioreplicates','2025-05-11 13:52:06'),
 (82,'2025_05_13_172421_drop_unused_tables','2025-05-13 16:10:28'),
-(99,'2025_05_15_202520_create_measurement_contexts','2025-05-16 12:29:17'),
-(100,'2025_05_15_202707_move_measurement_fields_to_contexts','2025-05-16 12:29:17'),
-(101,'2025_05_16_141435_fix_taxon_columns','2025-05-16 12:29:17');
+(102,'2025_05_16_141435_fix_taxon_columns','2025-05-16 12:29:44'),
+(103,'2025_05_15_202520_create_measurement_contexts','2025-05-16 12:44:48'),
+(104,'2025_05_15_202707_move_measurement_fields_to_contexts','2025-05-16 12:44:48');
 

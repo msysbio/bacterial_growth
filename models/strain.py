@@ -20,7 +20,7 @@ class Strain(OrmBase):
     defined: Mapped[bool] = mapped_column(sql.Boolean, nullable=False, default=True)
     NCBId:   Mapped[int]  = mapped_column(sql.Integer)
 
-    studyId: Mapped[str] = mapped_column(sql.ForeignKey('Study'), nullable=False)
+    studyId: Mapped[str] = mapped_column(sql.ForeignKey('Study.studyId'), nullable=False)
     study: Mapped['Study'] = relationship(back_populates="strains")
 
     userUniqueID: Mapped[str] = mapped_column(sql.String(100))

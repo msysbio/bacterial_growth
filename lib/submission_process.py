@@ -4,6 +4,7 @@ from datetime import datetime, timedelta, UTC
 from db import get_session, get_transaction
 
 import pandas as pd
+import sqlalchemy as sql
 
 from models import (
     Bioreplicate,
@@ -255,33 +256,10 @@ def _save_communities(db_session, submission_form, study, user_uuid):
 
         for identifier in strain_identifiers:
             if identifier not in identifier_cache:
-                strain = Strain(
-                    study=study,
-                    userUniqueID=user_uuid,
-                )
-
-                if identifier.startswith('existing|'):
-                    taxon_id = identifier.removeprefix('existing|')
-                    taxon = db_session.get_one(Taxon, taxon_id)
-
-                    strain.name    = taxon.name
-                    strain.NCBId   = taxon.id
-                    strain.defined = True
-
-                elif identifier.startswith('custom|'):
-                    identifier = identifier.removeprefix('custom|')
-                    custom_strain_data = _find_new_strain(submission, identifier)
-
-                    strain.name        = custom_strain_data['name']
-                    strain.description = custom_strain_data['description']
-                    strain.NCBId       = custom_strain_data['species']
-                    strain.defined     = False
-                else:
-                    raise ValueError(f"Strain identifier {repr(identifier)} has an unexpected prefix")
-
+                strain = _build_strain(db_session, identifier, submission, study, user_uuid)
+                identifier_cache[identifier] = strain
                 db_session.add(strain)
                 db_session.flush()
-                identifier_cache[identifier] = strain
 
             community.strainIds.append(identifier_cache[identifier].id)
 
@@ -454,6 +432,41 @@ def _get_expected_column_names(submission_form):
         'Growth data per strain':     strain_columns,
         'Growth data per metabolite': metabolite_columns,
     }
+
+
+def _build_strain(db_session, identifier, submission, study, user_uuid):
+    strain_params = {'study': study, 'userUniqueID': user_uuid}
+
+    if identifier.startswith('existing|'):
+        taxon_id = identifier.removeprefix('existing|')
+        taxon = db_session.scalars(
+            sql.select(Taxon)
+            .where(Taxon.ncbiId == taxon_id)
+            .limit(1)
+        ).one()
+
+        strain_params = {
+            'name':    taxon.name,
+            'NCBId':   taxon.ncbiId,
+            'defined': True,
+            **strain_params,
+        }
+
+    elif identifier.startswith('custom|'):
+        identifier = identifier.removeprefix('custom|')
+        custom_strain_data = _find_new_strain(submission, identifier)
+
+        strain_params = {
+            'name':        custom_strain_data['name'],
+            'NCBId':       custom_strain_data['species'],
+            'description': custom_strain_data['description'],
+            'defined':     False,
+            **strain_params,
+        }
+    else:
+        raise ValueError(f"Strain identifier {repr(identifier)} has an unexpected prefix")
+
+    return Strain(**strain_params)
 
 
 def _format_row_list_error(row_list):
