@@ -23,8 +23,7 @@
           <th>⬅</th>
           <th>Bioreplicate: Compartment</th>
           <th>Subject name</th>
-          <th>Technique name</th>
-          <th>Units</th>
+          <th>Technique</th>
           <th>➡</th>
         </tr>
 
@@ -34,23 +33,29 @@
           {% set technique    = measurement_context.technique %}
           {% set subject      = measurement_context.get_subject(g.db_session) %}
 
-          <tr data-context-id="{{ measurement_context.id }}">
+          <tr class="js-row" data-context-id="{{ measurement_context.id }}">
             <td>
               <input
                   type="checkbox"
-                  class="js-axis"
+                  class="js-axis js-axis-left"
                   name="axis|{{ measurement_context.id }}"
+                  {{ "checked" if measurement_context.id in chart_form.left_axis_ids }}
                   value="left" />
             </td>
             <td>{{ bioreplicate.name }}: {{ compartment.name }}</td>
             <td>{{ technique.subjectType }}: {{ subject.name }}</td>
-            <td>{{ technique.long_name }}</td>
-            <td>{{ technique.units or 'N/A' }}</td>
+            <td>
+              {{ technique.short_name }}
+              {% if technique.units: %}
+                in {{ technique.units }}
+              {% endif %}
+            </td>
             <td>
               <input
                   type="checkbox"
-                  class="js-axis"
+                  class="js-axis js-axis-right"
                   name="axis|{{ measurement_context.id }}"
+                  {{ "checked" if measurement_context.id in chart_form.right_axis_ids }}
                   value="right" />
             </td>
           </tr>

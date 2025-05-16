@@ -22,6 +22,24 @@ Page('.study-visualize-page', function($page) {
     });
   });
 
+  // Exclusive checkboxes on one row:
+  $page.on('change', 'input.js-axis', function(e) {
+    let $checkbox = $(e.currentTarget);
+    let $other;
+
+    if ($checkbox.is('.js-axis-left')) {
+      $other = $checkbox.parents('.js-row').find('.js-axis-right');
+    } else if ($checkbox.is('.js-axis-right')) {
+      $other = $checkbox.parents('.js-row').find('.js-axis-left');
+    }
+
+    if ($checkbox.is(':checked')) {
+      $other.prop('checked', false);
+    } else {
+      $other.prop('checked', true);
+    }
+  });
+
   $page.on('change', 'form.js-chart-form', function(e) {
     let $form = $(e.currentTarget);
     update_chart($form);

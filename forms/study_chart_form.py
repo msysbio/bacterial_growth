@@ -23,16 +23,19 @@ class StudyChartForm:
         self.db_session = db_session
         self.study      = study
 
-        self.measurement_contexts = []
+        self.measurement_context_ids = []
+        self.measurement_contexts    = []
+
+        self.left_axis_ids  = set()
+        self.right_axis_ids = set()
 
     def build_chart(self, args):
         chart = Chart()
-
-        measurement_context_ids = self._extract_args(args)
+        self._extract_args(args)
 
         self.measurement_contexts = self.db_session.scalars(
             sql.select(MeasurementContext)
-            .where(MeasurementContext.id.in_(measurement_context_ids))
+            .where(MeasurementContext.id.in_(self.measurement_context_ids))
         ).all()
 
         for measurement_context in self.measurement_contexts:
@@ -41,20 +44,34 @@ class StudyChartForm:
             technique = measurement_context.technique
 
             label = f"{subject.name} {technique.short_name}"
+            axis = 'right' if measurement_context.id in self.right_axis_ids else 'left'
 
-            chart.add_df(label, df)
+            chart.add_df(df, label=label, axis=axis)
 
         return chart
 
     def _extract_args(self, args):
-        measurement_context_ids = []
+        self.measurement_context_ids = []
+        self.left_axis_ids = set()
+        self.right_axis_ids = set()
 
-        for arg in args:
+        for arg, value in args.items():
             if arg.startswith('measurementContext|'):
                 context_id = int(arg.removeprefix('measurementContext|'))
-                measurement_context_ids.append(context_id)
+                self.measurement_context_ids.append(context_id)
+                self.left_axis_ids.add(context_id)
 
-        return measurement_context_ids
+            elif arg.startswith('axis|'):
+                context_id = int(arg.removeprefix('axis|'))
+
+                if value == 'left':
+                    # Left axis by default
+                    pass
+                elif value == 'right':
+                    self.left_axis_ids.remove(context_id)
+                    self.right_axis_ids.add(context_id)
+                else:
+                    raise ValueError(f"Unexpected axis: {value}")
 
     def get_df(self, measurement_context_id):
         query = (

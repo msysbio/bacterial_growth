@@ -8,8 +8,8 @@ class Chart:
     def __init__(self):
         self.data = []
 
-    def add_df(self, name, df):
-        self.data.append((name, df))
+    def add_df(self, df, label, axis):
+        self.data.append((label, axis, df))
 
     def to_html(self, width=None):
         # TODO (2025-05-15) time units
@@ -17,11 +17,18 @@ class Chart:
         fig = make_subplots(specs=[[{"secondary_y": True}]])
         fig.update_layout(template=PLOTLY_TEMPLATE)
 
-        for (name, df) in self.data:
-            fig.add_trace(
-                go.Scatter(x=df['time'], y=df['value'], name=name),
-                secondary_y=False,
-            )
+        for (label, axis, df) in self.data:
+            scatter_params = dict(x=df['time'], y=df['value'], name=label)
+
+            if axis == 'left':
+                secondary_y = False
+            elif axis == 'right':
+                scatter_params = dict(**scatter_params, line={'dash': 'dot'})
+                secondary_y = True
+            else:
+                raise ValueError(f"Unexpected axis: {axis}")
+
+            fig.add_trace(go.Scatter(**scatter_params), secondary_y=secondary_y)
 
         fig.update_layout(
             margin=dict(l=0, r=0, t=60, b=40),
