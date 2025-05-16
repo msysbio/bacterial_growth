@@ -47,18 +47,17 @@ class MeasurementContext(OrmBase):
     def has_measurements(self):
         return len([m for m in self.measurements if m.value is not None]) > 0
 
-    @classmethod
-    def get_subject(Self, db_session, subject_id, subject_type):
+    def get_subject(self, db_session):
         from models import Metabolite, Strain, Bioreplicate
 
-        if subject_type == 'metabolite':
-            return db_session.get(Metabolite, subject_id)
-        elif subject_type == 'strain':
-            return db_session.get(Strain, subject_id)
-        elif subject_type == 'bioreplicate':
-            return db_session.get(Bioreplicate, subject_id)
+        if self.subjectType == 'metabolite':
+            return db_session.get(Metabolite, self.subjectId)
+        elif self.subjectType == 'strain':
+            return db_session.get(Strain, self.subjectId)
+        elif self.subjectType == 'bioreplicate':
+            return db_session.get(Bioreplicate, self.subjectId)
         else:
-            raise ValueError(f"Unknown subject type: {subject_type}")
+            raise ValueError(f"Unknown subject type: {self.subjectType}")
 
     def subject_join(subject_type):
         from models import Metabolite, Strain, Bioreplicate

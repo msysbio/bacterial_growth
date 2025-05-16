@@ -23,14 +23,26 @@ class StudyChartForm:
         self.db_session = db_session
         self.study      = study
 
+        self.measurement_contexts = []
+
     def build_chart(self, args):
         chart = Chart()
 
         measurement_context_ids = self._extract_args(args)
 
-        for measurement_context_id in measurement_context_ids:
-            df = self.get_df(measurement_context_id)
-            chart.add_df(f"MC {measurement_context_id}", df)
+        self.measurement_contexts = self.db_session.scalars(
+            sql.select(MeasurementContext)
+            .where(MeasurementContext.id.in_(measurement_context_ids))
+        ).all()
+
+        for measurement_context in self.measurement_contexts:
+            df        = self.get_df(measurement_context.id)
+            subject   = measurement_context.get_subject(self.db_session)
+            technique = measurement_context.technique
+
+            label = f"{subject.name} {technique.short_name}"
+
+            chart.add_df(label, df)
 
         return chart
 

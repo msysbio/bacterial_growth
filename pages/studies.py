@@ -104,12 +104,12 @@ def study_download_zip(studyId):
 
 def study_visualize_page(studyId):
     study      = _fetch_study(studyId)
-    study_form = StudyChartForm(g.db_session, study)
+    chart_form = StudyChartForm(g.db_session, study)
 
     return render_template(
         "pages/studies/visualize.html",
         study=study,
-        study_form=study_form,
+        chart_form=chart_form,
     )
 
 
@@ -120,16 +120,15 @@ def study_chart_fragment(studyId):
     width = request.args.get('width', None)
     show_log_toggle = False
 
-    study_form = StudyChartForm(g.db_session, study)
-    study_chart_html = study_form.build_chart(args).to_html(
+    chart_form = StudyChartForm(g.db_session, study)
+    chart_html = chart_form.build_chart(args).to_html(
         width=f"{width}px",
     )
 
     return render_template(
-        'pages/studies/_figs.html',
-        study_chart_html=study_chart_html,
-        fig_htmls=[],
-        show_log_toggle=show_log_toggle
+        'pages/studies/_chart.html',
+        chart_form=chart_form,
+        chart_html=chart_html,
     )
 
 

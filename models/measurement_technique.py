@@ -76,7 +76,7 @@ class MeasurementTechnique(OrmBase):
         return TECHNIQUE_LONG_NAMES[self.type]
 
     @property
-    def name_with_subject_type(self):
+    def long_name_with_subject_type(self):
         parts = [self.long_name]
 
         if self.subjectType != 'metabolite':

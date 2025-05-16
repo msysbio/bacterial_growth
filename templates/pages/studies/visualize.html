@@ -1,5 +1,4 @@
-{% from 'pages/studies/_experiment_form.html' import render_experiment_form %}
-{% from 'pages/studies/_study_form.html' import render_study_form %}
+{% from 'pages/studies/_chart_form.html' import render_chart_form %}
 
 {% extends '_layout.html' %}
 
@@ -37,12 +36,14 @@
               </label>
             </div>
 
-            {{ render_study_form(study_form) }}
+            {{ render_chart_form(chart_form) }}
           </div>
 
-          <div class="chart-column chart box">
-            <div class="chart-placeholder">
-              📊
+          <div class="chart-column box">
+            <div class="chart">
+              <div class="chart-placeholder">
+                📊
+              </div>
             </div>
           </div>
         </div>

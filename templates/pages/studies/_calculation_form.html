@@ -16,7 +16,7 @@
                 class="form-input-blue form-input-full js-technique-type">
               {% for technique in study.measurementTechniques if technique.is_growth: %}
                 <option value="{{ technique.id }}">
-                  {{ technique.name_with_subject_type }}
+                  {{ technique.long_name_with_subject_type }}
                 </option>
               {% endfor %}
             </select>

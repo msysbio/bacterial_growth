@@ -1,0 +1,61 @@
+<div class="chart-container">
+  {% if show_log_toggle: %}
+    {% set identifier = 'apply_log:{}'.format(loop.index0) %}
+    <div>
+      <input
+          type="checkbox"
+          name="{{ identifier }}"
+          id="{{ identifier }}"
+          style="margin-left: 0"
+          {{ 'checked' if request.args[identifier] }} />
+      <label for="{{ identifier}}">
+        Apply log transform
+      </label>
+    </div>
+  {% endif %}
+
+  {{ chart_html|safe }}
+
+  <div class="data-container">
+    <div class="table-container">
+      <table class="dataframe-table targets-table">
+        <tr>
+          <th>⬅</th>
+          <th>Bioreplicate: Compartment</th>
+          <th>Subject name</th>
+          <th>Technique name</th>
+          <th>Units</th>
+          <th>➡</th>
+        </tr>
+
+        {% for measurement_context in chart_form.measurement_contexts: %}
+          {% set bioreplicate = measurement_context.bioreplicate %}
+          {% set compartment  = measurement_context.compartment %}
+          {% set technique    = measurement_context.technique %}
+          {% set subject      = measurement_context.get_subject(g.db_session) %}
+
+          <tr data-context-id="{{ measurement_context.id }}">
+            <td>
+              <input
+                  type="checkbox"
+                  class="js-axis"
+                  name="axis|{{ measurement_context.id }}"
+                  value="left" />
+            </td>
+            <td>{{ bioreplicate.name }}: {{ compartment.name }}</td>
+            <td>{{ technique.subjectType }}: {{ subject.name }}</td>
+            <td>{{ technique.long_name }}</td>
+            <td>{{ technique.units or 'N/A' }}</td>
+            <td>
+              <input
+                  type="checkbox"
+                  class="js-axis"
+                  name="axis|{{ measurement_context.id }}"
+                  value="right" />
+            </td>
+          </tr>
+        {% endfor %}
+      </table>
+    </div>
+  </div>
+</div>

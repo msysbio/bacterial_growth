@@ -1,4 +1,4 @@
-{% macro render_study_form(form) %}
+{% macro render_chart_form(form) %}
 
   {% set study = form.study %}
 
@@ -13,7 +13,7 @@
             <select name="techniqueId" class="form-input-blue full">
               {% for technique in study.measurementTechniques: %}
                 <option value="{{ technique.id }}" data-subject-type="{{ technique.subjectType }}">
-                {{ technique.name_with_subject_type }}
+                {{ technique.long_name_with_subject_type }}
                 </option>
               {% endfor %}
             </select>
@@ -32,8 +32,7 @@
 
         {% for measurementContext in experiment.measurementContexts if measurementContext.has_measurements(): %}
           {% set subjectType = measurementContext.subjectType %}
-          {% set subjectId   = measurementContext.subjectId %}
-          {% set subject     = measurementContext.get_subject(g.db_session, subjectId, subjectType) %}
+          {% set subject     = measurementContext.get_subject(g.db_session) %}
 
           {% set key = "measurementContext|{}".format(measurementContext.id) %}
 
