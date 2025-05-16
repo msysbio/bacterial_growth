@@ -95,24 +95,24 @@ class TestSubmissionForm(DatabaseTest):
         self.assertEqual(s2_study_design['timepoint_count'], 6)
 
     def test_strains(self):
-        t1 = self.create_taxon(tax_names="R. intestinalis")
-        t2 = self.create_taxon(tax_names="B. thetaiotaomicron")
+        t1 = self.create_taxon(name="R. intestinalis")
+        t2 = self.create_taxon(name="B. thetaiotaomicron")
 
         submission_form = SubmissionForm(db_session=self.db_session)
         self.assertEqual(submission_form.fetch_taxa(), [])
 
-        submission_form.update_strains({'strains': [t1.tax_id], 'new_strains': []})
+        submission_form.update_strains({'strains': [t1.ncbiId], 'new_strains': []})
         submission = submission_form.submission
 
         self.assertEqual(
-            [t.tax_names for t in submission_form.fetch_taxa()],
+            [t.name for t in submission_form.fetch_taxa()],
             ['R. intestinalis'],
         )
 
         new_strains = [
-            {'name': 'R. intestinalis 2',     'species': t1.tax_id},
-            {'name': 'B. thetaiotaomicron 2', 'species': t2.tax_id},
-            {'name': 'R. intestinalis 3',     'species': t1.tax_id},
+            {'name': 'R. intestinalis 2',     'species': t1.ncbiId},
+            {'name': 'B. thetaiotaomicron 2', 'species': t2.ncbiId},
+            {'name': 'R. intestinalis 3',     'species': t1.ncbiId},
             {'name': 'Nonexistent',           'species': '999'},
         ]
         submission_form.update_strains({'strains': [], 'new_strains': new_strains})

@@ -142,8 +142,8 @@ class TestSubmissionProcess(DatabaseTest):
         self.assertEqual(0, self.db_session.scalar(sql.func.count(Compartment.id)))
 
     def test_community_creation(self):
-        t_ri = self.create_taxon(tax_names='Roseburia intestinalis')
-        t_bh = self.create_taxon(tax_names='Blautia hydrogenotrophica')
+        t_ri = self.create_taxon(name='Roseburia intestinalis')
+        t_bh = self.create_taxon(name='Blautia hydrogenotrophica')
 
         submission_form = SubmissionForm(submission_id=self.submission.id, db_session=self.db_session)
         submission_form.update_study_design({
@@ -153,7 +153,7 @@ class TestSubmissionProcess(DatabaseTest):
             'new_strains': [{
                 'name': 'Custom strain',
                 'description': 'test',
-                'species': t_ri.tax_id,
+                'species': t_ri.ncbiId,
             }],
 
             'communities': [{
@@ -183,8 +183,8 @@ class TestSubmissionProcess(DatabaseTest):
         self.assertEqual(3, self.db_session.scalar(sql.func.count(Community.id)))
 
         # Check existence of strains:
-        s_ri     = self.db_session.scalar(sql.select(Strain).where(Strain.NCBId == t_ri.tax_id))
-        s_bh     = self.db_session.scalar(sql.select(Strain).where(Strain.NCBId == t_bh.tax_id))
+        s_ri     = self.db_session.scalar(sql.select(Strain).where(Strain.NCBId == t_ri.ncbiId))
+        s_bh     = self.db_session.scalar(sql.select(Strain).where(Strain.NCBId == t_bh.ncbiId))
         s_custom = self.db_session.scalar(sql.select(Strain).where(Strain.name == 'Custom strain'))
 
         c_full, c_ri, c_blank = communities
@@ -202,7 +202,7 @@ class TestSubmissionProcess(DatabaseTest):
         self.assertEqual(0, self.db_session.scalar(sql.func.count(Community.id)))
 
     def test_experiment_creation(self):
-        t_ri = self.create_taxon(tax_names='Roseburia intestinalis')
+        t_ri = self.create_taxon(name='Roseburia intestinalis')
 
         submission_form = SubmissionForm(submission_id=self.submission.id, db_session=self.db_session)
         submission_form.update_study_design({

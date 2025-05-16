@@ -8,9 +8,9 @@ from tests.database_test import DatabaseTest
 
 class TestTaxon(DatabaseTest):
     def test_search_basic(self):
-        self.create_taxon(tax_id="1", tax_names="Vibrio pelagius")
-        self.create_taxon(tax_id="2", tax_names="Anaerovibrio")
-        self.create_taxon(tax_id="3", tax_names="Brevibacterium linens")
+        self.create_taxon(ncbiId="1", name="Vibrio pelagius")
+        self.create_taxon(ncbiId="2", name="Anaerovibrio")
+        self.create_taxon(ncbiId="3", name="Brevibacterium linens")
 
         results, _ = Taxon.search_by_name(self.db_conn, 'pelagius')
         self.assertEqual(
@@ -32,10 +32,10 @@ class TestTaxon(DatabaseTest):
         self.assertEqual([], [r['text'] for r in results])
 
     def test_search_ordering_by_prefix_match(self):
-        self.create_taxon(tax_id="1", tax_names="Vibrio pelagius")
-        self.create_taxon(tax_id="2", tax_names="Vibrio anguillarum")
-        self.create_taxon(tax_id="3", tax_names="Anaerovibrio")
-        self.create_taxon(tax_id="4", tax_names="Panaeolus")
+        self.create_taxon(ncbiId="1", name="Vibrio pelagius")
+        self.create_taxon(ncbiId="2", name="Vibrio anguillarum")
+        self.create_taxon(ncbiId="3", name="Anaerovibrio")
+        self.create_taxon(ncbiId="4", name="Panaeolus")
 
         # Matches at the beginning of the word are first:
         results, _ = Taxon.search_by_name(self.db_conn, 'vib')
@@ -51,8 +51,8 @@ class TestTaxon(DatabaseTest):
         )
 
     def test_search_by_multiple_words(self):
-        self.create_taxon(tax_id="1", tax_names="Salmonella enterica serovar Infantis")
-        self.create_taxon(tax_id="2", tax_names="Salmonella enterica serovar Moscow")
+        self.create_taxon(ncbiId="1", name="Salmonella enterica serovar Infantis")
+        self.create_taxon(ncbiId="2", name="Salmonella enterica serovar Moscow")
 
         # Words are searched separately:
         results, _ = Taxon.search_by_name(self.db_conn, 'salmonella infantis')
@@ -69,10 +69,10 @@ class TestTaxon(DatabaseTest):
         )
 
     def test_pagination(self):
-        self.create_taxon(tax_names="Test 1 foo")
-        self.create_taxon(tax_names="Test 2 foo")
-        self.create_taxon(tax_names="Test 3 bar")
-        self.create_taxon(tax_names="Test 4 bar")
+        self.create_taxon(name="Test 1 foo")
+        self.create_taxon(name="Test 2 foo")
+        self.create_taxon(name="Test 3 bar")
+        self.create_taxon(name="Test 4 bar")
 
         # Two per page, two pages:
         results, has_more = Taxon.search_by_name(self.db_conn, 'Test', page=1, per_page=2)

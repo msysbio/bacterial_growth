@@ -126,8 +126,8 @@ class SubmissionForm:
                 continue
 
             strain['species_name'] = self.db_session.scalars(
-                sql.select(Taxon.tax_names)
-                .where(Taxon.tax_id == strain['species'])
+                sql.select(Taxon.name)
+                .where(Taxon.ncbiId == strain['species'])
                 .limit(1)
             ).one_or_none()
 
@@ -152,7 +152,7 @@ class SubmissionForm:
 
         return self.db_session.scalars(
             sql.select(Taxon)
-            .where(Taxon.tax_id.in_(strains))
+            .where(Taxon.ncbiId.in_(strains))
         ).all()
 
     def fetch_metabolites_for_technique(self, technique_index=None):

@@ -13,20 +13,14 @@ from models.orm_base import OrmBase
 class Taxon(OrmBase):
     __tablename__ = 'Taxa'
 
-    tax_id:    Mapped[str] = mapped_column(sql.String(512), primary_key=True)
-    tax_names: Mapped[str] = mapped_column(sql.String(512))
+    id: Mapped[int] = mapped_column(primary_key=True)
 
-    @hybrid_property
-    def id(self):
-        return self.tax_id
-
-    @hybrid_property
-    def name(self):
-        return self.tax_names
+    ncbiId: Mapped[str] = mapped_column(sql.String(512))
+    name:   Mapped[str] = mapped_column(sql.String(512))
 
     @property
     def short_name(self):
-        return re.sub(r'^([A-Z])[A-Za-z]+ ', r'\1. ', self.tax_names)
+        return re.sub(r'^([A-Z])[A-Za-z]+ ', r'\1. ', self.name)
 
     @staticmethod
     def search_by_name(db_conn, term, page=1, per_page=10):
@@ -39,13 +33,13 @@ class Taxon(OrmBase):
 
         query = """
             SELECT
-                tax_id AS id,
-                CONCAT(tax_names, ' (NCBI:', tax_id, ')') AS text
+                ncbiId AS id,
+                CONCAT(name, ' (NCBI:', ncbiId, ')') AS text
             FROM Taxa
-            WHERE LOWER(tax_names) LIKE :term_pattern
+            WHERE LOWER(name) LIKE :term_pattern
             ORDER BY
-                LOCATE(:first_word, LOWER(tax_names)) ASC,
-                tax_names ASC
+                LOCATE(:first_word, LOWER(name)) ASC,
+                name ASC
             LIMIT :per_page
             OFFSET :offset
         """
@@ -60,7 +54,7 @@ class Taxon(OrmBase):
         count_query = """
             SELECT COUNT(*)
             FROM Taxa
-            WHERE LOWER(tax_names) LIKE :term_pattern
+            WHERE LOWER(name) LIKE :term_pattern
         """
         total_count = db_conn.execute(sql.text(count_query), {'term_pattern': term_pattern}).scalar()
         has_more = (page * per_page < total_count)

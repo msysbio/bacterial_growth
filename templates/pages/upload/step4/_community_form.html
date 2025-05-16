@@ -31,9 +31,9 @@
             class="form-input-blue form-input-full js-strain-select">
           {% for taxon in submission_form.fetch_taxa(): %}
             <option
-                value="existing|{{ taxon.tax_id }}"
-                {{ "selected" if strainIdentifiers and "existing|{}".format(taxon.tax_id) in strainIdentifiers }}>
-              {{ taxon.tax_names }} (NCBI:{{ taxon.tax_id }})
+                value="existing|{{ taxon.ncbiId }}"
+                {{ "selected" if strainIdentifiers and "existing|{}".format(taxon.ncbiId) in strainIdentifiers }}>
+              {{ taxon.name }} (NCBI:{{ taxon.ncbiId }})
             </option>
           {% endfor %}
 

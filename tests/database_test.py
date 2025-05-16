@@ -46,10 +46,10 @@ class DatabaseTest(unittest.TestCase):
         self.db_session.close()
 
     def create_taxon(self, **params):
-        self.taxa_id = getattr(self, 'taxa_id', 0) + 1
+        self.ncbi_id = getattr(self, 'ncbi_id', 0) + 1
         params = {
-            'tax_id':    str(self.taxa_id),
-            'tax_names': f"Taxon {self.taxa_id}",
+            'ncbiId': str(self.ncbi_id),
+            'name':   f"Taxon {self.ncbi_id}",
             **params,
         }
 
