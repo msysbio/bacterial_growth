@@ -462,9 +462,11 @@ DROP TABLE IF EXISTS Taxa;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE Taxa (
-  tax_id varchar(512) COLLATE utf8mb4_bin NOT NULL,
-  tax_names varchar(512) COLLATE utf8mb4_bin DEFAULT NULL,
-  PRIMARY KEY (tax_id)
+  ncbiId varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  `name` varchar(512) COLLATE utf8mb4_bin NOT NULL,
+  id int NOT NULL AUTO_INCREMENT,
+  PRIMARY KEY (id),
+  UNIQUE KEY Taxa_ncbiId (ncbiId)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -514,5 +516,6 @@ INSERT INTO MigrationVersions VALUES
 (74,'2025_05_09_194730_fix_study_metabolite_columns','2025-05-09 17:59:54'),
 (76,'2025_05_10_112933_add_compartment_id_to_measurements','2025-05-10 09:32:30'),
 (78,'2025_05_11_154801_add_fields_to_bioreplicates','2025-05-11 13:52:06'),
-(82,'2025_05_13_172421_drop_unused_tables','2025-05-13 16:10:28');
+(82,'2025_05_13_172421_drop_unused_tables','2025-05-13 16:10:28'),
+(98,'2025_05_16_141435_fix_taxon_columns','2025-05-16 12:20:31');
 

@@ -29,8 +29,8 @@
               data-placeholder="Example: Roseburia intestinalis"
               class="strain-select js-existing-strain-select">
             {% for taxon in submission_form.fetch_taxa(): %}
-              <option value={{ taxon.tax_id }} selected="selected">
-              {{ taxon.tax_names }} (NCBI:{{ taxon.tax_id }})
+              <option value="{{ taxon.ncbiId }}" selected="selected">
+              {{ taxon.name }} (NCBI:{{ taxon.ncbiId }})
               </option>
             {% endfor %}
           </select>
