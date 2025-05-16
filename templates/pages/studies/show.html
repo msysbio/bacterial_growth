@@ -87,11 +87,7 @@
                   {% endif %}
 
                   {% for measurement_context in contexts: %}
-                    {% set subject = measurement_context.__class__.get_subject(
-                      g.db_session,
-                      measurement_context.subjectId,
-                      measurement_context.subjectType
-                    ) %}
+                    {% set subject = measurement_context.get_subject(g.db_session) %}
                     {% set measurements = measurement_context.measurements %}
 
                     <tr class="js-table-row">
