@@ -28,7 +28,7 @@ $(document).ready(function() {
   $('#main .open-sidebar a').on('click', function(e) {
     e.preventDefault();
 
-    $(':root').css('--sidebar-width', '340px');
+    $(':root').css('--sidebar-width', '250px');
     $('#main .open-sidebar').css('width', '0px');
 
     let transitionLengthMs = parseInt($(':root').css('--transition-length'), 10);
