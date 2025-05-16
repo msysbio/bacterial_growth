@@ -1,30 +1,16 @@
 .study-visualize-page {
-  .experiment-container {
-    border: 2px solid var(--border-color);
-    border-radius: var(--border-radius);
-    padding: 10px;
-    margin-top: 20px;
-    margin-bottom: 10px;
-  }
-
   .chart-form {
-    width: 100%;
-
-    .controls-column {
-      display: flex;
-      flex-direction: column;
-      row-gap: 6px;
-    }
+    margin-top: 20px;
   }
 
-  .chart-form select {
-    padding: 0.4rem !important;
+  .form-input-blue {
+    padding: 0.5rem !important;
   }
 
-  .experiment {
-    width: 100%;
+  .columns {
     display: flex;
-    column-gap: 20px;
+    flex-direction: row;
+    column-gap: 10px;
 
     .controls-column {
       width: 30%;
@@ -34,5 +20,11 @@
       width: 70%;
       overflow-x: hidden;
     }
+  }
+
+  .experiment {
+    display: flex;
+    flex-direction: column;
+    row-gap: 6px;
   }
 }

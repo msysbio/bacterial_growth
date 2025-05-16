@@ -5,61 +5,56 @@
   {% for experiment in study.experiments: %}
     <div class="experiment-container hidden js-experiment-container" data-experiment-id="{{ experiment.id }}">
       <div class="experiment">
-        <div class="controls-column">
-          <p>{{ experiment.description }}</p>
+        <p>{{ experiment.description }}</p>
 
-          <div class="form-row">
+        <div class="form-row">
+          <label class="full">
+            <span>Technique:</span>
             <select name="techniqueId" class="form-input-blue full">
               {% for technique in study.measurementTechniques: %}
                 <option value="{{ technique.id }}" data-subject-type="{{ technique.subjectType }}">
-                  {{ technique.name_with_subject_type }}
+                {{ technique.name_with_subject_type }}
                 </option>
               {% endfor %}
             </select>
-          </div>
-
-          <select name="bioreplicateCompartmentId" class="form-input-blue full">
-            {% for bioreplicate in experiment.bioreplicates: %}
-              {% for compartment in experiment.compartments: %}
-                <option value="{{ bioreplicate.id }}|{{ compartment.id }}">
-                  {{ bioreplicate.name }}: {{ compartment.name }}
-                </option>
-              {% endfor %}
-            {% endfor %}
-          </select>
-
-          {% for measurementContext in experiment.measurementContexts if measurementContext.has_measurements(): %}
-            {% set subjectType = measurementContext.subjectType %}
-            {% set subjectId   = measurementContext.subjectId %}
-            {% set subject     = measurementContext.get_subject(g.db_session, subjectId, subjectType) %}
-
-            {% set key = "measurementContext|{}".format(measurementContext.id) %}
-
-            <div
-                class="form-row hidden js-technique-row"
-                data-technique-id="{{ measurementContext.techniqueId }}"
-                data-bioreplicate-id="{{ measurementContext.bioreplicateId }}"
-                data-compartment-id="{{ measurementContext.compartmentId }}">
-              <input type="checkbox" name="{{ key }}" id="{{ key }}" />
-              <label for="{{ key }}">
-                {% if subjectType == 'bioreplicate' %}
-                  {{ subject.name }}: {{ measurementContext.compartment.name }}
-                {% else: %}
-                  {{ subject.name }}
-                {% endif %}
-              </label>
-            </div>
-          {% endfor %}
-
-          <div class="form-row">
-            <a href="#" class="white-button clear-chart">Clear</a>
-          </div>
+          </label>
         </div>
 
-        <div class="chart-column chart">
-          <div class="chart-placeholder">
-            📊
+        <select name="bioreplicateCompartmentId" class="form-input-blue full">
+          {% for bioreplicate in experiment.bioreplicates: %}
+            {% for compartment in experiment.compartments: %}
+              <option value="{{ bioreplicate.id }}|{{ compartment.id }}">
+                {{ bioreplicate.name }}: {{ compartment.name }}
+              </option>
+            {% endfor %}
+          {% endfor %}
+        </select>
+
+        {% for measurementContext in experiment.measurementContexts if measurementContext.has_measurements(): %}
+          {% set subjectType = measurementContext.subjectType %}
+          {% set subjectId   = measurementContext.subjectId %}
+          {% set subject     = measurementContext.get_subject(g.db_session, subjectId, subjectType) %}
+
+          {% set key = "measurementContext|{}".format(measurementContext.id) %}
+
+          <div
+              class="form-row hidden js-technique-row"
+              data-technique-id="{{ measurementContext.techniqueId }}"
+              data-bioreplicate-id="{{ measurementContext.bioreplicateId }}"
+              data-compartment-id="{{ measurementContext.compartmentId }}">
+            <input type="checkbox" name="{{ key }}" id="{{ key }}" />
+            <label for="{{ key }}">
+              {% if subjectType == 'bioreplicate' %}
+                {{ subject.name }}: {{ measurementContext.compartment.name }}
+              {% else: %}
+                {{ subject.name }}
+              {% endif %}
+            </label>
           </div>
+        {% endfor %}
+
+        <div class="form-row">
+          <a href="#" class="white-button clear-chart">Clear</a>
         </div>
       </div>
     </div>

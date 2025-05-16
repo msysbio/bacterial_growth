@@ -71,8 +71,7 @@ Page('.study-visualize-page', function($page) {
       $form.find(`.js-technique-row${selector1}${selector2}${selector3}`).removeClass('hidden');
     }
 
-    let $experiment = $form.find('.experiment');
-    let $chart      = $experiment.find('.chart');
+    let $chart = $form.find('.chart');
 
     let width          = Math.floor($chart.width());
     let scrollPosition = $(document).scrollTop();

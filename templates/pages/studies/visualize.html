@@ -23,19 +23,29 @@
         files.
       </p>
 
-      <hr>
-
       <form class="chart-form js-chart-form">
-        <label>
-          <span>Experiment:</span>
-          <select name="experimentId" class="form-input-blue">
-            {% for experiment in study.experiments: %}
-              <option value="{{ experiment.id }}">{{ experiment.name }}</option>
-            {% endfor %}
-          </select>
-        </label>
+        <div class="columns">
+          <div class="controls-column">
+            <div class="form-row">
+              <label>
+                <span>Experiment:</span>
+                <select name="experimentId" class="form-input-blue full">
+                  {% for experiment in study.experiments: %}
+                    <option value="{{ experiment.id }}">{{ experiment.name }}</option>
+                  {% endfor %}
+                </select>
+              </label>
+            </div>
 
-        {{ render_study_form(study_form) }}
+            {{ render_study_form(study_form) }}
+          </div>
+
+          <div class="chart-column chart box">
+            <div class="chart-placeholder">
+              📊
+            </div>
+          </div>
+        </div>
       </form>
     </article>
   </div>
