@@ -40,8 +40,7 @@ class Experiment(OrmBase):
 
     perturbations: Mapped[List['Perturbation']] = relationship(back_populates='experiment')
 
-    @property
-    def measurements(self):
-        for bioreplicate in self.bioreplicates:
-            for measurement in bioreplicate.measurements:
-                yield measurement
+    measurementContexts: Mapped[List['MeasurementContext']] = relationship(
+        secondary='Bioreplicates',
+        viewonly=True,
+    )

@@ -1,13 +1,15 @@
 Page('.study-visualize-page', function($page) {
   let studyId = $page.data('studyId')
+  let $form   = $page.find('.js-chart-form');
 
-  $page.find('.experiment-container').each(function(e) {
+  update_chart($form);
+
+  $page.find('.js-experiment-container').each(function(e) {
     let $container = $(this);
 
     if ($container.find('input[type=checkbox]:checked').length > 0) {
-      $container.prop('open', true);
-      let $form = $container.find('form');
-      update_chart($form);
+      $container.removeClass('hidden');
+      return;
     }
   });
 
@@ -20,7 +22,7 @@ Page('.study-visualize-page', function($page) {
     });
   });
 
-  $page.on('change', 'form.chart-form', function(e) {
+  $page.on('change', 'form.js-chart-form', function(e) {
     let $form = $(e.currentTarget);
     update_chart($form);
   });
@@ -29,13 +31,40 @@ Page('.study-visualize-page', function($page) {
     e.preventDefault();
 
     let $link = $(e.currentTarget);
-    let $container = $link.parents('.experiment-container');
+    let $container = $link.parents('.js-experiment-container');
     $container.find('input[type=checkbox]').prop('checked', false);
 
     update_chart($container.find('form'))
   });
 
   function update_chart($form) {
+    let selectedExperimentId = $form.find('select[name="experimentId"]:visible').val();
+
+    $form.find('.js-experiment-container').addClass('hidden');
+    $form.find(`.js-experiment-container[data-experiment-id="${selectedExperimentId}"]`).removeClass('hidden');
+
+    let selectedTechniqueId          = $form.find('select[name="techniqueId"]:visible').val();
+    let selectedTechniqueSubjectType = $form.find('select[name="techniqueId"]:visible option:selected').data('subjectType');
+
+    $form.find('.js-technique-row').addClass('hidden');
+
+    if (selectedTechniqueSubjectType == 'bioreplicate') {
+      // Hide bioreplicate select box, show all checkboxes (with bioreplicates)
+      $form.find('select[name="bioreplicateId"]').addClass('hidden');
+      $form.
+        find(`.js-technique-row[data-technique-id="${selectedTechniqueId}"]`).
+        removeClass('hidden');
+    } else {
+      // Show bioreplicate select box, show all checkboxes (with bioreplicates)
+      $form.find('select[name="bioreplicateId"]').removeClass('hidden');
+
+      let selectedBioreplicateId = $form.find('select[name="bioreplicateId"]:visible').val();
+
+      $form.
+        find(`.js-technique-row[data-technique-id="${selectedTechniqueId}"][data-bioreplicate-id="${selectedBioreplicateId}"]`).
+        removeClass('hidden');
+    }
+
     let $experiment = $form.find('.experiment');
     let $chart      = $experiment.find('.chart');
 

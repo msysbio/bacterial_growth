@@ -3,62 +3,56 @@
   {% set study = form.study %}
 
   {% for experiment in study.experiments: %}
-    <div class="experiment-container">
-      <h3>{{ experiment.name }}</h3>
+    <div class="experiment-container hidden js-experiment-container" data-experiment-id="{{ experiment.id }}">
+      <div class="experiment">
+        <div class="controls-column">
+          <p>{{ experiment.description }}</p>
 
-      <form class="chart-form">
-        <input type="hidden" name="experimentId" value="{{ experiment.id }}" />
+          <div class="form-row">
+            <select name="techniqueId" class="form-input-blue full">
+              {% for technique in study.measurementTechniques: %}
+                <option value="{{ technique.id }}" data-subject-type="{{ technique.subjectType }}">
+                  {{ technique.name_with_subject_type }}
+                </option>
+              {% endfor %}
+            </select>
+          </div>
 
-        <div class="experiment">
-          <div class="controls-column">
-            <p>{{ experiment.description }}</p>
-
-            <div class="form-row">
-              <select name="techniqueId" class="form-input-blue">
-                {% for technique in study.measurementTechniques: %}
-                  <option value="{{ technique.id }}">{{ technique.long_name }}</option>
-                {% endfor %}
-              </select>
-            </div>
-
-            {% for bioreplicate in experiment.bioreplicates %}
-              {% set key = "bioreplicate:{}".format(bioreplicate.id) %}
-
-              <div class="form-row">
-                <input
-                    type="checkbox"
-                    name="{{ key }}"
-                    id="{{ key }}" />
-                <label for="{{ key }}">
-                  {{ bioreplicate.name }}
-                </label>
-              </div>
+          <select name="bioreplicateId" class="form-input-blue full">
+            {% for bioreplicate in experiment.bioreplicates: %}
+              <option value="{{ bioreplicate.id }}">{{ bioreplicate.name }}</option>
             {% endfor %}
+          </select>
 
-            {% set key = "bioreplicate:{}:_average".format(experiment.name) %}
-            <div class="form-row">
-              <input
-                type="checkbox"
-                name="{{ key }}"
-                value="_average"
-                id="{{ key }}" />
+          {% for measurementContext in experiment.measurementContexts: %}
+            {% set subjectType = measurementContext.subjectType %}
+            {% set subjectId   = measurementContext.subjectId %}
+            {% set subject     = measurementContext.get_subject(g.db_session, subjectId, subjectType) %}
+
+            {% set key = "measurementContext|{}".format(measurementContext.id) %}
+
+            <div
+                class="form-row hidden js-technique-row"
+                data-technique-id="{{ measurementContext.techniqueId }}"
+                data-bioreplicate-id="{{ measurementContext.bioreplicateId }}">
+              <input type="checkbox" name="{{ key }}" id="{{ key }}" />
               <label for="{{ key }}">
-                Average {{ experiment.name }}
+                {{ subject.name }}
               </label>
             </div>
+          {% endfor %}
 
-            <div class="form-row">
-              <a href="#" class="white-button clear-chart">Clear</a>
-            </div>
-          </div>
-
-          <div class="chart-column chart">
-            <div class="chart-placeholder">
-              📊
-            </div>
+          <div class="form-row">
+            <a href="#" class="white-button clear-chart">Clear</a>
           </div>
         </div>
-      </form>
+
+        <div class="chart-column chart">
+          <div class="chart-placeholder">
+            📊
+          </div>
+        </div>
+      </div>
     </div>
   {% endfor %}
 

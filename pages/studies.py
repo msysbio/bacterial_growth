@@ -19,7 +19,6 @@ from models import (
     Calculation,
 )
 from forms.experiment_export_form import ExperimentExportForm
-from forms.experiment_chart_form import ExperimentChartForm
 from forms.study_chart_form import StudyChartForm
 from lib.chart import Chart
 from lib.calculation_tasks import update_calculation_technique
@@ -104,15 +103,13 @@ def study_download_zip(studyId):
 
 
 def study_visualize_page(studyId):
-    study            = _fetch_study(studyId)
-    experiment_forms = [ExperimentChartForm(e) for e in study.experiments]
-    study_form       = StudyChartForm(g.db_session, study)
+    study      = _fetch_study(studyId)
+    study_form = StudyChartForm(g.db_session, study)
 
     return render_template(
         "pages/studies/visualize.html",
         study=study,
         study_form=study_form,
-        experiment_forms=experiment_forms,
     )
 
 

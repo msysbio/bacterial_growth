@@ -23,15 +23,20 @@
         files.
       </p>
 
-      <p>
-        <h2>Experiments</h2>
+      <hr>
+
+      <form class="chart-form js-chart-form">
+        <label>
+          <span>Experiment:</span>
+          <select name="experimentId" class="form-input-blue">
+            {% for experiment in study.experiments: %}
+              <option value="{{ experiment.id }}">{{ experiment.name }}</option>
+            {% endfor %}
+          </select>
+        </label>
 
         {{ render_study_form(study_form) }}
-
-        {# {% for experiment_form in experiment_forms: %} #}
-        {#   {{ render_experiment_form(experiment_form) }} #}
-        {# {% endfor %} #}
-      </p>
+      </form>
     </article>
   </div>
 

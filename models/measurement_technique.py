@@ -76,6 +76,15 @@ class MeasurementTechnique(OrmBase):
         return TECHNIQUE_LONG_NAMES[self.type]
 
     @property
+    def name_with_subject_type(self):
+        parts = [self.long_name]
+
+        if self.subjectType != 'metabolite':
+            parts.append(self.subject_short_name)
+
+        return ' per '.join(parts)
+
+    @property
     def subject_short_name(self):
         match self.subjectType:
             case 'bioreplicate': return 'community'

@@ -1,19 +1,19 @@
 Page('.study-page', function($page) {
-  let $compareBox = $(document).find('.js-compare-box')
-
-  let studyId     = $page.data('studyId');
-  let compareData = $compareBox.data('value');
-
-  // TODO: a timestamp with a check on update?
-  if (!compareData.targets) {
-    compareData['targets'] = [];
-  }
-
-  if (compareData['targets'].length > 0) {
-    $compareBox.removeClass('hidden');
-  }
-
-  let targetSet = new Set(compareData['targets']);
+  // let $compareBox = $(document).find('.js-compare-box')
+  //
+  // let studyId     = $page.data('studyId');
+  // let compareData = $compareBox.data('value');
+  //
+  // // TODO: a timestamp with a check on update?
+  // if (!compareData.targets) {
+  //   compareData['targets'] = [];
+  // }
+  //
+  // if (compareData['targets'].length > 0) {
+  //   $compareBox.removeClass('hidden');
+  // }
+  //
+  // let targetSet = new Set(compareData['targets']);
 
   $page.find('.js-compare-container').each(function() {
     let $container = $(this);
