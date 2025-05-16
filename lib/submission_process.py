@@ -4,6 +4,7 @@ from datetime import datetime, timedelta, UTC
 from db import get_session, get_transaction
 
 import pandas as pd
+import sqlalchemy as sql
 
 from models import (
     Bioreplicate,
@@ -252,30 +253,38 @@ def _save_communities(db_session, submission_form, study, user_uuid):
         community.strainIds = []
 
         for identifier in strain_identifiers:
-            strain = Strain(
-                study=study,
-                userUniqueID=user_uuid,
-            )
+            strain_params = {'study': study, 'userUniqueID': user_uuid}
 
             if identifier.startswith('existing|'):
                 taxon_id = identifier.removeprefix('existing|')
-                taxon = db_session.get_one(Taxon, taxon_id)
+                taxon = db_session.scalars(
+                    sql.select(Taxon)
+                    .where(Taxon.ncbiId == taxon_id)
+                    .limit(1)
+                ).one()
 
-                strain.name    = taxon.name
-                strain.NCBId   = taxon.id
-                strain.defined = True
+                strain_params = {
+                    'name':    taxon.name,
+                    'NCBId':   taxon.ncbiId,
+                    'defined': True,
+                    **strain_params,
+                }
 
             elif identifier.startswith('custom|'):
                 identifier = identifier.removeprefix('custom|')
                 custom_strain_data = _find_new_strain(submission, identifier)
 
-                strain.name        = custom_strain_data['name']
-                strain.description = custom_strain_data['description']
-                strain.NCBId       = custom_strain_data['species']
-                strain.defined     = False
+                strain_params = {
+                    'name':        custom_strain_data['name'],
+                    'NCBId':       custom_strain_data['species'],
+                    'description': custom_strain_data['description'],
+                    'defined':     False,
+                    **strain_params,
+                }
             else:
                 raise ValueError(f"Strain identifier {repr(identifier)} has an unexpected prefix")
 
+            strain = Strain(**strain_params)
             db_session.add(strain)
             db_session.flush()
 

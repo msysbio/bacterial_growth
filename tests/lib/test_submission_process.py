@@ -159,13 +159,13 @@ class TestSubmissionProcess(DatabaseTest):
             'communities': [{
                 'name': 'Full',
                 'strainIdentifiers': [
-                    f"existing|{t_ri.id}",
-                    f"existing|{t_bh.id}",
+                    f"existing|{t_ri.ncbiId}",
+                    f"existing|{t_bh.ncbiId}",
                     'custom|Custom strain',
                 ],
             }, {
                 'name': 'RI',
-                'strainIdentifiers': [f"existing|{t_ri.id}"]
+                'strainIdentifiers': [f"existing|{t_ri.ncbiId}"]
             }, {
                 'name': 'Blank',
                 'strainIdentifiers': [],
@@ -211,7 +211,7 @@ class TestSubmissionProcess(DatabaseTest):
                 {'name': 'MUCIN', 'mediumName': 'WC'}
             ],
             'communities': [
-                {'name': 'RI', 'strainIdentifiers': [f"existing|{t_ri.id}"]},
+                {'name': 'RI', 'strainIdentifiers': [f"existing|{t_ri.ncbiId}"]},
             ],
 
             'experiments': [{
