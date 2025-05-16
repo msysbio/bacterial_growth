@@ -1,4 +1,5 @@
 {% from 'pages/studies/_experiment_form.html' import render_experiment_form %}
+{% from 'pages/studies/_study_form.html' import render_study_form %}
 
 {% extends '_layout.html' %}
 
@@ -25,9 +26,11 @@
       <p>
         <h2>Experiments</h2>
 
-        {% for experiment_form in experiment_forms: %}
-          {{ render_experiment_form(experiment_form) }}
-        {% endfor %}
+        {{ render_study_form(study_form) }}
+
+        {# {% for experiment_form in experiment_forms: %} #}
+        {#   {{ render_experiment_form(experiment_form) }} #}
+        {# {% endfor %} #}
       </p>
     </article>
   </div>

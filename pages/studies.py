@@ -5,6 +5,7 @@ from flask import (
     request,
 )
 from werkzeug.exceptions import Forbidden
+import pandas as pd
 import sqlalchemy as sql
 from sqlalchemy.sql.expression import literal
 
@@ -19,6 +20,8 @@ from models import (
 )
 from forms.experiment_export_form import ExperimentExportForm
 from forms.experiment_chart_form import ExperimentChartForm
+from forms.study_chart_form import StudyChartForm
+from lib.chart import Chart
 from lib.calculation_tasks import update_calculation_technique
 from lib.figures import make_figure_with_traces
 from lib.db import execute_into_df
@@ -101,53 +104,37 @@ def study_download_zip(studyId):
 
 
 def study_visualize_page(studyId):
-    study = _fetch_study(studyId)
+    study            = _fetch_study(studyId)
     experiment_forms = [ExperimentChartForm(e) for e in study.experiments]
+    study_form       = StudyChartForm(g.db_session, study)
 
     return render_template(
         "pages/studies/visualize.html",
         study=study,
+        study_form=study_form,
         experiment_forms=experiment_forms,
     )
 
 
 def study_chart_fragment(studyId):
+    study = _fetch_study(studyId)
     args = request.args.to_dict()
 
     width = args.pop('width')
     show_log_toggle = False
 
     experiment_id = args.pop('experimentId')
-    technique     = args.pop('technique')
+    technique_id  = args.pop('techniqueId')
 
-    experiment = g.db_session.get(Experiment, experiment_id)
-    form       = ExperimentChartForm(experiment)
-
-    if technique in ('16S rRNA-seq', 'FC counts per species'):
-        show_log_toggle = True
-        figs = form.generate_reads_figures(technique, args)
-    elif technique == 'Metabolites':
-        # TODO (2025-03-02) Separate "technique" and "subject type"
-        figs = form.generate_metabolite_figures(technique, args)
-    else:
-        figs = form.generate_growth_figures(technique, args)
-
-    fig_htmls = []
-    for fig in figs:
-        fig.update_layout(
-            margin=dict(l=0, r=0, t=60, b=40),
-            title=dict(x=0)
-        )
-
-        fig_htmls.append(fig.to_html(
-            full_html=False,
-            include_plotlyjs=False,
-            default_width=f"{width}px",
-        ))
+    study_form = StudyChartForm(g.db_session, study)
+    study_chart_html = study_form.build_chart(technique_id, args).to_html(
+        width=f"{width}px",
+    )
 
     return render_template(
         'pages/studies/_figs.html',
-        fig_htmls=fig_htmls,
+        study_chart_html=study_chart_html,
+        fig_htmls=[],
         show_log_toggle=show_log_toggle
     )
 

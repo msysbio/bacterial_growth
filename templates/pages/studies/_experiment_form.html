@@ -14,8 +14,8 @@
 
           <div class="form-row">
             <select name="technique" class="form-input-blue">
-              {% for technique in form.available_techniques: %}
-                <option>{{ technique }}</option>
+              {% for technique in form.study.measurementTechniques: %}
+                <option value="{{ technique.id }}">{{ technique.name }}</option>
               {% endfor %}
             </select>
           </div>
