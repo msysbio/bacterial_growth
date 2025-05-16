@@ -15,7 +15,6 @@ class Chart:
         # TODO (2025-05-15) time units
         # TODO (2025-05-15) value units
         fig = make_subplots(specs=[[{"secondary_y": True}]])
-        fig.update_layout(template=PLOTLY_TEMPLATE)
 
         for (label, axis, df) in self.data:
             scatter_params = dict(x=df['time'], y=df['value'], name=label)
@@ -31,8 +30,15 @@ class Chart:
             fig.add_trace(go.Scatter(**scatter_params), secondary_y=secondary_y)
 
         fig.update_layout(
+            template=PLOTLY_TEMPLATE,
             margin=dict(l=0, r=0, t=60, b=40),
-            title=dict(x=0)
+            title=dict(x=0),
+            legend=dict(
+                yanchor="bottom",
+                y=1,
+                xanchor="left",
+                x=0,
+            )
         )
 
         return fig.to_html(

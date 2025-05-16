@@ -70,13 +70,13 @@ Page('.study-visualize-page', function($page) {
 
     if (selectedTechniqueSubjectType == 'bioreplicate') {
       // Hide bioreplicate select box, show all checkboxes (with bioreplicates)
-      $form.find('select[name="bioreplicateCompartmentId"]').addClass('hidden');
+      $form.find('.js-bioreplicate-row').addClass('hidden');
       $form.
         find(`.js-technique-row[data-technique-id="${selectedTechniqueId}"]`).
         removeClass('hidden');
     } else {
       // Show bioreplicate select box, show all checkboxes (with bioreplicates)
-      $form.find('select[name="bioreplicateCompartmentId"]').removeClass('hidden');
+      $form.find('.js-bioreplicate-row').removeClass('hidden');
 
       let selectedBioreplicateCompartmentId = $form.
         find('select[name="bioreplicateCompartmentId"]:visible').val();

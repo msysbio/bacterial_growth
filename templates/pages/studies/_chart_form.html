@@ -20,15 +20,19 @@
           </label>
         </div>
 
-        <select name="bioreplicateCompartmentId" class="form-input-blue full">
-          {% for bioreplicate in experiment.bioreplicates: %}
-            {% for compartment in experiment.compartments: %}
-              <option value="{{ bioreplicate.id }}|{{ compartment.id }}">
-                {{ bioreplicate.name }}: {{ compartment.name }}
-              </option>
+        <div class="form-row js-bioreplicate-row">
+          <label class="full">
+          <span>Bioreplicate and compartment:</span>
+          <select name="bioreplicateCompartmentId" class="form-input-blue full">
+            {% for bioreplicate in experiment.bioreplicates: %}
+              {% for compartment in experiment.compartments: %}
+                <option value="{{ bioreplicate.id }}|{{ compartment.id }}">
+                  {{ bioreplicate.name }}: {{ compartment.name }}
+                </option>
+              {% endfor %}
             {% endfor %}
-          {% endfor %}
-        </select>
+          </select>
+        </div>
 
         {% for measurementContext in experiment.measurementContexts if measurementContext.has_measurements(): %}
           {% set subjectType = measurementContext.subjectType %}
