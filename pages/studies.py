@@ -115,16 +115,13 @@ def study_visualize_page(studyId):
 
 def study_chart_fragment(studyId):
     study = _fetch_study(studyId)
-    args = request.args.to_dict()
+    args = request.form.to_dict()
 
-    width = args.pop('width')
+    width = request.args.get('width', None)
     show_log_toggle = False
 
-    experiment_id = args.pop('experimentId')
-    technique_id  = args.pop('techniqueId')
-
     study_form = StudyChartForm(g.db_session, study)
-    study_chart_html = study_form.build_chart(technique_id, args).to_html(
+    study_chart_html = study_form.build_chart(args).to_html(
         width=f"{width}px",
     )
 

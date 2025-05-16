@@ -55,7 +55,7 @@ def init_routes(app):
     app.add_url_rule("/study/<string:studyId>/export/preview",  view_func=study_pages.study_export_preview_fragment)
     app.add_url_rule("/study/<string:studyId>/manage",          view_func=study_pages.study_manage_page)
     app.add_url_rule("/study/<string:studyId>/visualize",       view_func=study_pages.study_visualize_page)
-    app.add_url_rule("/study/<string:studyId>/visualize/chart", view_func=study_pages.study_chart_fragment)
+    app.add_url_rule("/study/<string:studyId>/visualize/chart", view_func=study_pages.study_chart_fragment, methods=["POST"])
 
     app.add_url_rule(
         "/study/<string:studyId>/calculations",

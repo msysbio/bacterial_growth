@@ -18,13 +18,17 @@
             </select>
           </div>
 
-          <select name="bioreplicateId" class="form-input-blue full">
+          <select name="bioreplicateCompartmentId" class="form-input-blue full">
             {% for bioreplicate in experiment.bioreplicates: %}
-              <option value="{{ bioreplicate.id }}">{{ bioreplicate.name }}</option>
+              {% for compartment in experiment.compartments: %}
+                <option value="{{ bioreplicate.id }}|{{ compartment.id }}">
+                  {{ bioreplicate.name }}: {{ compartment.name }}
+                </option>
+              {% endfor %}
             {% endfor %}
           </select>
 
-          {% for measurementContext in experiment.measurementContexts: %}
+          {% for measurementContext in experiment.measurementContexts if measurementContext.has_measurements(): %}
             {% set subjectType = measurementContext.subjectType %}
             {% set subjectId   = measurementContext.subjectId %}
             {% set subject     = measurementContext.get_subject(g.db_session, subjectId, subjectType) %}
@@ -34,10 +38,15 @@
             <div
                 class="form-row hidden js-technique-row"
                 data-technique-id="{{ measurementContext.techniqueId }}"
-                data-bioreplicate-id="{{ measurementContext.bioreplicateId }}">
+                data-bioreplicate-id="{{ measurementContext.bioreplicateId }}"
+                data-compartment-id="{{ measurementContext.compartmentId }}">
               <input type="checkbox" name="{{ key }}" id="{{ key }}" />
               <label for="{{ key }}">
-                {{ subject.name }}
+                {% if subjectType == 'bioreplicate' %}
+                  {{ subject.name }}: {{ measurementContext.compartment.name }}
+                {% else: %}
+                  {{ subject.name }}
+                {% endif %}
               </label>
             </div>
           {% endfor %}

@@ -23,7 +23,7 @@ class StudyChartForm:
         self.db_session = db_session
         self.study      = study
 
-    def build_chart(self, technique_id, args):
+    def build_chart(self, args):
         chart = Chart()
 
         measurement_context_ids = self._extract_args(args)

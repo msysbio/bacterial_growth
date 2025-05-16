@@ -43,26 +43,32 @@ Page('.study-visualize-page', function($page) {
     $form.find('.js-experiment-container').addClass('hidden');
     $form.find(`.js-experiment-container[data-experiment-id="${selectedExperimentId}"]`).removeClass('hidden');
 
-    let selectedTechniqueId          = $form.find('select[name="techniqueId"]:visible').val();
-    let selectedTechniqueSubjectType = $form.find('select[name="techniqueId"]:visible option:selected').data('subjectType');
+    let selectedTechniqueId = $form.
+      find('select[name="techniqueId"]:visible').val();
+    let selectedTechniqueSubjectType = $form.
+      find('select[name="techniqueId"]:visible option:selected').data('subjectType');
 
     $form.find('.js-technique-row').addClass('hidden');
 
     if (selectedTechniqueSubjectType == 'bioreplicate') {
       // Hide bioreplicate select box, show all checkboxes (with bioreplicates)
-      $form.find('select[name="bioreplicateId"]').addClass('hidden');
+      $form.find('select[name="bioreplicateCompartmentId"]').addClass('hidden');
       $form.
         find(`.js-technique-row[data-technique-id="${selectedTechniqueId}"]`).
         removeClass('hidden');
     } else {
       // Show bioreplicate select box, show all checkboxes (with bioreplicates)
-      $form.find('select[name="bioreplicateId"]').removeClass('hidden');
+      $form.find('select[name="bioreplicateCompartmentId"]').removeClass('hidden');
 
-      let selectedBioreplicateId = $form.find('select[name="bioreplicateId"]:visible').val();
+      let selectedBioreplicateCompartmentId = $form.
+        find('select[name="bioreplicateCompartmentId"]:visible').val();
+      let [bioreplicateId, compartmentId] = selectedBioreplicateCompartmentId.split('|');
 
-      $form.
-        find(`.js-technique-row[data-technique-id="${selectedTechniqueId}"][data-bioreplicate-id="${selectedBioreplicateId}"]`).
-        removeClass('hidden');
+      let selector1 = `[data-technique-id="${selectedTechniqueId}"]`;
+      let selector2 = `[data-bioreplicate-id="${bioreplicateId}"]`;
+      let selector3 = `[data-compartment-id="${compartmentId}"]`;
+
+      $form.find(`.js-technique-row${selector1}${selector2}${selector3}`).removeClass('hidden');
     }
 
     let $experiment = $form.find('.experiment');
@@ -74,6 +80,7 @@ Page('.study-visualize-page', function($page) {
     $.ajax({
       url: `/study/${studyId}/visualize/chart?width=${width}`,
       dataType: 'html',
+      method: 'POST',
       data: $form.serializeArray(),
       success: function(response) {
         $chart.html(response);
