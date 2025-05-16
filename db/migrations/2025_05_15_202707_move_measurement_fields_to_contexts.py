@@ -38,6 +38,11 @@ def up(conn):
     conn.execute(sql.text(query))
 
 def down(conn):
+    print("")
+    print("[Warning] This migration deletes measurements, they need to be regenerated")
+    print("")
+    conn.execute(sql.text("DELETE FROM Measurements"))
+
     query = """
         ALTER TABLE Measurements
         DROP contextId,
