@@ -4,19 +4,6 @@ Page('.study-visualize-page', function($page) {
 
   update_chart($form);
 
-  $('.js-chart-form [name=experimentId]').select2({
-    theme: 'custom',
-    width: '100%',
-  });
-  $('.js-chart-form [name=techniqueId]').select2({
-    theme: 'custom',
-    width: '100%',
-  });
-  $('.js-chart-form [name=bioreplicateCompartmentId]').select2({
-    theme: 'custom',
-    width: '100%',
-  });
-
   $page.find('.js-experiment-container').each(function(e) {
     let $container = $(this);
 

@@ -1,64 +1,49 @@
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
+from lib.conversion import convert_measurement_units
+
 PLOTLY_TEMPLATE = 'plotly_white'
+CELL_COUNT_UNITS = ('Cells/mL', 'Cells/μL')
+METABOLITE_UNITS = ('mM', 'μM', 'nM', 'pM', 'g/L')
 
 
 class Chart:
     def __init__(self, time_units):
         self.time_units = time_units
+        self.cell_count_units = 'Cells/mL'
+        self.metabolite_units = 'mM'
+        # self.cfu_count_units = 'CFUs/mL'
 
-        self.data        = []
-        self.units_left  = set()
-        self.units_right = set()
+        self.data_left  = []
+        self.data_right = []
 
-        # TODO (2025-05-17) Set them via args or [multiple units]
-        self.selected_left_units = None
-        self.selected_right_units = None
-
-    def add_df(self, df, units, label, axis):
-        self.data.append((df, label, axis))
-
+    def add_df(self, df, *, units, label, axis, metabolite_mass=None):
         if axis == 'left':
-            self.units_left.add(units)
-            self.selected_left_units = units
+            self.data_left.append((df, units, label, metabolite_mass))
         elif axis == 'right':
-            self.units_right.add(units)
-            self.selected_right_units = units
+            self.data_right.append((df, units, label, metabolite_mass))
         else:
             raise ValueError(f"Unexpected axis: {axis}")
 
     def to_html(self, width=None):
-        # TODO (2025-05-15) value units
         fig = make_subplots(specs=[[{"secondary_y": True}]])
 
-        for (df, label, axis) in self.data:
-            if df['std'].isnull().all():
-                # STD values were blank, don't draw error bars
-                error_y = None
-            else:
-                error_y = go.scatter.ErrorY(array=df['std'])
+        converted_data_left,  left_units_label  = self._convert_units(self.data_left)
+        converted_data_right, right_units_label = self._convert_units(self.data_right)
 
-            scatter_params = dict(
-                x=df['time'],
-                y=df['value'],
-                name=label,
-                error_y=error_y,
-            )
+        for (df, label) in converted_data_left:
+            scatter_params = self._get_scatter_params(df, label)
+            fig.add_trace(go.Scatter(**scatter_params), secondary_y=False)
 
-            if axis == 'left':
-                secondary_y = False
-            elif axis == 'right':
-                scatter_params = dict(**scatter_params, line={'dash': 'dot'})
-                secondary_y = True
-            else:
-                raise ValueError(f"Unexpected axis: {axis}")
+        for (df, label) in converted_data_right:
+            scatter_params = self._get_scatter_params(df, label)
+            scatter_params = dict(**scatter_params, line={'dash': 'dot'})
 
-            fig.add_trace(go.Scatter(**scatter_params), secondary_y=secondary_y)
+            fig.add_trace(go.Scatter(**scatter_params), secondary_y=True)
 
-        # TODO Pick units
-        fig.update_yaxes(title_text=self.selected_left_units, secondary_y=False)
-        fig.update_yaxes(title_text=self.selected_right_units, secondary_y=True)
+        fig.update_yaxes(title_text=left_units_label,  secondary_y=False)
+        fig.update_yaxes(title_text=right_units_label, secondary_y=True)
 
         fig.update_layout(
             template=PLOTLY_TEMPLATE,
@@ -82,4 +67,55 @@ class Chart:
             full_html=False,
             include_plotlyjs=False,
             default_width=(f"{width}px" if width is not None else None)
+        )
+
+    def _convert_units(self, data):
+        if len(data) == 0:
+            return [], None
+
+        converted_units = set()
+
+        converted_data = [(df, label) for (df, _, label, _) in data]
+        if len(data) == 1:
+            return converted_data, data[0][1]
+
+        for (df, units, label, metabolite_mass) in data:
+            if units in CELL_COUNT_UNITS:
+                # Cell counts:
+                new_value = convert_measurement_units(df['value'], units, self.cell_count_units)
+                if new_value is not None:
+                    df['value'] = new_value
+                    df['std'] = convert_measurement_units(df['std'], units, self.cell_count_units)
+                    converted_units.add(self.cell_count_units)
+                else:
+                    converted_units.add(units)
+            elif units in METABOLITE_UNITS:
+                # Metabolites
+                new_value = convert_measurement_units(df['value'], units, self.metabolite_units, mass=metabolite_mass)
+                if new_value is not None:
+                    df['value'] = new_value
+                    df['std'] = convert_measurement_units(df['std'], units, self.metabolite_units)
+                    converted_units.add(self.metabolite_units)
+                else:
+                    converted_units.add(units)
+            else:
+                converted_units.add(units)
+
+        if len(converted_units) > 1 or len(converted_data) == 0:
+            return converted_data, '[mixed units]'
+
+        return converted_data, tuple(converted_units)[0]
+
+    def _get_scatter_params(self, df, label):
+        if df['std'].isnull().all():
+            # STD values were blank, don't draw error bars
+            error_y = None
+        else:
+            error_y = go.scatter.ErrorY(array=df['std'])
+
+        return dict(
+            x=df['time'],
+            y=df['value'],
+            name=label,
+            error_y=error_y,
         )

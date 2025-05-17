@@ -77,7 +77,12 @@ class StudyChartForm:
 
             label = ' '.join(label_parts)
 
-            chart.add_df(df, units=technique.units, label=label, axis=axis)
+            if technique.subjectType == 'metabolite':
+                metabolite_mass = subject.averageMass
+            else:
+                metabolite_mass = None
+
+            chart.add_df(df, units=technique.units, label=label, axis=axis, metabolite_mass=metabolite_mass)
 
         return chart
 
