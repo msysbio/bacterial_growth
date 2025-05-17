@@ -1,4 +1,4 @@
-Page('.upload-page .step-content.step-4.active', function($page4) {
+Page('.upload-page .step-content.step-4.active', function($step4) {
   $step4.find('.js-compartment-section').initAjaxSubform({
     urlParams: { subform_type: 'compartment' },
 
