@@ -97,11 +97,11 @@ class TestMeasurement(DatabaseTest):
 
         glucose_id = self.create_study_metabolite(
             studyId=study_id,
-            metabolite={'metabo_name': 'glucose'},
+            metabolite={'name': 'glucose'},
         ).chebi_id
         trehalose_id = self.create_study_metabolite(
             studyId=study_id,
-            metabolite={'metabo_name': 'trehalose'},
+            metabolite={'name': 'trehalose'},
         ).chebi_id
 
         self.create_measurement_technique(

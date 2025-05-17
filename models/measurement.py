@@ -1,5 +1,5 @@
-from io import StringIO
 import csv
+from io import StringIO
 from decimal import Decimal
 
 import sqlalchemy as sql
@@ -93,13 +93,18 @@ class Measurement(OrmBase):
                     # Create a measurement context only if it doesn't already exist:
                     context_key = (bioreplicate.id, compartment.id, technique.id, subject.id, subject_type)
                     if context_key not in context_cache:
+                        if subject_type == 'metabolite':
+                            subjectId = subject.chebiId
+                        else:
+                            subjectId = subject.id
+
                         context = MeasurementContext(
                             # Relationships:
                             study=study,
                             bioreplicate=bioreplicate,
                             compartment=compartment,
                             # Subject:
-                            subjectId=subject.id,
+                            subjectId=subjectId,
                             subjectType=subject_type,
                             # Technique:
                             techniqueId=technique.id,

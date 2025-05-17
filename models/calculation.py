@@ -79,7 +79,11 @@ class Calculation(OrmBase):
         from models import Metabolite, Strain, Bioreplicate
 
         if self.subjectType == 'metabolite':
-            return db_session.get(Metabolite, self.subjectId)
+            return db_session.scalars(
+                sql.select(Metabolite)
+                .where(Metabolite.chebiId == subjectId)
+                .limit(1)
+            ).one_or_none()
         elif self.subjectType == 'strain':
             return db_session.get(Strain, self.subjectId)
         elif self.subjectType == 'bioreplicate':

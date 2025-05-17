@@ -31,7 +31,7 @@ def insert_from_growth_csv(db_session, study_id, csv_string):
             # Metabolite, fetch chebi id
             # TODO (2025-02-18) Fetch them from MetaboliteForExperiment, get chebi_id through there
             chebi_id = execute_text(db_session, """
-                SELECT chebi_id
+                SELECT chebiId
                 FROM Metabolites
                 WHERE metabo_name = :name
             """, name=column).scalar()

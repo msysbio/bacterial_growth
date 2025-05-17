@@ -66,7 +66,7 @@ def dynamical_query(all_advance_query):
                 metabo = query_dict['value'].strip().lower()
                 where_clause = f"""
                 FROM StudyMetabolites
-                WHERE LOWER(metabo_name) LIKE '%{metabo}%'
+                WHERE LOWER(name) LIKE '%{metabo}%'
                 """
             elif query_dict['option'] == 'chEBI ID':
                 chebi_id = query_dict['value']

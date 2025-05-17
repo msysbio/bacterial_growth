@@ -59,7 +59,7 @@
             <ul>
               {% for metabolite in result.metabolites: %}
                 <li>
-                  <a href="{{ url_for('metabolite_show_page', chebi_id=metabolite.chebi_id) }}">
+                  <a href="{{ url_for('metabolite_show_page', chebiId=metabolite.chebiId) }}">
                     {{ metabolite.name }}
                   </a>
                 </li>

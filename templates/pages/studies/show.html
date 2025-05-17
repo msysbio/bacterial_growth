@@ -121,7 +121,7 @@
                             {{ subject.name }}
                           </a>
                         {% elif technique.subjectType == 'metabolite': %}
-                          <a href="{{ url_for('metabolite_show_page', chebi_id=subject.id) }}">
+                          <a href="{{ url_for('metabolite_show_page', chebiId=subject.id) }}">
                             {{ subject.name }}
                           </a>
                         {% endif %}
@@ -212,7 +212,7 @@
                           {{ subject.name }}
                         </a>
                       {% elif calculation.subjectType == 'metabolite': %}
-                        <a href="{{ url_for('metabolite_show_page', chebi_id=subject.id) }}">
+                        <a href="{{ url_for('metabolite_show_page', chebiId=subject.id) }}">
                           {{ subject.name }}
                         </a>
                       {% endif %}

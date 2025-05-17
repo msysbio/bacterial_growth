@@ -51,7 +51,11 @@ class MeasurementContext(OrmBase):
         from models import Metabolite, Strain, Bioreplicate
 
         if self.subjectType == 'metabolite':
-            return db_session.get(Metabolite, self.subjectId)
+            return db_session.scalars(
+                sql.select(Metabolite)
+                .where(Metabolite.chebiId == self.subjectId)
+                .limit(1)
+            ).one_or_none()
         elif self.subjectType == 'strain':
             return db_session.get(Strain, self.subjectId)
         elif self.subjectType == 'bioreplicate':
@@ -59,17 +63,21 @@ class MeasurementContext(OrmBase):
         else:
             raise ValueError(f"Unknown subject type: {self.subjectType}")
 
+    # TODO (2025-05-17) Maybe remove
     def subject_join(subject_type):
         from models import Metabolite, Strain, Bioreplicate
 
         if subject_type == 'metabolite':
             Subject = Metabolite
+            subject_id_column = Subject.chebiId
         elif subject_type == 'strain':
             Subject = Strain
+            subject_id_column = Subject.id
         elif subject_type == 'bioreplicate':
             Subject = aliased(Bioreplicate)
+            subject_id_column = Subject.id
 
         name = Subject.name.label("subjectName")
-        join = (Subject, MeasurementContext.subjectId == Subject.id)
+        join = (Subject, MeasurementContext.subjectId == subject_id_column)
 
         return (name, join)

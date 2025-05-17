@@ -165,7 +165,7 @@ class SubmissionForm:
 
         return self.db_session.scalars(
             sql.select(Metabolite)
-            .where(Metabolite.chebi_id.in_(metabolites))
+            .where(Metabolite.chebiId.in_(metabolites))
         ).all()
 
     def fetch_all_metabolites(self):
@@ -177,7 +177,7 @@ class SubmissionForm:
 
         return self.db_session.scalars(
             sql.select(Metabolite)
-            .where(Metabolite.chebi_id.in_(ids))
+            .where(Metabolite.chebiId.in_(ids))
         ).all()
 
     def save(self):

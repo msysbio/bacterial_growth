@@ -58,8 +58,8 @@ class DatabaseTest(unittest.TestCase):
     def create_metabolite(self, **params):
         self.metabolite_id = getattr(self, 'metabolite_id', 0) + 1
         params = {
-            'chebi_id':    f"CHEBI:{self.metabolite_id}",
-            'metabo_name': f"Metabolite {self.metabolite_id}",
+            'chebiId': f"CHEBI:{self.metabolite_id}",
+            'name':    f"Metabolite {self.metabolite_id}",
             **params,
         }
 
@@ -168,10 +168,10 @@ class DatabaseTest(unittest.TestCase):
 
     def create_study_metabolite(self, **params):
         study_id = self._get_or_create_dependency(params, 'studyId', 'study')
-        chebi_id = self._get_or_create_dependency(params, 'chebi_id', 'metabolite')
+        chebi_id = self._get_or_create_dependency(params, 'chebiId', ('metabolite', 'chebiId'))
 
         params = {
-            'studyId':  study_id,
+            'studyId': study_id,
             'chebi_id': chebi_id,
             **params,
         }
