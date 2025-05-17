@@ -67,6 +67,9 @@ class MeasurementTechnique(OrmBase):
         back_populates="measurementTechnique"
     )
 
+    def __lt__(self, other):
+        return self.id < other.id
+
     @property
     def short_name(self):
         return TECHNIQUE_SHORT_NAMES[self.type]
@@ -96,17 +99,17 @@ class MeasurementTechnique(OrmBase):
         return self.type not in ('ph', 'metabolite')
 
     def get_bioreplicates(self, db_session):
-        from models import Bioreplicate, Measurement
+        from models import Bioreplicate, MeasurementContext
 
         return db_session.scalars(
             sql.select(Bioreplicate)
             .distinct()
-            .join(Measurement)
-            .where(Measurement.techniqueId == self.id)
+            .join(MeasurementContext)
+            .where(MeasurementContext.techniqueId == self.id)
         ).all()
 
     def get_subjects_for_bioreplicate(self, db_session, bioreplicate):
-        from models import Measurement
+        from models import MeasurementContext, Measurement
 
         match self.subjectType:
             case 'bioreplicate':
@@ -122,11 +125,12 @@ class MeasurementTechnique(OrmBase):
         return db_session.scalars(
             sql.select(subject_class)
             .where(subject_class.id.in_(
-                sql.select(Measurement.subjectId)
+                sql.select(MeasurementContext.subjectId)
+                .join(Measurement)
                 .distinct()
                 .where(
-                    Measurement.techniqueId == self.id,
-                    Measurement.bioreplicateUniqueId == bioreplicate.id,
+                    MeasurementContext.techniqueId == self.id,
+                    MeasurementContext.bioreplicateId == bioreplicate.id,
                     Measurement.value.is_not(None),
                 )
             ))
