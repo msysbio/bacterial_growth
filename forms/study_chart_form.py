@@ -71,7 +71,7 @@ class StudyChartForm:
             if technique.subjectType == 'metabolite':
                 label_parts = [f"<b>{subject.name}</b>"]
             else:
-                label_parts = [f"<b>{technique.short_name}</b>"]
+                label_parts = [technique.short_name]
 
             if technique.subjectType == 'bioreplicate':
                 label_parts.append('of the')
@@ -79,7 +79,7 @@ class StudyChartForm:
                 label_parts.append('community')
             elif technique.subjectType == 'metabolite':
                 label_parts.append('in')
-                label_parts.append(f"<b>{bioreplicate.name}<sub>{compartment.name}</sub></b>")
+                label_parts.append(f"{bioreplicate.name}<sub>{compartment.name}</sub>")
             else:
                 label_parts.append('of')
                 label_parts.append(f"<b>{subject.name}</b>")

@@ -52,12 +52,12 @@
           {% if technique.subjectType == 'metabolite': %}
             <strong>{{ subject.name }}</strong>
           {% else: %}
-            <strong>{{ technique.short_name }}</strong>
+            {{ technique.short_name }}
           {% endif %}
 
           {% if (left_axis and chart.mixed_units_left) or (right_axis and chart.mixed_units_right): %}
             {% if technique.units and technique.units != 'reads': %}
-              (<strong>{{ technique.units }}</strong>)
+              ({{ technique.units }})
             {% endif %}
           {% endif %}
 
@@ -67,12 +67,12 @@
             community
           {% elif technique.subjectType == 'metabolite': %}
             in
-            <strong>{{ bioreplicate.name }}<sub>{{ compartment.name }}</sub></strong>
+            {{ bioreplicate.name }}<sub>{{ compartment.name }}</sub>
           {% else: %}
             of
             <strong>{{ subject.name }}</strong>
             in
-            <strong>{{ bioreplicate.name }}<sub>{{ compartment.name }}</sub></strong>
+            {{ bioreplicate.name }}<sub>{{ compartment.name }}</sub>
           {% endif %}
         </div>
 
