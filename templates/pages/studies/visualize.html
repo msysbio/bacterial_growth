@@ -25,19 +25,6 @@
       <form class="chart-form js-chart-form">
         <div class="columns">
           <div class="controls-column">
-            <div class="form-row">
-              <label>
-                <span>Experiment:</span>
-                <select name="experimentId" class="form-input-blue full">
-                  {% for experiment in study.experiments: %}
-                    <option value="{{ experiment.id }}">
-                      {{ experiment.name }}: {{ experiment.description }}
-                    </option>
-                  {% endfor %}
-                </select>
-              </label>
-            </div>
-
             {{ render_chart_form(chart_form) }}
           </div>
 

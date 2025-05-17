@@ -58,6 +58,24 @@
     }
   }
 
+  .data-controls {
+    border-bottom: 2px solid var(--border-color);
+    padding: 4px 0;
+    margin-bottom: 10px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+
+    .column {
+      display: flex;
+      flex-direction: row;
+    }
+
+    input[type="checkbox"] {
+      margin: 0;
+    }
+  }
+
   .experiment {
     display: flex;
     flex-direction: column;

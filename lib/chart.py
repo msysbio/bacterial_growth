@@ -5,19 +5,41 @@ PLOTLY_TEMPLATE = 'plotly_white'
 
 
 class Chart:
-    def __init__(self):
-        self.data = []
+    def __init__(self, time_units):
+        self.time_units = time_units
 
-    def add_df(self, df, label, axis):
-        self.data.append((label, axis, df))
+        self.data        = []
+        self.units_left  = set()
+        self.units_right = set()
+
+    def add_df(self, df, units, label, axis):
+        self.data.append((df, label, axis))
+
+        if axis == 'left':
+            self.units_left.add(units)
+        elif axis == 'right':
+            self.units_right.add(units)
+        else:
+            raise ValueError(f"Unexpected axis: {axis}")
 
     def to_html(self, width=None):
         # TODO (2025-05-15) time units
         # TODO (2025-05-15) value units
         fig = make_subplots(specs=[[{"secondary_y": True}]])
 
-        for (label, axis, df) in self.data:
-            scatter_params = dict(x=df['time'], y=df['value'], name=label)
+        for (df, label, axis) in self.data:
+            if df['std'].isnull().all():
+                # STD values were blank, don't draw error bars
+                error_y = None
+            else:
+                error_y = go.scatter.ErrorY(array=df['std'])
+
+            scatter_params = dict(
+                x=df['time'],
+                y=df['value'],
+                name=label,
+                error_y=error_y,
+            )
 
             if axis == 'left':
                 secondary_y = False
@@ -33,11 +55,17 @@ class Chart:
             template=PLOTLY_TEMPLATE,
             margin=dict(l=0, r=0, t=60, b=40),
             title=dict(x=0),
+            hovermode='x unified',
             legend=dict(
                 yanchor="bottom",
                 y=1,
                 xanchor="left",
                 x=0,
+            ),
+            xaxis=dict(
+                title=dict(text=f"Time ({self.time_units})"),
+                # TODO: doesn't work for some reason
+                hoverformat=f"Time: %{{x}}{self.time_units}",
             )
         )
 

@@ -2,6 +2,19 @@
 
   {% set study = form.study %}
 
+  <div class="form-row">
+    <label>
+      <span>Experiment:</span>
+      <select name="experimentId" class="form-input-blue full">
+        {% for experiment in study.experiments: %}
+          <option value="{{ experiment.id }}">
+            {{- experiment.name }}: {{ experiment.description -}}
+          </option>
+        {% endfor %}
+      </select>
+    </label>
+  </div>
+
   {% for experiment in study.experiments: %}
     <div class="experiment-container hidden js-experiment-container" data-experiment-id="{{ experiment.id }}">
       <div class="experiment">
@@ -13,7 +26,7 @@
             <select name="techniqueId" class="form-input-blue full">
               {% for technique in study.measurementTechniques: %}
                 <option value="{{ technique.id }}" data-subject-type="{{ technique.subjectType }}">
-                {{ technique.long_name_with_subject_type }}
+                {{- technique.long_name_with_subject_type -}}
                 </option>
               {% endfor %}
             </select>
@@ -27,7 +40,7 @@
             {% for bioreplicate in experiment.bioreplicates: %}
               {% for compartment in experiment.compartments: %}
                 <option value="{{ bioreplicate.id }}|{{ compartment.id }}">
-                {{ bioreplicate.name }}, compartment {{ compartment.name }}
+                {{- bioreplicate.name }}, compartment {{ compartment.name -}}
                 </option>
               {% endfor %}
             {% endfor %}

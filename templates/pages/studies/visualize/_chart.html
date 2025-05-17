@@ -1,20 +1,31 @@
 <div class="chart-container">
-  {% if show_log_toggle: %}
-    {% set identifier = 'apply_log:{}'.format(loop.index0) %}
-    <div>
-      <input
-          type="checkbox"
-          name="{{ identifier }}"
-          id="{{ identifier }}"
-          style="margin-left: 0"
-          {{ 'checked' if request.args[identifier] }} />
-      <label for="{{ identifier}}">
-        Apply log transform
+  {{ chart_html|safe }}
+
+  <div class="data-controls">
+    <div class="column left">
+      <span class="icon icon-left"></span>
+      <label>
+        <input
+            type="checkbox"
+            class="js-log js-log-left"
+            name="log-left"
+            {{ "checked" if chart_form.log_left }} />
+        <span>Log view</span>
       </label>
     </div>
-  {% endif %}
 
-  {{ chart_html|safe }}
+    <div class="column right">
+      <label>
+        <input
+            type="checkbox"
+            class="js-log js-log-right"
+            name="log-right"
+            {{ "checked" if chart_form.log_right }} />
+        <span>Log view</span>
+      </label>
+      <span class="icon icon-right"></span>
+    </div>
+  </div>
 
   <div class="contexts-list">
     {% for measurement_context in chart_form.measurement_contexts: %}
@@ -41,7 +52,7 @@
             <strong>{{ technique.short_name }}</strong>
           {% endif %}
 
-          {% if technique.units: %}
+          {% if technique.units and technique.units != 'reads': %}
             (<strong>{{ technique.units }}</strong>)
           {% endif %}
 

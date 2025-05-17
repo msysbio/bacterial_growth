@@ -30,7 +30,7 @@ class StudyChartForm:
         self.right_axis_ids = set()
 
     def build_chart(self, args):
-        chart = Chart()
+        chart = Chart(time_units=self.study.timeUnits)
         self._extract_args(args)
 
         self.measurement_contexts = self.db_session.scalars(
@@ -39,7 +39,16 @@ class StudyChartForm:
         ).all()
 
         for measurement_context in self.measurement_contexts:
+            if measurement_context.id in self.right_axis_ids:
+                axis = 'right'
+                log_transform = self.log_right
+            else:
+                axis = 'left'
+                log_transform = self.log_left
+
             df = self.get_df(measurement_context.id)
+            if log_transform:
+                self._log_transform(df)
 
             subject      = measurement_context.get_subject(self.db_session)
             technique    = measurement_context.technique
@@ -50,7 +59,7 @@ class StudyChartForm:
                 label_parts = [f"<b>{subject.name}</b>"]
             else:
                 label_parts = [f"<b>{technique.short_name}</b>"]
-            if technique.units:
+            if technique.units and technique.units != 'reads':
                 label_parts.append(f"(<b>{technique.units}</b>)")
 
             if technique.subjectType == 'bioreplicate':
@@ -67,16 +76,19 @@ class StudyChartForm:
                 label_parts.append(f"{bioreplicate.name}<sub>{compartment.name}</sub>")
 
             label = ' '.join(label_parts)
-            axis = 'right' if measurement_context.id in self.right_axis_ids else 'left'
 
-            chart.add_df(df, label=label, axis=axis)
+            chart.add_df(df, units=technique.units, label=label, axis=axis)
 
         return chart
 
     def _extract_args(self, args):
         self.measurement_context_ids = []
-        self.left_axis_ids = set()
+
+        self.left_axis_ids  = set()
         self.right_axis_ids = set()
+
+        self.log_left  = False
+        self.log_right = False
 
         for arg, value in args.items():
             if arg.startswith('measurementContext|'):
@@ -96,6 +108,11 @@ class StudyChartForm:
                 else:
                     raise ValueError(f"Unexpected axis: {value}")
 
+            elif arg == 'log-left':
+                self.log_left = True
+            elif arg == 'log-right':
+                self.log_right = True
+
     def get_df(self, measurement_context_id):
         query = (
             sql.select(
@@ -112,6 +129,17 @@ class StudyChartForm:
         )
 
         return execute_into_df(self.db_session, query)
+
+    def _log_transform(self, df):
+        if not df['std'].isnull().all():
+            # Transform std values by summing them and transforming the results:
+            with np.errstate(divide='ignore'):
+                upper_log = np.log(df['value'] + df['std'])
+                lower_log = np.log(df['value'] - df['std'])
+                df['std'] = upper_log - lower_log
+
+        with np.errstate(divide='ignore'):
+            df['value'] = np.log(df['value'])
 
     def _transform_values(self, df, *, log=False):
         value_label = 'Cells/mL'
