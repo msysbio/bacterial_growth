@@ -16,7 +16,9 @@
   </div>
 
   {% for experiment in study.experiments: %}
-    <div class="experiment-container hidden js-experiment-container" data-experiment-id="{{ experiment.id }}">
+    <div
+        class="experiment-container hidden js-experiment-container"
+        data-experiment-id="{{ experiment.id }}">
       <div class="experiment">
         <p>{{ experiment.description }}</p>
 
@@ -33,7 +35,7 @@
           </label>
         </div>
 
-        <div class="form-row js-bioreplicate-row">
+        <div class="form-row hidden js-bioreplicate-row">
           <label class="full">
           <span>Bioreplicate and compartment:</span>
           <select name="bioreplicateCompartmentId" class="form-input-blue full">
@@ -46,6 +48,8 @@
             {% endfor %}
           </select>
         </div>
+
+        <br>
 
         {% for measurementContext in experiment.measurementContexts if measurementContext.has_measurements(): %}
           {% set subjectType = measurementContext.subjectType %}
@@ -69,7 +73,7 @@
           </div>
         {% endfor %}
 
-        <div class="form-row">
+        <div class="form-row margin-top-10">
           <a href="#" class="white-button clear-chart js-clear-chart">Clear</a>
         </div>
       </div>
