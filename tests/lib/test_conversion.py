@@ -1,9 +1,73 @@
+from decimal import Decimal
 import unittest
 
-from lib.conversion import convert_time
+from lib.conversion import (
+    convert_time,
+    convert_measurement_units,
+)
 
 
 class TestConversion(unittest.TestCase):
+    def test_cell_concentration_conversion(self):
+        left, right, units = convert_measurement_units(2, 'Cells/μL', 3000, 'Cells/mL')
+        self.assertEqual(units, 'Cells/mL')
+        self.assertEqual(left, 2000)
+        self.assertEqual(right, 3000)
+
+        left, right, units = convert_measurement_units(4000, 'Cells/mL', 1, 'Cells/μL')
+        self.assertEqual(units, 'Cells/mL')
+        self.assertEqual(left, 4000)
+        self.assertEqual(right, 1000)
+
+        left, right, units = convert_measurement_units(2000, 'Cells/mL', 2500, 'Cells/mL')
+        self.assertEqual(units, 'Cells/mL')
+        self.assertEqual(left, 2000)
+        self.assertEqual(right, 2500)
+
+        left, right, units = convert_measurement_units(2000, 'Cells/μL', Decimal('7.4'), 'pH')
+        # Values are unchanged, no units returned
+        self.assertEqual(left, 2000)
+        self.assertEqual(right, Decimal('7.4'))
+        self.assertIsNone(units)
+
+    def test_simple_metabolite_conversion(self):
+        left, right, units = convert_measurement_units(2000, 'μM', 3, 'mM')
+        self.assertEqual(units, 'μM')
+        self.assertEqual(left, 2000)
+        self.assertEqual(right, 3000)
+
+        left, right, units = convert_measurement_units(4, 'nM', 1000, 'pM')
+        self.assertEqual(units, 'pM')
+        self.assertEqual(left, 4000)
+        self.assertEqual(right, 1000)
+
+        left, right, units = convert_measurement_units(4, 'mM', 1_000_000_000, 'pM')
+        self.assertEqual(units, 'pM')
+        self.assertEqual(left, 4_000_000_000)
+        self.assertEqual(right, 1_000_000_000)
+
+    def test_metabolite_conversion_between_mass_and_concentration(self):
+        mass = 50
+        left, right, units = convert_measurement_units(200, 'g/L', 3000, 'mM', mass=mass)
+
+        self.assertEqual(units, 'mM')
+        self.assertEqual(left, 4000)
+        self.assertEqual(right, 3000)
+
+        mass = 100
+        left, right, units = convert_measurement_units(4000, 'mM', 300, 'g/L', mass=mass)
+
+        self.assertEqual(units, 'mM')
+        self.assertEqual(left, 4000)
+        self.assertEqual(right, 3000)
+
+        # Can't convert g/L without a mass
+        with self.assertRaises(ValueError):
+            convert_measurement_units(200, 'g/L', 3000, 'mM')
+        with self.assertRaises(ValueError):
+            convert_measurement_units(3000, 'mM', 200, 'g/L')
+
+
     def test_time_conversion_to_the_same_unit(self):
         for t in (1, 0.3, 100.0, 0.5):
             for unit in ('d', 'h', 'm', 's'):
