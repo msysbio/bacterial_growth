@@ -30,7 +30,9 @@
                 <span>Experiment:</span>
                 <select name="experimentId" class="form-input-blue full">
                   {% for experiment in study.experiments: %}
-                    <option value="{{ experiment.id }}">{{ experiment.name }}</option>
+                    <option value="{{ experiment.id }}">
+                      {{ experiment.name }}: {{ experiment.description }}
+                    </option>
                   {% endfor %}
                 </select>
               </label>

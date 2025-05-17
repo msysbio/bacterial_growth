@@ -4,6 +4,19 @@ Page('.study-visualize-page', function($page) {
 
   update_chart($form);
 
+  $('.js-chart-form [name=experimentId]').select2({
+    theme: 'custom',
+    width: '100%',
+  });
+  $('.js-chart-form [name=techniqueId]').select2({
+    theme: 'custom',
+    width: '100%',
+  });
+  $('.js-chart-form [name=bioreplicateCompartmentId]').select2({
+    theme: 'custom',
+    width: '100%',
+  });
+
   $page.find('.js-experiment-container').each(function(e) {
     let $container = $(this);
 
@@ -45,14 +58,14 @@ Page('.study-visualize-page', function($page) {
     update_chart($form);
   });
 
-  $page.on('click', '.clear-chart', function(e) {
+  $page.on('click', '.js-clear-chart', function(e) {
     e.preventDefault();
 
     let $link = $(e.currentTarget);
-    let $container = $link.parents('.js-experiment-container');
-    $container.find('input[type=checkbox]').prop('checked', false);
+    let $form = $link.parents('form');
+    $form.find('input[type=checkbox]').prop('checked', false);
 
-    update_chart($container.find('form'))
+    update_chart($form)
   });
 
   function update_chart($form) {

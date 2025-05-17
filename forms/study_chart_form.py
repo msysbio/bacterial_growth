@@ -39,11 +39,34 @@ class StudyChartForm:
         ).all()
 
         for measurement_context in self.measurement_contexts:
-            df        = self.get_df(measurement_context.id)
-            subject   = measurement_context.get_subject(self.db_session)
-            technique = measurement_context.technique
+            df = self.get_df(measurement_context.id)
 
-            label = f"{subject.name} {technique.short_name}"
+            subject      = measurement_context.get_subject(self.db_session)
+            technique    = measurement_context.technique
+            bioreplicate = measurement_context.bioreplicate
+            compartment  = measurement_context.compartment
+
+            if technique.subjectType == 'metabolite':
+                label_parts = [f"<b>{subject.name}</b>"]
+            else:
+                label_parts = [f"<b>{technique.short_name}</b>"]
+            if technique.units:
+                label_parts.append(f"(<b>{technique.units}</b>)")
+
+            if technique.subjectType == 'bioreplicate':
+                label_parts.append('of the')
+                label_parts.append(f"<b>{subject.name}<sub>{compartment.name}</sub></b>")
+                label_parts.append('community')
+            elif technique.subjectType == 'metabolite':
+                label_parts.append('in')
+                label_parts.append(f"<b>{bioreplicate.name}<sub>{compartment.name}</sub></b>")
+            else:
+                label_parts.append('of')
+                label_parts.append(f"<b>{subject.name}</b>")
+                label_parts.append('in')
+                label_parts.append(f"{bioreplicate.name}<sub>{compartment.name}</sub>")
+
+            label = ' '.join(label_parts)
             axis = 'right' if measurement_context.id in self.right_axis_ids else 'left'
 
             chart.add_df(df, label=label, axis=axis)
@@ -68,7 +91,7 @@ class StudyChartForm:
                     # Left axis by default
                     pass
                 elif value == 'right':
-                    self.left_axis_ids.remove(context_id)
+                    self.left_axis_ids.discard(context_id)
                     self.right_axis_ids.add(context_id)
                 else:
                     raise ValueError(f"Unexpected axis: {value}")

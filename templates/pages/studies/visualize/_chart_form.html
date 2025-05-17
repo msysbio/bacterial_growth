@@ -27,7 +27,7 @@
             {% for bioreplicate in experiment.bioreplicates: %}
               {% for compartment in experiment.compartments: %}
                 <option value="{{ bioreplicate.id }}|{{ compartment.id }}">
-                  {{ bioreplicate.name }}: {{ compartment.name }}
+                {{ bioreplicate.name }}, compartment {{ compartment.name }}
                 </option>
               {% endfor %}
             {% endfor %}
@@ -48,7 +48,7 @@
             <input type="checkbox" name="{{ key }}" id="{{ key }}" />
             <label for="{{ key }}">
               {% if subjectType == 'bioreplicate' %}
-                {{ subject.name }}: {{ measurementContext.compartment.name }}
+                {{ subject.name }}<sub>{{ measurementContext.compartment.name }}</sub>
               {% else: %}
                 {{ subject.name }}
               {% endif %}
@@ -57,7 +57,7 @@
         {% endfor %}
 
         <div class="form-row">
-          <a href="#" class="white-button clear-chart">Clear</a>
+          <a href="#" class="white-button clear-chart js-clear-chart">Clear</a>
         </div>
       </div>
     </div>

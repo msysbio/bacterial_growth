@@ -16,51 +16,60 @@
 
   {{ chart_html|safe }}
 
-  <div class="data-container">
-    <div class="table-container">
-      <table class="dataframe-table targets-table">
-        <tr>
-          <th>⬅</th>
-          <th>Bioreplicate: Compartment</th>
-          <th>Subject name</th>
-          <th>Technique</th>
-          <th>➡</th>
-        </tr>
+  <div class="contexts-list">
+    {% for measurement_context in chart_form.measurement_contexts: %}
+      {% set bioreplicate = measurement_context.bioreplicate %}
+      {% set compartment  = measurement_context.compartment %}
+      {% set technique    = measurement_context.technique %}
+      {% set subject      = measurement_context.get_subject(g.db_session) %}
 
-        {% for measurement_context in chart_form.measurement_contexts: %}
-          {% set bioreplicate = measurement_context.bioreplicate %}
-          {% set compartment  = measurement_context.compartment %}
-          {% set technique    = measurement_context.technique %}
-          {% set subject      = measurement_context.get_subject(g.db_session) %}
+      <div class="flex-row context-row js-row" data-context-id="{{ measurement_context.id }}">
+        <div class="left flex-row" data-tooltip="Move data trace to the left axis">
+          <span class="icon icon-left"></span>
+          <input
+              type="checkbox"
+              class="js-axis js-axis-left"
+              name="axis|{{ measurement_context.id }}"
+              {{ "checked" if measurement_context.id in chart_form.left_axis_ids }}
+              value="left" />
+        </div>
 
-          <tr class="js-row" data-context-id="{{ measurement_context.id }}">
-            <td>
-              <input
-                  type="checkbox"
-                  class="js-axis js-axis-left"
-                  name="axis|{{ measurement_context.id }}"
-                  {{ "checked" if measurement_context.id in chart_form.left_axis_ids }}
-                  value="left" />
-            </td>
-            <td>{{ bioreplicate.name }}: {{ compartment.name }}</td>
-            <td>{{ technique.subjectType }}: {{ subject.name }}</td>
-            <td>
-              {{ technique.short_name }}
-              {% if technique.units: %}
-                in {{ technique.units }}
-              {% endif %}
-            </td>
-            <td>
-              <input
-                  type="checkbox"
-                  class="js-axis js-axis-right"
-                  name="axis|{{ measurement_context.id }}"
-                  {{ "checked" if measurement_context.id in chart_form.right_axis_ids }}
-                  value="right" />
-            </td>
-          </tr>
-        {% endfor %}
-      </table>
-    </div>
+        <div class="middle {{ "align-right" if measurement_context.id in chart_form.right_axis_ids }}">
+          {% if technique.subjectType == 'metabolite': %}
+            <strong>{{ subject.name }}</strong>
+          {% else: %}
+            <strong>{{ technique.short_name }}</strong>
+          {% endif %}
+
+          {% if technique.units: %}
+            (<strong>{{ technique.units }}</strong>)
+          {% endif %}
+
+          {% if technique.subjectType == 'bioreplicate' %}
+            of the
+            <strong>{{ subject.name }}<sub>{{ compartment.name }}</sub></strong>
+            community
+          {% elif technique.subjectType == 'metabolite': %}
+            in
+            <strong>{{ bioreplicate.name }}<sub>{{ compartment.name }}</sub></strong>
+          {% else: %}
+            of
+            <strong>{{ subject.name }}</strong>
+            in
+            <strong>{{ bioreplicate.name }}<sub>{{ compartment.name }}</sub></strong>
+          {% endif %}
+        </div>
+
+        <div class="flex-row right" data-tooltip="Move data trace to the right axis">
+          <input
+              type="checkbox"
+              class="js-axis js-axis-right"
+              name="axis|{{ measurement_context.id }}"
+              {{ "checked" if measurement_context.id in chart_form.right_axis_ids }}
+              value="right" />
+          <span class="icon icon-right"></span>
+        </div>
+      </div>
+    {% endfor %}
   </div>
 </div>
