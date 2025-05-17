@@ -87,7 +87,7 @@ class Chart:
             xaxis=dict(
                 title=dict(text=f"Time ({self.time_units})"),
                 # TODO: doesn't work for some reason
-                hoverformat=f"Time: %{{x}}{self.time_units}",
+                # hoverformat=f"Time: %{{x}}{self.time_units}",
             )
         )
 

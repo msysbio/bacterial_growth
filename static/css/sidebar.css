@@ -25,6 +25,12 @@
     padding-right: 10px;
     color: rgba(7, 25, 82, 0.6);
     font-weight: 400;
+    transition: background-color var(--transition-length) ease;
+
+    .count {
+      margin-left: 4px;
+      color: rgba(7, 25, 82, 0.6);
+    }
 
     &:visited {
       color: inherit;
@@ -32,6 +38,10 @@
 
     &:hover {
       background-color: var(--sidebar-hover-color);
+    }
+
+    &.highlight {
+      background-color: #def440;
     }
 
     .emoji-icon {

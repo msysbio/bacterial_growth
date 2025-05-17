@@ -2,7 +2,7 @@ Page('.study-visualize-page', function($page) {
   let studyId = $page.data('studyId')
   let $form   = $page.find('.js-chart-form');
 
-  update_chart($form);
+  updateChart($form);
 
   $page.find('.js-experiment-container').each(function(e) {
     let $container = $(this);
@@ -42,7 +42,7 @@ Page('.study-visualize-page', function($page) {
 
   $page.on('change', 'form.js-chart-form', function(e) {
     let $form = $(e.currentTarget);
-    update_chart($form);
+    updateChart($form);
   });
 
   $page.on('click', '.js-select-all', function(e) {
@@ -52,7 +52,7 @@ Page('.study-visualize-page', function($page) {
     let $form = $link.parents('form');
     $form.find('input[type=checkbox].js-measurement-toggle:visible').prop('checked', true);
 
-    update_chart($form)
+    updateChart($form)
   });
 
   $page.on('click', '.js-clear-chart', function(e) {
@@ -62,10 +62,36 @@ Page('.study-visualize-page', function($page) {
     let $form = $link.parents('form');
     $form.find('input[type=checkbox]').prop('checked', false);
 
-    update_chart($form)
+    updateChart($form)
   });
 
-  function update_chart($form) {
+  $page.on('click', '.js-compare', function(e) {
+    e.preventDefault();
+
+    let contextIds = [];
+    $('.js-contexts-list [data-context-id]').each(function() {
+      contextIds.push($(this).data('contextId'));
+    });
+
+    updateCompareData('add', contextIds, function(compareData) {
+      let countText;
+      if (compareData.contextCount > 0) {
+        countText = `(${compareData.contextCount})`;
+      } else {
+        countText = '';
+      }
+
+      let $sidebarCompareItem = $(document).find('.js-sidebar-compare');
+      $sidebarCompareItem.find('.js-count').html(countText);
+
+      $sidebarCompareItem.addClass('highlight');
+      setTimeout(function() {
+        $sidebarCompareItem.removeClass('highlight');
+      }, 500);
+    });
+  });
+
+  function updateChart($form) {
     let selectedExperimentId = $form.find('select[name="experimentId"]:visible').val();
 
     $form.find('.js-experiment-container').addClass('hidden');
@@ -113,6 +139,20 @@ Page('.study-visualize-page', function($page) {
         $chart.html(response);
         $(document).scrollTop(scrollPosition);
       }
+    })
+  }
+
+  function updateCompareData(action, contexts, successCallback) {
+    $.ajax({
+      type: 'POST',
+      url: `/comparison/update/${action}.json`,
+      data: JSON.stringify({'contexts': contexts}),
+      cache: false,
+      contentType: 'application/json',
+      processData: true,
+      success: function(response) {
+        successCallback(JSON.parse(response))
+      },
     })
   }
 });

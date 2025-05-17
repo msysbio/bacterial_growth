@@ -27,7 +27,7 @@
     </div>
   </div>
 
-  <div class="contexts-list">
+  <div class="contexts-list js-contexts-list">
     {% for measurement_context in chart_form.measurement_contexts: %}
       {% set bioreplicate = measurement_context.bioreplicate %}
       {% set compartment  = measurement_context.compartment %}
@@ -87,5 +87,13 @@
         </div>
       </div>
     {% endfor %}
+  </div>
+
+  <br>
+
+  <div class="flex-row margin-top-10">
+    <a href="#" class="green-button flex-right js-compare">
+      Compare across studies
+    </a>
   </div>
 </div>

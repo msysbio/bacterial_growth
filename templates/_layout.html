@@ -49,6 +49,17 @@
             </a>
           </li>
           <li>
+            <a href="{{ url_for('comparison_show_page') }}" class="js-sidebar-compare">
+              <div class="emoji-icon">↔</div>
+              Compare
+              <span class="js-count count">
+                {% if 'compareData' in session and session['compareData'].get('contexts', [])|length > 0 %}
+                  ({{ session['compareData']['contexts']|length }})
+                {% endif %}
+              </span>
+            </a>
+          </li>
+          <li>
             <a href="{{ url_for('user_show_page') }}">
               <div class="emoji-icon">🧑‍🔬</div>
               Profile

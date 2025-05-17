@@ -45,20 +45,21 @@ def comparison_show_page():
 
 def comparison_update_json(action):
     compare_data = _init_compare_data()
-    target       = request.json['target']
-    target_set   = set(compare_data['targets'])
+    contexts     = request.json['contexts']
+    context_set  = set(compare_data['contexts'])
 
-    if action == 'add':
-        target_set.add(target)
-    elif action == 'remove':
-        target_set.remove(target)
-    else:
-        raise ValueError(f"Unexpected action: {action}")
+    for context in contexts:
+        if action == 'add':
+            context_set.add(context)
+        elif action == 'remove':
+            context_set.discard(context)
+        else:
+            raise ValueError(f"Unexpected action: {action}")
 
-    compare_data['targets'] = list(target_set)
+    compare_data['contexts'] = list(context_set)
     session['compareData'] = compare_data
 
-    return json.dumps({'targetCount': len(compare_data['targets'])})
+    return json.dumps({'contextCount': len(compare_data['contexts'])})
 
 
 def comparison_clear_action():
@@ -114,4 +115,9 @@ def comparison_chart_fragment():
 
 
 def _init_compare_data():
-    return session.get('compareData', {'targets': []})
+    data = session.get('compareData', {})
+
+    if 'contexts' not in data:
+        data['contexts'] = []
+
+    return data
