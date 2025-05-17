@@ -9,14 +9,21 @@ METABOLITE_UNITS = ('mM', 'μM', 'nM', 'pM', 'g/L')
 
 
 class Chart:
-    def __init__(self, time_units):
+    def __init__(self, time_units, log_left=False, log_right=False, width=None):
         self.time_units = time_units
         self.cell_count_units = 'Cells/mL'
         self.metabolite_units = 'mM'
         # self.cfu_count_units = 'CFUs/mL'
+        self.width = width
+
+        self.log_left  = log_left
+        self.log_right = log_right
 
         self.data_left  = []
         self.data_right = []
+
+        self.mixed_units_left  = False
+        self.mixed_units_right = False
 
     def add_df(self, df, *, units, label, axis, metabolite_mass=None):
         if axis == 'left':
@@ -26,11 +33,21 @@ class Chart:
         else:
             raise ValueError(f"Unexpected axis: {axis}")
 
-    def to_html(self, width=None):
+    def to_html(self):
         fig = make_subplots(specs=[[{"secondary_y": True}]])
 
         converted_data_left,  left_units_label  = self._convert_units(self.data_left)
         converted_data_right, right_units_label = self._convert_units(self.data_right)
+
+        if left_units_label == '[mixed units]':
+            self.mixed_units_left = True
+        if right_units_label == '[mixed units]':
+            self.mixed_units_right = True
+
+        if self.log_left:
+            left_units_label = f"log({left_units_label})"
+        if self.log_right:
+            right_units_label = f"log({right_units_label})"
 
         for (df, label) in converted_data_left:
             scatter_params = self._get_scatter_params(df, label)
@@ -66,7 +83,7 @@ class Chart:
         return fig.to_html(
             full_html=False,
             include_plotlyjs=False,
-            default_width=(f"{width}px" if width is not None else None)
+            default_width=(f"{self.width}px" if self.width is not None else None)
         )
 
     def _convert_units(self, data):

@@ -121,14 +121,12 @@ def study_chart_fragment(studyId):
     show_log_toggle = False
 
     chart_form = StudyChartForm(g.db_session, study)
-    chart_html = chart_form.build_chart(args).to_html(
-        width=f"{width}px",
-    )
+    chart = chart_form.build_chart(args, width)
 
     return render_template(
         'pages/studies/visualize/_chart.html',
         chart_form=chart_form,
-        chart_html=chart_html,
+        chart=chart,
     )
 
 

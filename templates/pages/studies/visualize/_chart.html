@@ -1,5 +1,5 @@
 <div class="chart-container">
-  {{ chart_html|safe }}
+  {{ chart.to_html()|safe }}
 
   <div class="data-controls">
     <div class="column left">
@@ -45,15 +45,20 @@
               value="left" />
         </div>
 
-        <div class="middle {{ "align-right" if measurement_context.id in chart_form.right_axis_ids }}">
+        {% set right_axis = True if measurement_context.id in chart_form.right_axis_ids else False %}
+        {% set left_axis = not right_axis %}
+
+        <div class="middle {{ "align-right" if right_axis }}">
           {% if technique.subjectType == 'metabolite': %}
             <strong>{{ subject.name }}</strong>
           {% else: %}
             <strong>{{ technique.short_name }}</strong>
           {% endif %}
 
-          {% if technique.units and technique.units != 'reads': %}
-            (<strong>{{ technique.units }}</strong>)
+          {% if (left_axis and chart.mixed_units_left) or (right_axis and chart.mixed_units_right): %}
+            {% if technique.units and technique.units != 'reads': %}
+              (<strong>{{ technique.units }}</strong>)
+            {% endif %}
           {% endif %}
 
           {% if technique.subjectType == 'bioreplicate' %}

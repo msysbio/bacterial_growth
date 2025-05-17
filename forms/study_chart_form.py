@@ -29,9 +29,15 @@ class StudyChartForm:
         self.left_axis_ids  = set()
         self.right_axis_ids = set()
 
-    def build_chart(self, args):
-        chart = Chart(time_units=self.study.timeUnits)
+    def build_chart(self, args, width):
         self._extract_args(args)
+
+        chart = Chart(
+            time_units=self.study.timeUnits,
+            log_left=self.log_left,
+            log_right=self.log_right,
+            width=width,
+        )
 
         self.measurement_contexts = self.db_session.scalars(
             sql.select(MeasurementContext)
@@ -59,8 +65,6 @@ class StudyChartForm:
                 label_parts = [f"<b>{subject.name}</b>"]
             else:
                 label_parts = [f"<b>{technique.short_name}</b>"]
-            if technique.units and technique.units != 'reads':
-                label_parts.append(f"(<b>{technique.units}</b>)")
 
             if technique.subjectType == 'bioreplicate':
                 label_parts.append('of the')
@@ -82,7 +86,13 @@ class StudyChartForm:
             else:
                 metabolite_mass = None
 
-            chart.add_df(df, units=technique.units, label=label, axis=axis, metabolite_mass=metabolite_mass)
+            chart.add_df(
+                df,
+                units=technique.units,
+                label=label,
+                axis=axis,
+                metabolite_mass=metabolite_mass,
+            )
 
         return chart
 
@@ -145,23 +155,3 @@ class StudyChartForm:
 
         with np.errstate(divide='ignore'):
             df['value'] = np.log(df['value'])
-
-    def _transform_values(self, df, *, log=False):
-        value_label = 'Cells/mL'
-        value_std = None
-
-        if log:
-            value_label = 'log(Cells)/mL'
-
-            # If we have 0 values, we'll get NaNs, which is okay for
-            # rendering purposes, so we ignore the error:
-            with np.errstate(divide='ignore'):
-                df['value'] = np.log10(df['value'])
-        else:
-            value_std = df['std']
-
-            if value_std.isnull().all():
-                # STD values were blank, don't draw error bars
-                value_std = None
-
-        return value_label, value_std
