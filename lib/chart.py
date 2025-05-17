@@ -12,18 +12,23 @@ class Chart:
         self.units_left  = set()
         self.units_right = set()
 
+        # TODO (2025-05-17) Set them via args or [multiple units]
+        self.selected_left_units = None
+        self.selected_right_units = None
+
     def add_df(self, df, units, label, axis):
         self.data.append((df, label, axis))
 
         if axis == 'left':
             self.units_left.add(units)
+            self.selected_left_units = units
         elif axis == 'right':
             self.units_right.add(units)
+            self.selected_right_units = units
         else:
             raise ValueError(f"Unexpected axis: {axis}")
 
     def to_html(self, width=None):
-        # TODO (2025-05-15) time units
         # TODO (2025-05-15) value units
         fig = make_subplots(specs=[[{"secondary_y": True}]])
 
@@ -50,6 +55,10 @@ class Chart:
                 raise ValueError(f"Unexpected axis: {axis}")
 
             fig.add_trace(go.Scatter(**scatter_params), secondary_y=secondary_y)
+
+        # TODO Pick units
+        fig.update_yaxes(title_text=self.selected_left_units, secondary_y=False)
+        fig.update_yaxes(title_text=self.selected_right_units, secondary_y=True)
 
         fig.update_layout(
             template=PLOTLY_TEMPLATE,
