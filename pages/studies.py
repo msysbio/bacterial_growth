@@ -126,7 +126,7 @@ def study_chart_fragment(studyId):
     )
 
     return render_template(
-        'pages/studies/_chart.html',
+        'pages/studies/visualize/_chart.html',
         chart_form=chart_form,
         chart_html=chart_html,
     )
@@ -267,7 +267,7 @@ def study_calculations_edit_fragment(studyId):
     )
 
     return render_template(
-        'pages/studies/_calculation_result.html',
+        'pages/studies/manage/_calculation_result.html',
         calculation=calculation,
         fig_htmls=[fig_html],
     )
