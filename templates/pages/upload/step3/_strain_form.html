@@ -59,6 +59,15 @@
             </option>
           </optgroup>
 
+          <optgroup label="CFUs per volume">
+            <option value="CFUs/mL" {{ "selected" if data['units'] == 'CFUs/mL' }}>
+              CFUs/mL
+            </option>
+            <option value="CFUs/μL" {{ "selected" if data['units'] == 'CFUs/μL' }}>
+              CFUs/μL
+            </option>
+          </optgroup>
+
           <optgroup label="Indirect measurements">
             <option value="reads" {{ "selected" if data['units'] == 'reads' }}>
               Reads

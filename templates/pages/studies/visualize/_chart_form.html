@@ -62,7 +62,7 @@
               data-technique-id="{{ measurementContext.techniqueId }}"
               data-bioreplicate-id="{{ measurementContext.bioreplicateId }}"
               data-compartment-id="{{ measurementContext.compartmentId }}">
-            <input type="checkbox" name="{{ key }}" id="{{ key }}" />
+            <input type="checkbox" name="{{ key }}" id="{{ key }}" class="js-measurement-toggle" />
             <label for="{{ key }}">
               {% if subjectType == 'bioreplicate' %}
                 {{ subject.name }}<sub>{{ measurementContext.compartment.name }}</sub>
@@ -74,7 +74,45 @@
         {% endfor %}
 
         <div class="form-row margin-top-10">
-          <a href="#" class="white-button clear-chart js-clear-chart">Clear</a>
+          <a href="#" class="white-button js-select-all">Select all</a>
+          <a href="#" class="white-button flex-right js-clear-chart">Clear</a>
+        </div>
+
+        <div class="form-row">
+          <label class="full">
+            <span>Cell count units:</span>
+            <select name="cellCountUnits" class="form-input-blue full">
+              <option>Cells/mL</option>
+              <option>Cells/μL</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="form-row">
+          <label class="full">
+            <span>CFU count units</span>
+            <select name="cfuCountUnits" class="form-input-blue full">
+              <option>CFUs/mL</option>
+              <option>CFUs/μL</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="form-row">
+          <label class="full">
+            <span>Metabolite units:</span>
+            <select name="metaboliteUnits" class="form-input-blue full">
+              <optgroup label="Molar concentration">
+                <option value="mM">Milimolars (mM)</option>
+                <option value="μM">Micromolars (μM)</option>
+                <option value="nM">Nanomolars (nM)</option>
+                <option value="pM">Picomolars (pM)</option>
+              </optgroup>
+              <optgroup label="Mass concentration">
+                <option value="g/L">Grams per Liter (g/L)</option>
+              </optgroup>
+            </select>
+          </label>
         </div>
       </div>
     </div>

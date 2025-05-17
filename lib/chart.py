@@ -4,17 +4,28 @@ from plotly.subplots import make_subplots
 from lib.conversion import convert_measurement_units
 
 PLOTLY_TEMPLATE = 'plotly_white'
+
 CELL_COUNT_UNITS = ('Cells/mL', 'Cells/μL')
+CFU_COUNT_UNITS  = ('CFUs/mL', 'CFUs/μL')
 METABOLITE_UNITS = ('mM', 'μM', 'nM', 'pM', 'g/L')
 
 
 class Chart:
-    def __init__(self, time_units, log_left=False, log_right=False, width=None):
-        self.time_units = time_units
-        self.cell_count_units = 'Cells/mL'
-        self.metabolite_units = 'mM'
-        # self.cfu_count_units = 'CFUs/mL'
-        self.width = width
+    def __init__(
+        self,
+        time_units,
+        cell_count_units='Cells/mL',
+        cfu_count_units='CFUs/mL',
+        metabolite_units='mM',
+        log_left=False,
+        log_right=False,
+        width=None,
+    ):
+        self.time_units       = time_units
+        self.cell_count_units = cell_count_units
+        self.cfu_count_units  = cfu_count_units
+        self.metabolite_units = metabolite_units
+        self.width            = width
 
         self.log_left  = log_left
         self.log_right = log_right
@@ -103,6 +114,15 @@ class Chart:
                 if new_value is not None:
                     df['value'] = new_value
                     df['std'] = convert_measurement_units(df['std'], units, self.cell_count_units)
+                    converted_units.add(self.cell_count_units)
+                else:
+                    converted_units.add(units)
+            elif units in CFU_COUNT_UNITS:
+                # CFU counts:
+                new_value = convert_measurement_units(df['value'], units, self.cfu_count_units)
+                if new_value is not None:
+                    df['value'] = new_value
+                    df['std'] = convert_measurement_units(df['std'], units, self.cfu_count_units)
                     converted_units.add(self.cell_count_units)
                 else:
                     converted_units.add(units)

@@ -118,7 +118,6 @@ def study_chart_fragment(studyId):
     args = request.form.to_dict()
 
     width = request.args.get('width', None)
-    show_log_toggle = False
 
     chart_form = StudyChartForm(g.db_session, study)
     chart = chart_form.build_chart(args, width)

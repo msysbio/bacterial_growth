@@ -29,11 +29,18 @@ class StudyChartForm:
         self.left_axis_ids  = set()
         self.right_axis_ids = set()
 
+        self.cell_count_units = 'Cells/mL'
+        self.cfu_count_units  = 'CFUs/mL'
+        self.metabolite_units = 'mM'
+
     def build_chart(self, args, width):
         self._extract_args(args)
 
         chart = Chart(
             time_units=self.study.timeUnits,
+            cell_count_units=self.cell_count_units,
+            cfu_count_units=self.cfu_count_units,
+            metabolite_units=self.metabolite_units,
             log_left=self.log_left,
             log_right=self.log_right,
             width=width,
@@ -127,6 +134,13 @@ class StudyChartForm:
                 self.log_left = True
             elif arg == 'log-right':
                 self.log_right = True
+
+            elif arg == 'cellCountUnits':
+                self.cell_count_units = value
+            elif arg == 'cfuCountUnits':
+                self.cfu_count_units = value
+            elif arg == 'metaboliteUnits':
+                self.metabolite_units = value
 
     def get_df(self, measurement_context_id):
         query = (

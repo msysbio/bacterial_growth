@@ -45,6 +45,16 @@ Page('.study-visualize-page', function($page) {
     update_chart($form);
   });
 
+  $page.on('click', '.js-select-all', function(e) {
+    e.preventDefault();
+
+    let $link = $(e.currentTarget);
+    let $form = $link.parents('form');
+    $form.find('input[type=checkbox].js-measurement-toggle:visible').prop('checked', true);
+
+    update_chart($form)
+  });
+
   $page.on('click', '.js-clear-chart', function(e) {
     e.preventDefault();
 
