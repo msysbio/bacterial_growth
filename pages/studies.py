@@ -21,7 +21,6 @@ from models import (
 )
 from forms.experiment_export_form import ExperimentExportForm
 from forms.study_chart_form import StudyChartForm
-from forms.study_modeling_form import StudyModelingForm
 from lib.chart import Chart
 from lib.modeling_tasks import process_modeling_request
 from lib.figures import make_figure_with_traces
@@ -43,13 +42,7 @@ def study_manage_page(studyId):
     if not study.manageable_by_user(g.current_user):
         raise Forbidden()
 
-    modeling_form = StudyModelingForm(g.db_session, study)
-
-    return render_template(
-        "pages/studies/manage.html",
-        study=study,
-        modeling_form=modeling_form,
-    )
+    return render_template("pages/studies/manage.html", study=study)
 
 
 def study_export_page(studyId):
@@ -138,45 +131,49 @@ def study_chart_fragment(studyId):
 
 
 def study_modeling_submit_action(studyId):
+    study = _fetch_study(studyId)
     args = request.form.to_dict()
 
-    study = _fetch_study(studyId)
-    width = request.args.get('width', None)
+    modeling_type = args.pop('modelingType')
+    measurement_context_ids = []
 
-    chart_form = StudyModelingForm(g.db_session, study)
-    chart = chart_form.build_chart(args, width)
+    for arg, value in args.items():
+        if arg.startswith('measurementContext|'):
+            context_id = int(arg.removeprefix('measurementContext|'))
+            measurement_context_ids.append(context_id)
 
-    if chart.selected_measurement_context_id:
-        modeling_request = g.db_session.scalars(
-            sql.select(ModelingRequest)
-            .where(
-                ModelingRequest.contextId == chart.selected_measurement_context_id,
-                ModelingRequest.type == chart_form.modeling_type,
-                ModelingRequest.studyId == study.publicId,
-            )
-        ).one_or_none()
+    modeling_request = g.db_session.scalars(
+        sql.select(ModelingRequest)
+        .where(
+            ModelingRequest.type == modeling_type,
+            ModelingRequest.studyId == study.publicId,
+        )
+    ).one_or_none()
 
     if modeling_request is None:
         modeling_request = ModelingRequest(
-            type=chart_form.modeling_type,
+            type=modeling_type,
             study=study,
         )
         g.db_session.add(modeling_request)
         g.db_session.commit()
 
-    result = process_modeling_request.delay(modeling_request.id, chart_form.measurement_context_ids)
+    result = process_modeling_request.delay(modeling_request.id, measurement_context_ids)
     modeling_request.jobUuid = result.task_id
     g.db_session.commit()
 
     return {'modelingRequestId': modeling_request.id}
 
 
-def study_modeling_check_json(studyId, modelingTechniqueId):
-    modeling_technique = g.db_session.get(ModelingTechnique, modelingTechniqueId)
+def study_modeling_check_json(studyId):
+    study = _fetch_study(studyId)
+
+    ready      = all([mr.state in ('ready', 'error') for mr in study.modelingRequests])
+    successful = all([mr.state != 'error' for mr in study.modelingRequests])
 
     return {
-        "ready":      modeling_technique.state in ('ready', 'error'),
-        "successful": modeling_technique.state != 'error',
+        "ready":      ready,
+        "successful": successful,
     }
 
 
@@ -194,6 +191,7 @@ def study_modeling_chart_fragment(studyId, measurementContextId):
     chart = Chart(
         time_units=study.timeUnits,
         title=measurement_context.get_chart_label(g.db_session),
+        legend_position='right',
     )
     chart.add_df(measurement_df, units=measurement_context.technique.units, label="Measurements")
 
@@ -208,10 +206,11 @@ def study_modeling_chart_fragment(studyId, measurementContextId):
     ).one_or_none()
 
     if modeling_result:
-        modeling_result.generate_chart_df(measurement_df)
+        df    = modeling_result.generate_chart_df(measurement_df)
         label = modeling_result.model_name
+        units = modeling_result.measurementContext.technique.units
 
-        chart.add_model_df(df, label)
+        chart.add_model_df(df, units=units, label=label)
 
         model_coefficients = modeling_result.coefficients
     else:

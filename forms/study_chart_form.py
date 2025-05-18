@@ -52,6 +52,8 @@ class StudyChartForm:
         ).all()
 
         for measurement_context in self.measurement_contexts:
+            technique = measurement_context.technique
+
             if measurement_context.id in self.right_axis_ids:
                 axis = 'right'
                 log_transform = self.log_right

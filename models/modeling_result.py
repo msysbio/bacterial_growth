@@ -98,10 +98,10 @@ class ModelingResult(OrmBase):
             raise ValueError(f"Don't know how to predict values for model type: {repr(self.type)}")
 
     def _predict_easy_linear(self, time):
-        # y0    = self.coefficients['y0']
-        y0_lm = self.coefficients['y0_lm']
-        mumax = self.coefficients['mumax']
-        # lag   = self.coefficients['lag']
+        # y0    = float(self.coefficients['y0'])
+        y0_lm = float(self.coefficients['y0_lm'])
+        mumax = float(self.coefficients['mumax'])
+        # lag   = float(self.coefficients['lag'])
 
         # No lag:
         # return y0 * np.exp(time * mumax)
@@ -110,10 +110,10 @@ class ModelingResult(OrmBase):
         return y0_lm * np.exp(time * mumax)
 
     def _predict_baranyi_roberts(self, time):
-        y0    = self.coefficients['y0']
-        mumax = self.coefficients['mumax']
-        K     = self.coefficients['K']
-        h0    = self.coefficients['h0']
+        y0    = float(self.coefficients['y0'])
+        mumax = float(self.coefficients['mumax'])
+        K     = float(self.coefficients['K'])
+        h0    = float(self.coefficients['h0'])
 
         # Formula taken from the "growthrates" documentation under `grow_baranyi`:
         # https://cran.r-project.org/web/packages/growthrates/growthrates.pdf

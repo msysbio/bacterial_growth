@@ -55,7 +55,7 @@ Page('.study-manage-page', function($page) {
     let $form        = $trigger.parents('form');
     let $chart       = $form.find('.js-chart');
     let url          = $trigger.attr('href');
-    let modelingType = $trigger.parents('form').find('select[name=modelingType]').val()
+    let modelingType = $trigger.parents('form').find('select[name=modelingType]').log().val();
 
     $page.find('.js-technique-row').removeClass('highlight');
     $trigger.parents('.js-technique-row').addClass('highlight');
@@ -74,7 +74,7 @@ Page('.study-manage-page', function($page) {
     });
   });
 
-  $page.on('submit', '.js-calculation-form', function(e) {
+  $page.on('submit', '.js-modeling-form', function(e) {
     e.preventDefault();
     let $form = $(e.currentTarget);
 
@@ -89,7 +89,7 @@ Page('.study-manage-page', function($page) {
 
         function check() {
           $.ajax({
-            url: `/study/${studyId}/modeling/${modelingRequestId}.json`,
+            url: `/study/${studyId}/modeling/check.json`,
             dataType: 'json',
             success: function(response) {
               if (!response.ready) {

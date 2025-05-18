@@ -64,10 +64,12 @@
         will be available for visualization once the calculation is finished.
       </p>
 
-      <form class="simple-form modeling-form js-modeling-form">
+      <form
+          action="{{ url_for('study_modeling_submit_action', studyId=study.publicId) }}"
+          class="simple-form modeling-form js-modeling-form">
         <div class="columns">
           <div class="controls-column">
-            {{ render_modeling_form(modeling_form) }}
+            {{ render_modeling_form(study) }}
           </div>
 
           <div class="chart-column box">

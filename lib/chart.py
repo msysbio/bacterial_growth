@@ -21,6 +21,7 @@ class Chart:
         log_right=False,
         width=None,
         title=None,
+        legend_position='bottom'
     ):
         self.time_units       = time_units
         self.cell_count_units = cell_count_units
@@ -28,6 +29,7 @@ class Chart:
         self.metabolite_units = metabolite_units
         self.width            = width
         self.title            = title
+        self.legend_position  = legend_position
 
         self.log_left  = log_left
         self.log_right = log_right
@@ -38,11 +40,31 @@ class Chart:
         self.mixed_units_left  = False
         self.mixed_units_right = False
 
+        self.max_y = 0
+
     def add_df(self, df, *, units, label=None, axis='left', metabolite_mass=None):
+        entry = (df, units, label, metabolite_mass)
+
         if axis == 'left':
-            self.data_left.append((df, units, label, metabolite_mass))
+            self.data_left.append(entry)
         elif axis == 'right':
-            self.data_right.append((df, units, label, metabolite_mass))
+            self.data_right.append(entry)
+        else:
+            raise ValueError(f"Unexpected axis: {axis}")
+
+        std_y = df['value'].std()
+        max_y = df['value'].max() + std_y / 2
+
+        if max_y > self.max_y:
+            self.max_y = max_y
+
+    def add_model_df(self, df, *, units, label=None, axis='left'):
+        entry = (df, units, label, None)
+
+        if axis == 'left':
+            self.data_left.append(entry)
+        elif axis == 'right':
+            self.data_right.append(entry)
         else:
             raise ValueError(f"Unexpected axis: {axis}")
 
@@ -80,19 +102,18 @@ class Chart:
         else:
             title = dict(x=0)
 
-        # yaxis_range=[-std_y / 10, max_y + std_y / 2]
+        if self.legend_position == 'bottom':
+            legend = dict(yanchor="bottom", y=1, xanchor="left", x=0)
+        else:
+            legend = None
 
         fig.update_layout(
             template=PLOTLY_TEMPLATE,
             margin=dict(l=0, r=0, t=60, b=40),
             title=title,
             hovermode='x unified',
-            legend=dict(
-                yanchor="bottom",
-                y=1,
-                xanchor="left",
-                x=0,
-            ),
+            legend=legend,
+            yaxis_range=[0, self.max_y],
             xaxis=dict(
                 title=dict(text=f"Time ({self.time_units})"),
                 # TODO: doesn't work for some reason
@@ -122,7 +143,8 @@ class Chart:
                 new_value = convert_measurement_units(df['value'], units, self.cell_count_units)
                 if new_value is not None:
                     df['value'] = new_value
-                    df['std'] = convert_measurement_units(df['std'], units, self.cell_count_units)
+                    if 'std' in df:
+                        df['std'] = convert_measurement_units(df['std'], units, self.cell_count_units)
                     converted_units.add(self.cell_count_units)
                 else:
                     converted_units.add(units)
@@ -131,7 +153,8 @@ class Chart:
                 new_value = convert_measurement_units(df['value'], units, self.cfu_count_units)
                 if new_value is not None:
                     df['value'] = new_value
-                    df['std'] = convert_measurement_units(df['std'], units, self.cfu_count_units)
+                    if 'std' in df:
+                        df['std'] = convert_measurement_units(df['std'], units, self.cfu_count_units)
                     converted_units.add(self.cell_count_units)
                 else:
                     converted_units.add(units)
@@ -140,7 +163,8 @@ class Chart:
                 new_value = convert_measurement_units(df['value'], units, self.metabolite_units, mass=metabolite_mass)
                 if new_value is not None:
                     df['value'] = new_value
-                    df['std'] = convert_measurement_units(df['std'], units, self.metabolite_units)
+                    if 'std' in df:
+                        df['std'] = convert_measurement_units(df['std'], units, self.metabolite_units)
                     converted_units.add(self.metabolite_units)
                 else:
                     converted_units.add(units)
@@ -153,11 +177,14 @@ class Chart:
         return converted_data, tuple(converted_units)[0]
 
     def _get_scatter_params(self, df, label):
-        if df['std'].isnull().all():
-            # STD values were blank, don't draw error bars
-            error_y = None
+        if 'std' in df:
+            if df['std'].isnull().all():
+                # STD values were blank, don't draw error bars
+                error_y = None
+            else:
+                error_y = go.scatter.ErrorY(array=df['std'])
         else:
-            error_y = go.scatter.ErrorY(array=df['std'])
+            error_y = None
 
         return dict(
             x=df['time'],

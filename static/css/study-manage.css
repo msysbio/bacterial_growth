@@ -32,6 +32,12 @@
     .highlight {
       background-color: var(--light-blue);
     }
+
+    .modeling-fields {
+      display: flex;
+      flex-direction: column;
+      row-gap: 10px;
+    }
   }
 
   .measurement-subjects {
