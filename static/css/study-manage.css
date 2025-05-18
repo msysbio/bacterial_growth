@@ -1,4 +1,8 @@
 .study-manage-page {
+  .form-input-blue {
+    padding: 0.5rem !important;
+  }
+
   .modeling-form {
     margin-top: 20px;
   }

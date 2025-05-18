@@ -1,4 +1,5 @@
 import json
+import itertools
 
 from flask import (
     g,
@@ -14,33 +15,35 @@ from models import (
     Bioreplicate,
     Measurement,
     MeasurementTechnique,
+    MeasurementContext,
 )
 from lib.db import execute_into_df
 from lib.figures import make_figure_with_secondary_axis
+from forms.comparative_chart_form import ComparativeChartForm
 
 
 def comparison_show_page():
     compare_data = _init_compare_data()
 
-    targets = []
-    for target_identifier in sorted(compare_data['targets']):
-        (biorep_uuid, technique_id, subject_type, subject_id) = target_identifier.split('|')
+    measurement_contexts = g.db_session.scalars(
+        sql.select(MeasurementContext)
+        .where(MeasurementContext.id.in_(compare_data['contexts']))
+    ).all()
 
-        technique    = g.db_session.get(MeasurementTechnique, technique_id)
-        bioreplicate = g.db_session.get(Bioreplicate, biorep_uuid)
-        subject      = Measurement.get_subject(g.db_session, subject_id, subject_type)
-        measurements = g.db_session.scalars(
-            sql.select(Measurement)
-            .where(
-                Measurement.techniqueId == technique_id,
-                Measurement.subjectId == subject_id,
-                Measurement.subjectType == subject_type,
-            )
-        ).all()
+    measurement_contexts_by_study = {
+        s: list(mcs)
+        for (s, mcs)
+        in itertools.groupby(measurement_contexts, lambda mc: mc.study)
+    }
 
-        targets.append((target_identifier, bioreplicate, technique, subject, measurements))
+    # TODO (2025-05-18) Convert time units between studies
+    chart_form = ComparativeChartForm(g.db_session, 'h')
 
-    return render_template("pages/comparison/show.html", targets=targets)
+    return render_template(
+        "pages/comparison/show.html",
+        measurement_contexts_by_study=measurement_contexts_by_study,
+        chart_form=chart_form,
+    )
 
 
 def comparison_update_json(action):
@@ -70,47 +73,17 @@ def comparison_clear_action():
 
 
 def comparison_chart_fragment():
-    args = request.args.to_dict()
+    args = request.form.to_dict()
+    width = request.args.get('width', None)
 
-    width = args.pop('width')
-    target_data = []
-
-    for (target_identifier, direction) in args.items():
-        (biorep_uuid, technique_id, subject_type, subject_id) = target_identifier.split('|')
-
-        subject = Measurement.get_subject(g.db_session, subject_id, subject_type)
-        technique = g.db_session.get(MeasurementTechnique, technique_id)
-
-        measurement_query = (
-            sql.select(
-                Measurement.timeInHours.label("time"),
-                Measurement.value.label("value"),
-                (literal(subject.name) + ' ' + literal(technique.short_name)).label("name"),
-            )
-            .where(
-                Measurement.bioreplicateUniqueId == biorep_uuid,
-                Measurement.techniqueId == technique_id,
-                Measurement.subjectId == subject_id,
-                Measurement.subjectType == subject_type,
-            )
-        )
-        df = execute_into_df(g.db_conn, measurement_query)
-        target_data.append((direction, df))
-
-    fig = make_figure_with_secondary_axis(target_data)
-    fig.update_layout(
-        margin=dict(l=0, r=0, t=60, b=40),
-        title=dict(x=0)
-    )
-    fig_html = fig.to_html(
-        full_html=False,
-        include_plotlyjs=False,
-        default_width=f"{width}px",
-    )
+    # TODO (2025-05-18) Convert time units between studies
+    chart_form = ComparativeChartForm(g.db_session, time_units='h')
+    chart = chart_form.build_chart(args, width, legend_position='right')
 
     return render_template(
         'pages/comparison/_chart.html',
-        fig_html=fig_html,
+        chart_form=chart_form,
+        chart=chart,
     )
 
 

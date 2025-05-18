@@ -15,13 +15,11 @@ from models import (
     Study,
 )
 
-PLOTLY_TEMPLATE = 'plotly_white'
 
-
-class StudyChartForm:
-    def __init__(self, db_session, study):
+class ComparativeChartForm:
+    def __init__(self, db_session, time_units):
         self.db_session = db_session
-        self.study      = study
+        self.time_units = time_units
 
         self.measurement_context_ids = []
         self.measurement_contexts    = []
@@ -33,17 +31,18 @@ class StudyChartForm:
         self.cfu_count_units  = 'CFUs/mL'
         self.metabolite_units = 'mM'
 
-    def build_chart(self, args, width):
+    def build_chart(self, args, width, legend_position='top'):
         self._extract_args(args)
 
         chart = Chart(
-            time_units=self.study.timeUnits,
+            time_units=self.time_units,
             cell_count_units=self.cell_count_units,
             cfu_count_units=self.cfu_count_units,
             metabolite_units=self.metabolite_units,
             log_left=self.log_left,
             log_right=self.log_right,
             width=width,
+            legend_position=legend_position,
         )
 
         self.measurement_contexts = self.db_session.scalars(
@@ -53,6 +52,7 @@ class StudyChartForm:
 
         for measurement_context in self.measurement_contexts:
             technique = measurement_context.technique
+            subject = measurement_context.get_subject(self.db_session)
 
             if measurement_context.id in self.right_axis_ids:
                 axis = 'right'

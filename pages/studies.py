@@ -20,7 +20,7 @@ from models import (
     Study,
 )
 from forms.experiment_export_form import ExperimentExportForm
-from forms.study_chart_form import StudyChartForm
+from forms.comparative_chart_form import ComparativeChartForm
 from lib.chart import Chart
 from lib.modeling_tasks import process_modeling_request
 from lib.figures import make_figure_with_traces
@@ -105,7 +105,7 @@ def study_download_zip(studyId):
 
 def study_visualize_page(studyId):
     study      = _fetch_study(studyId)
-    chart_form = StudyChartForm(g.db_session, study)
+    chart_form = ComparativeChartForm(g.db_session, time_units=study.timeUnits)
 
     return render_template(
         "pages/studies/visualize.html",
@@ -120,7 +120,7 @@ def study_chart_fragment(studyId):
 
     width = request.args.get('width', None)
 
-    chart_form = StudyChartForm(g.db_session, study)
+    chart_form = ComparativeChartForm(g.db_session, time_units=study.timeUnits)
     chart = chart_form.build_chart(args, width)
 
     return render_template(

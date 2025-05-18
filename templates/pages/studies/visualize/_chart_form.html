@@ -1,6 +1,4 @@
-{% macro render_chart_form(form) %}
-
-  {% set study = form.study %}
+{% macro render_chart_form(form, study) %}
 
   <div class="form-row">
     <label>
@@ -51,21 +49,21 @@
 
         <br>
 
-        {% for measurementContext in experiment.measurementContexts if measurementContext.has_measurements(): %}
-          {% set subjectType = measurementContext.subjectType %}
-          {% set subject     = measurementContext.get_subject(g.db_session) %}
+        {% for measurement_context in experiment.measurementContexts if measurement_context.has_measurements(): %}
+          {% set subjectType = measurement_context.subjectType %}
+          {% set subject     = measurement_context.get_subject(g.db_session) %}
 
-          {% set key = "measurementContext|{}".format(measurementContext.id) %}
+          {% set key = "measurementContext|{}".format(measurement_context.id) %}
 
           <div
               class="form-row hidden js-technique-row"
-              data-technique-id="{{ measurementContext.techniqueId }}"
-              data-bioreplicate-id="{{ measurementContext.bioreplicateId }}"
-              data-compartment-id="{{ measurementContext.compartmentId }}">
+              data-technique-id="{{ measurement_context.techniqueId }}"
+              data-bioreplicate-id="{{ measurement_context.bioreplicateId }}"
+              data-compartment-id="{{ measurement_context.compartmentId }}">
             <input type="checkbox" name="{{ key }}" id="{{ key }}" class="js-measurement-toggle" />
             <label for="{{ key }}">
               {% if subjectType == 'bioreplicate' %}
-                {{ subject.name }}<sub>{{ measurementContext.compartment.name }}</sub>
+                {{ subject.name }}<sub>{{ measurement_context.compartment.name }}</sub>
               {% else: %}
                 {{ subject.name }}
               {% endif %}

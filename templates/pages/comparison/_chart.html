@@ -1,3 +1,94 @@
-<div class="fig-container">
-  {{ fig_html|safe }}
+<div class="chart-container">
+  {{ chart.to_html()|safe }}
+
+  <div class="data-controls">
+    <div class="column left">
+      <span class="icon icon-left"></span>
+      <label>
+        <input
+            type="checkbox"
+            class="js-log js-log-left"
+            name="log-left"
+            {{ "checked" if chart_form.log_left }} />
+        <span>Log view</span>
+      </label>
+    </div>
+
+    <div class="column right">
+      <label>
+        <input
+            type="checkbox"
+            class="js-log js-log-right"
+            name="log-right"
+            {{ "checked" if chart_form.log_right }} />
+        <span>Log view</span>
+      </label>
+      <span class="icon icon-right"></span>
+    </div>
+  </div>
+
+  <div class="contexts-list js-contexts-list">
+    {% for measurement_context in chart_form.measurement_contexts: %}
+      {% set study        = measurement_context.study %}
+      {% set bioreplicate = measurement_context.bioreplicate %}
+      {% set compartment  = measurement_context.compartment %}
+      {% set technique    = measurement_context.technique %}
+      {% set subject      = measurement_context.get_subject(g.db_session) %}
+
+      <div class="flex-row context-row js-row" data-context-id="{{ measurement_context.id }}">
+        <div class="left flex-row" data-tooltip="Move data trace to the left axis">
+          <span class="icon icon-left"></span>
+          <input
+              type="checkbox"
+              class="js-axis js-axis-left"
+              name="axis|{{ measurement_context.id }}"
+              {{ "checked" if measurement_context.id in chart_form.left_axis_ids }}
+              value="left" />
+        </div>
+
+        {% set right_axis = True if measurement_context.id in chart_form.right_axis_ids else False %}
+        {% set left_axis = not right_axis %}
+
+        <div class="middle {{ "align-right" if right_axis }}">
+          [{{ study.publicId }}]
+
+          {% if technique.subjectType == 'metabolite': %}
+            <strong>{{ subject.name }}</strong>
+          {% else: %}
+            {{ technique.short_name }}
+          {% endif %}
+
+          {% if (left_axis and chart.mixed_units_left) or (right_axis and chart.mixed_units_right): %}
+            {% if technique.units and technique.units != 'reads': %}
+              ({{ technique.units }})
+            {% endif %}
+          {% endif %}
+
+          {% if technique.subjectType == 'bioreplicate' %}
+            of the
+            <strong>{{ subject.name }}<sub>{{ compartment.name }}</sub></strong>
+            community
+          {% elif technique.subjectType == 'metabolite': %}
+            in
+            {{ bioreplicate.name }}<sub>{{ compartment.name }}</sub>
+          {% else: %}
+            of
+            <strong>{{ subject.name }}</strong>
+            in
+            {{ bioreplicate.name }}<sub>{{ compartment.name }}</sub>
+          {% endif %}
+        </div>
+
+        <div class="flex-row right" data-tooltip="Move data trace to the right axis">
+          <input
+              type="checkbox"
+              class="js-axis js-axis-right"
+              name="axis|{{ measurement_context.id }}"
+              {{ "checked" if measurement_context.id in chart_form.right_axis_ids }}
+              value="right" />
+          <span class="icon icon-right"></span>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
 </div>

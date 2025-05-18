@@ -82,7 +82,7 @@ def init_routes(app):
     app.add_url_rule("/metabolites/completion/",     view_func=metabolite_pages.metabolites_completion_json)
 
     app.add_url_rule("/comparison/",      view_func=comparison_pages.comparison_show_page)
-    app.add_url_rule("/comparison/chart", view_func=comparison_pages.comparison_chart_fragment)
+    app.add_url_rule("/comparison/chart", view_func=comparison_pages.comparison_chart_fragment, methods=["POST"])
     app.add_url_rule("/comparison/clear", view_func=comparison_pages.comparison_clear_action, methods=["POST"])
     app.add_url_rule(
         "/comparison/update/<action>.json",
