@@ -30,6 +30,7 @@
           {% for measurement_context in measurement_contexts: %}
             {% set subjectType = measurement_context.subjectType %}
             {% set subject     = measurement_context.get_subject(g.db_session) %}
+            {% set experiment  = measurement_context.bioreplicate.experiment %}
 
             {% set key = "measurementContext|{}".format(measurement_context.id) %}
 
@@ -40,7 +41,7 @@
                 data-compartment-id="{{ measurement_context.compartmentId }}">
               <input type="checkbox" name="{{ key }}" id="{{ key }}" class="js-measurement-toggle" />
               <label for="{{ key }}">
-                {{ measurement_context.get_chart_label(g.db_session)|safe }}
+                {{ experiment.name }}: {{ measurement_context.get_chart_label(g.db_session)|safe }}
               </label>
             </div>
           {% endfor %}

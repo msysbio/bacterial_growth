@@ -31,6 +31,7 @@
     {% for measurement_context in chart_form.measurement_contexts: %}
       {% set study        = measurement_context.study %}
       {% set bioreplicate = measurement_context.bioreplicate %}
+      {% set experiment   = bioreplicate.experiment %}
       {% set compartment  = measurement_context.compartment %}
       {% set technique    = measurement_context.technique %}
       {% set subject      = measurement_context.get_subject(g.db_session) %}
@@ -50,7 +51,7 @@
         {% set left_axis = not right_axis %}
 
         <div class="middle {{ "align-right" if right_axis }}">
-          [{{ study.publicId }}]
+          [{{ study.publicId }}: {{ experiment.name }}]
 
           {% if technique.subjectType == 'metabolite': %}
             <strong>{{ subject.name }}</strong>

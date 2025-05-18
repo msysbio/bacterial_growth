@@ -21,7 +21,7 @@ class Chart:
         log_right=False,
         width=None,
         title=None,
-        legend_position='bottom'
+        legend_position='top'
     ):
         self.time_units       = time_units
         self.cell_count_units = cell_count_units
@@ -102,7 +102,7 @@ class Chart:
         else:
             title = dict(x=0)
 
-        if self.legend_position == 'bottom':
+        if self.legend_position == 'top':
             legend = dict(yanchor="bottom", y=1, xanchor="left", x=0)
         else:
             legend = None
