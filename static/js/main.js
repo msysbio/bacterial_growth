@@ -37,6 +37,16 @@ $(document).ready(function() {
     }, transitionLengthMs + 1);
   });
 
+  // If there are Plotly plots, resize them automatically:
+  $(document).on('x-sidebar-resize', function() {
+    $('.js-plotly-plot').each(function() {
+      let $chart = $(this);
+      let width = Math.floor($chart.parents('.chart').width());
+
+      Plotly.relayout($chart[0], { 'width': width }, 0);
+    });
+  });
+
   $('.js-tabs .tab-headers span').on('click', function(e) {
     e.preventDefault();
 

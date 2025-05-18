@@ -20,12 +20,14 @@ class Chart:
         log_left=False,
         log_right=False,
         width=None,
+        title=None,
     ):
         self.time_units       = time_units
         self.cell_count_units = cell_count_units
         self.cfu_count_units  = cfu_count_units
         self.metabolite_units = metabolite_units
         self.width            = width
+        self.title            = title
 
         self.log_left  = log_left
         self.log_right = log_right
@@ -36,7 +38,7 @@ class Chart:
         self.mixed_units_left  = False
         self.mixed_units_right = False
 
-    def add_df(self, df, *, units, label, axis, metabolite_mass=None):
+    def add_df(self, df, *, units, label=None, axis='left', metabolite_mass=None):
         if axis == 'left':
             self.data_left.append((df, units, label, metabolite_mass))
         elif axis == 'right':
@@ -73,10 +75,17 @@ class Chart:
         fig.update_yaxes(title_text=left_units_label,  secondary_y=False)
         fig.update_yaxes(title_text=right_units_label, secondary_y=True)
 
+        if self.title:
+            title = dict(text=self.title)
+        else:
+            title = dict(x=0)
+
+        # yaxis_range=[-std_y / 10, max_y + std_y / 2]
+
         fig.update_layout(
             template=PLOTLY_TEMPLATE,
             margin=dict(l=0, r=0, t=60, b=40),
-            title=dict(x=0),
+            title=title,
             hovermode='x unified',
             legend=dict(
                 yanchor="bottom",

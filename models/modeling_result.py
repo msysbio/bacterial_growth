@@ -56,6 +56,19 @@ class ModelingResult(OrmBase):
     updatedAt:    Mapped[datetime] = mapped_column(UtcDateTime, server_default=FetchedValue())
     calculatedAt: Mapped[datetime] = mapped_column(UtcDateTime)
 
+    @classmethod
+    def empty_coefficients(Self, model_type):
+        if model_type == 'easy_linear':
+            return {'y0': None, 'y0_lm': None, 'mumax': None, 'lag': None}
+        elif model_type == 'baranyi_roberts':
+            return {'y0': None, 'mumax': None, 'K': None, 'h0': None}
+        else:
+            raise ValueError(f"Don't know what the coefficients are for model type: {repr(model_type)}")
+
+    @property
+    def model_name(self):
+        return MODEL_NAMES[self.type]
+
     @validates('type')
     def _validate_type(self, key, value):
         return self._validate_inclusion(key, value, VALID_TYPES)
@@ -74,7 +87,6 @@ class ModelingResult(OrmBase):
         return pd.DataFrame.from_dict({
             'time': timepoints,
             'value': values,
-            'name': MODEL_NAMES[self.type],
         })
 
     def _predict(self, timepoints):
@@ -83,7 +95,7 @@ class ModelingResult(OrmBase):
         elif self.type == 'baranyi_roberts':
             return self._predict_baranyi_roberts(timepoints)
         else:
-            raise ValueError(f"Don't know how to predict values for calculation type: {repr(self.type)}")
+            raise ValueError(f"Don't know how to predict values for model type: {repr(self.type)}")
 
     def _predict_easy_linear(self, time):
         # y0    = self.coefficients['y0']

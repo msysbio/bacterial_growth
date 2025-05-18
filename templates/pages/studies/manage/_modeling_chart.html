@@ -1,25 +1,21 @@
 {% macro render_param_input(name, description) %}
-
-  {% if name in calculation.coefficients: %}
+  {% if model_coefficients and name in model_coefficients: %}
     <div class="form-row">
-      <label>
+      <label class="full">
         <span>{{ name }}: <span class="help">{{ description }}</span></span>
         <input
             type="text"
             name="param-{{ name }}"
             class="form-input-blue form-input-full"
-            value="{{ calculation and calculation.coefficients[name] or '' }}"
-            {{ 'readonly' if calculation is none }} />
+            value="{{ model_coefficients[name] or '' }}"
+            {{ 'readonly' if modeling_result is none }} />
       </label>
     </div>
   {% endif %}
-
 {% endmacro %}
 
 <div class="chart-container js-chart-preview">
-  {% for fig_html in fig_htmls %}
-    {{ fig_html|safe }}
-  {% endfor %}
+  {{ chart.to_html()|safe }}
 </div>
 
 {{ render_param_input("y0",    "initial value of abundance") }}

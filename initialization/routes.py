@@ -57,18 +57,20 @@ def init_routes(app):
     app.add_url_rule("/study/<string:studyId>/visualize",       view_func=study_pages.study_visualize_page)
     app.add_url_rule("/study/<string:studyId>/visualize/chart", view_func=study_pages.study_chart_fragment, methods=["POST"])
 
+    # TODO (2025-05-18) Rethink organization of routes and actions
+
     app.add_url_rule(
-        "/study/<string:studyId>/modeling",
-        view_func=study_pages.study_modeling_action,
+        "/study/<string:studyId>/modeling/submit",
+        view_func=study_pages.study_modeling_submit_action,
         methods=["POST"],
     )
     app.add_url_rule(
-        "/study/<string:studyId>/modeling/<string:modelingTechniqueId>.json",
+        "/study/<string:studyId>/modeling/check.json",
         view_func=study_pages.study_modeling_check_json,
     )
     app.add_url_rule(
-        "/study/<string:studyId>/modeling/edit",
-        view_func=study_pages.study_modeling_edit_fragment,
+        "/study/<string:studyId>/modeling/<int:measurementContextId>/chart",
+        view_func=study_pages.study_modeling_chart_fragment,
     )
 
     app.add_url_rule("/project/<string:projectId>", view_func=project_pages.project_show_page)

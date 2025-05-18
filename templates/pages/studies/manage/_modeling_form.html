@@ -1,77 +1,103 @@
-{% macro render_modeling_form(study, type) %}
+{% macro render_modeling_form(form) %}
 
-  <form
-      action="{{ url_for('study_modeling_action', studyId=study.publicId) }}"
-      class="simple-form js-calculation-form"
-      method="POST">
-    <input type="hidden" name="type" value="{{ type }}" />
+  {% set study = form.study %}
 
-    <div class="flex-row flex-gap-10">
-      <div class="column full flex-column flex-gap-10">
+  <input type="hidden" name="selectedMeasurementContextId" />
+
+  <div class="form-row">
+    <label>
+      <span>Experiment:</span>
+      <select name="experimentId" class="form-input-blue full">
+        {% for experiment in study.experiments: %}
+          <option value="{{ experiment.id }}">
+          {{- experiment.name }}: {{ experiment.description -}}
+          </option>
+        {% endfor %}
+      </select>
+    </label>
+  </div>
+
+  {% for experiment in study.experiments: %}
+    <div
+        class="experiment-container hidden js-experiment-container"
+        data-experiment-id="{{ experiment.id }}">
+      <div class="experiment">
+        <p>{{ experiment.description }}</p>
+
         <div class="form-row">
           <label class="full">
-            <span>Measurement technique</span>
-            <select
-                name="measurementTechniqueId"
-                class="form-input-blue form-input-full js-technique-type">
+            <span>Measurement technique:</span>
+            <select name="techniqueId" class="form-input-blue full">
               {% for technique in study.measurementTechniques if technique.is_growth: %}
-                <option value="{{ technique.id }}">
-                  {{ technique.long_name_with_subject_type }}
+                <option value="{{ technique.id }}" data-subject-type="{{ technique.subjectType }}">
+                {{- technique.long_name_with_subject_type -}}
                 </option>
               {% endfor %}
             </select>
           </label>
         </div>
 
-        <div class="form-row">
-          <h3>Measurement subjects:</h3>
+        <div class="form-row hidden js-bioreplicate-row">
+          <label class="full">
+          <span>Bioreplicate and compartment:</span>
+          <select name="bioreplicateCompartmentId" class="form-input-blue full">
+            {% for bioreplicate in experiment.bioreplicates: %}
+              {% for compartment in experiment.compartments: %}
+                <option value="{{ bioreplicate.id }}|{{ compartment.id }}">
+                {{- bioreplicate.name }}, compartment {{ compartment.name -}}
+                </option>
+              {% endfor %}
+            {% endfor %}
+          </select>
         </div>
 
-        <div class="form-row measurement-subjects">
-          {% for technique in study.measurementTechniques if technique.is_growth: %}
-            <div class="box hidden flex-column flex-gap-6 js-technique-box" data-technique-id="{{ technique.id }}">
-              {% for bioreplicate in technique.get_bioreplicates(g.db_session): %}
-                {% if technique.subjectType != 'bioreplicate': %}
-                  <div class="flex-row">
-                    <strong>
-                      Bioreplicate: {{ bioreplicate.name }}
-                    </strong>
-                  </div>
-                {% endif %}
+        <br>
 
-                {% for subject in technique.get_subjects_for_bioreplicate(g.db_session, bioreplicate): %}
-                  {% set target_identifier = [
-                    bioreplicate.id,
-                    technique.id,
-                    technique.subjectType,
-                    subject.id,
-                  ]|join('|')%}
+        {% for measurementContext in experiment.measurementContexts if measurementContext.has_measurements() and measurementContext.technique.is_growth: %}
+          {% set subjectType = measurementContext.subjectType %}
+          {% set subject     = measurementContext.get_subject(g.db_session) %}
 
-                  <div class="flex-row flex-gap-10 js-subject-row" style="align-items: center">
-                    <label>
-                      <input
-                          type="checkbox"
-                          name="target|{{ target_identifier }}" />
-                      {{ subject.name }}
-                    </label>
+          {% set key = "measurementContext|{}".format(measurementContext.id) %}
 
-                    {% set edit_url = url_for(
-                      "study_modeling_edit_fragment",
-                      studyId=study.publicId,
-                      bioreplicateUniqueId=bioreplicate.id,
-                      subjectType=technique.subjectType,
-                      subjectId=subject.id,
-                      techniqueId=technique.id
-                    ) %}
+          <div
+              class="form-row hidden js-technique-row"
+              data-technique-id="{{ measurementContext.techniqueId }}"
+              data-bioreplicate-id="{{ measurementContext.bioreplicateId }}"
+              data-compartment-id="{{ measurementContext.compartmentId }}">
+            <input type="checkbox" name="{{ key }}" id="{{ key }}" class="js-measurement-toggle" />
+            <label for="{{ key }}">
+              {% if subjectType == 'bioreplicate' %}
+                {{ subject.name }}<sub>{{ measurementContext.compartment.name }}</sub>
+              {% else: %}
+                {{ subject.name }}
+              {% endif %}
+            </label>
 
-                    <a href="{{ edit_url }}" class="flex-right js-edit-trigger">
-                      <div class="icon icon-edit"></div>
-                    </a>
-                  </div>
-                {% endfor %}
-              {% endfor %}
-            </div>
-          {% endfor %}
+            {% set edit_url = url_for(
+              "study_modeling_chart_fragment",
+              studyId=study.publicId,
+              measurementContextId=measurementContext.id,
+            ) %}
+
+            <a href="{{ edit_url }}" class="flex-right js-edit-trigger">
+              <div class="icon icon-edit"></div>
+            </a>
+          </div>
+        {% endfor %}
+
+        <div class="form-row margin-top-10">
+          <a href="#" class="white-button js-select-all">Select all</a>
+          <a href="#" class="white-button flex-right js-clear-chart">Clear</a>
+        </div>
+
+        <div class="form-row">
+          <label class="full">
+            <span>Modeling type</span>
+            <select name="modelingType" class="form-input-blue form-input-full">
+              <option value="easy_linear">"Easy linear" model</option>
+              <option value="baranyi_roberts">Baranyi-Roberts model</option>
+            </select>
+          </label>
         </div>
 
         <h3>Calculation status</h3>
@@ -86,23 +112,7 @@
           <input type="submit" class="flex-end" value="Calculate" />
         </div>
       </div>
-
-      <div class="column full flex-column flex-gap-10">
-        <h3>Result</h3>
-
-        <div class="box js-result-container">
-          <div class="chart-container js-chart-preview">
-            <div class="chart-placeholder">
-              📊
-            </div>
-          </div>
-
-          <div class="form-row help">
-            Pick a measurement target to see its calculation results.
-          </div>
-        </div>
-      </div>
     </div>
-  </form>
+  {% endfor %}
 
 {% endmacro %}

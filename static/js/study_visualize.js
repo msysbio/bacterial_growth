@@ -13,15 +13,6 @@ Page('.study-visualize-page', function($page) {
     }
   });
 
-  $(document).on('x-sidebar-resize', function() {
-    $('.js-plotly-plot').each(function() {
-      let $chart = $(this);
-      let width = Math.floor($chart.parents('.chart').width());
-
-      Plotly.relayout($chart[0], { 'width': width }, 0);
-    });
-  });
-
   // Exclusive checkboxes on one row:
   $page.on('change', 'input.js-axis', function(e) {
     let $checkbox = $(e.currentTarget);

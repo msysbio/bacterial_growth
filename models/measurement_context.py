@@ -62,10 +62,42 @@ class MeasurementContext(OrmBase):
                 Measurement.std,
             )
             .join(MeasurementContext)
+            .where(
+                MeasurementContext.id == self.id,
+                Measurement.value.is_not(None),
+            )
             .order_by(Measurement.timeInSeconds)
         )
 
         return execute_into_df(db_session, query)
+
+    def get_chart_label(self, db_session):
+        subject      = self.get_subject(db_session)
+        technique    = self.technique
+        bioreplicate = self.bioreplicate
+        compartment  = self.compartment
+
+        if technique.subjectType == 'metabolite':
+            label_parts = [f"<b>{subject.name}</b>"]
+        else:
+            label_parts = [technique.short_name]
+
+        if technique.subjectType == 'bioreplicate':
+            label_parts.append('of the')
+            label_parts.append(f"<b>{subject.name}<sub>{compartment.name}</sub></b>")
+            label_parts.append('community')
+        elif technique.subjectType == 'metabolite':
+            label_parts.append('in')
+            label_parts.append(f"{bioreplicate.name}<sub>{compartment.name}</sub>")
+        else:
+            label_parts.append('of')
+            label_parts.append(f"<b>{subject.name}</b>")
+            label_parts.append('in')
+            label_parts.append(f"{bioreplicate.name}<sub>{compartment.name}</sub>")
+
+        label = ' '.join(label_parts)
+
+        return label
 
     def get_subject(self, db_session):
         from models import Metabolite, Strain, Bioreplicate

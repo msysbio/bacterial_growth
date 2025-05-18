@@ -21,15 +21,6 @@ Page('.comparison-page', function($page) {
     update_chart($container, scrollPosition);
   });
 
-  $(document).on('x-sidebar-resize', function() {
-    $('.js-plotly-plot').each(function() {
-      let $chart = $(this);
-      let width = Math.floor($chart.parents('.chart').width());
-
-      Plotly.relayout($chart[0], { 'width': width }, 0);
-    });
-  });
-
   function update_chart($container, scrollPosition) {
     let $form  = $container.find('form');
     let $chart = $container.find('.chart');

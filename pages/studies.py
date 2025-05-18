@@ -14,12 +14,14 @@ from models import (
     Experiment,
     Measurement,
     MeasurementTechnique,
+    MeasurementContext,
     ModelingRequest,
     ModelingResult,
     Study,
 )
 from forms.experiment_export_form import ExperimentExportForm
 from forms.study_chart_form import StudyChartForm
+from forms.study_modeling_form import StudyModelingForm
 from lib.chart import Chart
 from lib.modeling_tasks import process_modeling_request
 from lib.figures import make_figure_with_traces
@@ -41,7 +43,13 @@ def study_manage_page(studyId):
     if not study.manageable_by_user(g.current_user):
         raise Forbidden()
 
-    return render_template("pages/studies/manage.html", study=study)
+    modeling_form = StudyModelingForm(g.db_session, study)
+
+    return render_template(
+        "pages/studies/manage.html",
+        study=study,
+        modeling_form=modeling_form,
+    )
 
 
 def study_export_page(studyId):
@@ -129,52 +137,38 @@ def study_chart_fragment(studyId):
     )
 
 
-def study_modeling_action(studyId):
+def study_modeling_submit_action(studyId):
     args = request.form.to_dict()
 
     study = _fetch_study(studyId)
-    calculation_type = args['type']
+    width = request.args.get('width', None)
 
-    target_param_list = []
-    for target_identifier in args.keys():
-        if not target_identifier.startswith('target|'):
-            continue
+    chart_form = StudyModelingForm(g.db_session, study)
+    chart = chart_form.build_chart(args, width)
 
-        (
-            _label,
-            bioreplicate_uuid,
-            measurement_technique_id,
-            subject_type,
-            subject_id,
-        ) = target_identifier.split('|')
+    if chart.selected_measurement_context_id:
+        modeling_request = g.db_session.scalars(
+            sql.select(ModelingRequest)
+            .where(
+                ModelingRequest.contextId == chart.selected_measurement_context_id,
+                ModelingRequest.type == chart_form.modeling_type,
+                ModelingRequest.studyId == study.publicId,
+            )
+        ).one_or_none()
 
-        target_param_list.append({
-            'bioreplicate_uuid':        bioreplicate_uuid,
-            'measurement_technique_id': measurement_technique_id,
-            'subject_type':             subject_type,
-            'subject_id':               subject_id,
-        })
-
-    calculation_technique = g.db_session.scalars(
-        sql.select(ModelingRequest)
-        .where(
-            ModelingRequest.type == calculation_type,
-            ModelingRequest.studyUniqueID == study.uuid
+    if modeling_request is None:
+        modeling_request = ModelingRequest(
+            type=chart_form.modeling_type,
+            study=study,
         )
-    ).one_or_none()
-    if calculation_technique is None:
-        calculation_technique = ModelingRequest(
-            type=calculation_type,
-            studyUniqueID=study.uuid,
-        )
-        g.db_session.add(calculation_technique)
+        g.db_session.add(modeling_request)
         g.db_session.commit()
 
-    result = process_modeling_request.delay(calculation_technique.id, target_param_list)
-    calculation_technique.jobUuid = result.task_id
+    result = process_modeling_request.delay(modeling_request.id, chart_form.measurement_context_ids)
+    modeling_request.jobUuid = result.task_id
     g.db_session.commit()
 
-    return {'calculationTechniqueId': calculation_technique.id}
+    return {'modelingRequestId': modeling_request.id}
 
 
 def study_modeling_check_json(studyId, modelingTechniqueId):
@@ -186,87 +180,47 @@ def study_modeling_check_json(studyId, modelingTechniqueId):
     }
 
 
-def study_modeling_edit_fragment(studyId):
+def study_modeling_chart_fragment(studyId, measurementContextId):
+    study = _fetch_study(studyId)
     args = request.args.to_dict()
 
-    model_type   = args.pop('calculationType')
-    biorep_uuid  = args.pop('bioreplicateUniqueId')
-    subject_type = args.pop('subjectType')
-    subject_id   = args.pop('subjectId')
-    technique_id = args.pop('techniqueId')
+    modeling_type = args.pop('modelingType')
+    width         = args.pop('width')
+    height        = args.pop('height')
 
-    width  = args.pop('width')
-    height = args.pop('height')
+    measurement_context = g.db_session.get(MeasurementContext, measurementContextId)
+    measurement_df      = measurement_context.get_df(g.db_session)
 
-    measurement_technique = g.db_session.get(MeasurementTechnique, technique_id)
-    subject = Measurement.get_subject(g.db_session, subject_id, subject_type)
-
-    measurement_df = execute_into_df(
-        g.db_session,
-        sql.select(
-            Measurement.timeInHours.label("time"),
-            Measurement.value.label("value"),
-            (literal(subject.name) + ' ' + literal(measurement_technique.short_name)).label("name"),
-        )
-        .where(
-            Measurement.bioreplicateUniqueId == biorep_uuid,
-            Measurement.subjectType == subject_type,
-            Measurement.subjectId == subject_id,
-            Measurement.techniqueId == technique_id,
-        )
+    chart = Chart(
+        time_units=study.timeUnits,
+        title=measurement_context.get_chart_label(g.db_session),
     )
+    chart.add_df(measurement_df, units=measurement_context.technique.units, label="Measurements")
 
-    query = (
+    modeling_result = g.db_session.scalars(
         sql.select(ModelingResult)
+        .join(ModelingRequest)
         .where(
-            ModelingResult.type == model_type,
-            ModelingResult.bioreplicateUniqueId == biorep_uuid,
-            ModelingResult.subjectType == subject_type,
-            ModelingResult.subjectId == subject_id,
-            ModelingResult.measurementTechniqueId == measurement_technique.id,
+            ModelingRequest.type == modeling_type,
+            ModelingResult.measurementContextId == measurement_context.id,
             ModelingResult.state.in_(('ready', 'error')),
         )
-    )
-    calculation = g.db_session.scalars(query).one_or_none()
+    ).one_or_none()
 
-    if calculation:
-        calculation_df = calculation.generate_chart_df(measurement_df)
-        fig_dfs = [measurement_df, calculation_df]
+    if modeling_result:
+        modeling_result.generate_chart_df(measurement_df)
+        label = modeling_result.model_name
+
+        chart.add_model_df(df, label)
+
+        model_coefficients = modeling_result.coefficients
     else:
-        fig_dfs = [measurement_df]
-
-    fig = make_figure_with_traces(
-        fig_dfs,
-        labels={
-            'time': 'Hours',
-            'value': measurement_technique.units,
-        },
-    )
-
-    max_y = measurement_df['value'].max()
-    std_y = measurement_df['value'].std()
-
-    fig.update_layout(
-        margin=dict(l=0, r=0, t=0, b=0),
-        title=dict(x=0),
-        legend=dict(
-            yanchor="bottom",
-            xanchor="right",
-        ),
-        yaxis_range=[-std_y / 10, max_y + std_y / 2]
-    )
-
-    fig_html = fig.to_html(
-        full_html=False,
-        include_plotlyjs=False,
-        default_width=f"{width}px",
-        default_height=f"{height}px",
-    )
+        model_coefficients = ModelingResult.empty_coefficients(modeling_type)
 
     return render_template(
-        'pages/studies/manage/_calculation_result.html',
-        calculation=calculation,
-        fig_htmls=[fig_html],
+        'pages/studies/manage/_modeling_chart.html',
+        chart=chart,
+        model_coefficients=model_coefficients,
     )
 
 

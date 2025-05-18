@@ -61,32 +61,9 @@ class StudyChartForm:
 
             df = self.get_df(measurement_context.id)
             if log_transform:
-                self._log_transform(df)
+                self._apply_log_transform(df)
 
-            subject      = measurement_context.get_subject(self.db_session)
-            technique    = measurement_context.technique
-            bioreplicate = measurement_context.bioreplicate
-            compartment  = measurement_context.compartment
-
-            if technique.subjectType == 'metabolite':
-                label_parts = [f"<b>{subject.name}</b>"]
-            else:
-                label_parts = [technique.short_name]
-
-            if technique.subjectType == 'bioreplicate':
-                label_parts.append('of the')
-                label_parts.append(f"<b>{subject.name}<sub>{compartment.name}</sub></b>")
-                label_parts.append('community')
-            elif technique.subjectType == 'metabolite':
-                label_parts.append('in')
-                label_parts.append(f"{bioreplicate.name}<sub>{compartment.name}</sub>")
-            else:
-                label_parts.append('of')
-                label_parts.append(f"<b>{subject.name}</b>")
-                label_parts.append('in')
-                label_parts.append(f"{bioreplicate.name}<sub>{compartment.name}</sub>")
-
-            label = ' '.join(label_parts)
+            label = measurement_context.get_chart_label(self.db_session)
 
             if technique.subjectType == 'metabolite':
                 metabolite_mass = subject.averageMass
@@ -159,7 +136,7 @@ class StudyChartForm:
 
         return execute_into_df(self.db_session, query)
 
-    def _log_transform(self, df):
+    def _apply_log_transform(self, df):
         if not df['std'].isnull().all():
             # Transform std values by summing them and transforming the results:
             with np.errstate(divide='ignore'):
