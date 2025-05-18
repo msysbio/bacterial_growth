@@ -7,29 +7,28 @@ from celery.utils.log import get_task_logger
 from db import FLASK_DB
 from lib.r_script import RScript
 from models import (
-    CalculationTechnique,
-    Calculation,
-    MeasurementTechnique,
+    ModelingRequest,
+    ModelingResult,
 )
 
 LOGGER = get_task_logger(__name__)
 
 
 @shared_task
-def update_calculation_technique(calculation_technique_id, target_param_list):
+def update_calculation_technique(modeling_request_id, target_param_list):
     db_session = FLASK_DB.session
 
-    return _update_calculation_technique(db_session, calculation_technique_id, target_param_list)
+    return _update_calculation_technique(db_session, modeling_request_id, target_param_list)
 
 
-def _update_calculation_technique(db_session, calculation_technique_id, target_param_list):
-    calculation_technique = db_session.get(CalculationTechnique, calculation_technique_id)
-    calculation_technique.state = 'in_progress'
+def _update_calculation_technique(db_session, modeling_request_id, target_param_list):
+    modeling_request = db_session.get(ModelingRequest, modeling_request_id)
+    modeling_request.state = 'in_progress'
     db_session.commit()
 
     with tempfile.TemporaryDirectory() as tmp_dir_name:
         try:
-            calculation_technique.calculations = []
+            modeling_request.results = []
 
             for target_params in target_param_list:
                 bioreplicate_uuid        = target_params['bioreplicate_uuid']
@@ -38,20 +37,20 @@ def _update_calculation_technique(db_session, calculation_technique_id, target_p
                 measurement_technique_id = target_params['measurement_technique_id']
 
                 measurement_technique = db_session.get_one(
-                    MeasurementTechnique,
+                    ModelingResult,
                     measurement_technique_id,
                 )
 
-                calculation = Calculation(
-                    type=calculation_technique.type,
+                modeling_result = ModelingResult(
+                    type=modeling_request.type,
                     subjectId=subject_id,
                     subjectType=subject_type,
                     measurementTechniqueId=measurement_technique_id,
-                    calculationTechniqueId=calculation_technique.id,
+                    calculationTechniqueId=modeling_request.id,
                     bioreplicateUniqueId=bioreplicate_uuid,
                 )
-                db_session.add(calculation)
-                calculation_technique.calculations.append(calculation)
+                db_session.add(modeling_result)
+                modeling_request.results.append(modeling_result)
 
                 data = measurement_technique.get_subject_df(
                     db_session,
@@ -70,23 +69,23 @@ def _update_calculation_technique(db_session, calculation_technique_id, target_p
                 rscript = RScript(root_path=tmp_dir_name)
                 rscript.write_csv('input.csv', data)
 
-                script_name = f"scripts/modeling/{calculation_technique.type}.R"
+                script_name = f"scripts/modeling/{modeling_request.type}.R"
                 rscript.run(script_name, 'input.csv', 'coefficients.json')
 
-                calculation.coefficients = rscript.read_json('coefficients.json')
+                modeling_result.coefficients = rscript.read_json('coefficients.json')
 
-                calculation.state = 'ready'
-                calculation.calculatedAt = datetime.now(UTC)
+                modeling_result.state = 'ready'
+                modeling_result.calculatedAt = datetime.now(UTC)
 
-            calculation_technique.state = 'ready'
-            calculation_technique.error = None
+            modeling_request.state = 'ready'
+            modeling_request.error = None
             db_session.commit()
         except Exception as e:
             db_session.rollback()
-            calculation_technique.state = 'error'
+            modeling_request.state = 'error'
 
             # TODO (2025-04-28) Make "error" a text field, show it somewhere
-            calculation_technique.error = str(e)[0:100]
+            modeling_request.error = str(e)[0:100]
             db_session.commit()
 
             raise

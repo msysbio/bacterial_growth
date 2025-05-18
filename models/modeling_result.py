@@ -31,33 +31,22 @@ MODEL_NAMES = {
 }
 
 
-class Calculation(OrmBase):
-    __tablename__ = "Calculations"
+class ModelingResult(OrmBase):
+    __tablename__ = "ModelingResults"
 
-    id:          Mapped[int] = mapped_column(primary_key=True)
-    type:        Mapped[str] = mapped_column(sql.String(100), nullable=False)
-    subjectId:   Mapped[str] = mapped_column(sql.String(100), nullable=False)
-    subjectType: Mapped[str] = mapped_column(sql.String(100), nullable=False)
+    id:   Mapped[int] = mapped_column(primary_key=True)
+    type: Mapped[str] = mapped_column(sql.String(100), nullable=False)
 
-    measurementTechniqueId: Mapped[int] = mapped_column(
-        sql.ForeignKey('MeasurementTechniques.id'),
+    requestId: Mapped[int] = mapped_column(sql.ForeignKey('ModelingRequests.id'), nullable=False)
+    request: Mapped['ModelingRequest'] = relationship(back_populates='results')
+
+    measurementContextId: Mapped[int] = mapped_column(
+        sql.ForeignKey('MeasurementContexts.id'),
         nullable=False,
     )
-    measurementTechnique: Mapped['MeasurementTechnique'] = relationship(
-        back_populates="calculations",
-    )
+    measurementContext: Mapped['MeasurementContext'] = relationship(back_populates='modelingResults')
 
-    calculationTechniqueId: Mapped[int] = mapped_column(
-        sql.ForeignKey('CalculationTechniques.id'),
-        nullable=False,
-    )
-    calculationTechnique: Mapped['CalculationTechnique'] = relationship(
-        back_populates="calculations",
-    )
-
-    bioreplicateUniqueId: Mapped[int] = mapped_column(sql.ForeignKey('Bioreplicates.id'), nullable=False)
-    bioreplicate: Mapped['Bioreplicate'] = relationship(back_populates='calculations')
-
+    fit:          Mapped[sql.JSON] = mapped_column(sql.JSON, nullable=False)
     coefficients: Mapped[sql.JSON] = mapped_column(sql.JSON, nullable=False)
 
     state: Mapped[str] = mapped_column(sql.String(100), default='pending')
@@ -74,22 +63,6 @@ class Calculation(OrmBase):
     @validates('state')
     def _validate_state(self, key, value):
         return self._validate_inclusion(key, value, VALID_STATES)
-
-    def get_subject(self, db_session):
-        from models import Metabolite, Strain, Bioreplicate
-
-        if self.subjectType == 'metabolite':
-            return db_session.scalars(
-                sql.select(Metabolite)
-                .where(Metabolite.chebiId == subjectId)
-                .limit(1)
-            ).one_or_none()
-        elif self.subjectType == 'strain':
-            return db_session.get(Strain, self.subjectId)
-        elif self.subjectType == 'bioreplicate':
-            return db_session.get(Bioreplicate, self.subjectId)
-        else:
-            raise ValueError(f"Unknown subject type: {self.subjectType}")
 
     def generate_chart_df(self, measurements_df):
         start_time = measurements_df['time'].min()

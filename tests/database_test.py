@@ -7,7 +7,7 @@ import db
 from lib.db import execute_text
 from models import (
     Bioreplicate,
-    CalculationTechnique,
+    ModelingRequest,
     Compartment,
     Experiment,
     Measurement,
@@ -246,16 +246,16 @@ class DatabaseTest(unittest.TestCase):
 
         return self._create_orm_record(Submission, params)
 
-    def create_calculation_technique(self, **params):
-        study_uuid = self._get_or_create_dependency(params, 'studyUniqueID', 'study')
+    def create_modeling_request(self, **params):
+        study_id = self._get_or_create_dependency(params, 'studyId', 'study')
 
         params = {
-            'type':          'baranyi_roberts',
-            'studyUniqueID': study_uuid,
+            'type':    'baranyi_roberts',
+            'studyId': study_id,
             **params,
         }
 
-        return self._create_orm_record(CalculationTechnique, params)
+        return self._create_orm_record(ModelingRequest, params)
 
     def _create_orm_record(self, model_class, params):
         instance = model_class(**params)

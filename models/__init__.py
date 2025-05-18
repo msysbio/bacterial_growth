@@ -1,6 +1,4 @@
 from .bioreplicate import Bioreplicate
-from .calculation import Calculation
-from .calculation_technique import CalculationTechnique
 from .community import Community
 from .compartment import Compartment
 from .excel_file import ExcelFile
@@ -10,6 +8,8 @@ from .measurement import Measurement
 from .measurement_context import MeasurementContext
 from .measurement_technique import MeasurementTechnique
 from .metabolite import Metabolite
+from .modeling_request import ModelingRequest
+from .modeling_result import ModelingResult
 from .perturbation import Perturbation
 from .project import Project
 from .project_user import ProjectUser

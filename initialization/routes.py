@@ -58,17 +58,17 @@ def init_routes(app):
     app.add_url_rule("/study/<string:studyId>/visualize/chart", view_func=study_pages.study_chart_fragment, methods=["POST"])
 
     app.add_url_rule(
-        "/study/<string:studyId>/calculations",
-        view_func=study_pages.study_calculations_action,
+        "/study/<string:studyId>/modeling",
+        view_func=study_pages.study_modeling_action,
         methods=["POST"],
     )
     app.add_url_rule(
-        "/study/<string:studyId>/calculations/<string:calculationTechniqueId>.json",
-        view_func=study_pages.study_calculations_check_json,
+        "/study/<string:studyId>/modeling/<string:modelingTechniqueId>.json",
+        view_func=study_pages.study_modeling_check_json,
     )
     app.add_url_rule(
-        "/study/<string:studyId>/calculations/edit",
-        view_func=study_pages.study_calculations_edit_fragment,
+        "/study/<string:studyId>/modeling/edit",
+        view_func=study_pages.study_modeling_edit_fragment,
     )
 
     app.add_url_rule("/project/<string:projectId>", view_func=project_pages.project_show_page)

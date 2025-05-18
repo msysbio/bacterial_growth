@@ -2,28 +2,28 @@ import tests.init  # noqa: F401
 
 import unittest
 
-from models import CalculationTechnique
+from models import ModelingRequest
 from tests.database_test import DatabaseTest
 
 
-class TestCalculationTechnique(DatabaseTest):
+class TestModelingRequest(DatabaseTest):
     def test_successful_creation(self):
         study  = self.create_study()
 
-        calculation_technique = CalculationTechnique(
+        modeling_request = ModelingRequest(
             type='baranyi_roberts',
             studyUniqueID=study.uuid,
         )
-        self.db_session.add(calculation_technique)
+        self.db_session.add(modeling_request)
         self.db_session.flush()
 
-        self.assertIsNotNone(calculation_technique.id)
-        self.assertEqual(calculation_technique.state, 'pending')
+        self.assertIsNotNone(modeling_request.id)
+        self.assertEqual(modeling_request.state, 'pending')
 
         with self.assertRaises(ValueError):
-            calculation_technique.type = 'unexpected'
+            modeling_request.type = 'unexpected'
         with self.assertRaises(ValueError):
-            calculation_technique.state = 'unexpected'
+            modeling_request.state = 'unexpected'
 
 
 if __name__ == '__main__':

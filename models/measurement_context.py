@@ -33,11 +33,15 @@ class MeasurementContext(OrmBase):
 
     techniqueId: Mapped[int] = mapped_column(sql.ForeignKey("MeasurementTechniques.id"))
     technique: Mapped['MeasurementTechnique'] = relationship(
-        back_populates="measurementContexts"
+        back_populates='measurementContexts'
     )
 
     measurements: Mapped[List['Measurement']] = relationship(
-        back_populates="context",
+        back_populates='context',
+        cascade='all, delete-orphan',
+    )
+    modelingResults: Mapped[List['ModelingResult']] = relationship(
+        back_populates='measurementContext',
         cascade='all, delete-orphan',
     )
 

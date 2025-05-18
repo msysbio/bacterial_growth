@@ -11,12 +11,12 @@ from sqlalchemy.sql.expression import literal
 
 import models.study_dfs as study_dfs
 from models import (
-    Study,
     Experiment,
     Measurement,
     MeasurementTechnique,
-    CalculationTechnique,
-    Calculation,
+    ModelingRequest,
+    ModelingResult,
+    Study,
 )
 from forms.experiment_export_form import ExperimentExportForm
 from forms.study_chart_form import StudyChartForm
@@ -129,7 +129,7 @@ def study_chart_fragment(studyId):
     )
 
 
-def study_calculations_action(studyId):
+def study_modeling_action(studyId):
     args = request.form.to_dict()
 
     study = _fetch_study(studyId)
@@ -156,14 +156,14 @@ def study_calculations_action(studyId):
         })
 
     calculation_technique = g.db_session.scalars(
-        sql.select(CalculationTechnique)
+        sql.select(ModelingRequest)
         .where(
-            CalculationTechnique.type == calculation_type,
-            CalculationTechnique.studyUniqueID == study.uuid
+            ModelingRequest.type == calculation_type,
+            ModelingRequest.studyUniqueID == study.uuid
         )
     ).one_or_none()
     if calculation_technique is None:
-        calculation_technique = CalculationTechnique(
+        calculation_technique = ModelingRequest(
             type=calculation_type,
             studyUniqueID=study.uuid,
         )
@@ -177,23 +177,23 @@ def study_calculations_action(studyId):
     return {'calculationTechniqueId': calculation_technique.id}
 
 
-def study_calculations_check_json(studyId, calculationTechniqueId):
-    calculation_technique = g.db_session.get(CalculationTechnique, calculationTechniqueId)
+def study_modeling_check_json(studyId, modelingTechniqueId):
+    modeling_technique = g.db_session.get(ModelingTechnique, modelingTechniqueId)
 
     return {
-        "ready":      calculation_technique.state in ('ready', 'error'),
-        "successful": calculation_technique.state != 'error',
+        "ready":      modeling_technique.state in ('ready', 'error'),
+        "successful": modeling_technique.state != 'error',
     }
 
 
-def study_calculations_edit_fragment(studyId):
+def study_modeling_edit_fragment(studyId):
     args = request.args.to_dict()
 
-    calculation_type = args.pop('calculationType')
-    biorep_uuid      = args.pop('bioreplicateUniqueId')
-    subject_type     = args.pop('subjectType')
-    subject_id       = args.pop('subjectId')
-    technique_id     = args.pop('techniqueId')
+    model_type   = args.pop('calculationType')
+    biorep_uuid  = args.pop('bioreplicateUniqueId')
+    subject_type = args.pop('subjectType')
+    subject_id   = args.pop('subjectId')
+    technique_id = args.pop('techniqueId')
 
     width  = args.pop('width')
     height = args.pop('height')
@@ -217,14 +217,14 @@ def study_calculations_edit_fragment(studyId):
     )
 
     query = (
-        sql.select(Calculation)
+        sql.select(ModelingResult)
         .where(
-            Calculation.type == calculation_type,
-            Calculation.bioreplicateUniqueId == biorep_uuid,
-            Calculation.subjectType == subject_type,
-            Calculation.subjectId == subject_id,
-            Calculation.measurementTechniqueId == measurement_technique.id,
-            Calculation.state.in_(('ready', 'error')),
+            ModelingResult.type == model_type,
+            ModelingResult.bioreplicateUniqueId == biorep_uuid,
+            ModelingResult.subjectType == subject_type,
+            ModelingResult.subjectId == subject_id,
+            ModelingResult.measurementTechniqueId == measurement_technique.id,
+            ModelingResult.state.in_(('ready', 'error')),
         )
     )
     calculation = g.db_session.scalars(query).one_or_none()

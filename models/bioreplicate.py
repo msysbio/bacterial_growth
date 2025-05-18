@@ -38,11 +38,6 @@ class Bioreplicate(OrmBase):
         viewonly=True,
     )
 
-    calculations: Mapped[List["Calculation"]] = relationship(
-        back_populates='bioreplicate',
-        cascade='all, delete-orphan'
-    )
-
     @staticmethod
     def find_for_study(db_session, study_id, name):
         return db_session.scalars(

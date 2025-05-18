@@ -63,9 +63,6 @@ class MeasurementTechnique(OrmBase):
         secondary='MeasurementContexts',
         viewonly=True,
     )
-    calculations: Mapped[List['Calculation']] = relationship(
-        back_populates="measurementTechnique"
-    )
 
     def __lt__(self, other):
         return self.id < other.id

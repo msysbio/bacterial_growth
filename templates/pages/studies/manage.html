@@ -1,5 +1,5 @@
 {% from 'utils/_post_button.html' import post_button %}
-{% from 'pages/studies/manage/_calculation_form.html' import render_calculation_form %}
+{% from 'pages/studies/manage/_modeling_form.html' import render_modeling_form %}
 
 {% extends '_layout.html' %}
 
@@ -57,25 +57,14 @@
         </p>
       {% endif %}
 
-      <h2>Models and other calculations</h2>
+      <h2>Growth models</h2>
 
       <p>
-        Select a type of calculation to perform on the study's measurements.
-        The results will be available for visualization once the calculation is
-        finished.
+        Select a type of model to fit on the study's measurements. The results
+        will be available for visualization once the calculation is finished.
       </p>
 
-      <h2>Easy linear model</h2>
-
-      <br>
-
-      {{ render_calculation_form(study=study, type="easy_linear") }}
-
-      <h2>Baranyi-Roberts model</h2>
-
-      <br>
-
-      {{ render_calculation_form(study=study, type="baranyi_roberts") }}
+      {{ render_modeling_form(study=study, type="easy_linear") }}
     </article>
   </div>
 
