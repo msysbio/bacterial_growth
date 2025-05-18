@@ -8,11 +8,11 @@ from tests.database_test import DatabaseTest
 
 class TestModelingRequest(DatabaseTest):
     def test_successful_creation(self):
-        study  = self.create_study()
+        study = self.create_study()
 
         modeling_request = ModelingRequest(
             type='baranyi_roberts',
-            studyUniqueID=study.uuid,
+            studyId=study.publicId,
         )
         self.db_session.add(modeling_request)
         self.db_session.flush()

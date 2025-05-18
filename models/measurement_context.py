@@ -13,6 +13,7 @@ from sqlalchemy.orm import (
 from sqlalchemy.ext.hybrid import hybrid_property
 
 from models.orm_base import OrmBase
+from lib.db import execute_into_df
 from lib.conversion import convert_time
 from lib.util import group_by_unique_name
 
@@ -50,6 +51,21 @@ class MeasurementContext(OrmBase):
 
     def has_measurements(self):
         return len([m for m in self.measurements if m.value is not None]) > 0
+
+    def get_df(self, db_session):
+        from models import Measurement
+
+        query = (
+            sql.select(
+                Measurement.timeInHours.label("time"),
+                Measurement.value,
+                Measurement.std,
+            )
+            .join(MeasurementContext)
+            .order_by(Measurement.timeInSeconds)
+        )
+
+        return execute_into_df(db_session, query)
 
     def get_subject(self, db_session):
         from models import Metabolite, Strain, Bioreplicate

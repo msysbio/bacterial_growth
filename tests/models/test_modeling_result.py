@@ -10,12 +10,12 @@ class TestModelingResult(DatabaseTest):
     def test_successful_creation(self):
         strain              = self.create_strain()
         measurement_context = self.create_measurement_context(subjectId=strain.id, subjectType='strain')
+        modeling_request    = self.create_modeling_request()
 
         modeling_result = ModelingResult(
             type='baranyi_roberts',
             measurementContextId=measurement_context.id,
-            subjectId=strain.id,
-            subjectType='strain',
+            requestId=modeling_request.id,
         )
         self.db_session.add(modeling_result)
         self.db_session.flush()

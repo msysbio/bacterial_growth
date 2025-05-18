@@ -159,30 +159,3 @@ class MeasurementTechnique(OrmBase):
             contexts = list([mc for mc in group if mc.has_measurements()])
 
             yield ((bioreplicate, compartment), contexts)
-
-    def get_subject_df(self, db_session, bioreplicate_uuid, subject_id, subject_type):
-        from models import Measurement, MeasurementContext, Bioreplicate
-
-        subjectName, subjectJoin = MeasurementContext.subject_join(subject_type)
-
-        query = (
-            sql.select(
-                Measurement.timeInHours.label("time"),
-                Measurement.value,
-                Measurement.std,
-                subjectName,
-            )
-            .join(MeasurementContext)
-            .join(Bioreplicate)
-            .join(*subjectJoin)
-            .where(
-                Measurement.contextId == MeasurementContext.id,
-                MeasurementContext.techniqueId == self.id,
-                MeasurementContext.bioreplicateId == bioreplicate_uuid,
-                MeasurementContext.subjectId == subject_id,
-                MeasurementContext.subjectType == subject_type,
-            )
-            .order_by(Measurement.timeInSeconds)
-        )
-
-        return execute_into_df(db_session, query)

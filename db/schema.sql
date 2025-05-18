@@ -265,15 +265,15 @@ DROP TABLE IF EXISTS ModelingRequests;
 CREATE TABLE ModelingRequests (
   id int NOT NULL AUTO_INCREMENT,
   `type` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
-  studyUniqueId varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
   jobUuid varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
   state varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
   `error` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
   createdAt datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updatedAt datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  studyId varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
   PRIMARY KEY (id),
-  KEY CalculationTechniques_studyUniqueId (studyUniqueId),
-  CONSTRAINT CalculationTechniques_studyUniqueId FOREIGN KEY (studyUniqueId) REFERENCES Study (studyUniqueID) ON DELETE CASCADE ON UPDATE CASCADE
+  KEY ModelingRequests_studyId (studyId),
+  CONSTRAINT ModelingRequests_studyId FOREIGN KEY (studyId) REFERENCES Study (studyId)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -536,6 +536,6 @@ INSERT INTO MigrationVersions VALUES
 (102,'2025_05_16_141435_fix_taxon_columns','2025-05-16 12:29:44'),
 (103,'2025_05_15_202520_create_measurement_contexts','2025-05-16 12:44:48'),
 (104,'2025_05_15_202707_move_measurement_fields_to_contexts','2025-05-16 12:44:48'),
-(106,'2025_05_17_165050_fix_metabolite_columns','2025-05-17 15:02:10'),
-(118,'2025_05_18_105334_rename_calculations_to_models','2025-05-18 09:22:44');
+(120,'2025_05_17_165050_fix_metabolite_columns','2025-05-18 09:49:50'),
+(121,'2025_05_18_105334_rename_calculations_to_models','2025-05-18 09:49:50');
 

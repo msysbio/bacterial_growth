@@ -12,6 +12,18 @@ def up(conn):
     conn.execute(sql.text("RENAME TABLE Calculations to ModelingResults"))
 
     query = """
+        ALTER TABLE ModelingRequests
+        DROP CONSTRAINT CalculationTechniques_studyUniqueId,
+        DROP studyUniqueId,
+        ADD studyId varchar(100) COLLATE utf8mb4_bin NOT NULL,
+        ADD CONSTRAINT ModelingRequests_studyId
+            FOREIGN KEY (studyId)
+            REFERENCES Study (studyId)
+        ;
+    """
+    conn.execute(sql.text(query))
+
+    query = """
         ALTER TABLE ModelingResults
         CHANGE calculationTechniqueId requestId int NOT NULL,
         DROP CONSTRAINT Calculations_measurementTechniqueId,
@@ -65,6 +77,18 @@ def down(conn):
         ADD CONSTRAINT Calculations_measurementTechniqueId
             FOREIGN KEY (measurementTechniqueId)
             REFERENCES MeasurementTechniques (id)
+        ;
+    """
+    conn.execute(sql.text(query))
+
+    query = """
+        ALTER TABLE ModelingRequests
+        DROP CONSTRAINT ModelingRequests_studyId,
+        DROP studyId,
+        ADD studyUniqueId varchar(100) COLLATE utf8mb4_bin DEFAULT NULL,
+        ADD CONSTRAINT CalculationTechniques_studyUniqueId
+            FOREIGN KEY (studyUniqueId)
+            REFERENCES Study (studyUniqueID)
         ;
     """
     conn.execute(sql.text(query))
