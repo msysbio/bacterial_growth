@@ -46,6 +46,8 @@ class MeasurementContext(OrmBase):
         cascade='all, delete-orphan',
     )
 
+    calculationType: Mapped[str] = mapped_column(sql.String(50))
+
     subjectId:   Mapped[str] = mapped_column(sql.String(100), nullable=False)
     subjectType: Mapped[str] = mapped_column(sql.String(100), nullable=False)
 

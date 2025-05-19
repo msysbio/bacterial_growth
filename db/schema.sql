@@ -31,6 +31,7 @@ CREATE TABLE Bioreplicates (
   position varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
   isControl tinyint(1) NOT NULL DEFAULT '0',
   isBlank tinyint(1) NOT NULL DEFAULT '0',
+  calculationType varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
   PRIMARY KEY (id),
   UNIQUE KEY studyId (studyId,`name`),
   KEY fk_1 (experimentId),
@@ -165,6 +166,7 @@ CREATE TABLE MeasurementContexts (
   techniqueId int DEFAULT NULL,
   subjectId varchar(100) NOT NULL,
   subjectType varchar(100) NOT NULL,
+  calculationType varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
   PRIMARY KEY (id),
   KEY MeasurementContexts_fk_1 (bioreplicateId),
   KEY MeasurementContexts_fk_2 (compartmentId),
@@ -537,5 +539,6 @@ INSERT INTO MigrationVersions VALUES
 (103,'2025_05_15_202520_create_measurement_contexts','2025-05-16 12:44:48'),
 (104,'2025_05_15_202707_move_measurement_fields_to_contexts','2025-05-16 12:44:48'),
 (120,'2025_05_17_165050_fix_metabolite_columns','2025-05-18 09:49:50'),
-(121,'2025_05_18_105334_rename_calculations_to_models','2025-05-18 09:49:50');
+(121,'2025_05_18_105334_rename_calculations_to_models','2025-05-18 09:49:50'),
+(128,'2025_05_19_170414_add_calculation_types','2025-05-19 17:10:23');
 
