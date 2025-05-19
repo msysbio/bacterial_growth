@@ -81,9 +81,9 @@ class Chart:
             self.mixed_units_right = True
 
         if self.log_left:
-            left_units_label = f"log({left_units_label})"
+            left_units_label = f"ln({left_units_label})"
         if self.log_right:
-            right_units_label = f"log({right_units_label})"
+            right_units_label = f"ln({right_units_label})"
 
         for (df, label) in converted_data_left:
             scatter_params = self._get_scatter_params(df, label)
