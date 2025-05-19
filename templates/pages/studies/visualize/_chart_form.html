@@ -1,5 +1,4 @@
 {% macro render_chart_form(form, study) %}
-
   <div class="form-row">
     <label>
       <span>Experiment:</span>
@@ -60,7 +59,14 @@
               data-technique-id="{{ measurement_context.techniqueId }}"
               data-bioreplicate-id="{{ measurement_context.bioreplicateId }}"
               data-compartment-id="{{ measurement_context.compartmentId }}">
-            <input type="checkbox" name="{{ key }}" id="{{ key }}" class="js-measurement-toggle" />
+            <input
+                type="checkbox"
+                name="{{ key }}"
+                id="{{ key }}"
+                {{ "checked" if measurement_context.id in form.measurement_context_ids }}
+                {{ "data-axis-left" if measurement_context.id in form.left_axis_ids }}
+                {{ "data-axis-right" if measurement_context.id in form.right_axis_ids }}
+                class="js-measurement-toggle" />
             <label for="{{ key }}">
               {% if subjectType == 'bioreplicate' %}
                 {{ subject.name }}<sub>{{ measurement_context.compartment.name }}</sub>

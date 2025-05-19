@@ -2,7 +2,19 @@ Page('.study-visualize-page', function($page) {
   let studyId = $page.data('studyId')
   let $form   = $page.find('.js-chart-form');
 
-  updateChart($form);
+  updateChart($form).then(function() {
+    // For each row in the preview form, check if it should be initialized on
+    // the left or right:
+    $form.find('.js-contexts-list .js-row').each(function() {
+      let $chartRow = $(this);
+      let contextId = $chartRow.data('contextId');
+      let $formRow = $form.find(`input[name="measurementContext|${contextId}"]`);
+
+      if (($formRow).is('[data-axis-right]')) {
+        $chartRow.find('.js-axis-right').trigger('click');
+      }
+    });
+  });
 
   $page.find('.js-experiment-container').each(function(e) {
     let $container = $(this);
@@ -121,7 +133,7 @@ Page('.study-visualize-page', function($page) {
     let width          = Math.floor($chart.width());
     let scrollPosition = $(document).scrollTop();
 
-    $.ajax({
+    return $.ajax({
       url: `/study/${studyId}/visualize/chart?width=${width}`,
       dataType: 'html',
       method: 'POST',

@@ -92,6 +92,12 @@
   <br>
 
   <div class="flex-row margin-top-10">
+    <a
+        href="{{ url_for('study_visualize_page', studyId=study.publicId) }}?{{ chart_form.permalink_query }}"
+        class="js-permalink">
+      Permalink to this page
+    </a>
+
     <a href="#" class="green-button flex-right js-compare">
       Compare across studies
     </a>

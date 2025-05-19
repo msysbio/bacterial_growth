@@ -17,15 +17,15 @@ from models import (
 
 
 class ComparativeChartForm:
-    def __init__(self, db_session, time_units):
+    def __init__(self, db_session, time_units, left_axis_ids=[], right_axis_ids=[]):
         self.db_session = db_session
         self.time_units = time_units
 
-        self.measurement_context_ids = []
-        self.measurement_contexts    = []
+        self.left_axis_ids  = set(left_axis_ids)
+        self.right_axis_ids = set(right_axis_ids)
 
-        self.left_axis_ids  = set()
-        self.right_axis_ids = set()
+        self.measurement_context_ids = list(self.left_axis_ids) + list(self.right_axis_ids)
+        self.measurement_contexts    = []
 
         self.cell_count_units = 'Cells/mL'
         self.cfu_count_units  = 'CFUs/mL'
@@ -81,6 +81,13 @@ class ComparativeChartForm:
             )
 
         return chart
+
+    @property
+    def permalink_query(self):
+        left_axis_part  = ','.join([str(i) for i in self.left_axis_ids])
+        right_axis_part = ','.join([str(i) for i in self.right_axis_ids])
+
+        return f"l={left_axis_part}&r={right_axis_part}"
 
     def _extract_args(self, args):
         self.measurement_context_ids = []

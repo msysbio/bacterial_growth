@@ -104,8 +104,17 @@ def study_download_zip(studyId):
 
 
 def study_visualize_page(studyId):
-    study      = _fetch_study(studyId)
-    chart_form = ComparativeChartForm(g.db_session, time_units=study.timeUnits)
+    study = _fetch_study(studyId)
+
+    left_axis_ids  = [int(s) for s in request.args.get('l', '').split(',') if s != '']
+    right_axis_ids = [int(s) for s in request.args.get('r', '').split(',') if s != '']
+
+    chart_form = ComparativeChartForm(
+        g.db_session,
+        time_units=study.timeUnits,
+        left_axis_ids=left_axis_ids,
+        right_axis_ids=right_axis_ids,
+    )
 
     return render_template(
         "pages/studies/visualize.html",
@@ -127,6 +136,7 @@ def study_chart_fragment(studyId):
         'pages/studies/visualize/_chart.html',
         chart_form=chart_form,
         chart=chart,
+        study=study,
     )
 
 
