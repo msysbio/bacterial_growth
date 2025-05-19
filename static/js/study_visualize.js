@@ -3,6 +3,8 @@ Page('.study-visualize-page', function($page) {
   let $form   = $page.find('.js-chart-form');
 
   updateChart($form).then(function() {
+    let checkboxesChanged = false;
+
     // For each row in the preview form, check if it should be initialized on
     // the left or right:
     $form.find('.js-contexts-list .js-row').each(function() {
@@ -11,9 +13,15 @@ Page('.study-visualize-page', function($page) {
       let $formRow = $form.find(`input[name="measurementContext|${contextId}"]`);
 
       if (($formRow).is('[data-axis-right]')) {
-        $chartRow.find('.js-axis-right').trigger('click');
+        $chartRow.find('.js-axis-left').prop('checked', false);
+        $chartRow.find('.js-axis-right').prop('checked', true);
+        checkboxesChanged = true;
       }
     });
+
+    if (checkboxesChanged) {
+      updateChart($form);
+    }
   });
 
   $page.find('.js-experiment-container').each(function(e) {
