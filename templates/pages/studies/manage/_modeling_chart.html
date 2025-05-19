@@ -18,6 +18,15 @@
   {{ chart.to_html()|safe }}
 </div>
 
+<div class="form-row">
+  <input
+      type="checkbox"
+      class="js-log"
+      name="logTransform"
+      {{ "checked" if log_transform }} />
+  <span>Log view</span>
+</div>
+
 {{ render_param_input("y0",    "initial value of abundance") }}
 {{ render_param_input("y0_lm", "the intersection of the fit with the abscissa") }}
 {{ render_param_input("mumax", "maximum growth rate (1/time)") }}

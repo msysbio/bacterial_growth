@@ -194,6 +194,7 @@ def study_modeling_chart_fragment(studyId, measurementContextId):
     modeling_type = args.pop('modelingType')
     width         = args.pop('width')
     height        = args.pop('height')
+    log_transform = args.pop('logTransform', 'false') == 'true'
 
     measurement_context = g.db_session.get(MeasurementContext, measurementContextId)
     measurement_df      = measurement_context.get_df(g.db_session)
@@ -202,6 +203,7 @@ def study_modeling_chart_fragment(studyId, measurementContextId):
         time_units=study.timeUnits,
         title=measurement_context.get_chart_label(g.db_session),
         legend_position='right',
+        log_left=log_transform,
     )
     chart.add_df(measurement_df, units=measurement_context.technique.units, label="Measurements")
 
@@ -230,6 +232,7 @@ def study_modeling_chart_fragment(studyId, measurementContextId):
         'pages/studies/manage/_modeling_chart.html',
         chart=chart,
         model_coefficients=model_coefficients,
+        log_transform=log_transform,
     )
 
 

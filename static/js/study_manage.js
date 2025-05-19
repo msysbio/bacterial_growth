@@ -26,6 +26,11 @@ Page('.study-manage-page', function($page) {
   $page.on('change', 'form.js-modeling-form', function(e) {
     let $form = $(e.currentTarget);
     updateFormVisibility($form);
+
+    let $activeTrigger = $('.js-technique-row.highlight:visible .js-edit-trigger');
+    if ($activeTrigger.length > 0) {
+      updateChart($activeTrigger.first());
+    }
   });
 
   $page.on('click', '.js-select-all', function(e) {
@@ -51,27 +56,8 @@ Page('.study-manage-page', function($page) {
   $page.on('click', '.js-edit-trigger', function(e) {
     e.preventDefault();
 
-    let $trigger     = $(this);
-    let $form        = $trigger.parents('form');
-    let $chart       = $form.find('.js-chart');
-    let url          = $trigger.attr('href');
-    let modelingType = $trigger.parents('form').find('select[name=modelingType]').log().val();
-
-    $page.find('.js-technique-row').removeClass('highlight');
-    $trigger.parents('.js-technique-row').addClass('highlight');
-
-    $.ajax({
-      url: url,
-      dataType: 'html',
-      data: {
-        'modelingType': modelingType,
-        'width':        $chart.width(),
-        'height':       $chart.height(),
-      },
-      success: function(response) {
-        $chart.html(response)
-      },
-    });
+    let $trigger = $(this);
+    updateChart($trigger)
   });
 
   $page.on('submit', '.js-modeling-form', function(e) {
@@ -104,6 +90,11 @@ Page('.study-manage-page', function($page) {
               }
 
               $result.html("OK");
+
+              let $activeTrigger = $('.js-technique-row.highlight:visible .js-edit-trigger');
+              if ($activeTrigger.length > 0) {
+                updateChart($activeTrigger.first());
+              }
             }
           });
         }
@@ -155,5 +146,31 @@ Page('.study-manage-page', function($page) {
 
       $form.find(`.js-technique-row${selector1}${selector2}${selector3}`).removeClass('hidden');
     }
+  }
+
+  function updateChart($trigger) {
+    let $form = $trigger.parents('form');
+    let url   = $trigger.attr('href');
+
+    let $chart       = $form.find('.js-chart');
+    let modelingType = $form.find('select[name=modelingType]').val();
+    let logTransform = $form.find('input[name=logTransform]').prop('checked');
+
+    $page.find('.js-technique-row').removeClass('highlight');
+    $trigger.parents('.js-technique-row').addClass('highlight');
+
+    $.ajax({
+      url: url,
+      dataType: 'html',
+      data: {
+        'modelingType': modelingType,
+        'logTransform': logTransform,
+        'width':        $chart.width(),
+        'height':       $chart.height(),
+      },
+      success: function(response) {
+        $chart.html(response)
+      },
+    });
   }
 });
