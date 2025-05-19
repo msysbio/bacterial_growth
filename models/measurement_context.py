@@ -51,9 +51,6 @@ class MeasurementContext(OrmBase):
     subjectId:   Mapped[str] = mapped_column(sql.String(100), nullable=False)
     subjectType: Mapped[str] = mapped_column(sql.String(100), nullable=False)
 
-    def has_measurements(self):
-        return len([m for m in self.measurements if m.value is not None]) > 0
-
     def get_df(self, db_session):
         from models import Measurement
 

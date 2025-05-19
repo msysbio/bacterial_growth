@@ -51,7 +51,7 @@
 
         <br>
 
-        {% for measurementContext in experiment.measurementContexts if measurementContext.has_measurements() and measurementContext.technique.is_growth: %}
+        {% for measurementContext in experiment.measurementContexts if measurementContext.technique.is_growth: %}
           {% set subjectType = measurementContext.subjectType %}
           {% set subject     = measurementContext.get_subject(g.db_session) %}
 

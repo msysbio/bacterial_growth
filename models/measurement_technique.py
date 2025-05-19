@@ -156,6 +156,6 @@ class MeasurementTechnique(OrmBase):
         grouper = lambda mc: (mc.bioreplicate, mc.compartment)
 
         for ((bioreplicate, compartment), group) in itertools.groupby(self.measurementContexts, grouper):
-            contexts = list([mc for mc in group if mc.has_measurements()])
+            contexts = list(group)
 
             yield ((bioreplicate, compartment), contexts)

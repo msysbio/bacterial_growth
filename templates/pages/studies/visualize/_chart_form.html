@@ -48,7 +48,7 @@
 
         <br>
 
-        {% for measurement_context in experiment.measurementContexts if measurement_context.has_measurements(): %}
+        {% for measurement_context in experiment.measurementContexts: %}
           {% set subjectType = measurement_context.subjectType %}
           {% set subject     = measurement_context.get_subject(g.db_session) %}
 
