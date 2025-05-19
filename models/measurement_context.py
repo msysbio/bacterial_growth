@@ -114,22 +114,3 @@ class MeasurementContext(OrmBase):
             return db_session.get(Bioreplicate, self.subjectId)
         else:
             raise ValueError(f"Unknown subject type: {self.subjectType}")
-
-    # TODO (2025-05-17) Maybe remove
-    def subject_join(subject_type):
-        from models import Metabolite, Strain, Bioreplicate
-
-        if subject_type == 'metabolite':
-            Subject = Metabolite
-            subject_id_column = Subject.chebiId
-        elif subject_type == 'strain':
-            Subject = Strain
-            subject_id_column = Subject.id
-        elif subject_type == 'bioreplicate':
-            Subject = aliased(Bioreplicate)
-            subject_id_column = Subject.id
-
-        name = Subject.name.label("subjectName")
-        join = (Subject, MeasurementContext.subjectId == subject_id_column)
-
-        return (name, join)
