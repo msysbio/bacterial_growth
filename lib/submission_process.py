@@ -26,6 +26,7 @@ from models import (
     Taxon,
 )
 from lib.util import group_by_unique_name, is_non_negative_float
+from lib.db import execute_into_df
 
 
 def persist_submission_to_database(submission_form):
@@ -391,6 +392,7 @@ def _create_average_measurements(db_session, study, experiment):
     bioreplicate_ids = [b.id for b in experiment.bioreplicates]
 
     # The averaged measurements will be parented by a custom-generated bioreplicate:
+    # Note: This always gets created, unfortunately
     average_bioreplicate = Bioreplicate(
         name=f"Average({experiment.name})",
         calculationType='average',
@@ -445,13 +447,14 @@ def _create_average_measurements(db_session, study, experiment):
 
 def _create_average_measurement_context(
     db_session,
-    *
     parent_records,
     measurement_contexts,
     average_bioreplicate,
     subject_id,
     subject_type,
 ):
+    (study, technique, compartment) = parent_records
+
     # Collect average measurement values for the given contexts:
     measurement_rows = db_session.execute(
         sql.select(
@@ -459,7 +462,7 @@ def _create_average_measurement_context(
             sql.func.avg(Measurement.value),
             sql.func.std(Measurement.value),
         )
-        .where(Measurement.contextId.in_([mc.id for mc in target_contexts]))
+        .where(Measurement.contextId.in_([mc.id for mc in measurement_contexts]))
         .group_by(Measurement.timeInSeconds)
         .order_by(Measurement.timeInSeconds)
     ).all()
