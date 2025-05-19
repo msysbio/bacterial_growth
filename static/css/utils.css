@@ -390,3 +390,5 @@ form.simple-form {
 .icon.icon-tool           { background-image: url('/static/images/icons/tool.svg'); }
 .icon.icon-info           { background-image: url('/static/images/icons/info-circle.svg'); }
 .icon.icon-duplicate      { background-image: url('/static/images/icons/transition-bottom.svg'); }
+.icon.icon-left           { background-image: url('/static/images/icons/chevrons-left.svg'); }
+.icon.icon-right          { background-image: url('/static/images/icons/chevrons-right.svg'); }

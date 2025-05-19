@@ -8,9 +8,9 @@ from tests.database_test import DatabaseTest
 
 class TestMetabolite(DatabaseTest):
     def test_search_basic(self):
-        self.create_metabolite(chebi_id="CHEBI:1", metabo_name="glucose")
-        self.create_metabolite(chebi_id="CHEBI:2", metabo_name="trehalose")
-        self.create_metabolite(chebi_id="CHEBI:3", metabo_name="lactate")
+        self.create_metabolite(chebiId="CHEBI:1", name="glucose")
+        self.create_metabolite(chebiId="CHEBI:2", name="trehalose")
+        self.create_metabolite(chebiId="CHEBI:3", name="lactate")
 
         results, _ = Metabolite.search_by_name(self.db_conn, 'glucose')
         self.assertEqual(
@@ -32,8 +32,8 @@ class TestMetabolite(DatabaseTest):
         self.assertEqual([], [r['text'] for r in results])
 
     def test_search_ordering_by_prefix_match(self):
-        self.create_metabolite(chebi_id="CHEBI:1", metabo_name="glucose")
-        self.create_metabolite(chebi_id="CHEBI:2", metabo_name="d-gluconic acid")
+        self.create_metabolite(chebiId="CHEBI:1", name="glucose")
+        self.create_metabolite(chebiId="CHEBI:2", name="d-gluconic acid")
 
         # Matches at the beginning of the word are first:
         results, _ = Metabolite.search_by_name(self.db_conn, 'gluc')
@@ -43,10 +43,10 @@ class TestMetabolite(DatabaseTest):
         )
 
     def test_pagination(self):
-        self.create_metabolite(metabo_name="Test 1 foo")
-        self.create_metabolite(metabo_name="Test 2 foo")
-        self.create_metabolite(metabo_name="Test 3 bar")
-        self.create_metabolite(metabo_name="Test 4 bar")
+        self.create_metabolite(name="Test 1 foo")
+        self.create_metabolite(name="Test 2 foo")
+        self.create_metabolite(name="Test 3 bar")
+        self.create_metabolite(name="Test 4 bar")
 
         # Two per page, two pages:
         results, has_more = Metabolite.search_by_name(self.db_conn, 'Test', page=1, per_page=2)

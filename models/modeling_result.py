@@ -31,33 +31,22 @@ MODEL_NAMES = {
 }
 
 
-class Calculation(OrmBase):
-    __tablename__ = "Calculations"
+class ModelingResult(OrmBase):
+    __tablename__ = "ModelingResults"
 
-    id:          Mapped[int] = mapped_column(primary_key=True)
-    type:        Mapped[str] = mapped_column(sql.String(100), nullable=False)
-    subjectId:   Mapped[str] = mapped_column(sql.String(100), nullable=False)
-    subjectType: Mapped[str] = mapped_column(sql.String(100), nullable=False)
+    id:   Mapped[int] = mapped_column(primary_key=True)
+    type: Mapped[str] = mapped_column(sql.String(100), nullable=False)
 
-    measurementTechniqueId: Mapped[int] = mapped_column(
-        sql.ForeignKey('MeasurementTechniques.id'),
+    requestId: Mapped[int] = mapped_column(sql.ForeignKey('ModelingRequests.id'), nullable=False)
+    request: Mapped['ModelingRequest'] = relationship(back_populates='results')
+
+    measurementContextId: Mapped[int] = mapped_column(
+        sql.ForeignKey('MeasurementContexts.id'),
         nullable=False,
     )
-    measurementTechnique: Mapped['MeasurementTechnique'] = relationship(
-        back_populates="calculations",
-    )
+    measurementContext: Mapped['MeasurementContext'] = relationship(back_populates='modelingResults')
 
-    calculationTechniqueId: Mapped[int] = mapped_column(
-        sql.ForeignKey('CalculationTechniques.id'),
-        nullable=False,
-    )
-    calculationTechnique: Mapped['CalculationTechnique'] = relationship(
-        back_populates="calculations",
-    )
-
-    bioreplicateUniqueId: Mapped[int] = mapped_column(sql.ForeignKey('Bioreplicates.id'), nullable=False)
-    bioreplicate: Mapped['Bioreplicate'] = relationship(back_populates='calculations')
-
+    fit:          Mapped[sql.JSON] = mapped_column(sql.JSON, nullable=False)
     coefficients: Mapped[sql.JSON] = mapped_column(sql.JSON, nullable=False)
 
     state: Mapped[str] = mapped_column(sql.String(100), default='pending')
@@ -67,6 +56,19 @@ class Calculation(OrmBase):
     updatedAt:    Mapped[datetime] = mapped_column(UtcDateTime, server_default=FetchedValue())
     calculatedAt: Mapped[datetime] = mapped_column(UtcDateTime)
 
+    @classmethod
+    def empty_coefficients(Self, model_type):
+        if model_type == 'easy_linear':
+            return {'y0': None, 'y0_lm': None, 'mumax': None, 'lag': None}
+        elif model_type == 'baranyi_roberts':
+            return {'y0': None, 'mumax': None, 'K': None, 'h0': None}
+        else:
+            raise ValueError(f"Don't know what the coefficients are for model type: {repr(model_type)}")
+
+    @property
+    def model_name(self):
+        return MODEL_NAMES[self.type]
+
     @validates('type')
     def _validate_type(self, key, value):
         return self._validate_inclusion(key, value, VALID_TYPES)
@@ -74,18 +76,6 @@ class Calculation(OrmBase):
     @validates('state')
     def _validate_state(self, key, value):
         return self._validate_inclusion(key, value, VALID_STATES)
-
-    def get_subject(self, db_session):
-        from models import Metabolite, Strain, Bioreplicate
-
-        if self.subjectType == 'metabolite':
-            return db_session.get(Metabolite, self.subjectId)
-        elif self.subjectType == 'strain':
-            return db_session.get(Strain, self.subjectId)
-        elif self.subjectType == 'bioreplicate':
-            return db_session.get(Bioreplicate, self.subjectId)
-        else:
-            raise ValueError(f"Unknown subject type: {self.subjectType}")
 
     def generate_chart_df(self, measurements_df):
         start_time = measurements_df['time'].min()
@@ -97,7 +87,6 @@ class Calculation(OrmBase):
         return pd.DataFrame.from_dict({
             'time': timepoints,
             'value': values,
-            'name': MODEL_NAMES[self.type],
         })
 
     def _predict(self, timepoints):
@@ -106,13 +95,13 @@ class Calculation(OrmBase):
         elif self.type == 'baranyi_roberts':
             return self._predict_baranyi_roberts(timepoints)
         else:
-            raise ValueError(f"Don't know how to predict values for calculation type: {repr(self.type)}")
+            raise ValueError(f"Don't know how to predict values for model type: {repr(self.type)}")
 
     def _predict_easy_linear(self, time):
-        # y0    = self.coefficients['y0']
-        y0_lm = self.coefficients['y0_lm']
-        mumax = self.coefficients['mumax']
-        # lag   = self.coefficients['lag']
+        # y0    = float(self.coefficients['y0'])
+        y0_lm = float(self.coefficients['y0_lm'])
+        mumax = float(self.coefficients['mumax'])
+        # lag   = float(self.coefficients['lag'])
 
         # No lag:
         # return y0 * np.exp(time * mumax)
@@ -121,10 +110,10 @@ class Calculation(OrmBase):
         return y0_lm * np.exp(time * mumax)
 
     def _predict_baranyi_roberts(self, time):
-        y0    = self.coefficients['y0']
-        mumax = self.coefficients['mumax']
-        K     = self.coefficients['K']
-        h0    = self.coefficients['h0']
+        y0    = float(self.coefficients['y0'])
+        mumax = float(self.coefficients['mumax'])
+        K     = float(self.coefficients['K'])
+        h0    = float(self.coefficients['h0'])
 
         # Formula taken from the "growthrates" documentation under `grow_baranyi`:
         # https://cran.r-project.org/web/packages/growthrates/growthrates.pdf

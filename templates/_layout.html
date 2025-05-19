@@ -25,7 +25,7 @@
       </div>
 
       <header>
-        <img style="min-width: 300px;" src="{{ url_for('static', filename='images/logo_sidebar3.png') }}" />
+        <img src="{{ url_for('static', filename='images/logo_sidebar3.png') }}" />
       </header>
 
       <nav>
@@ -46,6 +46,17 @@
             <a href="{{ url_for('upload_status_page') }}">
               <div class="emoji-icon">📤</div>
               Upload data
+            </a>
+          </li>
+          <li>
+            <a href="{{ url_for('comparison_show_page') }}" class="js-sidebar-compare">
+              <div class="emoji-icon">↔</div>
+              Compare
+              <span class="js-count count">
+                {% if 'compareData' in session and session['compareData'].get('contexts', [])|length > 0 %}
+                  ({{ session['compareData']['contexts']|length }})
+                {% endif %}
+              </span>
             </a>
           </li>
           <li>
@@ -78,21 +89,6 @@
       </div>
 
       {% block content %}{% endblock %}
-
-      {% set compareData = session['compareData'] or {'targets': []} %}
-
-      <div
-          class="hidden compare-box js-compare-box"
-          data-value='{{ compareData|tojson }}'>
-        <span class="js-target-count">
-          {{ compareData['targets']|length }}
-        </span>
-        comparison targets
-
-        <a class="green-button small-button" href="{{ url_for('comparison_show_page') }}">
-          Compare
-        </a>
-      </div>
     </main>
   </body>
 </html>

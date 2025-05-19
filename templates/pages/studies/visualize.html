@@ -1,4 +1,4 @@
-{% from 'pages/studies/_experiment_form.html' import render_experiment_form %}
+{% from 'pages/studies/visualize/_chart_form.html' import render_chart_form %}
 
 {% extends '_layout.html' %}
 
@@ -14,21 +14,28 @@
       {% include 'pages/studies/_navigation_buttons.html' %}
 
       <p>
-        Select the Biological replicates from the experiments you want to plot.
-        You can visualize different plots corresponding to Optical density,
-        Flow cytometry, Plate counts, 16S rRNA sequencing, and metabolite
-        concentrations. By clicking on the camera icon at the right corner of
-        each plot, the images can be saved locally on your computer as .png
-        files.
+        Select an experiment and measurement technique and then check the boxes
+        of the measurement subjects you wish to plot. You can add multiple data
+        traces on the chart and use the controls at its bottom to shift them
+        between the left and right axes to group them by units, e.g. cell
+        counts on the left axis, metabolites on the right one.
       </p>
 
-      <p>
-        <h2>Experiments</h2>
+      <form class="simple-form chart-form js-chart-form">
+        <div class="columns">
+          <div class="controls-column">
+            {{ render_chart_form(chart_form, study) }}
+          </div>
 
-        {% for experiment_form in experiment_forms: %}
-          {{ render_experiment_form(experiment_form) }}
-        {% endfor %}
-      </p>
+          <div class="chart-column box">
+            <div class="chart">
+              <div class="chart-placeholder">
+                📊
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
     </article>
   </div>
 

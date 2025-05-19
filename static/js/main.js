@@ -28,13 +28,23 @@ $(document).ready(function() {
   $('#main .open-sidebar a').on('click', function(e) {
     e.preventDefault();
 
-    $(':root').css('--sidebar-width', '340px');
+    $(':root').css('--sidebar-width', '250px');
     $('#main .open-sidebar').css('width', '0px');
 
     let transitionLengthMs = parseInt($(':root').css('--transition-length'), 10);
     setTimeout(function() {
       $(document).trigger('x-sidebar-resize')
     }, transitionLengthMs + 1);
+  });
+
+  // If there are Plotly plots, resize them automatically:
+  $(document).on('x-sidebar-resize', function() {
+    $('.js-plotly-plot').each(function() {
+      let $chart = $(this);
+      let width = Math.floor($chart.parents('.chart').width());
+
+      Plotly.relayout($chart[0], { 'width': width }, 0);
+    });
   });
 
   $('.js-tabs .tab-headers span').on('click', function(e) {
@@ -90,6 +100,25 @@ $(document).ready(function() {
   tippy('[data-tooltip]', {
     content: function(element) {
       return element.getAttribute('data-tooltip');
+    }
+  })
+
+  // On click, smooth-scroll to the location:
+  $(document).on('click', '.js-smooth-scroll', function(e) {
+    let $link   = $(e.currentTarget);
+    let $target = $($link.attr('href'));
+
+    $(document).scrollTo($target, 150, {offset: -20});
+  })
+
+  // On click, smooth-scroll to the location:
+  $(document).on('click', '.js-scroll-top', function(e) {
+    e.preventDefault()
+    let $link = $(e.currentTarget);
+    $(document).scrollTo(0, 150);
+
+    if (window.history) {
+      window.history.pushState(null, null, ' ')
     }
   })
 });

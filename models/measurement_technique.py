@@ -55,12 +55,17 @@ class MeasurementTechnique(OrmBase):
     createdAt: Mapped[datetime] = mapped_column(UtcDateTime, server_default=FetchedValue())
     updatedAt: Mapped[datetime] = mapped_column(UtcDateTime, server_default=FetchedValue())
 
+    measurementContexts: Mapped[List['MeasurementContext']] = relationship(
+        back_populates="technique",
+        order_by='MeasurementContext.bioreplicateId, MeasurementContext.compartmentId',
+    )
     measurements: Mapped[List['Measurement']] = relationship(
-        back_populates="techniqueRecord"
+        secondary='MeasurementContexts',
+        viewonly=True,
     )
-    calculations: Mapped[List['Calculation']] = relationship(
-        back_populates="measurementTechnique"
-    )
+
+    def __lt__(self, other):
+        return self.id < other.id
 
     @property
     def short_name(self):
@@ -69,6 +74,15 @@ class MeasurementTechnique(OrmBase):
     @property
     def long_name(self):
         return TECHNIQUE_LONG_NAMES[self.type]
+
+    @property
+    def long_name_with_subject_type(self):
+        parts = [self.long_name]
+
+        if self.subjectType != 'metabolite':
+            parts.append(self.subject_short_name)
+
+        return ' per '.join(parts)
 
     @property
     def subject_short_name(self):
@@ -82,17 +96,17 @@ class MeasurementTechnique(OrmBase):
         return self.type not in ('ph', 'metabolite')
 
     def get_bioreplicates(self, db_session):
-        from models import Bioreplicate, Measurement
+        from models import Bioreplicate, MeasurementContext
 
         return db_session.scalars(
             sql.select(Bioreplicate)
             .distinct()
-            .join(Measurement)
-            .where(Measurement.techniqueId == self.id)
+            .join(MeasurementContext)
+            .where(MeasurementContext.techniqueId == self.id)
         ).all()
 
     def get_subjects_for_bioreplicate(self, db_session, bioreplicate):
-        from models import Measurement
+        from models import MeasurementContext, Measurement
 
         match self.subjectType:
             case 'bioreplicate':
@@ -108,11 +122,12 @@ class MeasurementTechnique(OrmBase):
         return db_session.scalars(
             sql.select(subject_class)
             .where(subject_class.id.in_(
-                sql.select(Measurement.subjectId)
+                sql.select(MeasurementContext.subjectId)
+                .join(Measurement)
                 .distinct()
                 .where(
-                    Measurement.techniqueId == self.id,
-                    Measurement.bioreplicateUniqueId == bioreplicate.id,
+                    MeasurementContext.techniqueId == self.id,
+                    MeasurementContext.bioreplicateId == bioreplicate.id,
                     Measurement.value.is_not(None),
                 )
             ))
@@ -137,69 +152,10 @@ class MeasurementTechnique(OrmBase):
 
             return f"{subject_name} {suffix}"
 
-    def measurements_by_compartment(self, db_session, measurements=None):
-        from models import (
-            Bioreplicate,
-            Compartment
-        )
+    def get_grouped_contexts(self):
+        grouper = lambda mc: (mc.bioreplicate, mc.compartment)
 
-        if measurements is None:
-            measurements = self.measurements
+        for ((bioreplicate, compartment), group) in itertools.groupby(self.measurementContexts, grouper):
+            contexts = list([mc for mc in group if mc.has_measurements()])
 
-        grouper = lambda m: (m.bioreplicateUniqueId, m.compartmentId)
-
-        ordered_measurements = sorted(self.measurements, key=grouper)
-        for ((bioreplicate_uuid, compartment_id), group) in itertools.groupby(ordered_measurements, grouper):
-            measurements = list(group)
-
-            if len([m for m in measurements if m.value is not None]) == 0:
-                continue
-
-            bioreplicate = db_session.get(Bioreplicate, bioreplicate_uuid)
-            compartment  = db_session.get(Compartment, compartment_id)
-
-            yield ((bioreplicate, compartment), measurements)
-
-    def measurements_by_subject(self, db_session, measurements=None):
-        from models import Measurement
-
-        if measurements is None:
-            measurements = self.measurements
-
-        grouper = lambda m: (m.subjectType, m.subjectId)
-
-        ordered_measurements = sorted(measurements, key=grouper)
-        for ((subject_type, subject_id), group) in itertools.groupby(ordered_measurements, grouper):
-            measurements = list(group)
-
-            if len([m for m in measurements if m.value is not None]) == 0:
-                continue
-
-            subject = Measurement.get_subject(db_session, subject_id, subject_type)
-
-            yield (subject, measurements)
-
-    def get_subject_df(self, db_session, bioreplicate_uuid, subject_id, subject_type):
-        from models import Measurement, Bioreplicate
-
-        subjectName, subjectJoin = Measurement.subject_join(subject_type)
-
-        query = (
-            sql.select(
-                Measurement.timeInHours.label("time"),
-                Measurement.value,
-                Measurement.std,
-                subjectName,
-            )
-            .join(Bioreplicate)
-            .join(*subjectJoin)
-            .where(
-                Measurement.techniqueId == self.id,
-                Measurement.bioreplicateUniqueId == bioreplicate_uuid,
-                Measurement.subjectId == subject_id,
-                Measurement.subjectType == subject_type,
-            )
-            .order_by(Measurement.timeInSeconds)
-        )
-
-        return execute_into_df(db_session, query)
+            yield ((bioreplicate, compartment), contexts)

@@ -35,6 +35,36 @@
     }
   }
 
+  .measurement-techniques {
+    flex: 1;
+  }
+
+  .measurements-toc {
+    position: sticky;
+    top: 20px;
+    margin-top: 20px;
+    margin-left: 20px;
+    flex: 1;
+
+    h2 {
+      font-size: 16px;
+      margin-top: 10px;
+      margin-bottom: 10px;
+    }
+    h2:first-child {
+      margin-top: 0;
+    }
+
+    ol {
+      margin: 0;
+      padding-left: 20px;
+    }
+  }
+
+  .measurements-list {
+    max-width: 200px;
+  }
+
   .measurement-techniques,
   .calculation-techniques {
     display: flex;

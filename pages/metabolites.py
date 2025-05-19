@@ -10,7 +10,7 @@ from models import Metabolite
 
 def metabolite_show_page(chebi_id):
     with get_connection() as conn:
-        query = "SELECT * FROM Metabolites WHERE chebi_id = :chebi_id LIMIT 1"
+        query = "SELECT * FROM Metabolites WHERE chebiId = :chebi_id LIMIT 1"
         metabolite = conn.execute(sql.text(query), {'chebi_id': chebi_id}).one()._asdict()
         numeric_id = re.sub(r'^CHEBI:', '', chebi_id)
 

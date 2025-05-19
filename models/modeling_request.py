@@ -31,14 +31,14 @@ MODEL_NAMES = {
 }
 
 
-class CalculationTechnique(OrmBase):
-    __tablename__ = "CalculationTechniques"
+class ModelingRequest(OrmBase):
+    __tablename__ = "ModelingRequests"
 
     id:   Mapped[int] = mapped_column(primary_key=True)
     type: Mapped[str] = mapped_column(sql.String(100), nullable=False)
 
-    studyUniqueID: Mapped[str] = mapped_column(sql.ForeignKey('Study.studyUniqueID'), nullable=False)
-    study: Mapped['Study'] = relationship(back_populates="calculationTechniques")
+    studyId: Mapped[str] = mapped_column(sql.ForeignKey('Study.studyId'), nullable=False)
+    study: Mapped['Study'] = relationship(back_populates='modelingRequests')
 
     jobUuid: Mapped[str] = mapped_column(sql.String(100))
     state:   Mapped[str] = mapped_column(sql.String(100), default='pending')
@@ -47,9 +47,9 @@ class CalculationTechnique(OrmBase):
     createdAt: Mapped[datetime] = mapped_column(UtcDateTime, server_default=FetchedValue())
     updatedAt: Mapped[datetime] = mapped_column(UtcDateTime, server_default=FetchedValue())
 
-    calculations: Mapped[List['Calculation']] = relationship(
-        back_populates="calculationTechnique",
-        cascade="all, delete-orphan"
+    results: Mapped[List['ModelingResult']] = relationship(
+        back_populates='request',
+        cascade='all, delete-orphan'
     )
 
     @validates('type')

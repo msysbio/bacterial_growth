@@ -40,8 +40,8 @@
             placeholder="Example: glucose"
             class="form-input-blue form-input-full js-metabolites-select">
           {% for metabolite in submission_form.fetch_metabolites_for_technique(index): %}
-            <option value="{{ metabolite.chebi_id }}" selected>
-              {{ metabolite.metabo_name }} ({{ metabolite.chebi_id }})
+            <option value="{{ metabolite.chebiId }}" selected>
+              {{ metabolite.name }} ({{ metabolite.chebiId }})
             </option>
           {% endfor %}
         </select>

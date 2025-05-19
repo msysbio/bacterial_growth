@@ -24,10 +24,7 @@ def download_excel_file(id):
     submission_user_ids = g.db_session.scalars(
         sql.select(Submission.userUniqueID)
         .distinct()
-        .where(sql.or_(
-            Submission.studyFileId == file.id,
-            Submission.dataFileId == file.id,
-        ))
+        .where(Submission.dataFileId == file.id)
     ).all()
 
     allowed_user_ids = set(submission_user_ids)

@@ -47,6 +47,8 @@ def persist_submission_to_database(submission_form):
 
         # First, clear out existing relationships
         study.measurements           = []
+        study.measurementContexts    = []
+        study.measurementTechniques  = []
         study.strains                = []
         study.experimentCompartments = []
         study.compartments           = []
@@ -54,7 +56,6 @@ def persist_submission_to_database(submission_form):
         study.experiments            = []
         study.bioreplicates          = []
         study.perturbations          = []
-        study.measurementTechniques  = []
         study.studyMetabolites       = []
 
         _save_compartments(db_trans_session, submission_form, study)
@@ -244,6 +245,7 @@ def _save_compartments(db_session, submission_form, study):
 def _save_communities(db_session, submission_form, study, user_uuid):
     submission = submission_form.submission
     communities = []
+    identifier_cache = {}
 
     for community_data in submission.studyDesign['communities']:
         community_data = copy.deepcopy(community_data)
@@ -253,42 +255,13 @@ def _save_communities(db_session, submission_form, study, user_uuid):
         community.strainIds = []
 
         for identifier in strain_identifiers:
-            strain_params = {'study': study, 'userUniqueID': user_uuid}
+            if identifier not in identifier_cache:
+                strain = _build_strain(db_session, identifier, submission, study, user_uuid)
+                identifier_cache[identifier] = strain
+                db_session.add(strain)
+                db_session.flush()
 
-            if identifier.startswith('existing|'):
-                taxon_id = identifier.removeprefix('existing|')
-                taxon = db_session.scalars(
-                    sql.select(Taxon)
-                    .where(Taxon.ncbiId == taxon_id)
-                    .limit(1)
-                ).one()
-
-                strain_params = {
-                    'name':    taxon.name,
-                    'NCBId':   taxon.ncbiId,
-                    'defined': True,
-                    **strain_params,
-                }
-
-            elif identifier.startswith('custom|'):
-                identifier = identifier.removeprefix('custom|')
-                custom_strain_data = _find_new_strain(submission, identifier)
-
-                strain_params = {
-                    'name':        custom_strain_data['name'],
-                    'NCBId':       custom_strain_data['species'],
-                    'description': custom_strain_data['description'],
-                    'defined':     False,
-                    **strain_params,
-                }
-            else:
-                raise ValueError(f"Strain identifier {repr(identifier)} has an unexpected prefix")
-
-            strain = Strain(**strain_params)
-            db_session.add(strain)
-            db_session.flush()
-
-            community.strainIds.append(strain.id)
+            community.strainIds.append(identifier_cache[identifier].id)
 
         communities.append(community)
 
@@ -459,6 +432,41 @@ def _get_expected_column_names(submission_form):
         'Growth data per strain':     strain_columns,
         'Growth data per metabolite': metabolite_columns,
     }
+
+
+def _build_strain(db_session, identifier, submission, study, user_uuid):
+    strain_params = {'study': study, 'userUniqueID': user_uuid}
+
+    if identifier.startswith('existing|'):
+        taxon_id = identifier.removeprefix('existing|')
+        taxon = db_session.scalars(
+            sql.select(Taxon)
+            .where(Taxon.ncbiId == taxon_id)
+            .limit(1)
+        ).one()
+
+        strain_params = {
+            'name':    taxon.name,
+            'NCBId':   taxon.ncbiId,
+            'defined': True,
+            **strain_params,
+        }
+
+    elif identifier.startswith('custom|'):
+        identifier = identifier.removeprefix('custom|')
+        custom_strain_data = _find_new_strain(submission, identifier)
+
+        strain_params = {
+            'name':        custom_strain_data['name'],
+            'NCBId':       custom_strain_data['species'],
+            'description': custom_strain_data['description'],
+            'defined':     False,
+            **strain_params,
+        }
+    else:
+        raise ValueError(f"Strain identifier {repr(identifier)} has an unexpected prefix")
+
+    return Strain(**strain_params)
 
 
 def _format_row_list_error(row_list):

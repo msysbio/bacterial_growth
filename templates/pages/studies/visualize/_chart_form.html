@@ -1,0 +1,119 @@
+{% macro render_chart_form(form, study) %}
+
+  <div class="form-row">
+    <label>
+      <span>Experiment:</span>
+      <select name="experimentId" class="form-input-blue full">
+        {% for experiment in study.experiments: %}
+          <option value="{{ experiment.id }}">
+            {{- experiment.name }}: {{ experiment.description -}}
+          </option>
+        {% endfor %}
+      </select>
+    </label>
+  </div>
+
+  {% for experiment in study.experiments: %}
+    <div
+        class="experiment-container hidden js-experiment-container"
+        data-experiment-id="{{ experiment.id }}">
+      <div class="experiment">
+        <p>{{ experiment.description }}</p>
+
+        <div class="form-row">
+          <label class="full">
+            <span>Technique:</span>
+            <select name="techniqueId" class="form-input-blue full">
+              {% for technique in study.measurementTechniques: %}
+                <option value="{{ technique.id }}" data-subject-type="{{ technique.subjectType }}">
+                {{- technique.long_name_with_subject_type -}}
+                </option>
+              {% endfor %}
+            </select>
+          </label>
+        </div>
+
+        <div class="form-row hidden js-bioreplicate-row">
+          <label class="full">
+          <span>Bioreplicate and compartment:</span>
+          <select name="bioreplicateCompartmentId" class="form-input-blue full">
+            {% for bioreplicate in experiment.bioreplicates: %}
+              {% for compartment in experiment.compartments: %}
+                <option value="{{ bioreplicate.id }}|{{ compartment.id }}">
+                {{- bioreplicate.name }}, compartment {{ compartment.name -}}
+                </option>
+              {% endfor %}
+            {% endfor %}
+          </select>
+        </div>
+
+        <br>
+
+        {% for measurement_context in experiment.measurementContexts if measurement_context.has_measurements(): %}
+          {% set subjectType = measurement_context.subjectType %}
+          {% set subject     = measurement_context.get_subject(g.db_session) %}
+
+          {% set key = "measurementContext|{}".format(measurement_context.id) %}
+
+          <div
+              class="form-row hidden js-technique-row"
+              data-technique-id="{{ measurement_context.techniqueId }}"
+              data-bioreplicate-id="{{ measurement_context.bioreplicateId }}"
+              data-compartment-id="{{ measurement_context.compartmentId }}">
+            <input type="checkbox" name="{{ key }}" id="{{ key }}" class="js-measurement-toggle" />
+            <label for="{{ key }}">
+              {% if subjectType == 'bioreplicate' %}
+                {{ subject.name }}<sub>{{ measurement_context.compartment.name }}</sub>
+              {% else: %}
+                {{ subject.name }}
+              {% endif %}
+            </label>
+          </div>
+        {% endfor %}
+
+        <div class="form-row margin-top-10">
+          <a href="#" class="white-button js-select-all">Select all</a>
+          <a href="#" class="white-button flex-right js-clear-chart">Clear</a>
+        </div>
+
+        <div class="form-row">
+          <label class="full">
+            <span>Cell count units:</span>
+            <select name="cellCountUnits" class="form-input-blue full">
+              <option>Cells/mL</option>
+              <option>Cells/μL</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="form-row">
+          <label class="full">
+            <span>CFU count units</span>
+            <select name="cfuCountUnits" class="form-input-blue full">
+              <option>CFUs/mL</option>
+              <option>CFUs/μL</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="form-row">
+          <label class="full">
+            <span>Metabolite units:</span>
+            <select name="metaboliteUnits" class="form-input-blue full">
+              <optgroup label="Molar concentration">
+                <option value="mM">Milimolars (mM)</option>
+                <option value="μM">Micromolars (μM)</option>
+                <option value="nM">Nanomolars (nM)</option>
+                <option value="pM">Picomolars (pM)</option>
+              </optgroup>
+              <optgroup label="Mass concentration">
+                <option value="g/L">Grams per Liter (g/L)</option>
+              </optgroup>
+            </select>
+          </label>
+        </div>
+      </div>
+    </div>
+  {% endfor %}
+
+{% endmacro %}

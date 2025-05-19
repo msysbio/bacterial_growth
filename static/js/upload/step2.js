@@ -1,4 +1,4 @@
-Page('.upload-page .step-content.step-2.active', function($page2) {
+Page('.upload-page .step-content.step-2.active', function($step2) {
   // Initialize selection of existing strains
   let $existingStrainSelect = $step2.find('.js-existing-strain-select');
   $existingStrainSelect.select2({

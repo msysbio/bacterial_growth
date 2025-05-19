@@ -1,50 +1,65 @@
 Page('.comparison-page', function($page) {
-  update_chart($page.find('.data-container'));
+  let $form = $page.find('.js-chart-form');
 
-  $page.on('change', '.js-target', function() {
-    let scrollPosition = $(document).scrollTop();
+  updateChart($form);
 
-    let $target    = $(this);
-    let $container = $target.parents('.data-container');
-    let target     = $target.prop('name');
+  // Exclusive checkboxes on one row:
+  $page.on('change', 'input.js-axis', function(e) {
+    let $checkbox = $(e.currentTarget);
+    let $other;
 
-    if ($target.is(':checked')) {
-      // uncheck all others with the same name
-      $page.find(`input[name="${target}"]`).each(function() {
-        let $otherInput = $(this);
-        if (!$target.is($otherInput)) {
-          $otherInput.prop('checked', false);
-        }
-      });
+    if ($checkbox.is('.js-axis-left')) {
+      $other = $checkbox.parents('.js-row').find('.js-axis-right');
+    } else if ($checkbox.is('.js-axis-right')) {
+      $other = $checkbox.parents('.js-row').find('.js-axis-left');
     }
 
-    update_chart($container, scrollPosition);
+    if ($checkbox.is(':checked')) {
+      $other.prop('checked', false);
+    } else {
+      $other.prop('checked', true);
+    }
   });
 
-  $(document).on('x-sidebar-resize', function() {
-    $('.js-plotly-plot').each(function() {
-      let $chart = $(this);
-      let width = Math.floor($chart.parents('.chart').width());
-
-      Plotly.relayout($chart[0], { 'width': width }, 0);
-    });
+  $page.on('change', 'form.js-chart-form', function(e) {
+    let $form = $(e.currentTarget);
+    updateChart($form);
   });
 
-  function update_chart($container, scrollPosition) {
-    let $form  = $container.find('form');
-    let $chart = $container.find('.chart');
-    let width  = Math.floor($chart.width());
+  $page.on('click', '.js-select-all', function(e) {
+    e.preventDefault();
+
+    let $link = $(e.currentTarget);
+    let $form = $link.parents('form');
+    $form.find('input[type=checkbox].js-measurement-toggle:visible').prop('checked', true);
+
+    updateChart($form)
+  });
+
+  $page.on('click', '.js-clear-chart', function(e) {
+    e.preventDefault();
+
+    let $link = $(e.currentTarget);
+    let $form = $link.parents('form');
+    $form.find('input[type=checkbox]').prop('checked', false);
+
+    updateChart($form)
+  });
+
+  function updateChart($form) {
+    let $chart = $form.find('.js-chart');
+
+    let width          = Math.floor($chart.width());
+    let scrollPosition = $(document).scrollTop();
 
     $.ajax({
       url: `/comparison/chart?width=${width}`,
       dataType: 'html',
+      method: 'POST',
       data: $form.serializeArray(),
       success: function(response) {
         $chart.html(response);
-
-        if (scrollPosition) {
-          $(document).scrollTop(scrollPosition);
-        }
+        $(document).scrollTop(scrollPosition);
       }
     })
   }

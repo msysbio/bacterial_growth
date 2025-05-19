@@ -128,25 +128,25 @@ class TestSubmissionForm(DatabaseTest):
         )
 
     def test_metabolites(self):
-        m1 = self.create_metabolite(metabo_name="glucose")
-        m2 = self.create_metabolite(metabo_name="trehalose")
+        m1 = self.create_metabolite(name="glucose")
+        m2 = self.create_metabolite(name="trehalose")
 
         submission_form = SubmissionForm(db_session=self.db_session)
         self.assertEqual(submission_form.fetch_taxa(), [])
 
         study_design = submission_form.submission.studyDesign
-        study_design['techniques'] = [{'metaboliteIds': [m1.chebi_id]}]
+        study_design['techniques'] = [{'metaboliteIds': [m1.chebiId]}]
         submission_form.update_study_design(study_design)
 
         self.assertEqual(
-            [m.metabo_name for m in submission_form.fetch_metabolites_for_technique(0)],
+            [m.name for m in submission_form.fetch_metabolites_for_technique(0)],
             ['glucose'],
         )
 
-        study_design['techniques'] = [{'metaboliteIds': [m1.chebi_id, m2.chebi_id]}]
+        study_design['techniques'] = [{'metaboliteIds': [m1.chebiId, m2.chebiId]}]
         submission_form.update_study_design(study_design)
         self.assertEqual(
-            [m.metabo_name for m in submission_form.fetch_metabolites_for_technique(0)],
+            [m.name for m in submission_form.fetch_metabolites_for_technique(0)],
             ['glucose', 'trehalose'],
         )
 

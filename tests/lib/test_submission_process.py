@@ -263,8 +263,8 @@ class TestSubmissionProcess(DatabaseTest):
         self.assertEqual({'RI_1', 'RI_2', 'RI_3'}, {b.name for b in study.bioreplicates})
 
     def test_measurement_technique_creation(self):
-        m1 = self.create_metabolite(metabo_name='pyruvate')
-        m2 = self.create_metabolite(metabo_name='butyrate')
+        m1 = self.create_metabolite(name='pyruvate')
+        m2 = self.create_metabolite(name='butyrate')
 
         submission_form = SubmissionForm(submission_id=self.submission.id, db_session=self.db_session)
         submission_form.update_study_design({
@@ -285,7 +285,7 @@ class TestSubmissionProcess(DatabaseTest):
                 'units': 'mM',
                 'includeStd': False,
                 'subjectType': 'strain',
-                'metaboliteIds': [m1.id, m2.id],
+                'metaboliteIds': [m1.chebiId, m2.chebiId],
             }]
         })
         submission_form.save()

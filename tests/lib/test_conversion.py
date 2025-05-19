@@ -1,9 +1,52 @@
+from decimal import Decimal
 import unittest
 
-from lib.conversion import convert_time
+from lib.conversion import (
+    convert_time,
+    convert_measurement_units,
+)
 
 
 class TestConversion(unittest.TestCase):
+    def test_cell_concentration_conversion(self):
+        value = convert_measurement_units(2, 'Cells/μL', 'Cells/mL')
+        self.assertEqual(value, 2000)
+
+        value = convert_measurement_units(4000, 'Cells/mL', 'Cells/μL')
+        self.assertEqual(value, 4)
+
+        value = convert_measurement_units(2000, 'Cells/mL', 'Cells/mL')
+        self.assertEqual(value, 2000)
+
+        value = convert_measurement_units(2000, 'Cells/μL', 'pH')
+        self.assertIsNone(value)
+
+    def test_simple_metabolite_conversion(self):
+        value = convert_measurement_units(2000, 'μM', 'mM')
+        self.assertEqual(value, 2)
+
+        value = convert_measurement_units(4, 'nM', 'pM')
+        self.assertEqual(value, 4000)
+
+        value = convert_measurement_units(4, 'mM', 'pM')
+        self.assertEqual(value, 4_000_000_000)
+
+    def test_metabolite_conversion_between_mass_and_concentration(self):
+        mass = 50
+        value = convert_measurement_units(200, 'g/L', 'mM', mass=mass)
+        self.assertEqual(value, 4000)
+
+        mass = 30
+        value = convert_measurement_units(4000, 'mM', 'g/L', mass=mass)
+        self.assertEqual(value, 120)
+
+        # Can't convert g/L without a mass
+        value = convert_measurement_units(200, 'g/L', 'mM')
+        self.assertIsNone(value)
+
+        value = convert_measurement_units(3000, 'mM', 'g/L')
+        self.assertIsNone(value)
+
     def test_time_conversion_to_the_same_unit(self):
         for t in (1, 0.3, 100.0, 0.5):
             for unit in ('d', 'h', 'm', 's'):

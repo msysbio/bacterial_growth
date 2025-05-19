@@ -54,7 +54,7 @@
                    data-tooltip="{{ project_name }}">{{ user_submission.project.projectId }}</a>]
             {% else: %}
               <span data-tooltip="{{ project_name }}">
-                [New] {{ project_name|truncate(20) }}
+                [New] {{ project_name|truncate(20) if project_name is not none }}
               </span>
             {% endif %}
           </td>
@@ -67,7 +67,7 @@
                    data-tooltip="{{ study_name }}">{{ user_submission.study.studyId }}</a>]
             {% else: %}
               <span data-tooltip="{{ study_name }}">
-                [New] {{ study_name|truncate(20) }}
+                [New] {{ study_name|truncate(20) if study_name is not none }}
               </span>
             {% endif %}
           </td>

@@ -12,23 +12,14 @@ import lib.util as util
 class TestMeasurement(DatabaseTest):
     def test_successful_creation(self):
         study = self.create_study()
-        study_id = study.studyId
-
-        bioreplicate_id = self.create_bioreplicate(studyId=study_id).id
-        compartment_id  = self.create_compartment(studyId=study_id).id
-        strain_id       = self.create_strain(studyId=study_id).NCBId
-        technique       = self.create_measurement_technique(type='fc', subjectType='bioreplicate', studyUniqueID=study.studyUniqueID)
+        strain = self.create_strain(studyId=study.publicId)
+        context = self.create_measurement_context(subjectType='strain', subjectId=strain.id, studyId=study.publicId)
 
         measurement = Measurement(
-            studyId=study.studyId,
-            bioreplicateUniqueId=bioreplicate_id,
-            compartmentId=compartment_id,
-            timeInSeconds=60 * 3600,
-            unit=technique.units,
-            techniqueId=technique.id,
+            study=study,
+            timeInSeconds=60.0,
+            contextId=context.id,
             value=Decimal('100_000.0'),
-            subjectType='strain',
-            subjectId=strain_id,
         )
 
         self.assertTrue(measurement.id is None)
@@ -69,7 +60,7 @@ class TestMeasurement(DatabaseTest):
 
         # FC measurement
         self.assertEqual(
-            [(m.timeInHours, m.subjectId, m.value) for m in measurements if m.techniqueId == t_fc.id],
+            [(m.timeInHours, m.subjectId, m.value) for m in measurements if m.technique.id == t_fc.id],
             [
                 (2.0, str(b1.id), Decimal('1234567890.000')),
                 (4.0, str(b1.id), Decimal('234567890.000')),
@@ -80,7 +71,7 @@ class TestMeasurement(DatabaseTest):
 
         # OD measurements
         self.assertEqual(
-            [(m.timeInHours, m.subjectId, m.value) for m in measurements if m.techniqueId == t_od.id],
+            [(m.timeInHours, m.subjectId, m.value) for m in measurements if m.technique.id == t_od.id],
             [
                 (2.0, str(b1.id), Decimal('0.900')),
                 (4.0, str(b1.id), Decimal('0.800')),
@@ -91,7 +82,7 @@ class TestMeasurement(DatabaseTest):
 
         # pH measurements
         self.assertEqual(
-            [m.value for m in measurements if m.techniqueId == t_ph.id],
+            [m.value for m in measurements if m.technique.id == t_ph.id],
             [Decimal('7.400'), Decimal('7.500'), Decimal('7.600'), Decimal('7.600')]
         )
 
@@ -106,11 +97,11 @@ class TestMeasurement(DatabaseTest):
 
         glucose_id = self.create_study_metabolite(
             studyId=study_id,
-            metabolite={'metabo_name': 'glucose'},
+            metabolite={'name': 'glucose'},
         ).chebi_id
         trehalose_id = self.create_study_metabolite(
             studyId=study_id,
-            metabolite={'metabo_name': 'trehalose'},
+            metabolite={'name': 'trehalose'},
         ).chebi_id
 
         self.create_measurement_technique(
@@ -208,7 +199,7 @@ class TestMeasurement(DatabaseTest):
             [
                 (m.timeInSeconds, int(m.subjectId), m.value)
                 for m in sorted(measurements, key=lambda m: (m.timeInSeconds, m.subjectId))
-                if m.techniqueId == t_16s.id
+                if m.technique.id == t_16s.id
             ],
             [
                 (3600, s1.id, Decimal('100.234')), (3600, s2.id, Decimal('200.456')),
@@ -222,7 +213,7 @@ class TestMeasurement(DatabaseTest):
             [
                 (m.timeInSeconds, int(m.subjectId), m.value)
                 for m in sorted(measurements, key=lambda m: (m.timeInHours, m.subjectId))
-                if m.techniqueId == t_fc.id
+                if m.technique.id == t_fc.id
             ],
             [
                 (3600, s1.id, Decimal('100.00')), (3600, s2.id, Decimal('200.00')),

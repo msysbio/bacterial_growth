@@ -7,10 +7,11 @@ import db
 from lib.db import execute_text
 from models import (
     Bioreplicate,
-    CalculationTechnique,
+    ModelingRequest,
     Compartment,
     Experiment,
     Measurement,
+    MeasurementContext,
     MeasurementTechnique,
     Metabolite,
     Project,
@@ -57,8 +58,8 @@ class DatabaseTest(unittest.TestCase):
     def create_metabolite(self, **params):
         self.metabolite_id = getattr(self, 'metabolite_id', 0) + 1
         params = {
-            'chebi_id':    f"CHEBI:{self.metabolite_id}",
-            'metabo_name': f"Metabolite {self.metabolite_id}",
+            'chebiId': f"CHEBI:{self.metabolite_id}",
+            'name':    f"Metabolite {self.metabolite_id}",
             **params,
         }
 
@@ -167,10 +168,10 @@ class DatabaseTest(unittest.TestCase):
 
     def create_study_metabolite(self, **params):
         study_id = self._get_or_create_dependency(params, 'studyId', 'study')
-        chebi_id = self._get_or_create_dependency(params, 'chebi_id', 'metabolite')
+        chebi_id = self._get_or_create_dependency(params, 'chebiId', ('metabolite', 'chebiId'))
 
         params = {
-            'studyId':  study_id,
+            'studyId': study_id,
             'chebi_id': chebi_id,
             **params,
         }
@@ -178,24 +179,14 @@ class DatabaseTest(unittest.TestCase):
         return self._create_orm_record(StudyMetabolite, params)
 
     def create_measurement(self, **params):
-        study_id          = self._get_or_create_dependency(params, 'studyId', 'study')
-        bioreplicate_uuid = self._get_or_create_dependency(params, 'bioreplicateUniqueId', ('bioreplicate', 'id'))
-        compartment_id    = self._get_or_create_dependency(params, 'compartmentId', ('compartment', 'id'))
-        technique_id      = self._get_or_create_dependency(params, 'id', 'measurement_technique')
-
-        subject_id   = params['subjectId']
-        subject_type = params['subjectType']
+        study_id   = self._get_or_create_dependency(params, 'studyId', 'study')
+        context_id = self._get_or_create_dependency(params, 'contextId', ('measurement_context', 'id'))
 
         params = {
-            'studyId':              study_id,
-            'bioreplicateUniqueId': bioreplicate_uuid,
-            'compartmentId':        compartment_id,
-            'techniqueId':          technique_id,
-            'timeInSeconds':        3600,
-            'unit':                 'unknown',
-            'value':                Decimal('100.000'),
-            'subjectId':            subject_id,
-            'subjectType':          subject_type,
+            'studyId':       study_id,
+            'contextId':     context_id,
+            'timeInSeconds': 3600,
+            'value':         Decimal('100.000'),
             **params,
         }
 
@@ -213,6 +204,22 @@ class DatabaseTest(unittest.TestCase):
         }
 
         return self._create_orm_record(MeasurementTechnique, params)
+
+    def create_measurement_context(self, **params):
+        study_id        = self._get_or_create_dependency(params, 'studyId', 'study')
+        bioreplicate_id = self._get_or_create_dependency(params, 'bioreplicateId', ('bioreplicate', 'id'))
+        compartment_id  = self._get_or_create_dependency(params, 'compartmentId', ('compartment', 'id'))
+        technique_id    = self._get_or_create_dependency(params, 'id', ('measurement_technique', 'id'))
+
+        params = {
+            'studyId':        study_id,
+            'bioreplicateId': bioreplicate_id,
+            'compartmentId':  compartment_id,
+            'techniqueId':    technique_id,
+            **params,
+        }
+
+        return self._create_orm_record(MeasurementContext, params)
 
     def create_submission(self, **params):
         """
@@ -239,16 +246,16 @@ class DatabaseTest(unittest.TestCase):
 
         return self._create_orm_record(Submission, params)
 
-    def create_calculation_technique(self, **params):
-        study_uuid = self._get_or_create_dependency(params, 'studyUniqueID', 'study')
+    def create_modeling_request(self, **params):
+        study_id = self._get_or_create_dependency(params, 'studyId', 'study')
 
         params = {
-            'type':          'baranyi_roberts',
-            'studyUniqueID': study_uuid,
+            'type':    'baranyi_roberts',
+            'studyId': study_id,
             **params,
         }
 
-        return self._create_orm_record(CalculationTechnique, params)
+        return self._create_orm_record(ModelingRequest, params)
 
     def _create_orm_record(self, model_class, params):
         instance = model_class(**params)

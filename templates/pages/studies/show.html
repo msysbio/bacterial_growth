@@ -1,4 +1,5 @@
 {% from 'utils/_dataframe.html' import render_dataframe %}
+{% from 'pages/studies/_measurements_toc.html' import render_measurements_toc %}
 
 {% extends '_layout.html' %}
 
@@ -34,194 +35,115 @@
         the panel in the upper-right corner.
       </p>
 
-      <div class="measurement-techniques">
-        {% for technique in study.measurementTechniques: %}
-          <div class="subform-container technique-container">
-            <h3>
-              {{ loop.index }}) {{ technique.long_name }}
+      <div class="flex-row">
+        <div class="measurement-techniques">
+          {% for technique in study.measurementTechniques: %}
+            <div class="subform-container technique-container">
+              <h3 id="measurement-technique-{{ technique.id }}">
+                {{ loop.index }}. {{ technique.long_name }}
 
-              {% if technique.subjectType != 'metabolite': %}
-                per {{ technique.subject_short_name }}
-              {% endif %}
-            </h3>
-
-            <p>
-              <strong>{{ technique.measurements|length }}</strong> total measurements
-
-              {% if technique.units != '': %}
-                recorded in <strong>{{ technique.units }}</strong>.
-              {% endif %}
-            </p>
-
-            {% if technique.description: %}
-              <p>{{ technique.description }}</p>
-            {% endif %}
-
-            <br>
-
-            <table class="dataframe-table measurements-table">
-              <tr>
-                <th>Actions</th>
-                <th>Subject</th>
-                <th>Time period</th>
-                <th>Measurements</th>
-              </tr>
-
-              {% for (bioreplicate, compartment), measurement_group in technique.measurements_by_compartment(g.db_session): %}
-                {% if technique.subjectType != 'bioreplicate': %}
-                  <tr class="js-table-row">
-                    <th colspan="4" align="center">
-                      Bioreplicate: {{ bioreplicate.name }}, Compartment: {{ compartment.name }}
-                    </th>
-                  </tr>
+                {% if technique.subjectType != 'metabolite': %}
+                  per {{ technique.subject_short_name }}
                 {% endif %}
+              </h3>
 
-                {% for subject, measurements in technique.measurements_by_subject(g.db_session, measurement_group): %}
-                  {% set subjectClass = subject.__class__.__name__ %}
+              <p>
+                <strong>{{ technique.measurements|length }}</strong> total measurements
 
-                  <tr class="js-table-row">
-                    <td>
-                      {% set targetIdentifier = "{}|{}|{}|{}".format(
-                        bioreplicate.id,
-                        technique.id,
-                        subjectClass|lower,
-                        subject.id
-                      ) %}
-
-                      <div class="js-compare-container" data-target-identifier="{{ targetIdentifier }}">
-                        <span class="js-compare">
-                          <a
-                              href="#"
-                              class="white-button small-button">
-                            ↔ Compare
-                          </a>
-                        </span>
-
-                        <span class="js-uncompare hidden">
-                          ✅ Comparing
-                          <a
-                              href="#"
-                              class="white-button small-button">
-                            ➖
-                          </a>
-                        </span>
-                      </div>
-                    </td>
-                    <td>
-                      {% if technique.subjectType == 'bioreplicate': %}
-                        {{ subject.name }}
-                      {% elif technique.subjectType == 'strain': %}
-                        <a href="{{ url_for('strain_show_page', id=subject.id) }}">
-                          {{ subject.name }}
-                        </a>
-                      {% elif technique.subjectType == 'metabolite': %}
-                        <a href="{{ url_for('metabolite_show_page', chebi_id=subject.id) }}">
-                          {{ subject.name }}
-                        </a>
-                      {% endif %}
-                    </td>
-                    <td>{{ measurements[0].timeInHours }}h - {{ measurements[-1].timeInHours }}h</td>
-
-                    <td class="numeric">
-                      <div class="truncate">
-                        {{ measurements|map(attribute='value')|map_scientific|join(', ') }}
-                      </div>
-                    </td>
-                  </tr>
-                {% endfor %}
-              {% endfor %}
-            </table>
-          </div>
-        {% endfor %}
-      </div>
-
-      <h2>Calculations</h2>
-
-      <p>
-        TODO Make this comparable to the measurements
-      </p>
-
-      <div class="calculation-techniques">
-        {% for technique in study.calculationTechniques: %}
-          <div class="subform-container technique-container">
-            <h3>
-              {{ loop.index }}) {{ technique.long_name }}
-            </h3>
-
-            <br>
-
-            <table class="dataframe-table measurements-table">
-              <tr>
-                <th>Actions</th>
-                <th>Subject</th>
-                <th>Coefficients</th>
-              </tr>
-
-              {% for calculation in technique.calculations: %}
-                {% if calculation.subjectType != 'bioreplicate': %}
-                  <tr class="js-table-row">
-                    <th colspan="3" align="center">
-                      Bioreplicate: {{ calculation.bioreplicate.name }}
-                    </th>
-                  </tr>
+                {% if technique.units != '': %}
+                  recorded in <strong>{{ technique.units }}</strong>.
                 {% endif %}
+              </p>
 
-                {% set bioreplicate = calculation.bioreplicate %}
-                {% set subject = calculation.get_subject(g.db_session) %}
-                {% set subjectClass = subject.__class__.__name__ %}
+              {% if technique.description: %}
+                <p>{{ technique.description }}</p>
+              {% endif %}
 
-                <tr class="js-table-row">
-                  <td>
-                    {% set targetIdentifier = "{}|{}|{}|{}".format(
-                      bioreplicate.id,
-                      technique.id,
-                      subjectClass|lower,
-                      subject.id
-                    ) %}
+              <br>
 
-                    <div class="js-compare-container" data-target-identifier="{{ targetIdentifier }}">
-                      <span class="js-compare">
-                        <a
-                            href="#"
-                            class="white-button small-button">
-                          ↔ Compare
-                        </a>
-                      </span>
-
-                      <span class="js-uncompare hidden">
-                        ✅ Comparing
-                        <a
-                            href="#"
-                            class="white-button small-button">
-                          ➖
-                        </a>
-                      </span>
-                    </div>
-                  </td>
-                  <td>
-                    {% if calculation.subjectType == 'bioreplicate': %}
-                      {{ subject.name }}
-                    {% elif calculation.subjectType == 'strain': %}
-                      <a href="{{ url_for('strain_show_page', id=subject.id) }}">
-                        {{ subject.name }}
-                      </a>
-                    {% elif calculation.subjectType == 'metabolite': %}
-                      <a href="{{ url_for('metabolite_show_page', chebi_id=subject.id) }}">
-                        {{ subject.name }}
-                      </a>
-                    {% endif %}
-                  </td>
-
-                  <td class="numeric">
-                    <div class="truncate">
-                      {{ calculation.coefficients|tojson }}
-                    </div>
-                  </td>
+              <table class="dataframe-table measurements-table">
+                <tr>
+                  <th>Actions</th>
+                  <th>Subject</th>
+                  <th>Time period</th>
+                  <th>Measurements</th>
                 </tr>
-              {% endfor %}
-            </table>
-          </div>
-        {% endfor %}
+
+                {% for (bioreplicate, compartment), contexts in technique.get_grouped_contexts(): %}
+                  {% if technique.subjectType != 'bioreplicate': %}
+                    <tr class="js-table-row">
+                      <th colspan="4" align="center">
+                        Bioreplicate: {{ bioreplicate.name }}, Compartment: {{ compartment.name }}
+                      </th>
+                    </tr>
+
+                    {% if contexts|length == 0: %}
+                      <tr class="js-table-row">
+                        <td colspan="4" align="center">
+                          <em>No measurements</em>
+                        </td>
+                      </tr>
+                    {% endif %}
+                  {% endif %}
+
+                  {% for measurement_context in contexts: %}
+                    {% set subject = measurement_context.get_subject(g.db_session) %}
+                    {% set measurements = measurement_context.measurements %}
+
+                    <tr class="js-table-row">
+                      <td>
+                        <div class="js-compare-container" data-target-identifier="{{ measurement_context.id }}">
+                          <span class="js-compare" data-tooltip="Compare">
+                            <a
+                                href="#"
+                                class="white-button small-button">
+                              ↔
+                            </a>
+                          </span>
+
+                          <span
+                              class="js-uncompare hidden"
+                              data-tooltip="Comparing, click to remove from comparison">
+                            ✅
+                            <a
+                                href="#"
+                                class="white-button small-button">
+                              ➖
+                            </a>
+                          </span>
+                        </div>
+                      </td>
+                      <td>
+                        {% if technique.subjectType == 'bioreplicate': %}
+                          {{ subject.name }}
+                        {% elif technique.subjectType == 'strain': %}
+                          <a href="{{ url_for('strain_show_page', id=subject.id) }}">
+                            {{ subject.name }}
+                          </a>
+                        {% elif technique.subjectType == 'metabolite': %}
+                          <a href="{{ url_for('metabolite_show_page', chebiId=subject.id) }}">
+                            {{ subject.name }}
+                          </a>
+                        {% endif %}
+                      </td>
+                      <td>{{ measurements[0].timeInHours }}h - {{ measurements[-1].timeInHours }}h</td>
+
+                      <td class="numeric">
+                        <div class="measurements-list truncate">
+                          {{ measurements|map(attribute='value')|map_scientific|join(', ') }}
+                        </div>
+                      </td>
+                    </tr>
+                  {% endfor %}
+                {% endfor %}
+              </table>
+            </div>
+          {% endfor %}
+        </div>
+
+        <div class="toc-container">
+          {{ render_measurements_toc(study) }}
+        </div>
       </div>
     </article>
   </div>

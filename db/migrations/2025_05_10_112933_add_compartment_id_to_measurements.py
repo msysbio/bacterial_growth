@@ -5,9 +5,7 @@ def up(conn):
     print("")
     print("[Warning] This migration deletes measurements, they need to be regenerated")
     print("")
-
-    query = "DELETE FROM Measurements"
-    conn.execute(sql.text(query))
+    conn.execute(sql.text("DELETE FROM Measurements"))
 
     query = """
         ALTER TABLE Measurements

@@ -9,6 +9,7 @@ from models import (
     Compartment,
     Experiment,
     Measurement,
+    MeasurementContext,
 )
 from lib.db import execute_into_df
 
@@ -41,7 +42,6 @@ class ExperimentExportForm:
 
     def get_experiment_data(self):
         experiment_data = {}
-        get_subject = functools.cache(Measurement.get_subject)
 
         for experiment in self.experiments:
             measurement_dfs = []
@@ -52,35 +52,31 @@ class ExperimentExportForm:
             }
 
             # Collect targets for each column of measurements:
-            for measurement in experiment.measurements:
-                if measurement.subjectType == 'bioreplicate':
-                    measurement_targets['bioreplicate'].add((
-                        measurement.technique,
-                        measurement.unit,
-                    ))
+            for measurement_context in experiment.measurementContexts:
+                if measurement_context.subjectType == 'bioreplicate':
+                    measurement_targets['bioreplicate'].add(measurement_context.technique)
                 else:
-                    subject = get_subject(self.db_session, measurement.subjectId, measurement.subjectType)
-                    measurement_targets[measurement.subjectType].add((
+                    subject = measurement_context.get_subject(self.db_session)
+                    measurement_targets[measurement_context.subjectType].add((
                         subject,
-                        measurement.technique,
-                        measurement.unit,
+                        measurement_context.technique,
                     ))
 
             # Strain-level measurements:
-            for (subject, technique, unit) in sorted(measurement_targets['strain']):
-                if technique == '16S rRNA-seq':
+            for (subject, technique) in sorted(measurement_targets['strain']):
+                if technique.type == '16s':
                     value_label = f"{subject.name} reads"
-                elif technique == 'FC counts per species':
+                elif technique.type == 'fc':
                     value_label = f"{subject.name} counts"
-                elif technique == 'plates':
+                elif technique.type == 'plates':
                     value_label = f"{subject.name} plate counts"
                 else:
-                    raise ValueError(f"Unknown technique: {technique}")
+                    raise ValueError(f"Unknown technique type: {technique.type}")
 
                 condition = (
-                    Measurement.subjectType == 'strain',
-                    Measurement.subjectId == subject.id,
-                    Measurement.technique == technique,
+                    MeasurementContext.subjectType == 'strain',
+                    MeasurementContext.subjectId == subject.id,
+                    MeasurementContext.techniqueId == technique.id,
                 )
 
                 query = self._base_bioreplicate_query(experiment, value_label).where(*condition)
@@ -92,15 +88,15 @@ class ExperimentExportForm:
                     measurement_dfs[-1] = pd.concat((measurement_dfs[-1], average_df))
 
             # Bioreplicate-level measurements:
-            for (technique, unit) in measurement_targets['bioreplicate']:
-                if unit is None:
+            for technique in measurement_targets['bioreplicate']:
+                if technique.units is None:
                     value_label = technique
                 else:
-                    value_label = f"{technique} ({unit})"
+                    value_label = f"{technique.short_name} ({technique.units})"
 
                 condition = (
-                    Measurement.subjectType == 'bioreplicate',
-                    Measurement.technique == technique,
+                    MeasurementContext.subjectType == 'bioreplicate',
+                    MeasurementContext.techniqueId == technique.id,
                 )
 
                 query = self._base_bioreplicate_query(experiment, value_label).where(*condition)
@@ -112,11 +108,11 @@ class ExperimentExportForm:
                     measurement_dfs[-1] = pd.concat((measurement_dfs[-1], average_df))
 
             # Metabolite measurements:
-            for (subject, _, unit) in sorted(measurement_targets['metabolite']):
-                value_label = f"{subject.name} ({unit})"
+            for (subject, technique) in sorted(measurement_targets['metabolite']):
+                value_label = f"{subject.name} ({technique.units})"
                 condition = (
-                    Measurement.subjectType == 'metabolite',
-                    Measurement.subjectId == subject.id,
+                    MeasurementContext.subjectType == 'metabolite',
+                    MeasurementContext.subjectId == subject.chebiId,
                 )
 
                 query = self._base_bioreplicate_query(experiment, value_label).where(*condition)
@@ -156,6 +152,8 @@ class ExperimentExportForm:
                 Compartment.name.label("Compartment"),
                 Measurement.value.label(value_label),
             )
+            .select_from(Measurement)
+            .join(MeasurementContext)
             .join(Bioreplicate)
             .join(Compartment)
             .join(Experiment)
@@ -177,6 +175,8 @@ class ExperimentExportForm:
                 literal_column(f"'Average {experiment.name}'").label("Biological Replicate ID"),
                 sql.func.avg(Measurement.value).label(value_label),
             )
+            .select_from(Measurement)
+            .join(MeasurementContext)
             .join(Bioreplicate)
             .join(Experiment)
             .where(Experiment.id == experiment.id)

@@ -10,55 +10,58 @@
       <h2>Comparison view</h2>
 
       <p>
-        Collect measurements from one or multiple studies by using the
-        "Compare" button. From this table, use the checkbox to add them to the
-        chart and compare values.
+        Collect measurements from one or multiple studies by going to their
+        "Visualize" pages and using the "Compare" button. From this table, use
+        the checkbox to add them to the chart and compare values.
       </p>
 
-      <br>
-
-      <div class="data-container">
-        <form action="{{ url_for('comparison_chart_fragment') }}" method="POST">
-          <div class="table-container">
-            <table class="dataframe-table targets-table">
-              <tr>
-                <th>⬅</th>
-                <th>➡</th>
-                <th>Study</th>
-                <th>Bioreplicate</th>
-                <th>Subject name</th>
-                <th>Technique name</th>
-                <th>Units</th>
-              </tr>
-
-              {% for (identifier, bioreplicate, technique, subject, measurements) in targets: %}
-                {% if technique.study: %}
-                  <tr data-identifier="{{ identifier }}">
-                    <td><input type="checkbox" class="js-target" name="{{ identifier }}" value="left" /></td>
-                    <td><input type="checkbox" class="js-target" name="{{ identifier }}" value="right" /></td>
-                    <td>[{{ technique.study.studyId }}] {{ technique.study.studyName }}</td>
-                    <td>{{ bioreplicate.name }}</td>
-                    <td>{{ technique.subjectType }}: {{ subject.name }}</td>
-                    <td>{{ technique.long_name }}</td>
-                    <td>{{ technique.units }}</td>
-                  </tr>
-                {% endif %}
-              {% endfor %}
-            </table>
-          </div>
-        </form>
-
-        <div class="chart-row chart">
-          <div class="chart-placeholder">
-            📊
-          </div>
-        </div>
-      </div>
-
       <div style="float: right;">
-        {{ post_button("Clear", url_for("comparison_clear_action")) }}
+        {{ post_button("Clear collected comparisons", url_for("comparison_clear_action")) }}
       </div>
       <div style="clear: both;"></div>
+
+      <form class="js-chart-form">
+        {% for (study, measurement_contexts) in measurement_contexts_by_study.items(): %}
+          <h4>
+            [<a href="{{ url_for('study_show_page', studyId=study.publicId) }}">{{ study.publicId }}</a>]
+            {{ study.name }}
+          </h4>
+
+          {% for measurement_context in measurement_contexts: %}
+            {% set subjectType = measurement_context.subjectType %}
+            {% set subject     = measurement_context.get_subject(g.db_session) %}
+            {% set experiment  = measurement_context.bioreplicate.experiment %}
+
+            {% set key = "measurementContext|{}".format(measurement_context.id) %}
+
+            <div
+                class="form-row js-technique-row"
+                data-technique-id="{{ measurement_context.techniqueId }}"
+                data-bioreplicate-id="{{ measurement_context.bioreplicateId }}"
+                data-compartment-id="{{ measurement_context.compartmentId }}">
+              <input type="checkbox" name="{{ key }}" id="{{ key }}" class="js-measurement-toggle" />
+              <label for="{{ key }}">
+                {{ experiment.name }}: {{ measurement_context.get_chart_label(g.db_session)|safe }}
+              </label>
+            </div>
+          {% endfor %}
+        {% endfor %}
+
+        <div class="form-row margin-top-10">
+          <a href="#" class="white-button js-select-all">Select all</a>
+          <a href="#" class="white-button flex-right js-clear-chart">Clear</a>
+        </div>
+
+        <br>
+
+        <div class="data-container">
+          <div class="chart-row chart js-chart">
+            <div class="chart-placeholder">
+              📊
+            </div>
+          </div>
+        </div>
+      </form>
     </article>
   </div>
 

@@ -5,21 +5,24 @@ from flask import (
     request,
 )
 from werkzeug.exceptions import Forbidden
+import pandas as pd
 import sqlalchemy as sql
 from sqlalchemy.sql.expression import literal
 
 import models.study_dfs as study_dfs
 from models import (
-    Study,
     Experiment,
     Measurement,
     MeasurementTechnique,
-    CalculationTechnique,
-    Calculation,
+    MeasurementContext,
+    ModelingRequest,
+    ModelingResult,
+    Study,
 )
 from forms.experiment_export_form import ExperimentExportForm
-from forms.experiment_chart_form import ExperimentChartForm
-from lib.calculation_tasks import update_calculation_technique
+from forms.comparative_chart_form import ComparativeChartForm
+from lib.chart import Chart
+from lib.modeling_tasks import process_modeling_request
 from lib.figures import make_figure_with_traces
 from lib.db import execute_into_df
 import lib.util as util
@@ -101,195 +104,122 @@ def study_download_zip(studyId):
 
 
 def study_visualize_page(studyId):
-    study = _fetch_study(studyId)
-    experiment_forms = [ExperimentChartForm(e) for e in study.experiments]
+    study      = _fetch_study(studyId)
+    chart_form = ComparativeChartForm(g.db_session, time_units=study.timeUnits)
 
     return render_template(
         "pages/studies/visualize.html",
         study=study,
-        experiment_forms=experiment_forms,
+        chart_form=chart_form,
     )
 
 
 def study_chart_fragment(studyId):
-    args = request.args.to_dict()
+    study = _fetch_study(studyId)
+    args = request.form.to_dict()
 
-    width = args.pop('width')
-    show_log_toggle = False
+    width = request.args.get('width', None)
 
-    experiment_id = args.pop('experimentId')
-    technique     = args.pop('technique')
-
-    experiment = g.db_session.get(Experiment, experiment_id)
-    form       = ExperimentChartForm(experiment)
-
-    if technique in ('16S rRNA-seq', 'FC counts per species'):
-        show_log_toggle = True
-        figs = form.generate_reads_figures(technique, args)
-    elif technique == 'Metabolites':
-        # TODO (2025-03-02) Separate "technique" and "subject type"
-        figs = form.generate_metabolite_figures(technique, args)
-    else:
-        figs = form.generate_growth_figures(technique, args)
-
-    fig_htmls = []
-    for fig in figs:
-        fig.update_layout(
-            margin=dict(l=0, r=0, t=60, b=40),
-            title=dict(x=0)
-        )
-
-        fig_htmls.append(fig.to_html(
-            full_html=False,
-            include_plotlyjs=False,
-            default_width=f"{width}px",
-        ))
+    chart_form = ComparativeChartForm(g.db_session, time_units=study.timeUnits)
+    chart = chart_form.build_chart(args, width)
 
     return render_template(
-        'pages/studies/_figs.html',
-        fig_htmls=fig_htmls,
-        show_log_toggle=show_log_toggle
+        'pages/studies/visualize/_chart.html',
+        chart_form=chart_form,
+        chart=chart,
     )
 
 
-def study_calculations_action(studyId):
+def study_modeling_submit_action(studyId):
+    study = _fetch_study(studyId)
     args = request.form.to_dict()
 
-    study = _fetch_study(studyId)
-    calculation_type = args['type']
+    modeling_type = args.pop('modelingType')
+    measurement_context_ids = []
 
-    target_param_list = []
-    for target_identifier in args.keys():
-        if not target_identifier.startswith('target|'):
-            continue
+    for arg, value in args.items():
+        if arg.startswith('measurementContext|'):
+            context_id = int(arg.removeprefix('measurementContext|'))
+            measurement_context_ids.append(context_id)
 
-        (
-            _label,
-            bioreplicate_uuid,
-            measurement_technique_id,
-            subject_type,
-            subject_id,
-        ) = target_identifier.split('|')
-
-        target_param_list.append({
-            'bioreplicate_uuid':        bioreplicate_uuid,
-            'measurement_technique_id': measurement_technique_id,
-            'subject_type':             subject_type,
-            'subject_id':               subject_id,
-        })
-
-    calculation_technique = g.db_session.scalars(
-        sql.select(CalculationTechnique)
+    modeling_request = g.db_session.scalars(
+        sql.select(ModelingRequest)
         .where(
-            CalculationTechnique.type == calculation_type,
-            CalculationTechnique.studyUniqueID == study.uuid
+            ModelingRequest.type == modeling_type,
+            ModelingRequest.studyId == study.publicId,
         )
     ).one_or_none()
-    if calculation_technique is None:
-        calculation_technique = CalculationTechnique(
-            type=calculation_type,
-            studyUniqueID=study.uuid,
+
+    if modeling_request is None:
+        modeling_request = ModelingRequest(
+            type=modeling_type,
+            study=study,
         )
-        g.db_session.add(calculation_technique)
+        g.db_session.add(modeling_request)
         g.db_session.commit()
 
-    result = update_calculation_technique.delay(calculation_technique.id, target_param_list)
-    calculation_technique.jobUuid = result.task_id
+    result = process_modeling_request.delay(modeling_request.id, measurement_context_ids)
+    modeling_request.jobUuid = result.task_id
     g.db_session.commit()
 
-    return {'calculationTechniqueId': calculation_technique.id}
+    return {'modelingRequestId': modeling_request.id}
 
 
-def study_calculations_check_json(studyId, calculationTechniqueId):
-    calculation_technique = g.db_session.get(CalculationTechnique, calculationTechniqueId)
+def study_modeling_check_json(studyId):
+    study = _fetch_study(studyId)
+
+    ready      = all([mr.state in ('ready', 'error') for mr in study.modelingRequests])
+    successful = all([mr.state != 'error' for mr in study.modelingRequests])
 
     return {
-        "ready":      calculation_technique.state in ('ready', 'error'),
-        "successful": calculation_technique.state != 'error',
+        "ready":      ready,
+        "successful": successful,
     }
 
 
-def study_calculations_edit_fragment(studyId):
+def study_modeling_chart_fragment(studyId, measurementContextId):
+    study = _fetch_study(studyId)
     args = request.args.to_dict()
 
-    calculation_type = args.pop('calculationType')
-    biorep_uuid      = args.pop('bioreplicateUniqueId')
-    subject_type     = args.pop('subjectType')
-    subject_id       = args.pop('subjectId')
-    technique_id     = args.pop('techniqueId')
+    modeling_type = args.pop('modelingType')
+    width         = args.pop('width')
+    height        = args.pop('height')
 
-    width  = args.pop('width')
-    height = args.pop('height')
+    measurement_context = g.db_session.get(MeasurementContext, measurementContextId)
+    measurement_df      = measurement_context.get_df(g.db_session)
 
-    measurement_technique = g.db_session.get(MeasurementTechnique, technique_id)
-    subject = Measurement.get_subject(g.db_session, subject_id, subject_type)
-
-    measurement_df = execute_into_df(
-        g.db_session,
-        sql.select(
-            Measurement.timeInHours.label("time"),
-            Measurement.value.label("value"),
-            (literal(subject.name) + ' ' + literal(measurement_technique.short_name)).label("name"),
-        )
-        .where(
-            Measurement.bioreplicateUniqueId == biorep_uuid,
-            Measurement.subjectType == subject_type,
-            Measurement.subjectId == subject_id,
-            Measurement.techniqueId == technique_id,
-        )
+    chart = Chart(
+        time_units=study.timeUnits,
+        title=measurement_context.get_chart_label(g.db_session),
+        legend_position='right',
     )
+    chart.add_df(measurement_df, units=measurement_context.technique.units, label="Measurements")
 
-    query = (
-        sql.select(Calculation)
+    modeling_result = g.db_session.scalars(
+        sql.select(ModelingResult)
+        .join(ModelingRequest)
         .where(
-            Calculation.type == calculation_type,
-            Calculation.bioreplicateUniqueId == biorep_uuid,
-            Calculation.subjectType == subject_type,
-            Calculation.subjectId == subject_id,
-            Calculation.measurementTechniqueId == measurement_technique.id,
-            Calculation.state.in_(('ready', 'error')),
+            ModelingRequest.type == modeling_type,
+            ModelingResult.measurementContextId == measurement_context.id,
+            ModelingResult.state.in_(('ready', 'error')),
         )
-    )
-    calculation = g.db_session.scalars(query).one_or_none()
+    ).one_or_none()
 
-    if calculation:
-        calculation_df = calculation.generate_chart_df(measurement_df)
-        fig_dfs = [measurement_df, calculation_df]
+    if modeling_result:
+        df    = modeling_result.generate_chart_df(measurement_df)
+        label = modeling_result.model_name
+        units = modeling_result.measurementContext.technique.units
+
+        chart.add_model_df(df, units=units, label=label)
+
+        model_coefficients = modeling_result.coefficients
     else:
-        fig_dfs = [measurement_df]
-
-    fig = make_figure_with_traces(
-        fig_dfs,
-        labels={
-            'time': 'Hours',
-            'value': measurement_technique.units,
-        },
-    )
-
-    max_y = measurement_df['value'].max()
-    std_y = measurement_df['value'].std()
-
-    fig.update_layout(
-        margin=dict(l=0, r=0, t=0, b=0),
-        title=dict(x=0),
-        legend=dict(
-            yanchor="bottom",
-            xanchor="right",
-        ),
-        yaxis_range=[-std_y / 10, max_y + std_y / 2]
-    )
-
-    fig_html = fig.to_html(
-        full_html=False,
-        include_plotlyjs=False,
-        default_width=f"{width}px",
-        default_height=f"{height}px",
-    )
+        model_coefficients = ModelingResult.empty_coefficients(modeling_type)
 
     return render_template(
-        'pages/studies/_calculation_result.html',
-        calculation=calculation,
-        fig_htmls=[fig_html],
+        'pages/studies/manage/_modeling_chart.html',
+        chart=chart,
+        model_coefficients=model_coefficients,
     )
 
 

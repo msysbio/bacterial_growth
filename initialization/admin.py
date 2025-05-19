@@ -12,11 +12,11 @@ from flask_admin._compat import as_unicode
 from db import FLASK_DB
 from models.orm_base import OrmBase
 from models import (
-    Calculation,
-    CalculationTechnique,
     Measurement,
     MeasurementTechnique,
     Metabolite,
+    ModelingRequest,
+    ModelingResult,
     Project,
     ProjectUser,
     Strain,
@@ -119,8 +119,8 @@ def init_admin(app):
 
     admin.add_view(AppView(MeasurementTechnique, db_session, category="Measurements"))
     admin.add_view(AppView(Measurement,          db_session, category="Measurements"))
-    admin.add_view(AppView(CalculationTechnique, db_session, category="Measurements"))
-    admin.add_view(AppView(Calculation,          db_session, category="Measurements"))
+    admin.add_view(AppView(ModelingRequest,      db_session, category="Measurements"))
+    admin.add_view(AppView(ModelingResult,       db_session, category="Measurements"))
 
     admin.add_view(AppView(Metabolite, db_session, category="External data"))
     admin.add_view(AppView(Taxon,      db_session, category="External data"))
