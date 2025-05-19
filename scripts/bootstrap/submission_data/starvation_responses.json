@@ -38,7 +38,7 @@
     },
     {
       "type": "fc",
-      "units": "Cells/mL",
+      "units": "Cells/μL",
       "includeStd": false,
       "description": "",
       "subjectType": "strain",

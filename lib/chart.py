@@ -40,6 +40,7 @@ class Chart:
         self.mixed_units_left  = False
         self.mixed_units_right = False
 
+        self.has_model_df = False
         self.max_y = 0
 
     def add_df(self, df, *, units, label=None, axis='left', metabolite_mass=None):
@@ -107,13 +108,21 @@ class Chart:
         else:
             legend = None
 
+        if self.has_model_df:
+            # We want to limit the size of the chart to avoid exponential
+            # curves shooting out:
+            # TODO: a bit of a hack, limits are set pre-unit-scaling
+            yaxis_range=[0, self.max_y]
+        else:
+            yaxis_range=None
+
         fig.update_layout(
             template=PLOTLY_TEMPLATE,
             margin=dict(l=0, r=0, t=60, b=40),
             title=title,
             hovermode='x unified',
             legend=legend,
-            yaxis_range=[0, self.max_y],
+            yaxis_range=yaxis_range,
             xaxis=dict(
                 title=dict(text=f"Time ({self.time_units})"),
                 # TODO: doesn't work for some reason
