@@ -35,52 +35,51 @@
           </label>
         </div>
 
-        <div class="form-row hidden js-bioreplicate-row">
-          <label class="full">
-          <span>Bioreplicate and compartment:</span>
-          <select name="bioreplicateCompartmentId" class="form-input-blue full">
-            {% for bioreplicate in experiment.bioreplicates: %}
-              {% for compartment in experiment.compartments: %}
-                <option value="{{ bioreplicate.id }}|{{ compartment.id }}">
-                {{- bioreplicate.name }}, compartment {{ compartment.name -}}
-                </option>
-              {% endfor %}
-            {% endfor %}
-          </select>
-        </div>
-
         <br>
 
-        {% for measurementContext in experiment.measurementContexts if measurementContext.technique.is_growth: %}
-          {% set subjectType = measurementContext.subjectType %}
-          {% set subject     = measurementContext.get_subject(g.db_session) %}
+        {% for technique in study.measurementTechniques if technique.is_growth: %}
+          {% for (bioreplicate, compartment), contexts in technique.get_grouped_contexts() if bioreplicate.experimentId == experiment.id: %}
+            {% if technique.subjectType != 'bioreplicate': %}
+              <div
+                  class="form-row hidden js-technique-row"
+                  data-technique-id="{{ technique.id }}">
+                <h4
+                  data-tooltip="Biological replicate {{ bioreplicate.name }}, compartment {{ compartment.name }}" >
+                  {{ bioreplicate.name }}<sub>{{ compartment.name }}</sub>
+                </h4>
+              </div>
+            {% endif %}
 
-          {% set key = "measurementContext|{}".format(measurementContext.id) %}
+            {% for measurement_context in contexts: %}
+              {% set subjectType = measurement_context.subjectType %}
+              {% set subject     = measurement_context.get_subject(g.db_session) %}
 
-          <div
-              class="form-row hidden js-technique-row"
-              data-technique-id="{{ measurementContext.techniqueId }}"
-              data-bioreplicate-id="{{ measurementContext.bioreplicateId }}"
-              data-compartment-id="{{ measurementContext.compartmentId }}">
-            <input type="checkbox" name="{{ key }}" id="{{ key }}" class="js-measurement-toggle" />
-            <label for="{{ key }}">
-              {% if subjectType == 'bioreplicate' %}
-                {{ subject.name }}<sub>{{ measurementContext.compartment.name }}</sub>
-              {% else: %}
-                {{ subject.name }}
-              {% endif %}
-            </label>
+              {% set key = "measurementContext|{}".format(measurement_context.id) %}
 
-            {% set edit_url = url_for(
-              "study_modeling_chart_fragment",
-              studyId=study.publicId,
-              measurementContextId=measurementContext.id,
-            ) %}
+              <div
+                  class="form-row hidden js-technique-row"
+                  data-technique-id="{{ technique.id }}">
+                <input type="checkbox" name="{{ key }}" id="{{ key }}" class="js-measurement-toggle" />
+                <label for="{{ key }}">
+                  {% if subjectType == 'bioreplicate' %}
+                    {{ subject.name }}<sub>{{ measurement_context.compartment.name }}</sub>
+                  {% else: %}
+                    {{ subject.name }}
+                  {% endif %}
+                </label>
 
-            <a href="{{ edit_url }}" class="flex-right js-edit-trigger">
-              <div class="icon icon-edit"></div>
-            </a>
-          </div>
+                {% set edit_url = url_for(
+                  "study_modeling_chart_fragment",
+                  studyId=study.publicId,
+                  measurementContextId=measurement_context.id,
+                ) %}
+
+                <a href="{{ edit_url }}" class="flex-right js-edit-trigger">
+                  <div class="icon icon-edit"></div>
+                </a>
+              </div>
+            {% endfor %}
+          {% endfor %}
         {% endfor %}
 
         <div class="form-row margin-top-10">

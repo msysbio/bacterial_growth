@@ -1,4 +1,8 @@
 .study-visualize-page {
+  h4 {
+    margin-top: 0;
+  }
+
   .chart-form {
     margin-top: 20px;
   }

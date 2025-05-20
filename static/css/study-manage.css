@@ -1,4 +1,8 @@
 .study-manage-page {
+  h4 {
+    margin-top: 0;
+  }
+
   .form-input-blue {
     padding: 0.5rem !important;
   }

@@ -103,38 +103,24 @@ Page('.study-visualize-page', function($page) {
   });
 
   function updateChart($form) {
-    let selectedExperimentId = $form.find('select[name="experimentId"]:visible').val();
+    let selectedExperimentId = $form.find('select[name="experimentId"]').val();
 
     $form.find('.js-experiment-container').addClass('hidden');
-    $form.find(`.js-experiment-container[data-experiment-id="${selectedExperimentId}"]`).removeClass('hidden');
-
-    let selectedTechniqueId = $form.
-      find('select[name="techniqueId"]:visible').val();
-    let selectedTechniqueSubjectType = $form.
-      find('select[name="techniqueId"]:visible option:selected').data('subjectType');
-
     $form.find('.js-technique-row').addClass('hidden');
 
-    if (selectedTechniqueSubjectType == 'bioreplicate') {
-      // Hide bioreplicate select box, show all checkboxes (with bioreplicates)
-      $form.find('.js-bioreplicate-row').addClass('hidden');
-      $form.
-        find(`.js-technique-row[data-technique-id="${selectedTechniqueId}"]`).
-        removeClass('hidden');
-    } else {
-      // Show bioreplicate select box, show all checkboxes (with bioreplicates)
-      $form.find('.js-bioreplicate-row').removeClass('hidden');
+    let $experiment = $form.find(`.js-experiment-container[data-experiment-id="${selectedExperimentId}"]`);
+    $experiment.removeClass('hidden');
 
-      let selectedBioreplicateCompartmentId = $form.
-        find('select[name="bioreplicateCompartmentId"]:visible').val();
-      let [bioreplicateId, compartmentId] = selectedBioreplicateCompartmentId.split('|');
+    let selectedTechniqueId = $experiment.
+      find('select[name="techniqueId"]').val();
+    let selectedTechniqueSubjectType = $experiment.
+      find('select[name="techniqueId"] option:selected').data('subjectType');
 
-      let selector1 = `[data-technique-id="${selectedTechniqueId}"]`;
-      let selector2 = `[data-bioreplicate-id="${bioreplicateId}"]`;
-      let selector3 = `[data-compartment-id="${compartmentId}"]`;
+    $experiment.
+      find(`.js-technique-row[data-technique-id="${selectedTechniqueId}"]`).
+      removeClass('hidden');
 
-      $form.find(`.js-technique-row${selector1}${selector2}${selector3}`).removeClass('hidden');
-    }
+    // Update chart:
 
     let $chart = $form.find('.chart');
 
