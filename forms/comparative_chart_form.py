@@ -72,9 +72,14 @@ class ComparativeChartForm:
             else:
                 metabolite_mass = None
 
+            if technique.units == '':
+                units = technique.short_name
+            else:
+                units = technique.units
+
             chart.add_df(
                 df,
-                units=technique.units,
+                units=units,
                 label=label,
                 axis=axis,
                 metabolite_mass=metabolite_mass,
