@@ -122,8 +122,15 @@ def init_admin(app):
     admin.add_view(AppView(ModelingRequest,      db_session, category="Measurements"))
     admin.add_view(AppView(ModelingResult,       db_session, category="Measurements"))
 
-    admin.add_view(AppView(Metabolite, db_session, category="External data"))
-    admin.add_view(AppView(Taxon,      db_session, category="External data"))
+    class MetaboliteView(AppView):
+        column_searchable_list = ['name']
+        form_excluded_columns = ['studyMetabolites']
+
+    class TaxonView(AppView):
+        column_searchable_list = ['name']
+
+    admin.add_view(MetaboliteView(Metabolite, db_session, category="External data"))
+    admin.add_view(TaxonView(Taxon,           db_session, category="External data"))
 
     admin.add_view(AppView(StudyUser,   db_session, category="Users"))
     admin.add_view(AppView(ProjectUser, db_session, category="Users"))
