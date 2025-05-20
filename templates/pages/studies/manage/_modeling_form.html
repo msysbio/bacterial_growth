@@ -65,7 +65,12 @@
               <div
                   class="form-row hidden js-technique-row"
                   data-technique-id="{{ technique.id }}">
-                <input type="checkbox" name="{{ key }}" id="{{ key }}" class="js-measurement-toggle" />
+                <input
+                    type="radio"
+                    name="selectedContext"
+                    value="{{ key }}"
+                    id="{{ key }}"
+                    class="js-measurement-toggle" />
                 <label for="{{ key }}">
                   {% if subjectType == 'bioreplicate' %}
                     {{ subject.name }}<sub>{{ measurement_context.compartment.name }}</sub>
@@ -74,15 +79,7 @@
                   {% endif %}
                 </label>
 
-                {% set edit_url = url_for(
-                  "study_modeling_chart_fragment",
-                  studyId=study.publicId,
-                  measurementContextId=measurement_context.id,
-                ) %}
-
-                <a href="{{ edit_url }}" class="flex-right js-edit-trigger">
-                  <div class="icon icon-edit"></div>
-                </a>
+                {# <div class="flex-right">✅</div> #}
               </div>
             {% endfor %}
           {% endfor %}

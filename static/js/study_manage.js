@@ -13,23 +13,13 @@ Page('.study-manage-page', function($page) {
     }
   });
 
-  // Activate the preview when checking a new item:
-  $page.on('change', 'input.js-measurement-toggle', function(e) {
-    let $checkbox = $(e.currentTarget);
-
-    if ($checkbox.is(':checked')) {
-      let $row = $checkbox.parents('.js-technique-row');
-      $row.find('.js-edit-trigger').trigger('click');
-    }
-  });
-
   $page.on('change', 'form.js-modeling-form', function(e) {
     let $form = $(e.currentTarget);
     updateFormVisibility($form);
 
-    let $activeTrigger = $('.js-technique-row.highlight:visible .js-edit-trigger');
-    if ($activeTrigger.length > 0) {
-      updateChart($activeTrigger.first());
+    let $activeRadio = $('.js-technique-row:visible input[type=radio]:checked');
+    if ($activeRadio.length > 0) {
+      updateChart($activeRadio.first());
     }
   });
 
@@ -51,13 +41,6 @@ Page('.study-manage-page', function($page) {
     $form.find('input[type=checkbox]').prop('checked', false);
 
     updateFormVisibility($form)
-  });
-
-  $page.on('click', '.js-edit-trigger', function(e) {
-    e.preventDefault();
-
-    let $trigger = $(this);
-    updateChart($trigger)
   });
 
   $page.on('submit', '.js-modeling-form', function(e) {
@@ -91,9 +74,9 @@ Page('.study-manage-page', function($page) {
 
               $result.html("OK");
 
-              let $activeTrigger = $('.js-technique-row.highlight:visible .js-edit-trigger');
-              if ($activeTrigger.length > 0) {
-                updateChart($activeTrigger.first());
+              let $activeRadio = $('.js-technique-row.highlight:visible input[type=radio]:checked');
+              if ($activeRadio.length > 0) {
+                updateChart($activeRadio.first());
               }
             }
           });
@@ -132,19 +115,20 @@ Page('.study-manage-page', function($page) {
       removeClass('hidden');
   }
 
-  function updateChart($trigger) {
-    let $form = $trigger.parents('form');
-    let url   = $trigger.attr('href');
+  function updateChart($radio) {
+    let $form = $radio.parents('form');
 
     let $chart       = $form.find('.js-chart');
     let modelingType = $form.find('select[name=modelingType]').val();
     let logTransform = $form.find('input[name=logTransform]').prop('checked');
 
     $page.find('.js-technique-row').removeClass('highlight');
-    $trigger.parents('.js-technique-row').addClass('highlight');
+    $radio.parents('.js-technique-row').addClass('highlight');
+
+    let measurementContextId = $radio.val().replaceAll('measurementContext|', '');
 
     $.ajax({
-      url: url,
+      url: `/study/${studyId}/modeling/${measurementContextId}/chart`,
       dataType: 'html',
       data: {
         'modelingType': modelingType,

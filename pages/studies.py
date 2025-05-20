@@ -146,12 +146,7 @@ def study_modeling_submit_action(studyId):
     args = request.form.to_dict()
 
     modeling_type = args.pop('modelingType')
-    measurement_context_ids = []
-
-    for arg, value in args.items():
-        if arg.startswith('measurementContext|'):
-            context_id = int(arg.removeprefix('measurementContext|'))
-            measurement_context_ids.append(context_id)
+    measurement_context_id = int(args.pop('selectedContext').removeprefix('measurementContext|'))
 
     modeling_request = g.db_session.scalars(
         sql.select(ModelingRequest)
@@ -169,7 +164,7 @@ def study_modeling_submit_action(studyId):
         g.db_session.add(modeling_request)
         g.db_session.commit()
 
-    result = process_modeling_request.delay(modeling_request.id, measurement_context_ids)
+    result = process_modeling_request.delay(modeling_request.id, [measurement_context_id])
     modeling_request.jobUuid = result.task_id
     g.db_session.commit()
 
