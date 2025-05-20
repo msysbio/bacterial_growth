@@ -7,6 +7,7 @@ from sqlalchemy.sql.expression import literal_column
 from db import get_connection, get_session
 from lib.db import execute_into_df
 from lib.chart import Chart
+from lib.log_transform import apply_log_transform
 from models import (
     Experiment,
     Measurement,
@@ -63,7 +64,7 @@ class ComparativeChartForm:
 
             df = self.get_df(measurement_context.id)
             if log_transform:
-                self._apply_log_transform(df)
+                apply_log_transform(df)
 
             label = measurement_context.get_chart_label(self.db_session)
 
@@ -149,14 +150,3 @@ class ComparativeChartForm:
         )
 
         return execute_into_df(self.db_session, query)
-
-    def _apply_log_transform(self, df):
-        if not df['std'].isnull().all():
-            # Transform std values by summing them and transforming the results:
-            with np.errstate(divide='ignore'):
-                upper_log = np.log(df['value'] + df['std'])
-                lower_log = np.log(df['value'] - df['std'])
-                df['std'] = upper_log - lower_log
-
-        with np.errstate(divide='ignore'):
-            df['value'] = np.log(df['value'])

@@ -25,6 +25,7 @@ from lib.chart import Chart
 from lib.modeling_tasks import process_modeling_request
 from lib.figures import make_figure_with_traces
 from lib.db import execute_into_df
+from lib.log_transform import apply_log_transform
 import lib.util as util
 
 
@@ -209,6 +210,9 @@ def study_modeling_chart_fragment(studyId, measurementContextId):
     if units == '':
         units = measurement_context.technique.short_name
 
+    if log_transform:
+        apply_log_transform(measurement_df)
+
     chart.add_df(
         measurement_df,
         units=units,
@@ -226,7 +230,10 @@ def study_modeling_chart_fragment(studyId, measurementContextId):
     ).one_or_none()
 
     if modeling_result:
-        df    = modeling_result.generate_chart_df(measurement_df)
+        df = modeling_result.generate_chart_df(measurement_df)
+        if log_transform:
+            apply_log_transform(df)
+
         label = modeling_result.model_name
 
         chart.add_model_df(df, units=units, label=label)

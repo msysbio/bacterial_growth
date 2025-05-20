@@ -1,3 +1,5 @@
+import math
+
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
@@ -40,8 +42,7 @@ class Chart:
         self.mixed_units_left  = False
         self.mixed_units_right = False
 
-        self.has_model_df = False
-        self.max_y = 0
+        self.model_df_indices = []
 
     def add_df(self, df, *, units, label=None, axis='left', metabolite_mass=None):
         entry = (df, units, label, metabolite_mass)
@@ -53,14 +54,8 @@ class Chart:
         else:
             raise ValueError(f"Unexpected axis: {axis}")
 
-        std_y = df['value'].std()
-        max_y = df['value'].max() + std_y / 2
-
-        if max_y > self.max_y:
-            self.max_y = max_y
-
     def add_model_df(self, df, *, units, label=None, axis='left'):
-        self.has_model_df = True
+        self.model_df_indices.append(len(self.data_left) + len(self.data_right))
         entry = (df, units, label, None)
 
         if axis == 'left':
@@ -109,11 +104,27 @@ class Chart:
         else:
             legend = None
 
-        if self.has_model_df:
-            # We want to limit the size of the chart to avoid exponential
-            # curves shooting out:
-            # TODO: a bit of a hack, limits are set pre-unit-scaling
-            yaxis_range=[0, self.max_y]
+        if len(self.model_df_indices) > 0:
+            # We have added models, so let's limit the y axis to avoid
+            # exponentials shooting up
+            # TODO (2025-05-20) Hack, only works on the left side
+            global_max_y = 0
+            global_min_y = math.inf
+
+            for (i, (df, _)) in enumerate(converted_data_left):
+                if i in self.model_df_indices:
+                    continue
+
+                std_y = df['value'].std()
+                max_y = df['value'].max() + std_y / 2
+                min_y = df['value'].min() - std_y / 2
+
+                if max_y > global_max_y:
+                    global_max_y = max_y
+                if min_y < global_min_y:
+                    global_min_y = min_y
+
+            yaxis_range=[global_min_y, global_max_y]
         else:
             yaxis_range=None
 
@@ -143,10 +154,7 @@ class Chart:
             return [], None
 
         converted_units = set()
-
         converted_data = [(df, label) for (df, _, label, _) in data]
-        if len(data) == 1:
-            return converted_data, data[0][1]
 
         for (df, units, label, metabolite_mass) in data:
             if units in CELL_COUNT_UNITS:
