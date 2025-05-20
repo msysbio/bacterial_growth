@@ -40,8 +40,14 @@
               <div
                   class="form-row hidden js-technique-row"
                   data-technique-id="{{ technique.id }}">
+                {% if bioreplicate.name.startswith('Average('): %}
+                  {% set description = "Average measurements over compartment {} across all biological replicates of the experiment {}.".format(compartment.name, experiment.name) %}
+                {% else: %}
+                  {% set description = "Measurements in compartment {} of biological replicate {}".format(compartment.name, bioreplicate.name) %}
+                {% endif %}
+
                 <h4
-                  data-tooltip="Biological replicate {{ bioreplicate.name }}, compartment {{ compartment.name }}" >
+                    data-tooltip="{{ description }}">
                   {{ bioreplicate.name }}<sub>{{ compartment.name }}</sub>
                 </h4>
               </div>

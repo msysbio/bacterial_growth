@@ -57,7 +57,7 @@ class MeasurementTechnique(OrmBase):
 
     measurementContexts: Mapped[List['MeasurementContext']] = relationship(
         back_populates="technique",
-        order_by='MeasurementContext.bioreplicateId, MeasurementContext.compartmentId',
+        order_by='MeasurementContext.calculationType.is_(None), MeasurementContext.bioreplicateId, MeasurementContext.compartmentId',
     )
     measurements: Mapped[List['Measurement']] = relationship(
         secondary='MeasurementContexts',
