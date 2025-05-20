@@ -60,6 +60,7 @@ class Chart:
             self.max_y = max_y
 
     def add_model_df(self, df, *, units, label=None, axis='left'):
+        self.has_model_df = True
         entry = (df, units, label, None)
 
         if axis == 'left':

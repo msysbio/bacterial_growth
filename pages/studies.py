@@ -205,7 +205,15 @@ def study_modeling_chart_fragment(studyId, measurementContextId):
         legend_position='right',
         log_left=log_transform,
     )
-    chart.add_df(measurement_df, units=measurement_context.technique.units, label="Measurements")
+    units = measurement_context.technique.units
+    if units == '':
+        units = measurement_context.technique.short_name
+
+    chart.add_df(
+        measurement_df,
+        units=units,
+        label="Measurements",
+    )
 
     modeling_result = g.db_session.scalars(
         sql.select(ModelingResult)
@@ -220,7 +228,6 @@ def study_modeling_chart_fragment(studyId, measurementContextId):
     if modeling_result:
         df    = modeling_result.generate_chart_df(measurement_df)
         label = modeling_result.model_name
-        units = modeling_result.measurementContext.technique.units
 
         chart.add_model_df(df, units=units, label=label)
 
