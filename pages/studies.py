@@ -179,6 +179,8 @@ def study_modeling_submit_action(studyId):
 def study_modeling_check_json(studyId):
     study = _fetch_study(studyId)
 
+    # TODO (2025-05-20) Return counts of pending requests?
+
     ready      = all([mr.state in ('ready', 'error') for mr in study.modelingRequests])
     successful = all([mr.state != 'error' for mr in study.modelingRequests])
 
@@ -235,7 +237,6 @@ def study_modeling_chart_fragment(studyId, measurementContextId):
             apply_log_transform(df)
 
         label = modeling_result.model_name
-
         chart.add_model_df(df, units=units, label=label)
 
         model_coefficients = modeling_result.coefficients

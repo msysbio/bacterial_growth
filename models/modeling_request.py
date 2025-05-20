@@ -42,7 +42,7 @@ class ModelingRequest(OrmBase):
 
     jobUuid: Mapped[str] = mapped_column(sql.String(100))
     state:   Mapped[str] = mapped_column(sql.String(100), default='pending')
-    error:   Mapped[str] = mapped_column(sql.String(100))
+    error:   Mapped[str] = mapped_column(sql.String)
 
     createdAt: Mapped[datetime] = mapped_column(UtcDateTime, server_default=FetchedValue())
     updatedAt: Mapped[datetime] = mapped_column(UtcDateTime, server_default=FetchedValue())

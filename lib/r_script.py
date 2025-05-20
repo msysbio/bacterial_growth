@@ -1,6 +1,6 @@
+import simplejson as json
 import subprocess
 import shutil
-import json
 import logging
 from pathlib import Path
 
@@ -51,5 +51,12 @@ class RScript:
         df.to_csv(self.root_path / filename, index=False)
 
     def read_json(self, filename):
-        with open(self.root_path / filename) as f:
-            return json.load(f)
+        path = self.root_path / filename
+
+        if not path.exists():
+            return None
+
+        text = path.read_text()
+        LOGGER.info(f"{filename}: {text}")
+
+        return json.loads(text, use_decimal=True)

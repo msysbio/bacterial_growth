@@ -269,7 +269,7 @@ CREATE TABLE ModelingRequests (
   `type` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
   jobUuid varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
   state varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
-  `error` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `error` text,
   createdAt datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updatedAt datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   studyId varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
@@ -540,5 +540,6 @@ INSERT INTO MigrationVersions VALUES
 (104,'2025_05_15_202707_move_measurement_fields_to_contexts','2025-05-16 12:44:48'),
 (120,'2025_05_17_165050_fix_metabolite_columns','2025-05-18 09:49:50'),
 (121,'2025_05_18_105334_rename_calculations_to_models','2025-05-18 09:49:50'),
-(128,'2025_05_19_170414_add_calculation_types','2025-05-19 17:10:23');
+(128,'2025_05_19_170414_add_calculation_types','2025-05-19 17:10:23'),
+(130,'2025_05_20_220923_fix_modeling_requests_error_column','2025-05-20 20:11:12');
 
