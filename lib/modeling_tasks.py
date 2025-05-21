@@ -40,40 +40,40 @@ def _process_modeling_request(db_session, modeling_request_id, measurement_conte
 
     with tempfile.TemporaryDirectory() as tmp_dir_name:
         for measurement_context in measurement_contexts:
+            modeling_result = db_session.scalars(
+                sql.select(ModelingResult)
+                .where(
+                    ModelingResult.requestId == modeling_request.id,
+                    ModelingResult.measurementContextId == measurement_context.id,
+                )
+            ).one_or_none()
+
+            if not modeling_result:
+                modeling_result = ModelingResult(
+                    type=modeling_request.type,
+                    request=modeling_request,
+                    measurementContext=measurement_context,
+                )
+
+            if modeling_request.type == 'easy_linear':
+                modeling_result.inputs = {'pointCount': point_count}
+            elif modeling_request.type == 'baranyi_roberts':
+                modeling_result.inputs = {'endTime': end_time}
+
+            db_session.add(modeling_result)
+            modeling_request.results.append(modeling_result)
+
+            data = measurement_context.get_df(db_session)
+            if modeling_request.type == 'baranyi_roberts' and end_time != '':
+                data = data[data['time'] <= float(end_time)]
+
+            # We don't need standard deviation for modeling:
+            data = data.drop(columns=['std'])
+
+            # Remove rows with NA values, if any
+            data = data.dropna()
+
             try:
-                modeling_result = db_session.scalars(
-                    sql.select(ModelingResult)
-                    .where(
-                        ModelingResult.requestId == modeling_request.id,
-                        ModelingResult.measurementContextId == measurement_context.id,
-                    )
-                ).one_or_none()
-
-                if not modeling_result:
-                    modeling_result = ModelingResult(
-                        type=modeling_request.type,
-                        request=modeling_request,
-                        measurementContext=measurement_context,
-                    )
-
-                if modeling_request.type == 'easy_linear':
-                    modeling_result.inputs = {'pointCount': point_count}
-                elif modeling_request.type == 'baranyi_roberts':
-                    modeling_result.inputs = {'endTime': end_time}
-
-                db_session.add(modeling_result)
-                modeling_request.results.append(modeling_result)
-
-                data = measurement_context.get_df(db_session)
-                if modeling_request.type == 'baranyi_roberts' and end_time != '':
-                    data = data[data['time'] <= float(end_time)]
-
-                # We don't need standard deviation for modeling:
-                data = data.drop(columns=['std'])
-
-                # Remove rows with NA values, if any
-                data = data.dropna()
-
                 rscript = RScript(root_path=tmp_dir_name)
                 rscript.write_csv('input.csv', data)
                 if modeling_request.type == 'easy_linear':
