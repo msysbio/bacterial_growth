@@ -32,7 +32,7 @@ class ComparativeChartForm:
         self.cfu_count_units  = 'CFUs/mL'
         self.metabolite_units = 'mM'
 
-    def build_chart(self, args, width, legend_position='top'):
+    def build_chart(self, args, width, legend_position='top', clamp_x_data=False):
         self._extract_args(args)
 
         chart = Chart(
@@ -44,6 +44,7 @@ class ComparativeChartForm:
             log_right=self.log_right,
             width=width,
             legend_position=legend_position,
+            clamp_x_data=clamp_x_data,
         )
 
         self.measurement_contexts = self.db_session.scalars(

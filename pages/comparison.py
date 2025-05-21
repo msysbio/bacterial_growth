@@ -78,7 +78,7 @@ def comparison_chart_fragment():
 
     # TODO (2025-05-18) Convert time units between studies
     chart_form = ComparativeChartForm(g.db_session, time_units='h')
-    chart = chart_form.build_chart(args, width, legend_position='top')
+    chart = chart_form.build_chart(args, width, legend_position='top', clamp_x_data=True)
 
     return render_template(
         'pages/comparison/_chart.html',

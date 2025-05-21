@@ -23,7 +23,8 @@ class Chart:
         log_right=False,
         width=None,
         title=None,
-        legend_position='top'
+        legend_position='top',
+        clamp_x_data=False,
     ):
         self.time_units       = time_units
         self.cell_count_units = cell_count_units
@@ -32,6 +33,7 @@ class Chart:
         self.width            = width
         self.title            = title
         self.legend_position  = legend_position
+        self.clamp_x_data     = clamp_x_data
 
         self.log_left  = log_left
         self.log_right = log_right
@@ -104,29 +106,8 @@ class Chart:
         else:
             legend = None
 
-        if len(self.model_df_indices) > 0:
-            # We have added models, so let's limit the y axis to avoid
-            # exponentials shooting up
-            # TODO (2025-05-20) Hack, only works on the left side
-            global_max_y = 0
-            global_min_y = math.inf
-
-            for (i, (df, _)) in enumerate(converted_data_left):
-                if i in self.model_df_indices:
-                    continue
-
-                std_y = df['value'].std()
-                max_y = df['value'].max() + std_y / 2
-                min_y = df['value'].min() - std_y / 2
-
-                if max_y > global_max_y:
-                    global_max_y = max_y
-                if min_y < global_min_y:
-                    global_min_y = min_y
-
-            yaxis_range=[global_min_y, global_max_y]
-        else:
-            yaxis_range=None
+        xaxis_range = self._calculate_x_range(converted_data_left + converted_data_right)
+        yaxis_range = self._calculate_y_range(converted_data_left)
 
         fig.update_layout(
             template=PLOTLY_TEMPLATE,
@@ -134,6 +115,7 @@ class Chart:
             title=title,
             hovermode='x unified',
             legend=legend,
+            xaxis_range=xaxis_range,
             yaxis_range=yaxis_range,
             yaxis=dict(
                 exponentformat="power",
@@ -211,3 +193,47 @@ class Chart:
             name=label,
             error_y=error_y,
         )
+
+    def _calculate_x_range(self, data):
+        if not self.clamp_x_data:
+            return None
+
+        # With multiple charts, fit the x-axis of the shortest one:
+        global_max_x = math.inf
+        global_min_x = 0
+
+        for (i, (df, _)) in enumerate(data):
+            max_x = df['time'].max() + 10
+            min_x = df['time'].min() - 10
+
+            if max_x < global_max_x:
+                global_max_x = max_x
+            if min_x > global_min_x:
+                global_min_x = min_x
+
+        return [global_min_x, global_max_x]
+
+    def _calculate_y_range(self, data):
+        if len(self.model_df_indices) == 0:
+            return None
+
+        # If we have added models, let's limit the y axis to avoid exponentials
+        # shooting up
+        # TODO (2025-05-20) Hack, only works on the left side
+        global_max_y = 0
+        global_min_y = math.inf
+
+        for (i, (df, _)) in enumerate(data):
+            if i in self.model_df_indices:
+                continue
+
+            std_y = df['value'].std()
+            max_y = df['value'].max() + std_y / 2
+            min_y = df['value'].min() - std_y / 2
+
+            if max_y > global_max_y:
+                global_max_y = max_y
+            if min_y < global_min_y:
+                global_min_y = min_y
+
+        return [global_min_y, global_max_y]
