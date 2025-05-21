@@ -14,10 +14,6 @@
 body *{
   font-family: 'Public Sans', sans-serif;
   color: var(--black);
-
-  &:focus {
-    outline: 1px solid var(--black);
-  }
 }
 
 a:hover {
