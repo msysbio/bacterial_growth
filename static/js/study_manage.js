@@ -100,7 +100,6 @@ Page('.study-manage-page', function($page) {
                 $stateContainer.append(`<div data-modeling-type="${modelingType}">✅</div>`);
               }
 
-
               let $activeRadio = $activeRow.find('input[type=radio]:checked');
               if ($activeRadio.length > 0) {
                 updateChart($activeRadio.first());
@@ -169,6 +168,7 @@ Page('.study-manage-page', function($page) {
       },
       success: function(response) {
         $chart.html(response)
+        initTooltips();
       },
     });
   }

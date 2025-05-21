@@ -17,13 +17,13 @@ LOGGER = get_task_logger(__name__)
 
 
 @shared_task
-def process_modeling_request(modeling_request_id, target_param_list):
+def process_modeling_request(modeling_request_id, measurement_context_ids, args):
     db_session = FLASK_DB.session
 
-    return _process_modeling_request(db_session, modeling_request_id, target_param_list)
+    return _process_modeling_request(db_session, modeling_request_id, measurement_context_ids, args)
 
 
-def _process_modeling_request(db_session, modeling_request_id, measurement_context_ids):
+def _process_modeling_request(db_session, modeling_request_id, measurement_context_ids, args={}):
     modeling_request = db_session.get(ModelingRequest, modeling_request_id)
     modeling_request.state = 'in_progress'
     db_session.commit()
@@ -34,6 +34,9 @@ def _process_modeling_request(db_session, modeling_request_id, measurement_conte
     ).all()
 
     has_error = False
+
+    point_count = int(args.get('pointCount', '5'))
+    end_time    = args.get('endTime', '')
 
     with tempfile.TemporaryDirectory() as tmp_dir_name:
         for measurement_context in measurement_contexts:
@@ -53,27 +56,40 @@ def _process_modeling_request(db_session, modeling_request_id, measurement_conte
                         measurementContext=measurement_context,
                     )
 
+                if modeling_request.type == 'easy_linear':
+                    modeling_result.inputs = {'pointCount': point_count}
+                elif modeling_request.type == 'baranyi_roberts':
+                    modeling_result.inputs = {'endTime': end_time}
+
                 db_session.add(modeling_result)
                 modeling_request.results.append(modeling_result)
 
                 data = measurement_context.get_df(db_session)
+                if modeling_request.type == 'baranyi_roberts' and end_time != '':
+                    data = data[data['time'] <= float(end_time)]
 
                 # We don't need standard deviation for modeling:
                 data = data.drop(columns=['std'])
 
-                # Remove rows with NA values
+                # Remove rows with NA values, if any
                 data = data.dropna()
 
                 rscript = RScript(root_path=tmp_dir_name)
                 rscript.write_csv('input.csv', data)
+                if modeling_request.type == 'easy_linear':
+                    rscript.write_json('input.json', {'pointCount': point_count})
 
                 script_name = f"scripts/modeling/{modeling_request.type}.R"
-                output      = rscript.run(script_name, 'input.csv')
+                output      = rscript.run(script_name)
 
                 LOGGER.info(output)
 
                 fit          = rscript.read_flat_json('fit.json', discard_keys="_row")
-                coefficients = rscript.read_key_value_json('coefficients.json', key_name="_row", value_name="coefficients")
+                coefficients = rscript.read_key_value_json(
+                    'coefficients.json',
+                    key_name="_row",
+                    value_name="coefficients",
+                )
 
                 if coefficients is None or fit is None:
                     modeling_result.state = 'error'

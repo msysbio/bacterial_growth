@@ -46,6 +46,7 @@ class ModelingResult(OrmBase):
     )
     measurementContext: Mapped['MeasurementContext'] = relationship(back_populates='modelingResults')
 
+    inputs:       Mapped[sql.JSON] = mapped_column(sql.JSON, nullable=False)
     fit:          Mapped[sql.JSON] = mapped_column(sql.JSON, nullable=False)
     coefficients: Mapped[sql.JSON] = mapped_column(sql.JSON, nullable=False)
 
@@ -64,6 +65,19 @@ class ModelingResult(OrmBase):
             return {'y0': None, 'mumax': None, 'K': None, 'h0': None}
         else:
             raise ValueError(f"Don't know what the coefficients are for model type: {repr(model_type)}")
+
+    @classmethod
+    def empty_fit(Self):
+        return {'r2': None, 'rss': None}
+
+    @classmethod
+    def empty_inputs(Self, model_type):
+        if model_type == 'easy_linear':
+            return {'pointCount': '5'}
+        elif model_type == 'baranyi_roberts':
+            return {'endTime': ''}
+        else:
+            return {}
 
     @property
     def model_name(self):

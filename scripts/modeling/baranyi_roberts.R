@@ -3,7 +3,7 @@ library("jsonlite")
 
 args <- commandArgs(TRUE)
 
-input_csv         = args[1]
+input_csv         = 'input.csv'
 coefficients_json = 'coefficients.json'
 fit_json          = 'fit.json'
 
@@ -26,13 +26,15 @@ h0_est = 1
 
 max_value = max(data$value)
 
-p <- c(y0 = y0_est, mumax = mumax_est, K = max_value, h0 = h0_est)
+p     <- c(y0 = y0_est, mumax = mumax_est, K = max_value, h0 = h0_est)
+lower <- c(y0 = 1e-9,   mumax = 0,         K = 0,         h0 = 0)
 
 model_fit <- fit_growthmodel(FUN       = grow_baranyi,
                              transform = 'log',
                              time      = data$time,
                              y         = data$value,
-                             p         = p)
+                             p         = p,
+                             lower     = lower)
 
 # Evaluate summary to ensure an error is raised if there are fit issues:
 summary(model_fit)
@@ -40,10 +42,10 @@ summary(model_fit)
 coefficients = coef(model_fit)
 
 f <- file(coefficients_json)
-writeLines(toJSON(as.data.frame(coefficients), auto_unbox=T))
+writeLines(toJSON(as.data.frame(coefficients), auto_unbox=T), f)
 close(f)
 
 f <- file(fit_json)
 fit <- data.frame(r2=rsquared(model_fit), rss=deviance(model_fit))
-writeLines(toJSON(fit, auto_unbox=T))
+writeLines(toJSON(fit, auto_unbox=T), f)
 close(f)

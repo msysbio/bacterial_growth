@@ -15,6 +15,7 @@ def init_assets(app):
         'js/lib/forms.js',
         'js/lib/util.js',
         'js/lib/page.js',
+        'js/lib/tooltips.js',
         # Pages:
         'js/upload/step1.js',
         'js/upload/step2.js',

@@ -50,6 +50,10 @@ class RScript:
     def write_csv(self, filename, df):
         df.to_csv(self.root_path / filename, index=False)
 
+    def write_json(self, filename, data):
+        with open(self.root_path / filename, 'w') as f:
+            json.dump(data, f)
+
     def read_key_value_json(self, filename, key_name, value_name):
         raw_data = self._read_raw_json(filename)
 

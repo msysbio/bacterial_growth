@@ -178,7 +178,7 @@ def study_modeling_submit_action(studyId):
         g.db_session.add(modeling_request)
         g.db_session.commit()
 
-    result = process_modeling_request.delay(modeling_request.id, [measurement_context_id])
+    result = process_modeling_request.delay(modeling_request.id, [measurement_context_id], args)
     modeling_request.jobUuid = result.task_id
     g.db_session.commit()
 
@@ -248,14 +248,23 @@ def study_modeling_chart_fragment(studyId, measurementContextId):
         label = modeling_result.model_name
         chart.add_model_df(df, units=units, label=label)
 
+        model_inputs       = modeling_result.inputs
         model_coefficients = modeling_result.coefficients
+        model_fit          = modeling_result.fit
     else:
+        model_inputs       = ModelingResult.empty_inputs(modeling_type)
         model_coefficients = ModelingResult.empty_coefficients(modeling_type)
+        model_fit          = ModelingResult.empty_fit()
 
     return render_template(
         'pages/studies/manage/_modeling_chart.html',
         chart=chart,
+        form_data=request.form,
+        model_type=modeling_type,
+        model_inputs=model_inputs,
         model_coefficients=model_coefficients,
+        model_fit=model_fit,
+        measurement_context=measurement_context,
         log_transform=log_transform,
     )
 
