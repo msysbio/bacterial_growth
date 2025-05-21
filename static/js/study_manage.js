@@ -3,6 +3,10 @@ Page('.study-manage-page', function($page) {
   let $form   = $page.find('.js-modeling-form');
 
   updateFormVisibility($form);
+  let $activeRadio = $('.js-technique-row:visible input[type=radio]:checked');
+  if ($activeRadio.length > 0) {
+    updateChart($activeRadio.first());
+  }
 
   $page.find('.js-experiment-container').each(function(e) {
     let $container = $(this);

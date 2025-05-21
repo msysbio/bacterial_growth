@@ -222,7 +222,7 @@ def study_modeling_chart_fragment(studyId, measurementContextId):
         .where(
             ModelingRequest.type == modeling_type,
             ModelingResult.measurementContextId == measurement_context.id,
-            ModelingResult.state.in_(('ready', 'error')),
+            ModelingResult.state == 'ready',
         )
     ).one_or_none()
 
