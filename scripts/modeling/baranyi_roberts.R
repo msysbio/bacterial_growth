@@ -9,44 +9,41 @@ fit_json          = 'fit.json'
 
 data <- read.table(input_csv, header=T, sep=',')
 
-## initial parameters and box constraints
+## Initial parameter estimation from spline fit
+spline_fit <- fit_spline(data$time, data$value)
+summary(spline_fit)
+spline_coefficients <- coef(spline_fit)
+
+y0_est    = spline_coefficients['y0']
+mumax_est = spline_coefficients['mumax']
+names(y0_est)    <- NULL
+names(mumax_est) <- NULL
+
+# TODO: estimate lag time by intercepting max growth with x-axis
+# h0_est = mumax_est * lag_time
+# h0_est = mumax_est * 5.52495319837189
+h0_est = 1
+
 max_value = max(data$value)
 
-p     <- c(y0 = 0.01,  mumax = .1,   K = max_value,      h0 = 1)
-lower <- c(y0 = 0.001, mumax = 1e-2, K = max_value / 10, h0 = -10)
-upper <- c(y0 = 0.1,   mumax = 4,    K = max_value * 10, h0 = 10)
+p <- c(y0 = y0_est, mumax = mumax_est, K = max_value, h0 = h0_est)
 
 model_fit <- fit_growthmodel(FUN       = grow_baranyi,
                              transform = 'log',
                              time      = data$time,
                              y         = data$value,
-                             p         = p,
-                             upper     = upper,
-                             lower     = lower)
+                             p         = p)
 
 # Evaluate summary to ensure an error is raised if there are fit issues:
 summary(model_fit)
 
 coefficients = coef(model_fit)
 
-# TODO: try toJSON(as.data.frame(coefficients))
-
 f <- file(coefficients_json)
-writeLines(c(
-           '{',
-           paste('"y0":',    coefficients['y0'], ','),
-           paste('"mumax":', coefficients['mumax'], ','),
-           paste('"K":',     coefficients['K'], ','),
-           paste('"h0":',    coefficients['h0']),
-           '}'
-           ), f)
+writeLines(toJSON(as.data.frame(coefficients), auto_unbox=T))
 close(f)
 
 f <- file(fit_json)
-writeLines(c(
-           '{',
-           paste('"r2":',  rsquared(model_fit), ','),
-           paste('"rss":', deviance(model_fit)),
-           '}'
-           ), f)
+fit <- data.frame(r2=rsquared(model_fit), rss=deviance(model_fit))
+writeLines(toJSON(fit, auto_unbox=T))
 close(f)

@@ -50,7 +50,25 @@ class RScript:
     def write_csv(self, filename, df):
         df.to_csv(self.root_path / filename, index=False)
 
-    def read_json(self, filename):
+    def read_key_value_json(self, filename, key_name, value_name):
+        raw_data = self._read_raw_json(filename)
+
+        if raw_data is None:
+            return None
+
+        return { entry[key_name]: entry[value_name] for entry in raw_data }
+
+    def read_flat_json(self, filename, discard_keys=[]):
+        raw_data = self._read_raw_json(filename)
+        if raw_data is None:
+            return None
+
+        if len(raw_data) == 0:
+            return None
+        else:
+            return {k: v for k, v in raw_data[0].items() if k not in discard_keys}
+
+    def _read_raw_json(self, filename):
         path = self.root_path / filename
 
         if not path.exists():

@@ -72,8 +72,8 @@ def _process_modeling_request(db_session, modeling_request_id, measurement_conte
 
                 LOGGER.info(output)
 
-                fit          = rscript.read_json('fit.json')
-                coefficients = rscript.read_json('coefficients.json')
+                fit          = rscript.read_flat_json('fit.json', discard_keys="_row")
+                coefficients = rscript.read_key_value_json('coefficients.json', key_name="_row", value_name="coefficients")
 
                 if coefficients is None or fit is None:
                     modeling_result.state = 'error'
