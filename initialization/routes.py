@@ -49,15 +49,14 @@ def init_routes(app):
         methods=["POST"],
     )
 
-    app.add_url_rule("/study/<string:studyId>/",                view_func=study_pages.study_show_page)
-    app.add_url_rule("/study/<string:studyId>.zip",             view_func=study_pages.study_download_zip)
-    app.add_url_rule("/study/<string:studyId>/export",          view_func=study_pages.study_export_page)
-    app.add_url_rule("/study/<string:studyId>/export/preview",  view_func=study_pages.study_export_preview_fragment)
-    app.add_url_rule("/study/<string:studyId>/manage",          view_func=study_pages.study_manage_page)
-    app.add_url_rule("/study/<string:studyId>/visualize",       view_func=study_pages.study_visualize_page)
-    app.add_url_rule("/study/<string:studyId>/visualize/chart", view_func=study_pages.study_chart_fragment, methods=["POST"])
-
-    # TODO (2025-05-18) Rethink organization of routes and actions
+    app.add_url_rule("/study/<string:studyId>/",                  view_func=study_pages.study_show_page)
+    app.add_url_rule("/study/<string:studyId>.zip",               view_func=study_pages.study_download_data_zip)
+    app.add_url_rule("/study/<string:studyId>/export/",           view_func=study_pages.study_export_page)
+    app.add_url_rule("/study/<string:studyId>/export/preview",    view_func=study_pages.study_export_preview_fragment)
+    app.add_url_rule("/study/<string:studyId>/manage/",           view_func=study_pages.study_manage_page)
+    app.add_url_rule("/study/<string:studyId>/manage/models.csv", view_func=study_pages.study_download_models_csv, methods=["POST"])
+    app.add_url_rule("/study/<string:studyId>/visualize/",        view_func=study_pages.study_visualize_page)
+    app.add_url_rule("/study/<string:studyId>/visualize/chart",   view_func=study_pages.study_chart_fragment, methods=["POST"])
 
     app.add_url_rule(
         "/study/<string:studyId>/modeling/submit",

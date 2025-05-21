@@ -1,3 +1,5 @@
+import io
+
 from flask import (
     g,
     render_template,
@@ -23,6 +25,7 @@ from forms.experiment_export_form import ExperimentExportForm
 from forms.comparative_chart_form import ComparativeChartForm
 from lib.chart import Chart
 from lib.modeling_tasks import process_modeling_request
+from lib.model_export import export_model_csv
 from lib.figures import make_figure_with_traces
 from lib.db import execute_into_df
 from lib.log_transform import apply_log_transform
@@ -103,6 +106,17 @@ def study_download_data_zip(studyId):
         download_name=f"{studyId}.zip",
     )
 
+
+def study_download_models_csv(studyId):
+    study = _fetch_study(studyId)
+
+    csv_data = export_model_csv(g.db_session, study)
+
+    return send_file(
+        io.BytesIO(csv_data),
+        as_attachment=True,
+        download_name=f"{studyId}_models.csv",
+    )
 
 def study_visualize_page(studyId):
     study = _fetch_study(studyId)
