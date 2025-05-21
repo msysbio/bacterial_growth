@@ -1,4 +1,6 @@
 Page('.study-visualize-page', function($page) {
+  let $compareData = $(document).find('[data-compare-ids]')
+
   let studyId = $page.data('studyId')
   let $form   = $page.find('.js-chart-form');
 
@@ -84,22 +86,7 @@ Page('.study-visualize-page', function($page) {
       contextIds.push($(this).data('contextId'));
     });
 
-    updateCompareData('add', contextIds, function(compareData) {
-      let countText;
-      if (compareData.contextCount > 0) {
-        countText = `(${compareData.contextCount})`;
-      } else {
-        countText = '';
-      }
-
-      let $sidebarCompareItem = $(document).find('.js-sidebar-compare');
-      $sidebarCompareItem.find('.js-count').html(countText);
-
-      $sidebarCompareItem.addClass('highlight');
-      setTimeout(function() {
-        $sidebarCompareItem.removeClass('highlight');
-      }, 500);
-    });
+    updateCompareData('add', contextIds);
   });
 
   function updateChart($form) {
@@ -139,6 +126,7 @@ Page('.study-visualize-page', function($page) {
     })
   }
 
+  // TODO duplicates study.js, extract
   function updateCompareData(action, contexts, successCallback) {
     $.ajax({
       type: 'POST',
@@ -148,7 +136,26 @@ Page('.study-visualize-page', function($page) {
       contentType: 'application/json',
       processData: true,
       success: function(response) {
-        successCallback(JSON.parse(response))
+        let compareData = JSON.parse(response);
+
+        let countText;
+        if (compareData.contextCount > 0) {
+          countText = `(${compareData.contextCount})`;
+        } else {
+          countText = '';
+        }
+
+        let $sidebarCompareItem = $(document).find('.js-sidebar-compare');
+        $sidebarCompareItem.find('.js-count').html(countText);
+
+        $sidebarCompareItem.addClass('highlight');
+        setTimeout(function() {
+          $sidebarCompareItem.removeClass('highlight');
+        }, 500);
+
+        if (successCallback) {
+          successCallback(compareData);
+        }
       },
     })
   }

@@ -85,6 +85,10 @@ class Study(OrmBase):
         return self.studyName
 
     @hybrid_property
+    def description(self):
+        return self.studyDescription
+
+    @hybrid_property
     def isPublished(self):
         return self.publishedAt
 

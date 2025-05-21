@@ -24,3 +24,12 @@ class Community(OrmBase):
     strainIds: Mapped[JSON] = mapped_column(JSON, nullable=False)
 
     experiments: Mapped[List['Experiment']] = relationship(back_populates='community')
+
+    # TODO make a join table to strains, this is silly
+    def get_strains(self, db_session):
+        from models import Strain
+
+        return db_session.scalars(
+            sql.select(Strain)
+            .where(Strain.id.in_(self.strainIds))
+        ).all()

@@ -35,16 +35,37 @@
     }
   }
 
-  .measurement-techniques {
-    flex: 1;
+  .experiments {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin-top: 20px;
+
+    .measurement-context-container {
+      margin-top: 6px;
+    }
+
+    .bioreplicates-list li {
+      margin-top: 6px;
+    }
   }
 
-  .measurements-toc {
+  .chart-placeholder {
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 52px;
+    opacity: 0.5;
+  }
+
+  .experiments-toc {
     position: sticky;
     top: 20px;
     margin-top: 20px;
     margin-left: 20px;
     flex: 1;
+    min-width: 200px;
 
     h2 {
       font-size: 16px;
@@ -59,38 +80,5 @@
       margin: 0;
       padding-left: 20px;
     }
-  }
-
-  .measurements-list {
-    max-width: 200px;
-  }
-
-  .measurement-techniques,
-  .calculation-techniques {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    margin-top: 20px;
-  }
-
-  table.measurements-table {
-    width: 100%;
-
-    td {
-      vertical-align: middle;
-    }
-
-    .numeric {
-      font-variant-numeric: tabular-nums;
-    }
-  }
-
-  .chart-placeholder {
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 52px;
-    opacity: 0.5;
   }
 }
