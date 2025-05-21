@@ -74,7 +74,8 @@ def study_export_preview_fragment(studyId):
     return '\n'.join(csv_previews)
 
 
-def study_download_zip(studyId):
+def study_download_data_zip(studyId):
+    study = _fetch_study(studyId)
     csv_data = []
 
     export_form = ExperimentExportForm(g.db_session, request.args)
@@ -86,7 +87,6 @@ def study_download_zip(studyId):
 
         csv_data.append((csv_name, csv_bytes))
 
-    study = g.db_session.scalars(sql.select(Study).where(Study.studyId == studyId)).one()
     readme_text = render_template(
         'pages/studies/export_readme.md',
         study=study,
