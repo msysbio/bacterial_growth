@@ -89,18 +89,18 @@
 
                     <span class="js-compare-container" data-context-ids="{{ measurement_context_ids|join(',') }}">
                       <span class="js-compare" data-tooltip="Compare">
-                        <a href="#" class="white-button small-button">↔</a>
+                        <a href="#" class="white-button no-border small-button">↔</a>
                       </span>
 
                       <span class="js-uncompare hidden" data-tooltip="Comparing, click to remove from comparison">
                         👆
-                        <a href="#" class="white-button small-button">➖</a>
+                        <a href="#" class="white-button no-border small-button">➖</a>
                       </span>
                     </span>
 
                     <a
                         href="{{ url_for('study_visualize_page', studyId=study.publicId, l=measurement_context_ids|join(',')) }}"
-                        class="white-button small-button"
+                        class="white-button no-border small-button"
                         data-tooltip="Visualize">
                       📈
                     </a>
@@ -119,18 +119,18 @@
                           <div class="js-table-row">
                             <span class="js-compare-container" data-context-ids="{{ measurement_context.id }}">
                               <span class="js-compare" data-tooltip="Compare">
-                                <a href="#" class="white-button small-button">↔</a>
+                                <a href="#" class="white-button no-border small-button">↔</a>
                               </span>
 
                               <span class="js-uncompare hidden" data-tooltip="Comparing, click to remove from comparison">
                                 👆
-                                <a href="#" class="white-button small-button">➖</a>
+                                <a href="#" class="white-button no-border small-button">➖</a>
                               </span>
                             </span>
 
                             <a
                                 href="{{ url_for('study_visualize_page', studyId=study.publicId, l=measurement_context.id) }}"
-                                class="white-button small-button"
+                                class="white-button no-border small-button"
                                 data-tooltip="Visualize">
                               📈
                             </a>

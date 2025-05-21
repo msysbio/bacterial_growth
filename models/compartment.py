@@ -65,12 +65,16 @@ class Compartment(OrmBase):
             "CO<sub>2</sub>":         (self.CO2, '%'),
             "H<sub>2</sub>":          (self.H2, '%'),
             "N<sub>2</sub>":          (self.N2, '%'),
-            "inoculum concentration": (self.inoculumConcentration, 'Cells/mL'),
-            "inoculum volume":        (self.inoculumVolume, 'Cells/mL'),
+            "inoculum concentration": (self.inoculumConcentration, ' Cells/mL'),
+            "inoculum volume":        (self.inoculumVolume, ' Cells/mL'),
             "initial pH":             (self.initialPh, ''),
             "initial temperature":    (self.initialTemperature, '°C'),
         }
 
-        formatted_properties = [f"{v}{units} {k}" for (k, (v, units)) in properties.items() if v is not None]
+        formatted_properties = [
+            f"<strong>{v}{units}</strong> {k}"
+            for (k, (v, units)) in properties.items()
+            if v is not None and v != ''
+        ]
 
         return ', '.join(formatted_properties)
