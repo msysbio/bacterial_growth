@@ -47,6 +47,11 @@ Page('.study-manage-page', function($page) {
     e.preventDefault();
     let $form = $(e.currentTarget);
 
+    let modelingType    = $form.find('select[name=modelingType]').val();
+    let $activeRow      = $('.js-technique-row.highlight:visible');
+    let $stateContainer = $activeRow.find('.js-modeling-result-state');
+    let $state          = $stateContainer.find(`[data-modeling-type=${modelingType}]`);
+
     $.ajax({
       url: $form.attr('action'),
       dataType: 'json',
@@ -61,20 +66,38 @@ Page('.study-manage-page', function($page) {
             url: `/study/${studyId}/modeling/check.json`,
             dataType: 'json',
             success: function(response) {
+              let $state = $stateContainer.find(`[data-modeling-type=${modelingType}]`);
+
               if (!response.ready) {
-                $result.html('Calculating...');
+                $result.html('⏳ Calculating...');
+                if ($state.length > 0) {
+                  $state.text('⏳');
+                } else {
+                  $stateContainer.append(`<div data-modeling-type="${modelingType}">⏳</div>`);
+                }
                 setTimeout(check, 1000);
                 return;
               }
 
               if (!response.successful) {
-                $result.html('<span class="error">[error]</span>');
+                $result.html("<span class=\"error\">❌ Calculation failed: Couldn't fit the model</span>");
+                if ($state.length > 0) {
+                  $state.text('❌');
+                } else {
+                  $stateContainer.append(`<div data-modeling-type="${modelingType}">❌</div>`);
+                }
                 return;
               }
 
-              $result.html("OK");
+              $result.html("✅ Calculation was successful");
+              if ($state.length > 0) {
+                $state.text('✅');
+              } else {
+                $stateContainer.append(`<div data-modeling-type="${modelingType}">✅</div>`);
+              }
 
-              let $activeRadio = $('.js-technique-row.highlight:visible input[type=radio]:checked');
+
+              let $activeRadio = $activeRow.find('input[type=radio]:checked');
               if ($activeRadio.length > 0) {
                 updateChart($activeRadio.first());
               }
@@ -113,6 +136,10 @@ Page('.study-manage-page', function($page) {
     $experiment.
       find(`.js-technique-row[data-technique-id="${selectedTechniqueId}"]`).
       removeClass('hidden');
+
+    let modelingType = $form.find('select[name=modelingType]').val();
+    $form.find('[data-modeling-type]').addClass('hidden');
+    $form.find(`[data-modeling-type="${modelingType}"]`).removeClass('hidden');
   }
 
   function updateChart($radio) {

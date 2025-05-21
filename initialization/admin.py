@@ -13,6 +13,7 @@ from db import FLASK_DB
 from models.orm_base import OrmBase
 from models import (
     Measurement,
+    MeasurementContext,
     MeasurementTechnique,
     Metabolite,
     ModelingRequest,
@@ -118,6 +119,7 @@ def init_admin(app):
     admin.add_view(AppView(Strain,            db_session, category="Studies"))
 
     admin.add_view(AppView(MeasurementTechnique, db_session, category="Measurements"))
+    admin.add_view(AppView(MeasurementContext,   db_session, category="Measurements"))
     admin.add_view(AppView(Measurement,          db_session, category="Measurements"))
     admin.add_view(AppView(ModelingRequest,      db_session, category="Measurements"))
     admin.add_view(AppView(ModelingResult,       db_session, category="Measurements"))

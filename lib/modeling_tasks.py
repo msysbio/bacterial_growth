@@ -34,15 +34,23 @@ def _process_modeling_request(db_session, modeling_request_id, measurement_conte
     ).all()
 
     with tempfile.TemporaryDirectory() as tmp_dir_name:
-        modeling_request.results = []
-
         for measurement_context in measurement_contexts:
             try:
-                modeling_result = ModelingResult(
-                    type=modeling_request.type,
-                    request=modeling_request,
-                    measurementContext=measurement_context,
-                )
+                modeling_result = db_session.scalars(
+                    sql.select(ModelingResult)
+                    .where(
+                        ModelingResult.requestId == modeling_request.id,
+                        ModelingResult.measurementContextId == measurement_context.id,
+                    )
+                ).one_or_none()
+
+                if not modeling_result:
+                    modeling_result = ModelingResult(
+                        type=modeling_request.type,
+                        request=modeling_request,
+                        measurementContext=measurement_context,
+                    )
+
                 db_session.add(modeling_result)
                 modeling_request.results.append(modeling_result)
 
@@ -74,7 +82,10 @@ def _process_modeling_request(db_session, modeling_request_id, measurement_conte
                     modeling_result.state = 'ready'
                     modeling_result.error = None
                     modeling_result.calculatedAt = datetime.now(UTC)
+                    modeling_request.error = None
             except Exception as e:
+                modeling_result.state = 'error'
+                modeling_result.error = 'RScript error'
                 LOGGER.error(e)
 
     modeling_request.state = 'ready'

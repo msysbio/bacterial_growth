@@ -83,7 +83,21 @@
                   {% endif %}
                 </label>
 
-                {# <div class="flex-right">✅</div> #}
+                <div class="js-modeling-result-state flex-right">
+                  {% for modeling_result in measurement_context.modelingResults: %}
+                    <div
+                        data-modeling-type="{{ modeling_result.type }}"
+                        class="hidden">
+                      {% if modeling_result.state == 'ready': %}
+                        ✅
+                      {% elif modeling_result.state == 'error': %}
+                        ❌
+                      {% elif modeling_result.state == 'in_progress': %}
+                        ⏳
+                      {% endif %}
+                    </div>
+                  {% endfor %}
+                </div>
               </div>
             {% endfor %}
           {% endfor %}
