@@ -19,24 +19,28 @@
     <div
         class="experiment-container hidden js-experiment-container"
         data-experiment-id="{{ experiment.id }}">
+      <p>{{ experiment.description }}</p>
+    </div>
+  {% endfor %}
+
+  <div class="form-row margin-top-10">
+    <label class="full">
+      <span>Measurement technique:</span>
+      <select name="techniqueId" class="form-input-blue full">
+        {% for technique in study.measurementTechniques if technique.is_growth: %}
+          <option value="{{ technique.id }}" data-subject-type="{{ technique.subjectType }}">
+          {{- technique.long_name_with_subject_type -}}
+          </option>
+        {% endfor %}
+      </select>
+    </label>
+  </div>
+
+  {% for experiment in study.experiments: %}
+    <div
+        class="experiment-container margin-top-10 hidden js-experiment-container"
+        data-experiment-id="{{ experiment.id }}">
       <div class="experiment">
-        <p>{{ experiment.description }}</p>
-
-        <div class="form-row">
-          <label class="full">
-            <span>Measurement technique:</span>
-            <select name="techniqueId" class="form-input-blue full">
-              {% for technique in study.measurementTechniques if technique.is_growth: %}
-                <option value="{{ technique.id }}" data-subject-type="{{ technique.subjectType }}">
-                {{- technique.long_name_with_subject_type -}}
-                </option>
-              {% endfor %}
-            </select>
-          </label>
-        </div>
-
-        <br>
-
         {% for technique in study.measurementTechniques if technique.is_growth: %}
           {% for (bioreplicate, compartment), contexts in technique.get_grouped_contexts() if bioreplicate.experimentId == experiment.id: %}
             {% if technique.subjectType != 'bioreplicate': %}
@@ -44,7 +48,7 @@
                   class="form-row hidden js-technique-row"
                   data-technique-id="{{ technique.id }}">
                 {% if bioreplicate.name.startswith('Average('): %}
-                  {% set description = "Average measurements over compartment {} in the experiment".format(compartment.name) %}
+                  {% set description = "Average measurements over compartment {} across all biological replicates of the experiment {}.".format(compartment.name, experiment.name) %}
                 {% else: %}
                   {% set description = "Measurements in compartment {} of biological replicate {}".format(compartment.name, bioreplicate.name) %}
                 {% endif %}

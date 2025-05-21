@@ -105,9 +105,9 @@ Page('.study-manage-page', function($page) {
     let $experiment = $form.find(`.js-experiment-container[data-experiment-id="${selectedExperimentId}"]`);
     $experiment.removeClass('hidden');
 
-    let selectedTechniqueId = $experiment.
+    let selectedTechniqueId = $form.
       find('select[name="techniqueId"]').val();
-    let selectedTechniqueSubjectType = $experiment.
+    let selectedTechniqueSubjectType = $form.
       find('select[name="techniqueId"] option:selected').data('subjectType');
 
     $experiment.
