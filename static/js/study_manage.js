@@ -143,6 +143,9 @@ Page('.study-manage-page', function($page) {
     let modelingType = $form.find('select[name=modelingType]').val();
     $form.find('[data-modeling-type]').addClass('hidden');
     $form.find(`[data-modeling-type="${modelingType}"]`).removeClass('hidden');
+
+    $form.find('[data-modeling-input]').addClass('hidden');
+    $form.find(`[data-modeling-input-${modelingType}]`).removeClass('hidden');
   }
 
   function updateChart($radio) {

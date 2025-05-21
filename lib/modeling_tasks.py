@@ -57,14 +57,14 @@ def _process_modeling_request(db_session, modeling_request_id, measurement_conte
 
             if modeling_request.type == 'easy_linear':
                 modeling_result.inputs = {'pointCount': point_count}
-            elif modeling_request.type == 'baranyi_roberts':
+            elif modeling_request.type in ('logistic', 'baranyi_roberts'):
                 modeling_result.inputs = {'endTime': end_time}
 
             db_session.add(modeling_result)
             modeling_request.results.append(modeling_result)
 
             data = measurement_context.get_df(db_session)
-            if modeling_request.type == 'baranyi_roberts' and end_time != '':
+            if modeling_request.type in ('logistic', 'baranyi_roberts') and end_time != '':
                 data = data[data['time'] <= float(end_time)]
 
             # We don't need standard deviation for modeling:

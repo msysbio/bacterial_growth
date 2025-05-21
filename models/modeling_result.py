@@ -16,6 +16,7 @@ from models.orm_base import OrmBase
 
 VALID_TYPES = [
     'easy_linear',
+    'logistic',
     'baranyi_roberts',
 ]
 
@@ -27,6 +28,7 @@ VALID_STATES = [
 
 MODEL_NAMES = {
     'easy_linear':     'Easy linear model',
+    'logistic':        'Logistic model',
     'baranyi_roberts': 'Baranyi-Roberts model',
 }
 
@@ -61,6 +63,8 @@ class ModelingResult(OrmBase):
     def empty_coefficients(Self, model_type):
         if model_type == 'easy_linear':
             return {'y0': None, 'y0_lm': None, 'mumax': None, 'lag': None}
+        elif model_type == 'logistic':
+            return {'y0': None, 'mumax': None, 'K': None}
         elif model_type == 'baranyi_roberts':
             return {'y0': None, 'mumax': None, 'K': None, 'h0': None}
         else:
@@ -74,7 +78,7 @@ class ModelingResult(OrmBase):
     def empty_inputs(Self, model_type):
         if model_type == 'easy_linear':
             return {'pointCount': '5'}
-        elif model_type == 'baranyi_roberts':
+        elif model_type in ('logistic', 'baranyi_roberts'):
             return {'endTime': ''}
         else:
             return {}
@@ -106,6 +110,8 @@ class ModelingResult(OrmBase):
     def _predict(self, timepoints):
         if self.type == 'easy_linear':
             return self._predict_easy_linear(timepoints)
+        elif self.type == 'logistic':
+            return self._predict_logistic(timepoints)
         elif self.type == 'baranyi_roberts':
             return self._predict_baranyi_roberts(timepoints)
         else:
@@ -122,6 +128,13 @@ class ModelingResult(OrmBase):
 
         # Exponential:
         return y0_lm * np.exp(time * mumax)
+
+    def _predict_logistic(self, time):
+        y0    = float(self.coefficients['y0'])
+        mumax = float(self.coefficients['mumax'])
+        K     = float(self.coefficients['K'])
+
+        return (K * y0)/(y0 + (K - y0) * np.exp(-mumax * time))
 
     def _predict_baranyi_roberts(self, time):
         y0    = float(self.coefficients['y0'])

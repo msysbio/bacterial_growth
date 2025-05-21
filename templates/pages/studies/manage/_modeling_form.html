@@ -119,12 +119,13 @@
         <span>Modeling type</span>
         <select name="modelingType" class="form-input-blue form-input-full">
           <option value="easy_linear">"Easy linear" model</option>
+          <option value="logistic">Logistic model</option>
           <option value="baranyi_roberts">Baranyi-Roberts model</option>
         </select>
       </label>
     </div>
 
-    <div class="form-row hidden" data-modeling-type="easy_linear">
+    <div class="form-row hidden" data-modeling-input data-modeling-input-easy_linear>
       <div class="form-row margin-top-10">
         <label data-tooltip="Set to limit the number of points to use to determine the slope">
           <span>Point count:</span>
@@ -138,7 +139,7 @@
       </div>
     </div>
 
-    <div class="form-row hidden" data-modeling-type="baranyi_roberts">
+    <div class="form-row hidden" data-modeling-input data-modeling-input-logistic data-modeling-input-baranyi_roberts>
       <div class="form-row margin-top-10">
         <label data-tooltip="Set to limit the end value on the x-axis to pick for the calculation">
           <span>End time:</span>
