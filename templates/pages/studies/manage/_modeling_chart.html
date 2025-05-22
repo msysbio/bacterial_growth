@@ -64,3 +64,16 @@
     {{ render_param_input(model_fit, "rss", "RSS: residual sum of squares") }}
   </div>
 </div>
+
+{% if r_summary: %}
+<div class="r-summary">
+  <h3 style="margin-top: 10px">
+    Output from
+    <a target="_blank" href="https://cran.r-project.org/web/packages/growthrates/index.html">
+      growthrates
+    </a>:
+  </h3>
+
+  <pre>{{ r_summary }}</pre>
+</div>
+{% endif %}

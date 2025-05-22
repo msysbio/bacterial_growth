@@ -12,6 +12,11 @@ data   <- read.table(input_csv, header=T, sep=',')
 config <- read_json(input_json)
 
 model_fit <- fit_easylinear(data$time, data$value, h=config$pointCount)
+
+print('## SUMMARY START')
+summary(model_fit)
+print('## SUMMARY END')
+
 coefficients = coef(model_fit)
 
 f <- file(coefficients_json)

@@ -3,6 +3,11 @@
     margin-top: 0;
   }
 
+  .r-summary pre {
+    padding: 10px;
+    background-color: #eee;
+  }
+
   .form-input-blue {
     padding: 0.5rem !important;
   }

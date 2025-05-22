@@ -27,7 +27,7 @@ VALID_STATES = [
 ]
 
 MODEL_NAMES = {
-    'easy_linear':     'Easy linear model',
+    'easy_linear':     '"Easy linear" method',
     'logistic':        'Logistic model',
     'baranyi_roberts': 'Baranyi-Roberts model',
 }
@@ -52,8 +52,9 @@ class ModelingResult(OrmBase):
     fit:          Mapped[sql.JSON] = mapped_column(sql.JSON, nullable=False)
     coefficients: Mapped[sql.JSON] = mapped_column(sql.JSON, nullable=False)
 
-    state: Mapped[str] = mapped_column(sql.String(100), default='pending')
-    error: Mapped[str] = mapped_column(sql.String(100))
+    state:    Mapped[str] = mapped_column(sql.String(100), default='pending')
+    error:    Mapped[str] = mapped_column(sql.String)
+    rSummary: Mapped[str] = mapped_column(sql.String)
 
     createdAt:    Mapped[datetime] = mapped_column(UtcDateTime, server_default=FetchedValue())
     updatedAt:    Mapped[datetime] = mapped_column(UtcDateTime, server_default=FetchedValue())

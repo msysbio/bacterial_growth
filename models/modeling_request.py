@@ -27,7 +27,7 @@ VALID_STATES = [
 ]
 
 MODEL_NAMES = {
-    'easy_linear':     'Easy linear model',
+    'easy_linear':     '"Easy linear" method',
     'logistic':        'Logistic model',
     'baranyi_roberts': 'Baranyi-Roberts model',
 }

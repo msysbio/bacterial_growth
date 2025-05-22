@@ -299,6 +299,7 @@ CREATE TABLE ModelingResults (
   fit json DEFAULT (json_object()),
   measurementContextId int NOT NULL,
   inputs json NOT NULL DEFAULT (json_object()),
+  rSummary text,
   PRIMARY KEY (id),
   KEY Calculations_calculationTechniqueId (requestId),
   CONSTRAINT Calculations_calculationTechniqueId FOREIGN KEY (requestId) REFERENCES ModelingRequests (id) ON DELETE CASCADE ON UPDATE CASCADE
@@ -543,5 +544,6 @@ INSERT INTO MigrationVersions VALUES
 (121,'2025_05_18_105334_rename_calculations_to_models','2025-05-18 09:49:50'),
 (128,'2025_05_19_170414_add_calculation_types','2025-05-19 17:10:23'),
 (130,'2025_05_20_220923_fix_modeling_requests_error_column','2025-05-20 20:11:12'),
-(133,'2025_05_21_143554_add_input_params_to_modeling_results','2025-05-21 12:37:48');
+(133,'2025_05_21_143554_add_input_params_to_modeling_results','2025-05-21 12:37:48'),
+(136,'2025_05_22_235526_add_r_summary_to_modeling_results','2025-05-22 22:15:36');
 

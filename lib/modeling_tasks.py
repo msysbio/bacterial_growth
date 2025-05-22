@@ -97,6 +97,7 @@ def _process_modeling_request(db_session, modeling_request_id, measurement_conte
                     has_error = True
                 else:
                     modeling_result.coefficients = coefficients
+                    modeling_result.rSummary = _extract_r_summary(output)
                     modeling_result.fit = fit
                     modeling_result.state = 'ready'
                     modeling_result.error = None
@@ -115,3 +116,23 @@ def _process_modeling_request(db_session, modeling_request_id, measurement_conte
 
     db_session.add(modeling_request)
     db_session.commit()
+
+
+def _extract_r_summary(text):
+    output_lines = []
+    in_summary = False
+
+    for line in text.splitlines():
+        if '## SUMMARY START' in line:
+            in_summary = True
+            continue
+        elif '## SUMMARY END' in line:
+            in_summary = False
+
+        if in_summary:
+            output_lines.append(line)
+
+    if output_lines:
+        return "\n".join(output_lines)
+    else:
+        return None

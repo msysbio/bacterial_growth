@@ -16,6 +16,10 @@ body *{
   color: var(--black);
 }
 
+pre {
+  font-family: monospace;
+}
+
 a:hover {
   transition: color 150ms;
   color: #0060df;

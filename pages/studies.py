@@ -251,10 +251,12 @@ def study_modeling_chart_fragment(studyId, measurementContextId):
         model_inputs       = modeling_result.inputs
         model_coefficients = modeling_result.coefficients
         model_fit          = modeling_result.fit
+        r_summary          = modeling_result.rSummary
     else:
         model_inputs       = ModelingResult.empty_inputs(modeling_type)
         model_coefficients = ModelingResult.empty_coefficients(modeling_type)
         model_fit          = ModelingResult.empty_fit()
+        r_summary          = None
 
     return render_template(
         'pages/studies/manage/_modeling_chart.html',
@@ -264,6 +266,7 @@ def study_modeling_chart_fragment(studyId, measurementContextId):
         model_inputs=model_inputs,
         model_coefficients=model_coefficients,
         model_fit=model_fit,
+        r_summary=r_summary,
         measurement_context=measurement_context,
         log_transform=log_transform,
     )

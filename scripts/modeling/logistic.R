@@ -31,8 +31,9 @@ model_fit <- fit_growthmodel(FUN       = grow_logistic,
                              p         = p,
                              lower     = lower)
 
-# Evaluate summary to ensure an error is raised if there are fit issues:
+print("## SUMMARY START")
 summary(model_fit)
+print("## SUMMARY END")
 
 coefficients = coef(model_fit)
 
