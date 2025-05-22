@@ -140,35 +140,14 @@ class Chart:
 
         for (df, units, label, metabolite_mass) in data:
             if units in CELL_COUNT_UNITS:
-                # Cell counts:
-                new_value = convert_measurement_units(df['value'], units, self.cell_count_units)
-                if new_value is not None:
-                    df['value'] = new_value
-                    if 'std' in df:
-                        df['std'] = convert_measurement_units(df['std'], units, self.cell_count_units)
-                    converted_units.add(self.cell_count_units)
-                else:
-                    converted_units.add(units)
+                result_units = self._convert_df_units(df, units, self.cell_count_units)
+                converted_units.add(result_units)
             elif units in CFU_COUNT_UNITS:
-                # CFU counts:
-                new_value = convert_measurement_units(df['value'], units, self.cfu_count_units)
-                if new_value is not None:
-                    df['value'] = new_value
-                    if 'std' in df:
-                        df['std'] = convert_measurement_units(df['std'], units, self.cfu_count_units)
-                    converted_units.add(self.cell_count_units)
-                else:
-                    converted_units.add(units)
+                result_units = self._convert_df_units(df, units, self.cfu_count_units)
+                converted_units.add(result_units)
             elif units in METABOLITE_UNITS:
-                # Metabolites
-                new_value = convert_measurement_units(df['value'], units, self.metabolite_units, mass=metabolite_mass)
-                if new_value is not None:
-                    df['value'] = new_value
-                    if 'std' in df:
-                        df['std'] = convert_measurement_units(df['std'], units, self.metabolite_units)
-                    converted_units.add(self.metabolite_units)
-                else:
-                    converted_units.add(units)
+                result_units = self._convert_df_units(df, units, self.metabolite_units, metabolite_mass)
+                converted_units.add(result_units)
             else:
                 converted_units.add(units)
 
@@ -193,6 +172,27 @@ class Chart:
             name=label,
             error_y=error_y,
         )
+
+    def _convert_df_units(self, df, source_units, target_units, metabolite_mass=None):
+        new_value = convert_measurement_units(
+            df['value'],
+            source_units,
+            target_units,
+            mass=metabolite_mass,
+        )
+
+        if new_value is not None:
+            df['value'] = new_value
+            if 'std' in df:
+                df['std'] = convert_measurement_units(
+                    df['std'],
+                    source_units,
+                    target_units,
+                    mass=metabolite_mass,
+                )
+            return target_units
+        else:
+            return source_units
 
     def _calculate_x_range(self, data):
         if not self.clamp_x_data:
