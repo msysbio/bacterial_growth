@@ -1,5 +1,7 @@
 #! /bin/sh
 
+export FLASK_SECRET_KEY="development_key"
+
 python main.py
 
 # If there's a syntax error, the flask server will crash, let's rerun it on
