@@ -12,6 +12,8 @@ def export_model_csv(db_session, study):
             'subject_type',
             'subject_name',
             'model_type',
+            'input_pointCount',
+            'input_endTime',
             'y0',
             'mumax',
             'lag',
@@ -37,6 +39,9 @@ def export_model_csv(db_session, study):
             'subject_type': measurement_context.subjectType,
             'subject_name': subject.name,
             'model_type':   modeling_result.model_name,
+            # Inputs:
+            'input_pointCount': modeling_result.inputs.get('pointCount', None),
+            'input_endTime':    modeling_result.inputs.get('endTime', None),
             # Coefficients:
             'y0':    modeling_result.coefficients.get('y0',    None),
             'mumax': modeling_result.coefficients.get('mumax', None),
