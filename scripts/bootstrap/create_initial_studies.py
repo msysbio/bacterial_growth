@@ -5,14 +5,14 @@ import simplejson as json
 import sqlalchemy as sql
 
 from db import get_session
-from models import (
+from app.model.orm import (
     ExcelFile,
     Project,
     Study,
     Submission,
 )
-from forms.submission_form import SubmissionForm
-from lib.submission_process import persist_submission_to_database
+from app.view.forms.submission_form import SubmissionForm
+from app.model.lib.submission_process import persist_submission_to_database
 
 STUDY_KEYS = [
     'synthetic_gut',

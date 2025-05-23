@@ -10,8 +10,8 @@ from flask_admin.contrib.sqla.form import AdminModelConverter
 from flask_admin._compat import as_unicode
 
 from db import FLASK_DB
-from models.orm_base import OrmBase
-from models import (
+from app.model.orm.orm_base import OrmBase
+from app.model.orm import (
     Measurement,
     MeasurementContext,
     MeasurementTechnique,
@@ -26,7 +26,7 @@ from models import (
     Submission,
     Taxon,
 )
-from lib.util import humanize_camelcased_string
+from app.model.lib.util import humanize_camelcased_string
 
 
 def json_formatter(_view, data, _name):

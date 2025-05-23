@@ -1,14 +1,14 @@
-import pages.metabolites as metabolite_pages
-import pages.search as search_pages
-import pages.static as static_pages
-import pages.strains as strain_pages
-import pages.studies as study_pages
-import pages.upload as upload_pages
-import pages.submissions as submission_pages
-import pages.users as user_pages
-import pages.projects as project_pages
-import pages.comparison as comparison_pages
-import pages.excel_files as excel_file_pages
+import app.pages.metabolites as metabolite_pages
+import app.pages.search as search_pages
+import app.pages.static as static_pages
+import app.pages.strains as strain_pages
+import app.pages.studies as study_pages
+import app.pages.upload as upload_pages
+import app.pages.submissions as submission_pages
+import app.pages.users as user_pages
+import app.pages.projects as project_pages
+import app.pages.comparison as comparison_pages
+import app.pages.excel_files as excel_file_pages
 
 
 def init_routes(app):

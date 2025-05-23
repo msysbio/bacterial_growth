@@ -16,7 +16,11 @@ from initialization.celery import init_celery
 
 def create_app():
     env = os.getenv('APP_ENV', 'development')
-    app = Flask(__name__)
+    app = Flask(
+        __name__,
+        template_folder="app/view/templates",
+        static_folder="app/view/static"
+    )
 
     app = init_config(app)
     app = init_flask_db(app)

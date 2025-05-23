@@ -6,8 +6,8 @@ from pathlib import Path
 import sqlalchemy as sql
 
 from db import get_session
-from lib.db import execute_text
-from models import (
+from app.model.lib.db import execute_text
+from app.model.orm import (
     Measurement,
     Bioreplicate,
     Strain,

@@ -18,5 +18,5 @@ def down(conn):
 
 
 if __name__ == "__main__":
-    from lib.migrations import run
+    from app.model.lib.migrations import run
     run(__file__, up, down)

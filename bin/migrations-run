@@ -10,7 +10,7 @@ from importlib import import_module
 import sqlalchemy as sql
 
 from db import get_connection, get_cli_connection_params
-from lib.migrate import run
+from app.model.lib.migrate import run
 
 def main():
     migration_dir = os.path.abspath(f"{os.path.dirname(__file__)}/../db/migrations")
