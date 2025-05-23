@@ -36,7 +36,7 @@ class Compartment(OrmBase):
     initialPh:             Mapped[Decimal] = mapped_column(sql.Numeric(7, 2), nullable=True)
     initialTemperature:    Mapped[Decimal] = mapped_column(sql.Numeric(7, 2), nullable=True)
 
-    carbonSource: Mapped[bool] = mapped_column(sql.Boolean)
+    # carbonSource: Mapped[bool] = mapped_column(sql.Boolean)
 
     mediumName: Mapped[str]  = mapped_column(sql.String(100), nullable=True)
     mediumUrl:  Mapped[str]  = mapped_column(sql.String(100), nullable=True)
@@ -53,3 +53,28 @@ class Compartment(OrmBase):
         secondary='MeasurementContexts',
         viewonly=True,
     )
+
+    @property
+    def properties_description(self):
+        properties = {
+            "volume":                 (self.volume, 'mL'),
+            "pressure":               (self.pressure, 'atm'),
+            "stirring mode":          (self.stirringMode, ''),
+            "stirring speed":         (self.stirringSpeed, 'rpm'),
+            "O<sub>2</sub>":          (self.O2, '%'),
+            "CO<sub>2</sub>":         (self.CO2, '%'),
+            "H<sub>2</sub>":          (self.H2, '%'),
+            "N<sub>2</sub>":          (self.N2, '%'),
+            "inoculum concentration": (self.inoculumConcentration, ' Cells/mL'),
+            "inoculum volume":        (self.inoculumVolume, ' Cells/mL'),
+            "initial pH":             (self.initialPh, ''),
+            "initial temperature":    (self.initialTemperature, '°C'),
+        }
+
+        formatted_properties = [
+            f"<strong>{v}{units}</strong> {k}"
+            for (k, (v, units)) in properties.items()
+            if v is not None and v != ''
+        ]
+
+        return ', '.join(formatted_properties)

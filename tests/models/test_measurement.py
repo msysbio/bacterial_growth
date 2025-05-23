@@ -132,7 +132,7 @@ class TestMeasurement(DatabaseTest):
             [(m.timeInSeconds, m.subjectId, m.value) for m in measurements if m.subjectType == "metabolite"],
             [
                 (3600, glucose_id, Decimal('50.0')), (3600, trehalose_id, Decimal('70.0')),
-                (4500, glucose_id, Decimal('30.0')), (4500, trehalose_id, None),
+                (4500, glucose_id, Decimal('30.0')),
                 (5400, glucose_id, Decimal('10.0')), (5400, trehalose_id, Decimal('10.0')),
             ]
         )
@@ -203,7 +203,7 @@ class TestMeasurement(DatabaseTest):
             ],
             [
                 (3600, s1.id, Decimal('100.234')), (3600, s2.id, Decimal('200.456')),
-                (4500, s1.id, None),               (4500, s2.id, Decimal('400.456')),
+                (4500, s2.id, Decimal('400.456')),
                 (5400, s1.id, Decimal('300.234')), (5400, s2.id, Decimal('600.456')),
             ]
         )

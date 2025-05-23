@@ -331,6 +331,10 @@ form.simple-form {
   &.orange-border {
     border: 1px solid orange;
   }
+
+  &.no-border {
+    border: none;
+  }
 }
 
 .tabs {

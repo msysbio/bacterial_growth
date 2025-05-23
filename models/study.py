@@ -61,6 +61,11 @@ class Study(OrmBase):
         viewonly=True,
     )
 
+    modelingResults: Mapped[List['ModelingResult']] = relationship(
+        secondary='ModelingRequests',
+        viewonly=True,
+    )
+
     studyMetabolites: Mapped[List['StudyMetabolite']] = owner_relationship()
     metabolites: Mapped[List['Metabolite']] = relationship(
         secondary='StudyMetabolites',
@@ -78,6 +83,10 @@ class Study(OrmBase):
     @hybrid_property
     def name(self):
         return self.studyName
+
+    @hybrid_property
+    def description(self):
+        return self.studyDescription
 
     @hybrid_property
     def isPublished(self):

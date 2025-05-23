@@ -3,6 +3,10 @@ Page('.study-manage-page', function($page) {
   let $form   = $page.find('.js-modeling-form');
 
   updateFormVisibility($form);
+  let $activeRadio = $('.js-technique-row:visible input[type=radio]:checked');
+  if ($activeRadio.length > 0) {
+    updateChart($activeRadio.first());
+  }
 
   $page.find('.js-experiment-container').each(function(e) {
     let $container = $(this);
@@ -13,19 +17,14 @@ Page('.study-manage-page', function($page) {
     }
   });
 
-  // Activate the preview when checking a new item:
-  $page.on('change', 'input.js-measurement-toggle', function(e) {
-    let $checkbox = $(e.currentTarget);
-
-    if ($checkbox.is(':checked')) {
-      let $row = $checkbox.parents('.js-technique-row');
-      $row.find('.js-edit-trigger').trigger('click');
-    }
-  });
-
   $page.on('change', 'form.js-modeling-form', function(e) {
     let $form = $(e.currentTarget);
     updateFormVisibility($form);
+
+    let $activeRadio = $('.js-technique-row:visible input[type=radio]:checked');
+    if ($activeRadio.length > 0) {
+      updateChart($activeRadio.first());
+    }
   });
 
   $page.on('click', '.js-select-all', function(e) {
@@ -48,35 +47,14 @@ Page('.study-manage-page', function($page) {
     updateFormVisibility($form)
   });
 
-  $page.on('click', '.js-edit-trigger', function(e) {
-    e.preventDefault();
-
-    let $trigger     = $(this);
-    let $form        = $trigger.parents('form');
-    let $chart       = $form.find('.js-chart');
-    let url          = $trigger.attr('href');
-    let modelingType = $trigger.parents('form').find('select[name=modelingType]').log().val();
-
-    $page.find('.js-technique-row').removeClass('highlight');
-    $trigger.parents('.js-technique-row').addClass('highlight');
-
-    $.ajax({
-      url: url,
-      dataType: 'html',
-      data: {
-        'modelingType': modelingType,
-        'width':        $chart.width(),
-        'height':       $chart.height(),
-      },
-      success: function(response) {
-        $chart.html(response)
-      },
-    });
-  });
-
   $page.on('submit', '.js-modeling-form', function(e) {
     e.preventDefault();
     let $form = $(e.currentTarget);
+
+    let modelingType    = $form.find('select[name=modelingType]').val();
+    let $activeRow      = $('.js-technique-row.highlight:visible');
+    let $stateContainer = $activeRow.find('.js-modeling-result-state');
+    let $state          = $stateContainer.find(`[data-modeling-type=${modelingType}]`);
 
     $.ajax({
       url: $form.attr('action'),
@@ -92,18 +70,40 @@ Page('.study-manage-page', function($page) {
             url: `/study/${studyId}/modeling/check.json`,
             dataType: 'json',
             success: function(response) {
+              let $state = $stateContainer.find(`[data-modeling-type=${modelingType}]`);
+
               if (!response.ready) {
-                $result.html('Calculating...');
+                $result.html('⏳ Calculating...');
+                if ($state.length > 0) {
+                  $state.text('⏳');
+                } else {
+                  $stateContainer.append(`<div data-modeling-type="${modelingType}">⏳</div>`);
+                }
                 setTimeout(check, 1000);
                 return;
               }
 
               if (!response.successful) {
-                $result.html('<span class="error">[error]</span>');
+                $result.html("<span class=\"error\">❌ Calculation failed: Couldn't fit the model</span>");
+                if ($state.length > 0) {
+                  $state.text('❌');
+                } else {
+                  $stateContainer.append(`<div data-modeling-type="${modelingType}">❌</div>`);
+                }
                 return;
               }
 
-              $result.html("OK");
+              $result.html("✅ Calculation was successful");
+              if ($state.length > 0) {
+                $state.text('✅');
+              } else {
+                $stateContainer.append(`<div data-modeling-type="${modelingType}">✅</div>`);
+              }
+
+              let $activeRadio = $activeRow.find('input[type=radio]:checked');
+              if ($activeRadio.length > 0) {
+                updateChart($activeRadio.first());
+              }
             }
           });
         }
@@ -126,34 +126,53 @@ Page('.study-manage-page', function($page) {
     let selectedExperimentId = $form.find('select[name="experimentId"]:visible').val();
 
     $form.find('.js-experiment-container').addClass('hidden');
-    $form.find(`.js-experiment-container[data-experiment-id="${selectedExperimentId}"]`).removeClass('hidden');
-
-    let selectedTechniqueId = $form.
-      find('select[name="techniqueId"]:visible').val();
-    let selectedTechniqueSubjectType = $form.
-      find('select[name="techniqueId"]:visible option:selected').data('subjectType');
-
     $form.find('.js-technique-row').addClass('hidden');
 
-    if (selectedTechniqueSubjectType == 'bioreplicate') {
-      // Hide bioreplicate select box, show all checkboxes (with bioreplicates)
-      $form.find('.js-bioreplicate-row').addClass('hidden');
-      $form.
-        find(`.js-technique-row[data-technique-id="${selectedTechniqueId}"]`).
-        removeClass('hidden');
-    } else {
-      // Show bioreplicate select box, show all checkboxes (with bioreplicates)
-      $form.find('.js-bioreplicate-row').removeClass('hidden');
+    let $experiment = $form.find(`.js-experiment-container[data-experiment-id="${selectedExperimentId}"]`);
+    $experiment.removeClass('hidden');
 
-      let selectedBioreplicateCompartmentId = $form.
-        find('select[name="bioreplicateCompartmentId"]:visible').val();
-      let [bioreplicateId, compartmentId] = selectedBioreplicateCompartmentId.split('|');
+    let selectedTechniqueId = $form.
+      find('select[name="techniqueId"]').val();
+    let selectedTechniqueSubjectType = $form.
+      find('select[name="techniqueId"] option:selected').data('subjectType');
 
-      let selector1 = `[data-technique-id="${selectedTechniqueId}"]`;
-      let selector2 = `[data-bioreplicate-id="${bioreplicateId}"]`;
-      let selector3 = `[data-compartment-id="${compartmentId}"]`;
+    $experiment.
+      find(`.js-technique-row[data-technique-id="${selectedTechniqueId}"]`).
+      removeClass('hidden');
 
-      $form.find(`.js-technique-row${selector1}${selector2}${selector3}`).removeClass('hidden');
-    }
+    let modelingType = $form.find('select[name=modelingType]').val();
+    $form.find('[data-modeling-type]').addClass('hidden');
+    $form.find(`[data-modeling-type="${modelingType}"]`).removeClass('hidden');
+
+    $form.find('[data-modeling-input]').addClass('hidden');
+    $form.find(`[data-modeling-input-${modelingType}]`).removeClass('hidden');
+  }
+
+  function updateChart($radio) {
+    let $form = $radio.parents('form');
+
+    let $chart       = $form.find('.js-chart');
+    let modelingType = $form.find('select[name=modelingType]').val();
+    let logTransform = $form.find('input[name=logTransform]').prop('checked');
+
+    $page.find('.js-technique-row').removeClass('highlight');
+    $radio.parents('.js-technique-row').addClass('highlight');
+
+    let measurementContextId = $radio.val().replaceAll('measurementContext|', '');
+
+    $.ajax({
+      url: `/study/${studyId}/modeling/${measurementContextId}/chart`,
+      dataType: 'html',
+      data: {
+        'modelingType': modelingType,
+        'logTransform': logTransform,
+        'width':        $chart.width(),
+        'height':       $chart.height(),
+      },
+      success: function(response) {
+        $chart.html(response)
+        initTooltips();
+      },
+    });
   }
 });

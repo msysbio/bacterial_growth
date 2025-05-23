@@ -1,3 +1,5 @@
+import io
+
 from flask import (
     g,
     render_template,
@@ -23,8 +25,10 @@ from forms.experiment_export_form import ExperimentExportForm
 from forms.comparative_chart_form import ComparativeChartForm
 from lib.chart import Chart
 from lib.modeling_tasks import process_modeling_request
+from lib.model_export import export_model_csv
 from lib.figures import make_figure_with_traces
 from lib.db import execute_into_df
+from lib.log_transform import apply_log_transform
 import lib.util as util
 
 
@@ -73,7 +77,8 @@ def study_export_preview_fragment(studyId):
     return '\n'.join(csv_previews)
 
 
-def study_download_zip(studyId):
+def study_download_data_zip(studyId):
+    study = _fetch_study(studyId)
     csv_data = []
 
     export_form = ExperimentExportForm(g.db_session, request.args)
@@ -85,7 +90,6 @@ def study_download_zip(studyId):
 
         csv_data.append((csv_name, csv_bytes))
 
-    study = g.db_session.scalars(sql.select(Study).where(Study.studyId == studyId)).one()
     readme_text = render_template(
         'pages/studies/export_readme.md',
         study=study,
@@ -102,6 +106,17 @@ def study_download_zip(studyId):
         download_name=f"{studyId}.zip",
     )
 
+
+def study_download_models_csv(studyId):
+    study = _fetch_study(studyId)
+
+    csv_data = export_model_csv(g.db_session, study)
+
+    return send_file(
+        io.BytesIO(csv_data),
+        as_attachment=True,
+        download_name=f"{studyId}_models.csv",
+    )
 
 def study_visualize_page(studyId):
     study = _fetch_study(studyId)
@@ -145,12 +160,7 @@ def study_modeling_submit_action(studyId):
     args = request.form.to_dict()
 
     modeling_type = args.pop('modelingType')
-    measurement_context_ids = []
-
-    for arg, value in args.items():
-        if arg.startswith('measurementContext|'):
-            context_id = int(arg.removeprefix('measurementContext|'))
-            measurement_context_ids.append(context_id)
+    measurement_context_id = int(args.pop('selectedContext').removeprefix('measurementContext|'))
 
     modeling_request = g.db_session.scalars(
         sql.select(ModelingRequest)
@@ -168,7 +178,7 @@ def study_modeling_submit_action(studyId):
         g.db_session.add(modeling_request)
         g.db_session.commit()
 
-    result = process_modeling_request.delay(modeling_request.id, measurement_context_ids)
+    result = process_modeling_request.delay(modeling_request.id, [measurement_context_id], args)
     modeling_request.jobUuid = result.task_id
     g.db_session.commit()
 
@@ -177,6 +187,8 @@ def study_modeling_submit_action(studyId):
 
 def study_modeling_check_json(studyId):
     study = _fetch_study(studyId)
+
+    # TODO (2025-05-20) Return counts of pending requests?
 
     ready      = all([mr.state in ('ready', 'error') for mr in study.modelingRequests])
     successful = all([mr.state != 'error' for mr in study.modelingRequests])
@@ -194,6 +206,7 @@ def study_modeling_chart_fragment(studyId, measurementContextId):
     modeling_type = args.pop('modelingType')
     width         = args.pop('width')
     height        = args.pop('height')
+    log_transform = args.pop('logTransform', 'false') == 'true'
 
     measurement_context = g.db_session.get(MeasurementContext, measurementContextId)
     measurement_df      = measurement_context.get_df(g.db_session)
@@ -202,8 +215,20 @@ def study_modeling_chart_fragment(studyId, measurementContextId):
         time_units=study.timeUnits,
         title=measurement_context.get_chart_label(g.db_session),
         legend_position='right',
+        log_left=log_transform,
     )
-    chart.add_df(measurement_df, units=measurement_context.technique.units, label="Measurements")
+    units = measurement_context.technique.units
+    if units == '':
+        units = measurement_context.technique.short_name
+
+    if log_transform:
+        apply_log_transform(measurement_df)
+
+    chart.add_df(
+        measurement_df,
+        units=units,
+        label="Measurements",
+    )
 
     modeling_result = g.db_session.scalars(
         sql.select(ModelingResult)
@@ -211,25 +236,39 @@ def study_modeling_chart_fragment(studyId, measurementContextId):
         .where(
             ModelingRequest.type == modeling_type,
             ModelingResult.measurementContextId == measurement_context.id,
-            ModelingResult.state.in_(('ready', 'error')),
+            ModelingResult.state == 'ready',
         )
     ).one_or_none()
 
     if modeling_result:
-        df    = modeling_result.generate_chart_df(measurement_df)
-        label = modeling_result.model_name
-        units = modeling_result.measurementContext.technique.units
+        df = modeling_result.generate_chart_df(measurement_df)
+        if log_transform:
+            apply_log_transform(df)
 
+        label = modeling_result.model_name
         chart.add_model_df(df, units=units, label=label)
 
+        model_inputs       = modeling_result.inputs
         model_coefficients = modeling_result.coefficients
+        model_fit          = modeling_result.fit
+        r_summary          = modeling_result.rSummary
     else:
+        model_inputs       = ModelingResult.empty_inputs(modeling_type)
         model_coefficients = ModelingResult.empty_coefficients(modeling_type)
+        model_fit          = ModelingResult.empty_fit()
+        r_summary          = None
 
     return render_template(
         'pages/studies/manage/_modeling_chart.html',
         chart=chart,
+        form_data=request.form,
+        model_type=modeling_type,
+        model_inputs=model_inputs,
         model_coefficients=model_coefficients,
+        model_fit=model_fit,
+        r_summary=r_summary,
+        measurement_context=measurement_context,
+        log_transform=log_transform,
     )
 
 

@@ -97,11 +97,7 @@ $(document).ready(function() {
   });
 
   // Initialize tippy popups:
-  tippy('[data-tooltip]', {
-    content: function(element) {
-      return element.getAttribute('data-tooltip');
-    }
-  })
+  initTooltips();
 
   // On click, smooth-scroll to the location:
   $(document).on('click', '.js-smooth-scroll', function(e) {

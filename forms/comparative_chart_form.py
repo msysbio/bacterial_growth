@@ -7,6 +7,7 @@ from sqlalchemy.sql.expression import literal_column
 from db import get_connection, get_session
 from lib.db import execute_into_df
 from lib.chart import Chart
+from lib.log_transform import apply_log_transform
 from models import (
     Experiment,
     Measurement,
@@ -31,7 +32,7 @@ class ComparativeChartForm:
         self.cfu_count_units  = 'CFUs/mL'
         self.metabolite_units = 'mM'
 
-    def build_chart(self, args, width, legend_position='top'):
+    def build_chart(self, args, width, legend_position='top', clamp_x_data=False):
         self._extract_args(args)
 
         chart = Chart(
@@ -43,6 +44,7 @@ class ComparativeChartForm:
             log_right=self.log_right,
             width=width,
             legend_position=legend_position,
+            clamp_x_data=clamp_x_data,
         )
 
         self.measurement_contexts = self.db_session.scalars(
@@ -63,7 +65,7 @@ class ComparativeChartForm:
 
             df = self.get_df(measurement_context.id)
             if log_transform:
-                self._apply_log_transform(df)
+                apply_log_transform(df)
 
             label = measurement_context.get_chart_label(self.db_session)
 
@@ -72,9 +74,14 @@ class ComparativeChartForm:
             else:
                 metabolite_mass = None
 
+            if technique.units == '':
+                units = technique.short_name
+            else:
+                units = technique.units
+
             chart.add_df(
                 df,
-                units=technique.units,
+                units=units,
                 label=label,
                 axis=axis,
                 metabolite_mass=metabolite_mass,
@@ -144,14 +151,3 @@ class ComparativeChartForm:
         )
 
         return execute_into_df(self.db_session, query)
-
-    def _apply_log_transform(self, df):
-        if not df['std'].isnull().all():
-            # Transform std values by summing them and transforming the results:
-            with np.errstate(divide='ignore'):
-                upper_log = np.log(df['value'] + df['std'])
-                lower_log = np.log(df['value'] - df['std'])
-                df['std'] = upper_log - lower_log
-
-        with np.errstate(divide='ignore'):
-            df['value'] = np.log(df['value'])

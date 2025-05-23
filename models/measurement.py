@@ -90,6 +90,16 @@ class Measurement(OrmBase):
                     raise KeyError(f"Unexpected subject type: {subject_type}")
 
                 for subject in subjects:
+                    value_column_name = technique.csv_column_name(subject.name)
+
+                    value = row[value_column_name]
+                    if value == '':
+                        continue
+
+                    std = row.get(f"{value_column_name} STD", None)
+                    if std == '':
+                        std = None
+
                     # Create a measurement context only if it doesn't already exist:
                     context_key = (bioreplicate.id, compartment.id, technique.id, subject.id, subject_type)
                     if context_key not in context_cache:
@@ -113,16 +123,6 @@ class Measurement(OrmBase):
                         db_session.add(context)
 
                     context = context_cache[context_key]
-                    value_column_name = technique.csv_column_name(subject.name)
-
-                    value = row[value_column_name]
-                    if value == '':
-                        value = None
-
-                    std = row.get(f"{value_column_name} STD", None)
-                    if std == '':
-                        std = None
-
                     measurement = Measurement(
                         study=study,
                         context=context,

@@ -1,5 +1,6 @@
 import io
 import copy
+import itertools
 from datetime import datetime, timedelta, UTC
 from db import get_session, get_transaction
 
@@ -13,6 +14,8 @@ from models import (
     Experiment,
     ExperimentCompartment,
     Measurement,
+    MeasurementContext,
+    Metabolite,
     Perturbation,
     Project,
     ProjectUser,
@@ -23,6 +26,7 @@ from models import (
     Taxon,
 )
 from lib.util import group_by_unique_name, is_non_negative_float
+from lib.db import execute_into_df
 
 
 def persist_submission_to_database(submission_form):
@@ -65,6 +69,9 @@ def persist_submission_to_database(submission_form):
 
         db_trans_session.flush()
         _save_measurements(db_trans_session, study, submission)
+
+        for experiment in study.experiments:
+            _create_average_measurements(db_trans_session, study, experiment)
 
         submission_form.save()
         db_trans_session.commit()
@@ -379,6 +386,113 @@ def _save_measurements(db_session, study, submission):
     if 'Growth data per metabolite' in sheets:
         df = sheets['Growth data per metabolite']
         Measurement.insert_from_csv_string(db_session, study, df.to_csv(index=False), subject_type='metabolite')
+
+
+def _create_average_measurements(db_session, study, experiment):
+    bioreplicate_ids = [b.id for b in experiment.bioreplicates]
+
+    # The averaged measurements will be parented by a custom-generated bioreplicate:
+    # Note: This always gets created, unfortunately
+    average_bioreplicate = Bioreplicate(
+        name=f"Average({experiment.name})",
+        calculationType='average',
+        experiment=experiment,
+        study=study,
+    )
+    db_session.add(average_bioreplicate)
+
+    for technique in study.measurementTechniques:
+        for compartment in experiment.compartments:
+            # We'll average values separately over techniques and compartments:
+            measurement_contexts = db_session.scalars(
+                sql.select(MeasurementContext)
+                .distinct()
+                .join(Measurement)
+                .where(
+                    MeasurementContext.compartmentId == compartment.id,
+                    MeasurementContext.bioreplicateId.in_(bioreplicate_ids),
+                    MeasurementContext.techniqueId == technique.id,
+                    Measurement.value.is_not(None),
+                )
+                .order_by(MeasurementContext.subjectType, MeasurementContext.subjectId)
+            ).all()
+
+            # If there is a single context for this cluster of measurements, there is nothing to average:
+            if len(measurement_contexts) <= 1:
+                continue
+
+            if technique.subjectType == 'bioreplicate':
+                # A single context for a group of bioreplicates
+                _create_average_measurement_context(
+                    db_session,
+                    parent_records=(study, technique, compartment),
+                    measurement_contexts=measurement_contexts,
+                    average_bioreplicate=average_bioreplicate,
+                    subject_id=average_bioreplicate.id,
+                    subject_type='bioreplicate',
+                )
+            else:
+                grouped_contexts = itertools.groupby(measurement_contexts, lambda mc: (mc.subjectId, mc.subjectType))
+
+                for (subject_id, subject_type), subject_contexts in grouped_contexts:
+                    # One context for each subject:
+                    _create_average_measurement_context(
+                        db_session,
+                        parent_records=(study, technique, compartment),
+                        measurement_contexts=list(subject_contexts),
+                        average_bioreplicate=average_bioreplicate,
+                        subject_id=subject_id,
+                        subject_type=subject_type
+                    )
+
+def _create_average_measurement_context(
+    db_session,
+    parent_records,
+    measurement_contexts,
+    average_bioreplicate,
+    subject_id,
+    subject_type,
+):
+    (study, technique, compartment) = parent_records
+
+    # Collect average measurement values for the given contexts:
+    measurement_rows = db_session.execute(
+        sql.select(
+            Measurement.timeInSeconds,
+            sql.func.avg(Measurement.value),
+            sql.func.std(Measurement.value),
+        )
+        .where(Measurement.contextId.in_([mc.id for mc in measurement_contexts]))
+        .group_by(Measurement.timeInSeconds)
+        .order_by(Measurement.timeInSeconds)
+    ).all()
+
+    if len(measurement_rows) == 0:
+        # We do not want to create unnecessary contexts
+        return
+
+    # Create a parent context for the individual measurements:
+    average_context = MeasurementContext(
+        study=study,
+        bioreplicate=average_bioreplicate,
+        compartment=compartment,
+        subjectId=subject_id,
+        subjectType=subject_type,
+        technique=technique,
+        calculationType='average',
+    )
+    db_session.add(average_context)
+
+    # Create individual measurements
+    for (time, value, std) in measurement_rows:
+        measurement = Measurement(
+            timeInSeconds=time,
+            value=value,
+            std=std,
+            context=average_context,
+            study=study,
+        )
+        db_session.add(measurement)
 
 
 def _find_new_strain(submission, identifier):

@@ -1,4 +1,6 @@
 Page('.study-visualize-page', function($page) {
+  let $compareData = $(document).find('[data-compare-ids]')
+
   let studyId = $page.data('studyId')
   let $form   = $page.find('.js-chart-form');
 
@@ -84,57 +86,28 @@ Page('.study-visualize-page', function($page) {
       contextIds.push($(this).data('contextId'));
     });
 
-    updateCompareData('add', contextIds, function(compareData) {
-      let countText;
-      if (compareData.contextCount > 0) {
-        countText = `(${compareData.contextCount})`;
-      } else {
-        countText = '';
-      }
-
-      let $sidebarCompareItem = $(document).find('.js-sidebar-compare');
-      $sidebarCompareItem.find('.js-count').html(countText);
-
-      $sidebarCompareItem.addClass('highlight');
-      setTimeout(function() {
-        $sidebarCompareItem.removeClass('highlight');
-      }, 500);
-    });
+    updateCompareData('add', contextIds);
   });
 
   function updateChart($form) {
-    let selectedExperimentId = $form.find('select[name="experimentId"]:visible').val();
+    let selectedExperimentId = $form.find('select[name="experimentId"]').val();
 
     $form.find('.js-experiment-container').addClass('hidden');
-    $form.find(`.js-experiment-container[data-experiment-id="${selectedExperimentId}"]`).removeClass('hidden');
-
-    let selectedTechniqueId = $form.
-      find('select[name="techniqueId"]:visible').val();
-    let selectedTechniqueSubjectType = $form.
-      find('select[name="techniqueId"]:visible option:selected').data('subjectType');
-
     $form.find('.js-technique-row').addClass('hidden');
 
-    if (selectedTechniqueSubjectType == 'bioreplicate') {
-      // Hide bioreplicate select box, show all checkboxes (with bioreplicates)
-      $form.find('.js-bioreplicate-row').addClass('hidden');
-      $form.
-        find(`.js-technique-row[data-technique-id="${selectedTechniqueId}"]`).
-        removeClass('hidden');
-    } else {
-      // Show bioreplicate select box, show all checkboxes (with bioreplicates)
-      $form.find('.js-bioreplicate-row').removeClass('hidden');
+    let $experiment = $form.find(`.js-experiment-container[data-experiment-id="${selectedExperimentId}"]`);
+    $experiment.removeClass('hidden');
 
-      let selectedBioreplicateCompartmentId = $form.
-        find('select[name="bioreplicateCompartmentId"]:visible').val();
-      let [bioreplicateId, compartmentId] = selectedBioreplicateCompartmentId.split('|');
+    let selectedTechniqueId = $form.
+      find('select[name="techniqueId"]').val();
+    let selectedTechniqueSubjectType = $form.
+      find('select[name="techniqueId"] option:selected').data('subjectType');
 
-      let selector1 = `[data-technique-id="${selectedTechniqueId}"]`;
-      let selector2 = `[data-bioreplicate-id="${bioreplicateId}"]`;
-      let selector3 = `[data-compartment-id="${compartmentId}"]`;
+    $experiment.
+      find(`.js-technique-row[data-technique-id="${selectedTechniqueId}"]`).
+      removeClass('hidden');
 
-      $form.find(`.js-technique-row${selector1}${selector2}${selector3}`).removeClass('hidden');
-    }
+    // Update chart:
 
     let $chart = $form.find('.chart');
 
@@ -153,6 +126,7 @@ Page('.study-visualize-page', function($page) {
     })
   }
 
+  // TODO duplicates study.js, extract
   function updateCompareData(action, contexts, successCallback) {
     $.ajax({
       type: 'POST',
@@ -162,7 +136,26 @@ Page('.study-visualize-page', function($page) {
       contentType: 'application/json',
       processData: true,
       success: function(response) {
-        successCallback(JSON.parse(response))
+        let compareData = JSON.parse(response);
+
+        let countText;
+        if (compareData.contextCount > 0) {
+          countText = `(${compareData.contextCount})`;
+        } else {
+          countText = '';
+        }
+
+        let $sidebarCompareItem = $(document).find('.js-sidebar-compare');
+        $sidebarCompareItem.find('.js-count').html(countText);
+
+        $sidebarCompareItem.addClass('highlight');
+        setTimeout(function() {
+          $sidebarCompareItem.removeClass('highlight');
+        }, 500);
+
+        if (successCallback) {
+          successCallback(compareData);
+        }
       },
     })
   }

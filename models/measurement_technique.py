@@ -57,7 +57,7 @@ class MeasurementTechnique(OrmBase):
 
     measurementContexts: Mapped[List['MeasurementContext']] = relationship(
         back_populates="technique",
-        order_by='MeasurementContext.bioreplicateId, MeasurementContext.compartmentId',
+        order_by='MeasurementContext.calculationType.is_(None), MeasurementContext.bioreplicateId, MeasurementContext.compartmentId',
     )
     measurements: Mapped[List['Measurement']] = relationship(
         secondary='MeasurementContexts',
@@ -156,6 +156,6 @@ class MeasurementTechnique(OrmBase):
         grouper = lambda mc: (mc.bioreplicate, mc.compartment)
 
         for ((bioreplicate, compartment), group) in itertools.groupby(self.measurementContexts, grouper):
-            contexts = list([mc for mc in group if mc.has_measurements()])
+            contexts = list(group)
 
             yield ((bioreplicate, compartment), contexts)

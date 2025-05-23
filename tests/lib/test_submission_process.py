@@ -21,6 +21,7 @@ from lib.submission_process import (
     _save_communities,
     _save_experiments,
     _save_measurement_techniques,
+    _create_average_measurements,
 )
 from tests.database_test import DatabaseTest
 
@@ -298,6 +299,49 @@ class TestSubmissionProcess(DatabaseTest):
         self.assertEqual(len(techniques), 3)
         self.assertEqual(techniques, study.measurementTechniques)
         self.assertEqual({m.name for m in study.metabolites}, {'pyruvate', 'butyrate'})
+
+    def test_average_measurement_creation(self):
+        study      = self.create_study()
+        experiment = self.create_experiment(name="e1", studyId=study.publicId)
+
+        b1 = self.create_bioreplicate(name="b1", studyId=study.publicId, experimentId=experiment.id)
+        b2 = self.create_bioreplicate(name="b2", studyId=study.publicId, experimentId=experiment.id)
+
+        c1 = self.create_compartment(studyId=study.publicId)
+        study.experiments[0].compartments = [c1]
+
+        mt = self.create_measurement_technique(subjectType='bioreplicate', studyUniqueID=study.uuid)
+
+        mc1 = self.create_measurement_context(
+            subjectId=b1.id,
+            subjectType='bioreplicate',
+            bioreplicateId=b1.id,
+            techniqueId=mt.id,
+            compartmentId=c1.id,
+            studyId=study.publicId,
+        )
+        for i, value in enumerate([10, 20, 30]):
+            self.create_measurement(timeInSeconds=i, value=value, contextId=mc1.id)
+
+        mc2 = self.create_measurement_context(
+            subjectId=b2.id,
+            subjectType='bioreplicate',
+            bioreplicateId=b1.id,
+            techniqueId=mt.id,
+            compartmentId=c1.id,
+            studyId=study.publicId,
+        )
+        for i, value in enumerate([20, 40, 60]):
+            self.create_measurement(timeInSeconds=i, value=value, contextId=mc2.id)
+
+        _create_average_measurements(self.db_session, study, experiment)
+        self.db_session.flush()
+
+        self.assertEqual({b.name for b in study.bioreplicates}, {"b1", "b2", "Average(e1)"})
+
+        average_bioreplicate = next(b for b in study.bioreplicates if b.name == "Average(e1)")
+        self.assertEqual(average_bioreplicate.calculationType, 'average')
+        self.assertEqual([int(m.value) for m in average_bioreplicate.measurements], [15, 30, 45])
 
 
 if __name__ == '__main__':

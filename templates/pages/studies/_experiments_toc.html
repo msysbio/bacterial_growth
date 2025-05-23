@@ -1,0 +1,21 @@
+{% macro render_experiments_toc(study) %}
+
+  <div class="box experiments-toc">
+    <h2>Experiments</h2>
+
+    <ol>
+      {% for experiment in study.experiments: %}
+        <li>
+          <a href="#experiment-{{ experiment.id }}" class="js-smooth-scroll">
+            {{ experiment.name }}
+          </a>
+        </li>
+      {% endfor %}
+    </ol>
+
+    <a href="#" class="js-scroll-top">
+      Back to top ⬆️
+    </a>
+  </div>
+
+{% endmacro %}

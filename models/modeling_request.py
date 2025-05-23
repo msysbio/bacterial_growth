@@ -15,6 +15,7 @@ from models.orm_base import OrmBase
 
 VALID_TYPES = [
     'easy_linear',
+    'logistic',
     'baranyi_roberts',
 ]
 
@@ -26,7 +27,8 @@ VALID_STATES = [
 ]
 
 MODEL_NAMES = {
-    'easy_linear':     'Easy linear model',
+    'easy_linear':     '"Easy linear" method',
+    'logistic':        'Logistic model',
     'baranyi_roberts': 'Baranyi-Roberts model',
 }
 
@@ -42,7 +44,7 @@ class ModelingRequest(OrmBase):
 
     jobUuid: Mapped[str] = mapped_column(sql.String(100))
     state:   Mapped[str] = mapped_column(sql.String(100), default='pending')
-    error:   Mapped[str] = mapped_column(sql.String(100))
+    error:   Mapped[str] = mapped_column(sql.String)
 
     createdAt: Mapped[datetime] = mapped_column(UtcDateTime, server_default=FetchedValue())
     updatedAt: Mapped[datetime] = mapped_column(UtcDateTime, server_default=FetchedValue())

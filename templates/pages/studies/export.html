@@ -17,7 +17,7 @@
 
       <form
           class="simple-form"
-          action="{{ url_for('study_download_zip', studyId=studyId) }}"
+          action="{{ url_for('study_download_data_zip', studyId=studyId) }}"
           method="GET">
         <div class="flex-row columns">
           <div class="column column-left">
@@ -78,14 +78,6 @@
                       {{ bioreplicate.name }}
                     </label>
                   {% endfor %}
-
-                  <label>
-                    <input
-                        type="checkbox"
-                        name="bioreplicates"
-                        value="_average:{{ experiment.id }}" />
-                    Average {{ experiment.name }}
-                  </label>
                 </div>
               </div>
             {% endfor %}

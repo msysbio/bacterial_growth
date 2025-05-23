@@ -1,5 +1,5 @@
 {% from 'utils/_dataframe.html' import render_dataframe %}
-{% from 'pages/studies/_measurements_toc.html' import render_measurements_toc %}
+{% from 'pages/studies/_experiments_toc.html' import render_experiments_toc %}
 
 {% extends '_layout.html' %}
 
@@ -23,126 +23,132 @@
         {% endif %}
       </p>
 
-      {% if study.studyDescription: %}
-        <p>{{ study.studyDescription }}</p>
+      {% if study.description: %}
+        <p>{{ study.description }}</p>
       {% endif %}
 
-      <h2>Measurements</h2>
-
-      <p>
-        To explore the data in graphical form, click "Compare" on the
-        measurements you're interested in and visit the "Comparison" page from
-        the panel in the upper-right corner.
-      </p>
-
       <div class="flex-row">
-        <div class="measurement-techniques">
-          {% for technique in study.measurementTechniques: %}
-            <div class="subform-container technique-container">
-              <h3 id="measurement-technique-{{ technique.id }}">
-                {{ loop.index }}. {{ technique.long_name }}
+        <div class="experiments">
+          {% for experiment in study.experiments: %}
+            <div class="experiment-container">
+              <h2 id="experiment-{{ experiment.id }}">
+                Experiment {{ loop.index }}: {{ experiment.name }}
+              </h2>
 
-                {% if technique.subjectType != 'metabolite': %}
-                  per {{ technique.subject_short_name }}
-                {% endif %}
-              </h3>
-
-              <p>
-                <strong>{{ technique.measurements|length }}</strong> total measurements
-
-                {% if technique.units != '': %}
-                  recorded in <strong>{{ technique.units }}</strong>.
-                {% endif %}
-              </p>
-
-              {% if technique.description: %}
-                <p>{{ technique.description }}</p>
+              {% if experiment.description: %}
+                <p>{{ experiment.description }}</p>
               {% endif %}
 
               <br>
 
-              <table class="dataframe-table measurements-table">
-                <tr>
-                  <th>Actions</th>
-                  <th>Subject</th>
-                  <th>Time period</th>
-                  <th>Measurements</th>
-                </tr>
+              <h3>Compartments</h3>
 
-                {% for (bioreplicate, compartment), contexts in technique.get_grouped_contexts(): %}
-                  {% if technique.subjectType != 'bioreplicate': %}
-                    <tr class="js-table-row">
-                      <th colspan="4" align="center">
-                        Bioreplicate: {{ bioreplicate.name }}, Compartment: {{ compartment.name }}
-                      </th>
-                    </tr>
+              <ol>
+                {% for compartment in experiment.compartments: %}
+                  <li>
+                    <strong>{{ compartment.name }}</strong>
 
-                    {% if contexts|length == 0: %}
-                      <tr class="js-table-row">
-                        <td colspan="4" align="center">
-                          <em>No measurements</em>
-                        </td>
-                      </tr>
+                    <br>
+
+                    Medium:
+                    {% if compartment.mediumUrl: %}
+                      <a target="_blank" href="{{ compartment.mediumUrl }}">
+                        {{ compartment.mediumName }}
+                      </a>
+                    {% else: %}
+                      {{ compartment.mediumName }}
                     {% endif %}
-                  {% endif %}
 
-                  {% for measurement_context in contexts: %}
-                    {% set subject = measurement_context.get_subject(g.db_session) %}
-                    {% set measurements = measurement_context.measurements %}
+                    <br>
 
-                    <tr class="js-table-row">
-                      <td>
-                        <div class="js-compare-container" data-target-identifier="{{ measurement_context.id }}">
-                          <span class="js-compare" data-tooltip="Compare">
-                            <a
-                                href="#"
-                                class="white-button small-button">
-                              ↔
-                            </a>
-                          </span>
-
-                          <span
-                              class="js-uncompare hidden"
-                              data-tooltip="Comparing, click to remove from comparison">
-                            ✅
-                            <a
-                                href="#"
-                                class="white-button small-button">
-                              ➖
-                            </a>
-                          </span>
-                        </div>
-                      </td>
-                      <td>
-                        {% if technique.subjectType == 'bioreplicate': %}
-                          {{ subject.name }}
-                        {% elif technique.subjectType == 'strain': %}
-                          <a href="{{ url_for('strain_show_page', id=subject.id) }}">
-                            {{ subject.name }}
-                          </a>
-                        {% elif technique.subjectType == 'metabolite': %}
-                          <a href="{{ url_for('metabolite_show_page', chebiId=subject.id) }}">
-                            {{ subject.name }}
-                          </a>
-                        {% endif %}
-                      </td>
-                      <td>{{ measurements[0].timeInHours }}h - {{ measurements[-1].timeInHours }}h</td>
-
-                      <td class="numeric">
-                        <div class="measurements-list truncate">
-                          {{ measurements|map(attribute='value')|map_scientific|join(', ') }}
-                        </div>
-                      </td>
-                    </tr>
-                  {% endfor %}
+                    Properties: {{ compartment.properties_description|safe }}
+                  </li>
                 {% endfor %}
-              </table>
+              </ol>
+
+              <h3>Community: {{ experiment.community.name }}</h3>
+
+              <ol>
+                {% for strain in experiment.community.get_strains(g.db_session): %}
+                  <li>
+                    <a href="{{ url_for('strain_show_page', id=strain.id) }}">
+                      {{ strain.name }}
+                    </a>
+                  </li>
+                {% endfor %}
+              </ol>
+
+              <h3>Biological replicates</h3>
+
+              <ol class="bioreplicates-list">
+                {% for bioreplicate in experiment.bioreplicates %}
+                  {% set measurement_context_ids = bioreplicate.measurementContexts|map(attribute="id") %}
+
+                  <li>
+                    <strong>{{ bioreplicate.name }}</strong>
+
+                    <span class="js-compare-container" data-context-ids="{{ measurement_context_ids|join(',') }}">
+                      <span class="js-compare" data-tooltip="Compare">
+                        <a href="#" class="white-button no-border small-button">↔</a>
+                      </span>
+
+                      <span class="js-uncompare hidden" data-tooltip="Comparing, click to remove from comparison">
+                        👆
+                        <a href="#" class="white-button no-border small-button">➖</a>
+                      </span>
+                    </span>
+
+                    <a
+                        href="{{ url_for('study_visualize_page', studyId=study.publicId, l=measurement_context_ids|join(',')) }}"
+                        class="white-button no-border small-button"
+                        data-tooltip="Visualize">
+                      📈
+                    </a>
+
+                    <br>
+
+                    <strong>Measurements</strong>:
+
+                    <ul class="measurement-techniques">
+                      {% for measurement_context in bioreplicate.measurementContexts: %}
+                        <li class="measurement-context-container">
+                          {% set subject = measurement_context.get_subject(g.db_session) %}
+                          {% set measurements = measurement_context.measurements %}
+                          {% set technique = measurement_context.technique %}
+
+                          <div class="js-table-row">
+                            <span class="js-compare-container" data-context-ids="{{ measurement_context.id }}">
+                              <span class="js-compare" data-tooltip="Compare">
+                                <a href="#" class="white-button no-border small-button">↔</a>
+                              </span>
+
+                              <span class="js-uncompare hidden" data-tooltip="Comparing, click to remove from comparison">
+                                👆
+                                <a href="#" class="white-button no-border small-button">➖</a>
+                              </span>
+                            </span>
+
+                            <a
+                                href="{{ url_for('study_visualize_page', studyId=study.publicId, l=measurement_context.id) }}"
+                                class="white-button no-border small-button"
+                                data-tooltip="Visualize">
+                              📈
+                            </a>
+
+                            {{ measurement_context.get_chart_label(g.db_session)|safe }}
+                          </div>
+                        </li>
+                      {% endfor %}
+                    </ul>
+                  </li>
+                {% endfor %}
+              </ol>
             </div>
           {% endfor %}
         </div>
 
         <div class="toc-container">
-          {{ render_measurements_toc(study) }}
+          {{ render_experiments_toc(study) }}
         </div>
       </div>
     </article>

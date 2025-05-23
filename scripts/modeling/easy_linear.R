@@ -3,21 +3,27 @@ library("jsonlite")
 
 args <- commandArgs(TRUE)
 
-input_csv   = args[1]
-output_json = args[2]
+input_csv         = 'input.csv'
+input_json        = 'input.json'
+coefficients_json = 'coefficients.json'
+fit_json          = 'fit.json'
 
-data <- read.table(input_csv, header=T, sep=',')
+data   <- read.table(input_csv, header=T, sep=',')
+config <- read_json(input_json)
 
-model_fit <- fit_easylinear(data$time, data$value)
+model_fit <- fit_easylinear(data$time, data$value, h=config$pointCount)
+
+print('## SUMMARY START')
+summary(model_fit)
+print('## SUMMARY END')
+
 coefficients = coef(model_fit)
 
-f <- file(output_json)
-writeLines(c(
-           '{',
-           paste('"y0":',    coefficients['y0'], ','),
-           paste('"y0_lm":', coefficients['y0_lm'], ','),
-           paste('"mumax":', coefficients['mumax'], ','),
-           paste('"lag":',   coefficients['lag']),
-           '}'
-           ), f)
+f <- file(coefficients_json)
+writeLines(toJSON(as.data.frame(coefficients), auto_unbox=T), f)
+close(f)
+
+f <- file(fit_json)
+fit <- data.frame(r2=rsquared(model_fit), rss=deviance(model_fit))
+writeLines(toJSON(fit, auto_unbox=T), f)
 close(f)

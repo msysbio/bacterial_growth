@@ -22,6 +22,9 @@ class Bioreplicate(OrmBase):
     isControl: Mapped[bool] = mapped_column(sql.Boolean, nullable=False, default=False)
     isBlank:   Mapped[bool] = mapped_column(sql.Boolean, nullable=False, default=False)
 
+    # Only set if the bioreplicate was generated and not uploaded
+    calculationType: Mapped[str] = mapped_column(sql.String(50))
+
     studyId: Mapped[str] = mapped_column(sql.ForeignKey('Study.studyId'), nullable=False)
     study: Mapped['Study'] = relationship(back_populates='bioreplicates')
 

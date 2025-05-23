@@ -23,13 +23,13 @@ def convert_measurement_units(
     if source_units == 'g/L':
         if mass is None:
             return None
-        value = (value * 1_000) / mass
+        value = (value * 1_000) / float(mass)
         source_units = 'mM'
 
     if target_units == 'g/L':
         if mass is None:
             return None
-        value = (value * mass) / 1_000.0
+        value = (value * float(mass)) / 1_000.0
         target_units = 'mM'
 
     if source_units == target_units:

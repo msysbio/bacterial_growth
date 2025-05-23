@@ -22,7 +22,6 @@ class ExperimentExportForm:
         self.db_session = db_session
 
         self.bioreplicate_uuids = []
-        self.averaged_experiments = set()
         self._extract_bioreplicate_args(args)
 
         self.csv_separator = ','
@@ -31,12 +30,7 @@ class ExperimentExportForm:
         self.experiments = self.db_session.scalars(
             sql.select(Experiment)
             .join(Bioreplicate)
-            .where(
-                sql.or_(
-                    Bioreplicate.id.in_(self.bioreplicate_uuids),
-                    Experiment.id.in_(self.averaged_experiments),
-                ),
-            )
+            .where(Bioreplicate.id.in_(self.bioreplicate_uuids))
             .group_by(Experiment.id)
         ).all()
 
@@ -82,11 +76,6 @@ class ExperimentExportForm:
                 query = self._base_bioreplicate_query(experiment, value_label).where(*condition)
                 measurement_dfs.append(execute_into_df(self.db_session, query))
 
-                if str(experiment.id) in self.averaged_experiments:
-                    query = self._base_average_query(experiment, value_label).where(*condition)
-                    average_df = execute_into_df(self.db_session, query)
-                    measurement_dfs[-1] = pd.concat((measurement_dfs[-1], average_df))
-
             # Bioreplicate-level measurements:
             for technique in measurement_targets['bioreplicate']:
                 if technique.units is None:
@@ -102,11 +91,6 @@ class ExperimentExportForm:
                 query = self._base_bioreplicate_query(experiment, value_label).where(*condition)
                 measurement_dfs.append(execute_into_df(self.db_session, query))
 
-                if str(experiment.id) in self.averaged_experiments:
-                    query = self._base_average_query(experiment, value_label).where(*condition)
-                    average_df = execute_into_df(self.db_session, query)
-                    measurement_dfs[-1] = pd.concat((measurement_dfs[-1], average_df))
-
             # Metabolite measurements:
             for (subject, technique) in sorted(measurement_targets['metabolite']):
                 value_label = f"{subject.name} ({technique.units})"
@@ -117,11 +101,6 @@ class ExperimentExportForm:
 
                 query = self._base_bioreplicate_query(experiment, value_label).where(*condition)
                 measurement_dfs.append(execute_into_df(self.db_session, query))
-
-                if str(experiment.id) in self.averaged_experiments:
-                    query = self._base_average_query(experiment, value_label).where(*condition)
-                    average_df = execute_into_df(self.db_session, query)
-                    measurement_dfs[-1] = pd.concat((measurement_dfs[-1], average_df))
 
             if len(measurement_dfs) == 0:
                 continue
@@ -168,29 +147,9 @@ class ExperimentExportForm:
             )
         )
 
-    def _base_average_query(self, experiment, value_label):
-        return (
-            sql.select(
-                Measurement.timeInHours.label("Time (hours)"),
-                literal_column(f"'Average {experiment.name}'").label("Biological Replicate ID"),
-                sql.func.avg(Measurement.value).label(value_label),
-            )
-            .select_from(Measurement)
-            .join(MeasurementContext)
-            .join(Bioreplicate)
-            .join(Experiment)
-            .where(Experiment.id == experiment.id)
-            .group_by(Measurement.timeInSeconds)
-            .order_by(Measurement.timeInSeconds)
-        )
-
     def _extract_bioreplicate_args(self, args):
         for arg in args.getlist('bioreplicates'):
-            if arg.startswith('_average:'):
-                experiment_uuid = arg.removeprefix('_average:')
-                self.averaged_experiments.add(experiment_uuid)
-            else:
-                self.bioreplicate_uuids.append(arg)
+            self.bioreplicate_uuids.append(arg)
 
     def _extract_csv_args(self, args):
         delimiter = args.get('delimiter', 'comma')

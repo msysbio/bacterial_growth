@@ -16,6 +16,7 @@ from models.orm_base import OrmBase
 
 VALID_TYPES = [
     'easy_linear',
+    'logistic',
     'baranyi_roberts',
 ]
 
@@ -26,7 +27,8 @@ VALID_STATES = [
 ]
 
 MODEL_NAMES = {
-    'easy_linear':     'Easy linear model',
+    'easy_linear':     '"Easy linear" method',
+    'logistic':        'Logistic model',
     'baranyi_roberts': 'Baranyi-Roberts model',
 }
 
@@ -46,11 +48,13 @@ class ModelingResult(OrmBase):
     )
     measurementContext: Mapped['MeasurementContext'] = relationship(back_populates='modelingResults')
 
+    inputs:       Mapped[sql.JSON] = mapped_column(sql.JSON, nullable=False)
     fit:          Mapped[sql.JSON] = mapped_column(sql.JSON, nullable=False)
     coefficients: Mapped[sql.JSON] = mapped_column(sql.JSON, nullable=False)
 
-    state: Mapped[str] = mapped_column(sql.String(100), default='pending')
-    error: Mapped[str] = mapped_column(sql.String(100))
+    state:    Mapped[str] = mapped_column(sql.String(100), default='pending')
+    error:    Mapped[str] = mapped_column(sql.String)
+    rSummary: Mapped[str] = mapped_column(sql.String)
 
     createdAt:    Mapped[datetime] = mapped_column(UtcDateTime, server_default=FetchedValue())
     updatedAt:    Mapped[datetime] = mapped_column(UtcDateTime, server_default=FetchedValue())
@@ -60,10 +64,25 @@ class ModelingResult(OrmBase):
     def empty_coefficients(Self, model_type):
         if model_type == 'easy_linear':
             return {'y0': None, 'y0_lm': None, 'mumax': None, 'lag': None}
+        elif model_type == 'logistic':
+            return {'y0': None, 'mumax': None, 'K': None}
         elif model_type == 'baranyi_roberts':
             return {'y0': None, 'mumax': None, 'K': None, 'h0': None}
         else:
             raise ValueError(f"Don't know what the coefficients are for model type: {repr(model_type)}")
+
+    @classmethod
+    def empty_fit(Self):
+        return {'r2': None, 'rss': None}
+
+    @classmethod
+    def empty_inputs(Self, model_type):
+        if model_type == 'easy_linear':
+            return {'pointCount': '5'}
+        elif model_type in ('logistic', 'baranyi_roberts'):
+            return {'endTime': ''}
+        else:
+            return {}
 
     @property
     def model_name(self):
@@ -92,13 +111,15 @@ class ModelingResult(OrmBase):
     def _predict(self, timepoints):
         if self.type == 'easy_linear':
             return self._predict_easy_linear(timepoints)
+        elif self.type == 'logistic':
+            return self._predict_logistic(timepoints)
         elif self.type == 'baranyi_roberts':
             return self._predict_baranyi_roberts(timepoints)
         else:
             raise ValueError(f"Don't know how to predict values for model type: {repr(self.type)}")
 
     def _predict_easy_linear(self, time):
-        # y0    = float(self.coefficients['y0'])
+        y0    = float(self.coefficients['y0'])
         y0_lm = float(self.coefficients['y0_lm'])
         mumax = float(self.coefficients['mumax'])
         # lag   = float(self.coefficients['lag'])
@@ -108,6 +129,13 @@ class ModelingResult(OrmBase):
 
         # Exponential:
         return y0_lm * np.exp(time * mumax)
+
+    def _predict_logistic(self, time):
+        y0    = float(self.coefficients['y0'])
+        mumax = float(self.coefficients['mumax'])
+        K     = float(self.coefficients['K'])
+
+        return (K * y0)/(y0 + (K - y0) * np.exp(-mumax * time))
 
     def _predict_baranyi_roberts(self, time):
         y0    = float(self.coefficients['y0'])

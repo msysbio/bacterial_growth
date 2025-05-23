@@ -49,12 +49,21 @@
             </a>
           </li>
           <li>
-            <a href="{{ url_for('comparison_show_page') }}" class="js-sidebar-compare">
+            {% if 'compareData' in session and session['compareData'].get('contexts', [])|length > 0 %}
+              {% set compareData = session['compareData']['contexts'] %}
+            {% else: %}
+              {% set compareData = [] %}
+            {% endif %}
+
+            <a
+                href="{{ url_for('comparison_show_page') }}"
+                class="js-sidebar-compare"
+                data-compare-ids='{{ compareData|join(',') }}'>
               <div class="emoji-icon">↔</div>
               Compare
               <span class="js-count count">
-                {% if 'compareData' in session and session['compareData'].get('contexts', [])|length > 0 %}
-                  ({{ session['compareData']['contexts']|length }})
+                {% if compareData|length > 0 %}
+                  ({{ compareData|length }})
                 {% endif %}
               </span>
             </a>

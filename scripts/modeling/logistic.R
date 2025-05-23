@@ -19,17 +19,12 @@ mumax_est = spline_coefficients['mumax']
 names(y0_est)    <- NULL
 names(mumax_est) <- NULL
 
-# TODO: estimate lag time by intercepting max growth with x-axis
-# h0_est = mumax_est * lag_time
-# h0_est = mumax_est * 5.52495319837189
-h0_est = 1
-
 max_value = max(data$value)
 
-p     <- c(y0 = y0_est, mumax = mumax_est, K = max_value, h0 = h0_est)
-lower <- c(y0 = 1e-9,   mumax = 0,         K = 0,         h0 = 0)
+p     <- c(y0 = y0_est, mumax = mumax_est, K = max_value)
+lower <- c(y0 = 1e-9,   mumax = 0,         K = 0)
 
-model_fit <- fit_growthmodel(FUN       = grow_baranyi,
+model_fit <- fit_growthmodel(FUN       = grow_logistic,
                              transform = 'log',
                              time      = data$time,
                              y         = data$value,

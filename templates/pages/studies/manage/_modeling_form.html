@@ -19,68 +19,88 @@
     <div
         class="experiment-container hidden js-experiment-container"
         data-experiment-id="{{ experiment.id }}">
+      <p>{{ experiment.description }}</p>
+    </div>
+  {% endfor %}
+
+  <div class="form-row margin-top-10">
+    <label class="full">
+      <span>Measurement technique:</span>
+      <select name="techniqueId" class="form-input-blue full">
+        {% for technique in study.measurementTechniques if technique.is_growth: %}
+          <option value="{{ technique.id }}" data-subject-type="{{ technique.subjectType }}">
+          {{- technique.long_name_with_subject_type -}}
+          </option>
+        {% endfor %}
+      </select>
+    </label>
+  </div>
+
+  {% for experiment in study.experiments: %}
+    <div
+        class="experiment-container margin-top-10 hidden js-experiment-container"
+        data-experiment-id="{{ experiment.id }}">
       <div class="experiment">
-        <p>{{ experiment.description }}</p>
+        {% for technique in study.measurementTechniques if technique.is_growth: %}
+          {% for (bioreplicate, compartment), contexts in technique.get_grouped_contexts() if bioreplicate.experimentId == experiment.id: %}
+            {% if technique.subjectType != 'bioreplicate': %}
+              <div
+                  class="form-row hidden js-technique-row"
+                  data-technique-id="{{ technique.id }}">
+                {% if bioreplicate.name.startswith('Average('): %}
+                  {% set description = "Average measurements over compartment {} across all biological replicates of the experiment {}.".format(compartment.name, experiment.name) %}
+                {% else: %}
+                  {% set description = "Measurements in compartment {} of biological replicate {}".format(compartment.name, bioreplicate.name) %}
+                {% endif %}
 
-        <div class="form-row">
-          <label class="full">
-            <span>Measurement technique:</span>
-            <select name="techniqueId" class="form-input-blue full">
-              {% for technique in study.measurementTechniques if technique.is_growth: %}
-                <option value="{{ technique.id }}" data-subject-type="{{ technique.subjectType }}">
-                {{- technique.long_name_with_subject_type -}}
-                </option>
-              {% endfor %}
-            </select>
-          </label>
-        </div>
+                <h4
+                    data-tooltip="{{ description }}">
+                  {{ bioreplicate.name }}<sub>{{ compartment.name }}</sub>
+                </h4>
+              </div>
+            {% endif %}
 
-        <div class="form-row hidden js-bioreplicate-row">
-          <label class="full">
-          <span>Bioreplicate and compartment:</span>
-          <select name="bioreplicateCompartmentId" class="form-input-blue full">
-            {% for bioreplicate in experiment.bioreplicates: %}
-              {% for compartment in experiment.compartments: %}
-                <option value="{{ bioreplicate.id }}|{{ compartment.id }}">
-                {{- bioreplicate.name }}, compartment {{ compartment.name -}}
-                </option>
-              {% endfor %}
+            {% for measurement_context in contexts: %}
+              {% set subjectType = measurement_context.subjectType %}
+              {% set subject     = measurement_context.get_subject(g.db_session) %}
+
+              {% set key = "measurementContext|{}".format(measurement_context.id) %}
+
+              <div
+                  class="form-row hidden js-technique-row"
+                  data-technique-id="{{ technique.id }}">
+                <input
+                    type="radio"
+                    name="selectedContext"
+                    value="{{ key }}"
+                    id="{{ key }}"
+                    class="js-measurement-toggle" />
+                <label for="{{ key }}">
+                  {% if subjectType == 'bioreplicate' %}
+                    {{ subject.name }}<sub>{{ measurement_context.compartment.name }}</sub>
+                  {% else: %}
+                    {{ subject.name }}
+                  {% endif %}
+                </label>
+
+                <div class="js-modeling-result-state flex-right">
+                  {% for modeling_result in measurement_context.modelingResults: %}
+                    <div
+                        data-modeling-type="{{ modeling_result.type }}"
+                        class="hidden">
+                      {% if modeling_result.state == 'ready': %}
+                        ✅
+                      {% elif modeling_result.state == 'error': %}
+                        ❌
+                      {% elif modeling_result.state == 'in_progress': %}
+                        ⏳
+                      {% endif %}
+                    </div>
+                  {% endfor %}
+                </div>
+              </div>
             {% endfor %}
-          </select>
-        </div>
-
-        <br>
-
-        {% for measurementContext in experiment.measurementContexts if measurementContext.has_measurements() and measurementContext.technique.is_growth: %}
-          {% set subjectType = measurementContext.subjectType %}
-          {% set subject     = measurementContext.get_subject(g.db_session) %}
-
-          {% set key = "measurementContext|{}".format(measurementContext.id) %}
-
-          <div
-              class="form-row hidden js-technique-row"
-              data-technique-id="{{ measurementContext.techniqueId }}"
-              data-bioreplicate-id="{{ measurementContext.bioreplicateId }}"
-              data-compartment-id="{{ measurementContext.compartmentId }}">
-            <input type="checkbox" name="{{ key }}" id="{{ key }}" class="js-measurement-toggle" />
-            <label for="{{ key }}">
-              {% if subjectType == 'bioreplicate' %}
-                {{ subject.name }}<sub>{{ measurementContext.compartment.name }}</sub>
-              {% else: %}
-                {{ subject.name }}
-              {% endif %}
-            </label>
-
-            {% set edit_url = url_for(
-              "study_modeling_chart_fragment",
-              studyId=study.publicId,
-              measurementContextId=measurementContext.id,
-            ) %}
-
-            <a href="{{ edit_url }}" class="flex-right js-edit-trigger">
-              <div class="icon icon-edit"></div>
-            </a>
-          </div>
+          {% endfor %}
         {% endfor %}
 
         <div class="form-row margin-top-10">
@@ -98,10 +118,39 @@
       <label class="full">
         <span>Modeling type</span>
         <select name="modelingType" class="form-input-blue form-input-full">
-          <option value="easy_linear">"Easy linear" model</option>
+          <option value="easy_linear">"Easy linear" method</option>
+          <option value="logistic">Logistic model</option>
           <option value="baranyi_roberts">Baranyi-Roberts model</option>
         </select>
       </label>
+    </div>
+
+    <div class="form-row hidden" data-modeling-input data-modeling-input-easy_linear>
+      <div class="form-row margin-top-10">
+        <label data-tooltip="Set to limit the number of points to use to determine the slope">
+          <span>Point count:</span>
+          <input
+              type="number"
+              name="pointCount"
+              min="2"
+              class="form-input-blue form-input-full"
+              value="{{ request.form['pointCount'] or 5 }}" />
+        </label>
+      </div>
+    </div>
+
+    <div class="form-row hidden" data-modeling-input data-modeling-input-logistic data-modeling-input-baranyi_roberts>
+      <div class="form-row margin-top-10">
+        <label data-tooltip="Set to limit the end value on the x-axis to pick for the calculation">
+          <span>End time:</span>
+          <input
+              type="number"
+              name="endTime"
+              min="0"
+              class="form-input-blue form-input-full"
+              value="{{ request.form['endTime'] or '' }}" />
+        </label>
+      </div>
     </div>
 
     <h3>Calculation status</h3>

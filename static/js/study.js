@@ -1,23 +1,23 @@
 Page('.study-page', function($page) {
-  // let $compareBox = $(document).find('.js-compare-box')
-  //
-  // let studyId     = $page.data('studyId');
-  // let compareData = $compareBox.data('value');
-  //
-  // // TODO: a timestamp with a check on update?
-  // if (!compareData.targets) {
-  //   compareData['targets'] = [];
-  // }
-  //
-  // if (compareData['targets'].length > 0) {
-  //   $compareBox.removeClass('hidden');
-  // }
-  //
-  // let targetSet = new Set(compareData['targets']);
+  let $compareData = $(document).find('[data-compare-ids]')
+
+  let compareIds;
+  if ($compareData.length > 0) {
+    compareIds = new Set($compareData.data('compareIds').toString().split(','));
+  } else {
+    compareIds = new Set();
+  }
+
+  let studyId = $page.data('studyId');
 
   $page.find('.js-compare-container').each(function() {
     let $container = $(this);
-    if (!targetSet.has($container.data('targetIdentifier'))) {
+    if (!$container.data('contextIds')) {
+      return;
+    }
+
+    let ids = new Set($container.data('contextIds').toString().split(','));
+    if (!ids.isSubsetOf(compareIds)) {
       return;
     }
 
@@ -33,13 +33,9 @@ Page('.study-page', function($page) {
     let $wrapper   = $button.parents('.js-compare');
     let $container = $button.parents('.js-compare-container');
 
-    let targetIdentifier = $container.data('targetIdentifier');
+    let contextIds = $container.data('contextIds').toString().split(',');
 
-    updateCompareBox('add', targetIdentifier, function(compareData) {
-      $compareBox.data('value', compareData);
-      $compareBox.find('.js-target-count').text(compareData.targetCount);
-      $compareBox.removeClass('hidden');
-
+    updateCompareData('add', contextIds, function(compareData) {
       // Hide "compare" button, show "uncompare" button
       $wrapper.addClass('hidden');
       $container.find('.js-uncompare').removeClass('hidden');
@@ -56,18 +52,9 @@ Page('.study-page', function($page) {
     let $wrapper   = $button.parents('.js-uncompare');
     let $container = $button.parents('.js-compare-container');
 
-    let targetIdentifier = $container.data('targetIdentifier');
+    let contextIds = $container.data('contextIds').toString().split(',');
 
-    updateCompareBox('remove', targetIdentifier, function(compareData) {
-      $compareBox.data(compareData);
-      let targetCount = compareData.targetCount;
-
-      if (targetCount == 0) {
-        $compareBox.addClass('hidden');
-      } else {
-        $compareBox.find('.js-target-count').text(targetCount);
-      }
-
+    updateCompareData('remove', contextIds, function(compareData) {
       // Hide "uncompare" section, show "compare" button
       $wrapper.addClass('hidden');
       $container.find('.js-compare').removeClass('hidden');
@@ -77,16 +64,33 @@ Page('.study-page', function($page) {
     });
   });
 
-  function updateCompareBox(action, target, successCallback) {
+  function updateCompareData(action, contexts, successCallback) {
     $.ajax({
       type: 'POST',
       url: `/comparison/update/${action}.json`,
-      data: JSON.stringify({'target': target}),
+      data: JSON.stringify({'contexts': contexts}),
       cache: false,
       contentType: 'application/json',
       processData: true,
       success: function(response) {
-        successCallback(JSON.parse(response))
+        let compareData = JSON.parse(response);
+
+        let contextCount;
+        if (compareData.contextCount > 0) {
+          countText = `(${compareData.contextCount})`;
+        } else {
+          countText = '';
+        }
+
+        let $sidebarCompareItem = $(document).find('.js-sidebar-compare');
+        $sidebarCompareItem.find('.js-count').html(countText);
+
+        $sidebarCompareItem.addClass('highlight');
+        setTimeout(function() {
+          $sidebarCompareItem.removeClass('highlight');
+        }, 500);
+
+        successCallback(compareData)
       },
     })
   }
