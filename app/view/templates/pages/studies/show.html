@@ -1,4 +1,5 @@
 {% from 'utils/_dataframe.html' import render_dataframe %}
+{% from 'utils/_time_tag.html' import time_tag %}
 {% from 'pages/studies/_experiments_toc.html' import render_experiments_toc %}
 
 {% extends '_layout.html' %}
@@ -16,11 +17,21 @@
 
       <h2>Basic information</h2>
 
-      <p>
+      <p class="small">
         {% if study.studyURL: %}
           <strong>Publication URL</strong>: {{ study.studyURL|urlize(target="_blank") }}
           <br>
         {% endif %}
+
+        <strong>Uploaded on</strong>
+        {{ time_tag(study.createdAt, format="%Y-%m-%d") -}}
+        by
+        <a target="_blank" href="https://orcid.org/0009-0004-1479-7441">Andrey Radev</a>
+        <br>
+
+        <strong>Last update</strong>:
+        {{ time_tag(study.updatedAt, format="%Y-%m-%d") }}
+        <br>
       </p>
 
       {% if study.description: %}
