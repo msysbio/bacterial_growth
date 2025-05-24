@@ -1,3 +1,5 @@
+import os
+
 from flask import (
     g,
     render_template,
@@ -54,10 +56,27 @@ def user_show_page():
     )
 
 
-def user_login_action():
-    session['user_uuid'] = request.form['user_uuid'].strip()
+def user_login_page():
+    if request.method == 'POST':
+        print(request.form)
 
-    return redirect(request.referrer)
+        session['user_uuid'] = request.form['user_uuid'].strip()
+
+        return redirect(request.referrer)
+    else:
+        app_env = os.getenv('APP_ENV', 'development')
+
+        if app_env == 'production':
+            # Real app id
+            orcid_client_id = 'APP-ULYLRC9LC29VYVBS'
+        elif app_env == 'development':
+            # Sandbox app id
+            orcid_client_id = 'APP-XM62M2OX6NY2F8JQ'
+
+        return render_template(
+            "pages/users/login.html",
+            orcid_client_id=orcid_client_id,
+        )
 
 
 def user_claim_project_action():

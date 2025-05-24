@@ -1,0 +1,40 @@
+{% extends '_layout.html' %}
+
+{% block title %}: Log in{% endblock %}
+
+{% block content %}
+  <div class="container login-page">
+    <h2>Log in</h2>
+
+    {% include 'shared/flashes.html' %}
+
+    <p>
+      To upload studies to the database, please confirm your identity
+      using an <a target="_blank" href="https://orcid.org/">ORCID iD</a>.
+    </p>
+
+    <br>
+
+    <div class="login-form-container box">
+      <form method="POST" class="simple-form orcid-form">
+        {% assets "orcid" %}
+        <script src="{{ ASSET_URL }}" type="text/javascript"></script>
+        {% endassets %}
+
+        <div
+            id="orcidWidget"
+            class="form-row full"
+            data-clientid="{{ orcid_client_id }}"
+            data-redirecturi="https://{{ request.host }}{{ request.path }}">
+        </div>
+
+        <br>
+
+        <div class="form-row submit-row">
+          <button class="green-button" type="submit">
+            Log in
+          </button>
+        </div>
+      </form>
+    </div>
+  {% endblock %}

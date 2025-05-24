@@ -307,7 +307,7 @@ form.simple-form {
   background-color: white;
   text-decoration: none;
   line-height: 1.1;
-  color: black;
+  color: var(--black);
   white-space: nowrap;
 
   &.flex-row {

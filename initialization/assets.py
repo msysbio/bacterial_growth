@@ -39,6 +39,11 @@ def init_assets(app):
         output='build/plotly.js'
     ))
 
+    assets.register('orcid', flask_assets.Bundle(
+        'js/vendor/orcid-widget.js',
+        output='build/orcid.js'
+    ))
+
     assets.register('app_css', flask_assets.Bundle(
         'css/vendor/select2-4.0.13.css',
         'css/vendor/tippy-fix.css',
@@ -51,6 +56,7 @@ def init_assets(app):
         'css/search.css',
         'css/upload.css',
         'css/export.css',
+        'css/login.css',
         'css/profile.css',
         'css/study.css',
         'css/study-visualize.css',
