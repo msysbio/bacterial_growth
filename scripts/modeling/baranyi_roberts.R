@@ -22,14 +22,18 @@ names(mumax_est) <- NULL
 # TODO: estimate lag time by intercepting max growth with x-axis
 # h0_est = mumax_est * lag_time
 # h0_est = mumax_est * 5.52495319837189
-h0_est = 1
+h0_est = 0.05
 
 max_value = max(data$value)
 
 p     <- c(y0 = y0_est, mumax = mumax_est, K = max_value, h0 = h0_est)
-lower <- c(y0 = 1e-9,   mumax = 0,         K = 0,         h0 = 0)
+lower <- c(y0 = 1e-9,   mumax = 1e-9,      K = 1e-9,      h0 = 1e-9)
+
+# Fitting methods:
+# “Marq”, “Port”, “Newton”, “Nelder-Mead”, “BFGS”, “CG”, “L-BFGS-B”, “SANN”, “Pseudo”, “bobyqa”
 
 model_fit <- fit_growthmodel(FUN       = grow_baranyi,
+                             method    = 'CG',
                              transform = 'log',
                              time      = data$time,
                              y         = data$value,
