@@ -46,6 +46,16 @@
                 Experiment {{ loop.index }}: {{ experiment.name }}
               </h2>
 
+              {% if experiment.publicId: %}
+                <p class="small">
+                  <strong>Public ID</strong>:
+                  <a href="{{ url_for('experiment_show_page', publicId=experiment.publicId) }}">
+                    {{ experiment.publicId }}
+                  </a>
+                  <br>
+                </p>
+              {% endif %}
+
               {% if experiment.description: %}
                 <p>{{ experiment.description }}</p>
               {% endif %}

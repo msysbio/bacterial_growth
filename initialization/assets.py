@@ -55,6 +55,7 @@ def init_assets(app):
         'css/study.css',
         'css/study-visualize.css',
         'css/study-manage.css',
+        'css/experiment.css',
         'css/comparison.css',
         filters='cssmin',
         output='build/app.css'
