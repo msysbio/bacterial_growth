@@ -67,7 +67,7 @@
               {% set key = "measurementContext|{}".format(measurement_context.id) %}
 
               <div
-                  class="form-row hidden js-technique-row"
+                  class="form-row hidden model-row js-technique-row"
                   data-technique-id="{{ technique.id }}">
                 <input
                     type="radio"
@@ -139,18 +139,16 @@
       </div>
     </div>
 
-    <div class="form-row hidden" data-modeling-input data-modeling-input-logistic data-modeling-input-baranyi_roberts>
-      <div class="form-row margin-top-10">
-        <label data-tooltip="Set to limit the end value on the x-axis to pick for the calculation">
-          <span>End time:</span>
-          <input
-              type="number"
-              name="endTime"
-              min="0"
-              class="form-input-blue form-input-full"
-              value="{{ request.form['endTime'] or '' }}" />
-        </label>
-      </div>
+    <div class="form-row full hidden" data-modeling-input data-modeling-input-logistic data-modeling-input-baranyi_roberts>
+      <label class="full" data-tooltip="Set to limit the end value on the x-axis to pick for the calculation">
+        <span>End time:</span>
+        <input
+            type="number"
+            name="endTime"
+            min="0"
+            class="form-input-blue form-input-full"
+            value="{{ request.form['endTime'] or '' }}" />
+      </label>
     </div>
 
     <h3>Calculation status</h3>

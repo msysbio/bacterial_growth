@@ -3,6 +3,19 @@
     margin-top: 0;
   }
 
+  .model-row {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    padding: 2px 8px;
+    border-radius: var(--border-radius);
+
+    input[type="radio"] {
+      margin: 0;
+    }
+  }
+
   .r-summary pre {
     padding: 10px;
     background-color: #eee;
