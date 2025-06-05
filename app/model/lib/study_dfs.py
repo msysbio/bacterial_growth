@@ -21,33 +21,33 @@ def dynamical_query(all_advance_query):
                 project_name = query_dict['value'].strip().lower()
                 if project_name != '':
                     where_clause = f"""
-                    FROM Study
+                    FROM Studies
                     WHERE projectUniqueID IN (
                         SELECT projectUniqueID
-                        FROM Project
+                        FROM Projects
                         WHERE LOWER(projectName) LIKE '%{project_name}%'
                     )
                     """
             elif query_dict['option'] == 'Project ID':
                 project_id = query_dict['value']
                 where_clause = f"""
-                FROM Study
+                FROM Studies
                 WHERE projectUniqueID IN (
                     SELECT projectUniqueID
-                    FROM Project
+                    FROM Projects
                     WHERE projectId = '{project_id}'
                 )
                 """
             elif query_dict['option'] == 'Study Name':
                 study_name = query_dict['value'].strip().lower()
                 where_clause = f"""
-                    FROM Study
+                    FROM Studies
                     WHERE LOWER(studyName) LIKE '%{study_name}%'
                 """
             elif query_dict['option'] == 'Study ID':
                 study_id = query_dict['value']
                 where_clause = f"""
-                FROM Study
+                FROM Studies
                 WHERE studyId = '{study_id}'
                 """
             elif query_dict['option'] == 'Microbial Strain':

@@ -34,7 +34,7 @@ from app.view.forms.upload_step5_form import UploadStep5Form
 def upload_status_page():
     submission_form = _init_submission_form(step=0)
 
-    if g.current_user.uuid:
+    if g.current_user and g.current_user.uuid:
         user_submissions = g.db_session.scalars(
             sql.select(Submission)
             .where(Submission.userUniqueID == g.current_user.uuid)
@@ -289,6 +289,12 @@ def upload_step7_page():
 
 
 def _init_submission_form(step):
+    # TODO (2025-06-05) It should not actually be allowed for a non-user to be here
+    if g.current_user:
+        user_uuid = g.current_user.uuid
+    else:
+        user_uuid = None
+
     return SubmissionForm(
         session.get('submission_id', None),
         step=step,

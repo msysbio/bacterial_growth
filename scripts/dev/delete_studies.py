@@ -41,6 +41,6 @@ with get_transaction() as conn:
             )
 
         conn.execute(
-            sql.text(f"DELETE FROM Study WHERE studyUniqueID = :study_uuid"),
+            sql.text(f"DELETE FROM Studies WHERE studyUniqueID = :study_uuid"),
             {'study_uuid': study_uuid}
         )
