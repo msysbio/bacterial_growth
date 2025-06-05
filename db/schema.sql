@@ -143,7 +143,9 @@ CREATE TABLE Experiments (
   `description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_bin,
   cultivationMode varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
   communityId int DEFAULT NULL,
+  publicId varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
   PRIMARY KEY (id),
+  UNIQUE KEY Experiments_publicId (publicId),
   KEY fk_1 (studyId),
   KEY Experiment_fk_1 (communityId),
   CONSTRAINT Experiment_fk_1 FOREIGN KEY (communityId) REFERENCES Communities (id) ON DELETE SET NULL ON UPDATE CASCADE,
@@ -545,5 +547,6 @@ INSERT INTO MigrationVersions VALUES
 (128,'2025_05_19_170414_add_calculation_types','2025-05-19 17:10:23'),
 (130,'2025_05_20_220923_fix_modeling_requests_error_column','2025-05-20 20:11:12'),
 (133,'2025_05_21_143554_add_input_params_to_modeling_results','2025-05-21 12:37:48'),
-(136,'2025_05_22_235526_add_r_summary_to_modeling_results','2025-05-22 22:15:36');
+(136,'2025_05_22_235526_add_r_summary_to_modeling_results','2025-05-22 22:15:36'),
+(138,'2025_05_25_132228_add_public_id_to_experiments','2025-05-25 11:25:28');
 

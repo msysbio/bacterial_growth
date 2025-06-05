@@ -1,3 +1,4 @@
+import re
 from typing import List
 
 import sqlalchemy as sql
@@ -15,6 +16,7 @@ class Experiment(OrmBase):
 
     id: Mapped[int] = mapped_column(primary_key=True)
 
+    publicId:    Mapped[str] = mapped_column(sql.String(100))
     name:        Mapped[str] = mapped_column(sql.String(100), nullable=False)
     description: Mapped[str] = mapped_column(sql.String)
 
@@ -44,3 +46,18 @@ class Experiment(OrmBase):
         secondary='Bioreplicates',
         viewonly=True,
     )
+
+    @staticmethod
+    def generate_public_id(db_session):
+        last_string_id = db_session.scalars(
+            sql.select(Experiment.publicId)
+            .order_by(Experiment.publicId.desc())
+            .limit(1)
+        ).one_or_none()
+
+        if last_string_id:
+            last_numeric_id = int(re.sub(r'EMGDB0*', '', last_string_id))
+        else:
+            last_numeric_id = 0
+
+        return "EMGDB{:09d}".format(last_numeric_id + 1)
