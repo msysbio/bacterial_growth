@@ -6,14 +6,6 @@ https://info.orcid.org/documentation/api-tutorials/api-tutorial-get-and-authenti
 import os
 import requests
 
-APP_ENV = os.getenv("APP_ENV", "development")
-
-if APP_ENV in ('development', 'test'):
-    ORCID_ROOT_URL  = 'https://sandbox.orcid.org'
-elif APP_ENV == 'production':
-    ORCID_ROOT_URL  = 'https://orcid.org'
-else:
-    raise ValueError(f"Unknown APP_ENV: {APP_ENV}")
 
 def get_login_url(orcid_client_id, app_host):
     params = {
@@ -25,11 +17,11 @@ def get_login_url(orcid_client_id, app_host):
 
     query_string = '&'.join([f"{k}={v}" for k, v in params.items()])
 
-    return f"{ORCID_ROOT_URL}/oauth/authorize?{query_string}"
+    return f"{_get_orcid_root_url()}/oauth/authorize?{query_string}"
 
 
 def authenticate_user(code, orcid_client_id, orcid_secret, app_host):
-    url = f"{ORCID_ROOT_URL}/oauth/token"
+    url = f"{_get_orcid_root_url()}/oauth/token"
     data = {
         'client_id':     orcid_client_id,
         'client_secret': orcid_secret,
@@ -49,4 +41,15 @@ def authenticate_user(code, orcid_client_id, orcid_secret, app_host):
 
 
 def get_user_url(user):
-    return f"{ORCID_ROOT_URL}/{user.orcidId}"
+    return f"{_get_orcid_root_url()}/{user.orcidId}"
+
+
+def _get_orcid_root_url():
+    app_env = os.getenv("app_env", "development")
+
+    if app_env in ('development', 'test'):
+        return 'https://sandbox.orcid.org'
+    elif app_env == 'production':
+        return 'https://orcid.org'
+    else:
+        raise ValueError(f"Unknown app_env: {app_env}")
