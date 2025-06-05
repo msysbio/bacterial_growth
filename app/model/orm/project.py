@@ -16,6 +16,9 @@ class Project(OrmBase):
     __tablename__ = 'Project'
 
     projectUniqueID: Mapped[str] = mapped_column(sql.String(100), primary_key=True)
+    ownerUniqueID: Mapped[str] = mapped_column(sql.ForeignKey('Users.uuid'))
+
+    owner: Mapped['User'] = relationship(back_populates='ownedProjects')
 
     projectId:          Mapped[str] = mapped_column(sql.String(100), nullable=False)
     projectName:        Mapped[str] = mapped_column(sql.String(100), nullable=False)

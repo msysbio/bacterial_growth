@@ -25,6 +25,9 @@ class Study(OrmBase):
     )
 
     studyUniqueID: Mapped[str] = mapped_column(sql.String(100), primary_key=True)
+    ownerUniqueID: Mapped[str] = mapped_column(sql.ForeignKey('Users.uuid'))
+
+    owner: Mapped['User'] = relationship(back_populates='ownedStudies')
 
     studyId:          Mapped[str] = mapped_column(sql.String(100))
     studyName:        Mapped[str] = mapped_column(sql.String(100))

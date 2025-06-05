@@ -36,6 +36,9 @@ class User(OrmBase):
     updatedAt:   Mapped[datetime] = mapped_column(UtcDateTime, server_default=sql.FetchedValue())
     lastLoginAt: Mapped[datetime] = mapped_column(UtcDateTime, nullable=True)
 
+    ownedProjects: Mapped[List['Project']] = relationship(back_populates='owner')
+    ownedStudies:  Mapped[List['Study']]   = relationship(back_populates='owner')
+
     studyUsers: Mapped[List['StudyUser']] = owner_relationship()
     managedStudies: Mapped[List['Study']] = relationship(
         secondary='StudyUsers',

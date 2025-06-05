@@ -127,7 +127,7 @@ def init_admin(app):
 
     class StudyView(AppView):
         column_searchable_list = ['studyName', 'studyDescription']
-        form_excluded_columns = ['measurements']
+        form_excluded_columns = ['measurements', 'measurementContexts', 'measurementTechniques']
 
     class SubmissionView(AppView):
         column_exclude_list = ['studyDesign', 'dataFile']

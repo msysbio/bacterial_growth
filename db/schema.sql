@@ -347,6 +347,7 @@ CREATE TABLE Project (
   projectUniqueID varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
   createdAt datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updatedAt datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  ownerUniqueID varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
   PRIMARY KEY (projectId),
   UNIQUE KEY projectName (projectName),
   UNIQUE KEY projectUniqueID (projectUniqueID)
@@ -413,6 +414,7 @@ CREATE TABLE Study (
   publishableAt datetime DEFAULT NULL,
   publishedAt datetime DEFAULT NULL,
   embargoExpiresAt datetime DEFAULT NULL,
+  ownerUniqueID varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
   PRIMARY KEY (studyId),
   UNIQUE KEY studyUniqueID (studyUniqueID)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
@@ -572,5 +574,6 @@ INSERT INTO MigrationVersions VALUES
 (133,'2025_05_21_143554_add_input_params_to_modeling_results','2025-05-21 12:37:48'),
 (136,'2025_05_22_235526_add_r_summary_to_modeling_results','2025-05-22 22:15:36'),
 (138,'2025_05_25_132228_add_public_id_to_experiments','2025-05-25 11:25:28'),
-(143,'2025_06_05_114908_create_users','2025-06-05 12:25:49');
+(143,'2025_06_05_114908_create_users','2025-06-05 12:25:49'),
+(146,'2025_06_05_145355_add_owner_to_studies_and_projects','2025-06-05 12:55:11');
 
