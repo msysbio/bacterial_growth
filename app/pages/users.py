@@ -129,6 +129,12 @@ def user_claim_study_action():
     return redirect(request.referrer)
 
 
+def user_logout_action():
+    del session['user_uuid']
+
+    return redirect(url_for('static_home_page'))
+
+
 def _user_login_show():
     app_env = os.getenv('APP_ENV', 'development')
 
@@ -162,5 +168,7 @@ def _user_login_submit(orcid_code):
 
     g.db_session.add(user)
     g.db_session.commit()
+
+    session['user_uuid'] = user.uuid
 
     return redirect(url_for('user_show_page'))

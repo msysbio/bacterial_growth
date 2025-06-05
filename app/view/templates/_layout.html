@@ -43,12 +43,6 @@
             </a>
           </li>
           <li>
-            <a href="{{ url_for('upload_status_page') }}">
-              <div class="emoji-icon">📤</div>
-              Upload data
-            </a>
-          </li>
-          <li>
             {% if 'compareData' in session and session['compareData'].get('contexts', [])|length > 0 %}
               {% set compareData = session['compareData']['contexts'] %}
             {% else: %}
@@ -69,9 +63,22 @@
             </a>
           </li>
           <li>
-            <a href="{{ url_for('user_show_page') }}">
-              <div class="emoji-icon">🧑‍🔬</div>
-              Profile
+            {% if g.current_user: %}
+              <a href="{{ url_for('user_show_page') }}">
+                <div class="emoji-icon">🧑‍🔬</div>
+                Profile
+              </a>
+            {% else: %}
+              <a href="{{ url_for('user_login_page') }}">
+                <div class="emoji-icon">🔐</div>
+                Log in
+              </a>
+            {% endif %}
+          </li>
+          <li>
+            <a href="{{ url_for('upload_status_page') }}">
+              <div class="emoji-icon">📤</div>
+              Upload data
             </a>
           </li>
           <li>

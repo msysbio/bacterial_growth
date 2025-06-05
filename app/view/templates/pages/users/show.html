@@ -1,10 +1,16 @@
+{% from 'utils/_post_button.html' import post_button %}
+
 {% extends '_layout.html' %}
 
 {% block title %}: Profile{% endblock %}
 
 {% block content %}
   <div class="container profile-page">
-    <h2>Profile page for {{ g.current_user.name }}</h2>
+    <div class="heading-row flex-row">
+      <h2>Profile page for {{ g.current_user.name }}</h2>
+
+      {{ post_button("Log out", url_for("user_logout_action"), class="flex-right") }}
+    </div>
 
     <p>
       ORCID: {{ g.current_user.orcidUrl|urlize(target="_blank", rel="noreferrer") }}

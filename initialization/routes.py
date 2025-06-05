@@ -99,6 +99,7 @@ def init_routes(app):
 
     app.add_url_rule("/profile/", view_func=user_pages.user_show_page)
     app.add_url_rule("/login/",   view_func=user_pages.user_login_page)
+    app.add_url_rule("/logout/",  view_func=user_pages.user_logout_action, methods=["POST"])
 
     app.add_url_rule("/claim-project/", view_func=user_pages.user_claim_project_action, methods=["POST"])
     app.add_url_rule("/claim-study/",   view_func=user_pages.user_claim_study_action,   methods=["POST"])

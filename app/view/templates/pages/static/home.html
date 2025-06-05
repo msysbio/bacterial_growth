@@ -7,7 +7,7 @@
 
   <div class="container">
     <article>
-      <h2>Welcome to µGrowthDB</h2>
+      <h2>Welcome to µGrowthDB{% if g.current_user: %}, {{ g.current_user.name }}{% endif %}</h2>
 
       <p>
         µGrowthDB is a relational database that provides a structure to store

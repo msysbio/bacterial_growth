@@ -1,3 +1,5 @@
+from datetime import datetime
+
 import simplejson as json
 from wtforms import fields
 from sqlalchemy.orm import configure_mappers
@@ -25,6 +27,7 @@ from app.model.orm import (
     StudyUser,
     Submission,
     Taxon,
+    User,
 )
 from app.model.lib.util import humanize_camelcased_string
 
@@ -82,7 +85,7 @@ class AppModelConverter(AdminModelConverter):
 
     @converts('UtcDateTime')
     def convert_datetime(self, field_args, **extra):
-        return form.DateTimeField(**field_args)
+        return form.DateTimeField(**field_args, default=datetime.utcnow)
 
 
 class AppView(ModelView):
@@ -134,6 +137,10 @@ def init_admin(app):
     admin.add_view(MetaboliteView(Metabolite, db_session, category="External data"))
     admin.add_view(TaxonView(Taxon,           db_session, category="External data"))
 
+    class UserView(AppView):
+        form_excluded_columns = ['createdAt', 'updatedAt', 'lastLoginAt']
+
+    admin.add_view(UserView(User,       db_session, category="Users"))
     admin.add_view(AppView(StudyUser,   db_session, category="Users"))
     admin.add_view(AppView(ProjectUser, db_session, category="Users"))
 
