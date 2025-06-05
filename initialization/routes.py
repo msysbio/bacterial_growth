@@ -3,6 +3,7 @@ import app.pages.search as search_pages
 import app.pages.static as static_pages
 import app.pages.strains as strain_pages
 import app.pages.studies as study_pages
+import app.pages.experiments as experiment_pages
 import app.pages.upload as upload_pages
 import app.pages.submissions as submission_pages
 import app.pages.users as user_pages
@@ -72,6 +73,7 @@ def init_routes(app):
         view_func=study_pages.study_modeling_chart_fragment,
     )
 
+    app.add_url_rule("/experiment/<string:publicId>/", view_func=experiment_pages.experiment_show_page)
     app.add_url_rule("/project/<string:projectId>", view_func=project_pages.project_show_page)
 
     app.add_url_rule("/strain/<int:id>",     view_func=strain_pages.strain_show_page)

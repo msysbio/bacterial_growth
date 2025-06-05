@@ -296,6 +296,7 @@ def _save_experiments(db_session, submission_form, study):
         experiment = Experiment(
             **Experiment.filter_keys(experiment_data),
             community=communities_by_name[community_name],
+            publicId=Experiment.generate_public_id(db_session),
         )
         db_session.add(experiment)
 

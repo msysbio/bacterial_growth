@@ -1,5 +1,4 @@
 {%- macro time_tag(timestamp, format="%Y-%m-%d %H:%M", relative=False) -%}
-
   <time
       class="{{ class }}"
       data-tooltip="{{ timestamp.strftime("%c UTC") }}"
@@ -10,5 +9,4 @@
       {{ timestamp.strftime(format) }}
     {% endif %}
   </time>
-
 {%- endmacro -%}
