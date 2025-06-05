@@ -16,6 +16,7 @@ plotly
 celery[redis]
 flask-admin
 gunicorn
+requests
 
 # Database
 sqlalchemy

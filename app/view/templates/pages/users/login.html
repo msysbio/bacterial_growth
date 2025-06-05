@@ -8,33 +8,16 @@
 
     {% include 'shared/flashes.html' %}
 
-    <p>
-      To upload studies to the database, please confirm your identity
-      using an <a target="_blank" href="https://orcid.org/">ORCID iD</a>.
-    </p>
-
-    <br>
-
     <div class="login-form-container box">
-      <form method="POST" class="simple-form orcid-form">
-        {% assets "orcid" %}
-        <script src="{{ ASSET_URL }}" type="text/javascript"></script>
-        {% endassets %}
+      <p>
+        To upload studies to the database, please confirm your identity
+        using an <a target="_blank" href="https://orcid.org/">ORCID iD</a>.
+      </p>
 
-        <div
-            id="orcidWidget"
-            class="form-row full"
-            data-clientid="{{ orcid_client_id }}"
-            data-redirecturi="https://{{ request.host }}{{ request.path }}">
-        </div>
-
-        <br>
-
-        <div class="form-row submit-row">
-          <button class="green-button" type="submit">
-            Log in
-          </button>
-        </div>
-      </form>
+      <p class="flex-row flex-center">
+        <a class="white-button flex-row flex-gap-6" href="{{ orcid_url }}">
+          <span class="icon icon-orcid"></span> Connect your ORCID iD
+        </a>
+      </p>
     </div>
   {% endblock %}

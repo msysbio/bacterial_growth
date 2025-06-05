@@ -7,8 +7,11 @@ from flask import (
     request,
     session,
     flash,
+    current_app,
+    url_for,
 )
 import sqlalchemy as sql
+import requests
 
 from app.model.orm import (
     Project,
@@ -17,6 +20,7 @@ from app.model.orm import (
     StudyUser,
     Strain,
 )
+from app.model.lib import orcid
 
 
 def user_show_page():
@@ -57,26 +61,10 @@ def user_show_page():
 
 
 def user_login_page():
-    if request.method == 'POST':
-        print(request.form)
-
-        session['user_uuid'] = request.form['user_uuid'].strip()
-
-        return redirect(request.referrer)
+    if 'code' in request.args:
+        return _user_login_submit(request.args['code'])
     else:
-        app_env = os.getenv('APP_ENV', 'development')
-
-        if app_env == 'production':
-            # Real app id
-            orcid_client_id = 'APP-ULYLRC9LC29VYVBS'
-        elif app_env == 'development':
-            # Sandbox app id
-            orcid_client_id = 'APP-XM62M2OX6NY2F8JQ'
-
-        return render_template(
-            "pages/users/login.html",
-            orcid_client_id=orcid_client_id,
-        )
+        return _user_login_show()
 
 
 def user_claim_project_action():
@@ -135,3 +123,33 @@ def user_claim_study_action():
         g.db_session.commit()
 
     return redirect(request.referrer)
+
+
+def _user_login_show():
+    app_env = os.getenv('APP_ENV', 'development')
+
+    orcid_url = orcid.get_login_url(request.host)
+
+    return render_template(
+        "pages/users/login.html",
+        orcid_url=orcid_url,
+    )
+
+
+def _user_login_submit(orcid_code):
+    orcid_secret = current_app.config["ORCID_SECRET"]
+    user_data = orcid.authenticate_user(orcid_code, orcid_secret, request.host)
+
+    # print(user_data)
+    # {
+    #     'access_token': '41fafcd6-30aa-40da-959c-4267fc9eb211',
+    #     'token_type': 'bearer',
+    #     'refresh_token': '3c967090-e009-4e57-868a-533459a21de4',
+    #     'expires_in': 631138518,
+    #     'scope': 'openid',
+    #     'name': 'Andrey Radev',
+    #     'orcid': '0009-0009-0846-2326',
+    #     'id_token': '...',
+    # }
+
+    return redirect(url_for('user_show_page'))

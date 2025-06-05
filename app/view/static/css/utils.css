@@ -40,6 +40,11 @@
   align-self: flex-end;
 }
 
+.flex-center {
+  justify-content: center;
+  align-items: center;
+}
+
 .flex-gap-10 {
   gap: 10px;
 }
@@ -396,3 +401,4 @@ form.simple-form {
 .icon.icon-duplicate      { background-image: url('/static/images/icons/transition-bottom.svg'); }
 .icon.icon-left           { background-image: url('/static/images/icons/chevrons-left.svg'); }
 .icon.icon-right          { background-image: url('/static/images/icons/chevrons-right.svg'); }
+.icon.icon-orcid          { background-image: url('/static/images/icons/orcid-authenticated.svg'); }
