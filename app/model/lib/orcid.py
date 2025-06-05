@@ -45,7 +45,7 @@ def get_user_url(user):
 
 
 def _get_orcid_root_url():
-    app_env = os.getenv("app_env", "development")
+    app_env = os.getenv("APP_ENV", "development")
 
     if app_env in ('development', 'test'):
         return 'https://sandbox.orcid.org'
