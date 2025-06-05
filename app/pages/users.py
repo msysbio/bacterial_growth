@@ -13,6 +13,7 @@ from flask import (
 )
 import sqlalchemy as sql
 import requests
+from werkzeug.exceptions import NotFound
 
 from app.model.orm import (
     Project,
@@ -69,6 +70,18 @@ def user_login_page():
         return _user_login_submit(request.args['code'])
     else:
         return _user_login_show()
+
+
+def user_backdoor_page():
+    app_env = os.getenv('APP_ENV', 'development')
+    if app_env not in ('development', 'test'):
+        raise NotFound()
+
+    if request.method == 'POST':
+        session['user_uuid'] = request.form['user_uuid'].strip()
+        return redirect(url_for('static_home_page'))
+    else:
+        return render_template("pages/users/backdoor.html")
 
 
 def user_claim_project_action():

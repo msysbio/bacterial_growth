@@ -1,3 +1,5 @@
+import os
+
 import app.pages.metabolites as metabolite_pages
 import app.pages.search as search_pages
 import app.pages.static as static_pages
@@ -10,6 +12,9 @@ import app.pages.users as user_pages
 import app.pages.projects as project_pages
 import app.pages.comparison as comparison_pages
 import app.pages.excel_files as excel_file_pages
+
+
+APP_ENV = os.getenv('APP_ENV', 'development')
 
 
 def init_routes(app):
@@ -100,6 +105,9 @@ def init_routes(app):
     app.add_url_rule("/profile/", view_func=user_pages.user_show_page)
     app.add_url_rule("/login/",   view_func=user_pages.user_login_page)
     app.add_url_rule("/logout/",  view_func=user_pages.user_logout_action, methods=["POST"])
+
+    if APP_ENV in ('development', 'test'):
+        app.add_url_rule("/backdoor/", view_func=user_pages.user_backdoor_page, methods=["GET", "POST"])
 
     app.add_url_rule("/claim-project/", view_func=user_pages.user_claim_project_action, methods=["POST"])
     app.add_url_rule("/claim-study/",   view_func=user_pages.user_claim_study_action,   methods=["POST"])
