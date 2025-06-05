@@ -2,7 +2,7 @@ from db import get_session
 
 import sqlalchemy as sql
 
-from models import (
+from app.model.orm import (
     Project,
     Study,
     ProjectUser,

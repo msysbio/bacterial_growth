@@ -3,7 +3,7 @@ from pathlib import Path
 
 import sqlalchemy as sql
 
-from models import (
+from app.model.orm import (
     Study,
     MeasurementTechnique,
     Measurement,

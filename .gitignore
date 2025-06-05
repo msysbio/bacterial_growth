@@ -16,8 +16,8 @@ docs/api/
 db/config.toml
 
 # Compiled assets:
-static/build/*
-static/.webassets-cache/*
+app/view/static/build/*
+app/view/static/.webassets-cache/*
 
 # Micromamba environment
 .micromamba/*

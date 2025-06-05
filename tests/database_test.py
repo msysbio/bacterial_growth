@@ -4,8 +4,8 @@ from uuid import uuid4
 from decimal import Decimal
 
 import db
-from lib.db import execute_text
-from models import (
+from app.model.lib.db import execute_text
+from app.model.orm import (
     Bioreplicate,
     ModelingRequest,
     Compartment,
