@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 
 import simplejson as json
 from wtforms import fields
@@ -85,7 +85,23 @@ class AppModelConverter(AdminModelConverter):
 
     @converts('UtcDateTime')
     def convert_datetime(self, field_args, **extra):
-        return form.DateTimeField(**field_args, default=datetime.utcnow)
+        return AppDateTimeField(**field_args, default=datetime.utcnow)
+
+
+class AppDateTimeField(form.DateTimeField):
+    def process_formdata(self, valuelist):
+        if not valuelist:
+            return
+
+        date_str = " ".join(valuelist)
+        for format in self.strptime_format:
+            try:
+                self.data = datetime.strptime(date_str, format).replace(tzinfo=timezone.utc)
+                return
+            except ValueError:
+                self.data = None
+
+        raise ValueError(self.gettext("Not a valid datetime value."))
 
 
 class AppView(ModelView):
