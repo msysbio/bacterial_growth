@@ -18,7 +18,7 @@ class Community(OrmBase):
     name: Mapped[str] = mapped_column(sql.String(100), nullable=False)
 
     # Note: convert to studyUniqueID or delete
-    studyId: Mapped[str] = mapped_column(sql.ForeignKey('Study.studyId'), nullable=False)
+    studyId: Mapped[str] = mapped_column(sql.ForeignKey('Studies.studyId'), nullable=False)
     study: Mapped['Study'] = relationship(back_populates='communities')
 
     strainIds: Mapped[JSON] = mapped_column(JSON, nullable=False)

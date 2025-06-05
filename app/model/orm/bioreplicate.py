@@ -25,7 +25,7 @@ class Bioreplicate(OrmBase):
     # Only set if the bioreplicate was generated and not uploaded
     calculationType: Mapped[str] = mapped_column(sql.String(50))
 
-    studyId: Mapped[str] = mapped_column(sql.ForeignKey('Study.studyId'), nullable=False)
+    studyId: Mapped[str] = mapped_column(sql.ForeignKey('Studies.studyId'), nullable=False)
     study: Mapped['Study'] = relationship(back_populates='bioreplicates')
 
     experimentId: Mapped[int] = mapped_column(sql.ForeignKey('Experiments.id'), nullable=False)

@@ -27,7 +27,7 @@ class Measurement(OrmBase):
 
     id: Mapped[int] = mapped_column(primary_key=True)
 
-    studyId: Mapped[str] = mapped_column(sql.ForeignKey('Study.studyId'), nullable=False)
+    studyId: Mapped[str] = mapped_column(sql.ForeignKey('Studies.studyId'), nullable=False)
     study: Mapped['Study'] = relationship(back_populates='measurements')
 
     contextId: Mapped[int] = mapped_column(sql.ForeignKey('MeasurementContexts.id'))

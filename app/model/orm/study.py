@@ -15,7 +15,7 @@ from app.model.orm.orm_base import OrmBase
 
 
 class Study(OrmBase):
-    __tablename__ = 'Study'
+    __tablename__ = 'Studies'
 
     # A relationship representing ownership of these records. Clearing them out
     # should directly delete them so they can be replaced.
@@ -35,7 +35,7 @@ class Study(OrmBase):
     studyURL:         Mapped[str] = mapped_column(sql.String, nullable=True)
     timeUnits:        Mapped[str] = mapped_column(sql.String(100))
 
-    projectUniqueID: Mapped[str] = mapped_column(sql.ForeignKey('Project.projectUniqueID'))
+    projectUniqueID: Mapped[str] = mapped_column(sql.ForeignKey('Projects.projectUniqueID'))
     project: Mapped['Project'] = relationship(back_populates="studies")
 
     createdAt:        Mapped[datetime] = mapped_column(UtcDateTime, server_default=sql.FetchedValue())

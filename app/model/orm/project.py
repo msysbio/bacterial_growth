@@ -13,7 +13,7 @@ from app.model.orm.orm_base import OrmBase
 
 
 class Project(OrmBase):
-    __tablename__ = 'Project'
+    __tablename__ = 'Projects'
 
     projectUniqueID: Mapped[str] = mapped_column(sql.String(100), primary_key=True)
     ownerUniqueID: Mapped[str] = mapped_column(sql.ForeignKey('Users.uuid'))

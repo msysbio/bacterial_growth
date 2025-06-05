@@ -29,7 +29,7 @@ class Experiment(OrmBase):
     communityId: Mapped[int] = mapped_column(sql.ForeignKey('Communities.id'))
     community: Mapped['Community'] = relationship(back_populates='experiments')
 
-    studyId: Mapped[str] = mapped_column(sql.ForeignKey('Study'), nullable=False)
+    studyId: Mapped[str] = mapped_column(sql.ForeignKey('Studies.studyId'), nullable=False)
     study: Mapped['Study'] = relationship(back_populates='experiments')
 
     cultivationMode: Mapped[str] = mapped_column(sql.String(50))

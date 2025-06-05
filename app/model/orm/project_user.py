@@ -15,8 +15,8 @@ class ProjectUser(OrmBase):
 
     id: Mapped[int] = mapped_column(sql.Integer, primary_key=True)
 
-    projectUniqueID: Mapped[str] = mapped_column(sql.ForeignKey('Project.projectUniqueID'), nullable=False)
-    userUniqueID:    Mapped[str] = mapped_column(sql.ForeignKey('Users.uuid'),              nullable=False)
+    projectUniqueID: Mapped[str] = mapped_column(sql.ForeignKey('Projects.projectUniqueID'), nullable=False)
+    userUniqueID:    Mapped[str] = mapped_column(sql.ForeignKey('Users.uuid'),               nullable=False)
 
     project: Mapped['Project'] = relationship(back_populates="projectUsers")
     user:    Mapped['User']    = relationship(back_populates="projectUsers")
