@@ -1,5 +1,7 @@
 import os
 
+from dotenv import load_dotenv
+
 
 def init_config(app):
     """
@@ -9,8 +11,11 @@ def init_config(app):
     log_level = os.getenv('LOG_LEVEL', None)
     timing    = os.getenv('TIME')
 
-    # Load env variables starting with "FLASK_" into the config
-    app.config.from_prefixed_env()
+    # Load .env file from local directory
+    load_dotenv('.env')
+
+    # Load env variables starting with "MGROWTHDB_" into the config
+    app.config.from_prefixed_env('MGROWTHDB')
 
     # 200MiB max size
     app.config['MAX_CONTENT_LENGTH'] = 200 * 1024 * 1024

@@ -5,6 +5,7 @@ openpyxl
 odfpy
 simplejson
 humanize
+dotenv
 
 # Web
 Flask

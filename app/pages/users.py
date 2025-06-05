@@ -136,9 +136,10 @@ def user_logout_action():
 
 
 def _user_login_show():
-    app_env = os.getenv('APP_ENV', 'development')
+    app_env         = os.getenv('APP_ENV', 'development')
+    orcid_client_id = current_app.config["ORCID_CLIENT_ID"]
 
-    orcid_url = orcid.get_login_url(request.host)
+    orcid_url = orcid.get_login_url(orcid_client_id, request.host)
 
     return render_template(
         "pages/users/login.html",
@@ -147,8 +148,10 @@ def _user_login_show():
 
 
 def _user_login_submit(orcid_code):
-    orcid_secret = current_app.config["ORCID_SECRET"]
-    user_data = orcid.authenticate_user(orcid_code, orcid_secret, request.host)
+    orcid_client_id = current_app.config["ORCID_CLIENT_ID"]
+    orcid_secret    = current_app.config["ORCID_SECRET"]
+
+    user_data = orcid.authenticate_user(orcid_code, orcid_client_id, orcid_secret, request.host)
 
     user = g.db_session.scalars(
         sql.select(User)

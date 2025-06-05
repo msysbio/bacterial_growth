@@ -1,8 +1,5 @@
 #! /bin/sh
 
-export FLASK_SECRET_KEY="development_key"
-export FLASK_ORCID_SECRET="5bf62330-fefd-41c2-aba2-844431fd92ff"
-
 python main.py
 
 # If there's a syntax error, the flask server will crash, let's rerun it on
