@@ -1,4 +1,5 @@
 import os
+from datetime import datetime, UTC
 
 from flask import (
     g,
@@ -16,9 +17,10 @@ import requests
 from app.model.orm import (
     Project,
     ProjectUser,
+    Strain,
     Study,
     StudyUser,
-    Strain,
+    User,
 )
 from app.model.lib import orcid
 
@@ -28,29 +30,31 @@ def user_show_page():
     studies = []
     custom_strains = []
 
-    if g.current_user:
-        projects = g.db_session.scalars(
-            sql.select(Project)
-            .join(ProjectUser)
-            .where(ProjectUser.userUniqueID == g.current_user.uuid)
-            .order_by(Project.projectId.asc())
-        ).all()
+    if not g.current_user:
+        return redirect(url_for('user_login_page'))
 
-        studies = g.db_session.scalars(
-            sql.select(Study)
-            .join(StudyUser)
-            .where(StudyUser.userUniqueID == g.current_user.uuid)
-            .order_by(Study.studyId.asc())
-        ).all()
+    projects = g.db_session.scalars(
+        sql.select(Project)
+        .join(ProjectUser)
+        .where(ProjectUser.userUniqueID == g.current_user.uuid)
+        .order_by(Project.projectId.asc())
+    ).all()
 
-        custom_strains = g.db_session.scalars(
-            sql.select(Strain)
-            .where(
-                Strain.userUniqueID == g.current_user.uuid,
-                Strain.defined.is_(False),
-            )
-            .order_by(Strain.name.desc())
-        ).all()
+    studies = g.db_session.scalars(
+        sql.select(Study)
+        .join(StudyUser)
+        .where(StudyUser.userUniqueID == g.current_user.uuid)
+        .order_by(Study.studyId.asc())
+    ).all()
+
+    custom_strains = g.db_session.scalars(
+        sql.select(Strain)
+        .where(
+            Strain.userUniqueID == g.current_user.uuid,
+            Strain.defined.is_(False),
+        )
+        .order_by(Strain.name.desc())
+    ).all()
 
     return render_template(
         'pages/users/show.html',
@@ -140,16 +144,23 @@ def _user_login_submit(orcid_code):
     orcid_secret = current_app.config["ORCID_SECRET"]
     user_data = orcid.authenticate_user(orcid_code, orcid_secret, request.host)
 
-    # print(user_data)
-    # {
-    #     'access_token': '41fafcd6-30aa-40da-959c-4267fc9eb211',
-    #     'token_type': 'bearer',
-    #     'refresh_token': '3c967090-e009-4e57-868a-533459a21de4',
-    #     'expires_in': 631138518,
-    #     'scope': 'openid',
-    #     'name': 'Andrey Radev',
-    #     'orcid': '0009-0009-0846-2326',
-    #     'id_token': '...',
-    # }
+    user = g.db_session.scalars(
+        sql.select(User)
+        .where(User.orcidId == user_data['orcid'])
+        .limit(1)
+    ).one_or_none()
+
+    if not user:
+        user = User(
+            uuid=session['user_uuid'],
+            orcidId=user_data['orcid'],
+        )
+
+    user.name        = user_data['name']
+    user.orcidToken  = user_data['access_token']
+    user.lastLoginAt = datetime.now(UTC)
+
+    g.db_session.add(user)
+    g.db_session.commit()
 
     return redirect(url_for('user_show_page'))

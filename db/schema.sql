@@ -491,6 +491,29 @@ CREATE TABLE Taxa (
   UNIQUE KEY Taxa_ncbiId (ncbiId)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `Users`
+--
+
+DROP TABLE IF EXISTS Users;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE Users (
+  id int NOT NULL AUTO_INCREMENT,
+  uuid varchar(100) NOT NULL,
+  orcidId varchar(100) NOT NULL,
+  orcidToken varchar(100) NOT NULL,
+  `name` varchar(255) NOT NULL,
+  isAdmin tinyint(1) NOT NULL DEFAULT '0',
+  createdAt datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updatedAt datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  lastLoginAt datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (id),
+  UNIQUE KEY Users_uuid (uuid),
+  UNIQUE KEY Users_orcidId (orcidId)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -548,5 +571,6 @@ INSERT INTO MigrationVersions VALUES
 (130,'2025_05_20_220923_fix_modeling_requests_error_column','2025-05-20 20:11:12'),
 (133,'2025_05_21_143554_add_input_params_to_modeling_results','2025-05-21 12:37:48'),
 (136,'2025_05_22_235526_add_r_summary_to_modeling_results','2025-05-22 22:15:36'),
-(138,'2025_05_25_132228_add_public_id_to_experiments','2025-05-25 11:25:28');
+(138,'2025_05_25_132228_add_public_id_to_experiments','2025-05-25 11:25:28'),
+(142,'2025_06_05_114908_create_users','2025-06-05 10:05:22');
 

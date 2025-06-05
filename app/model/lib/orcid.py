@@ -33,11 +33,11 @@ def get_login_url(app_host):
 def authenticate_user(code, secret, app_host):
     url = f"{ORCID_ROOT_URL}/oauth/token"
     data = {
-        'client_id': ORCID_CLIENT_ID,
+        'client_id':     ORCID_CLIENT_ID,
         'client_secret': secret,
-        'grant_type': 'authorization_code',
-        'code': code,
-        'redirect_uri': f"https://{app_host}/login/",
+        'grant_type':    'authorization_code',
+        'code':          code,
+        'redirect_uri':  f"https://{app_host}/login/",
     }
     headers = {
         'Accept':       'application/json',
@@ -48,3 +48,7 @@ def authenticate_user(code, secret, app_host):
     r.raise_for_status()
 
     return r.json()
+
+
+def get_user_url(user):
+    return f"{ORCID_ROOT_URL}/{user.orcidId}"

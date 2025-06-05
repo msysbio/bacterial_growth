@@ -5,9 +5,11 @@ from flask import (
     session,
     render_template,
 )
+import sqlalchemy as sql
 import sqlalchemy.exc as sql_exceptions
 
 from db import get_connection, FLASK_DB
+from app.model.orm import User
 
 
 def init_global_handlers(app):
@@ -45,11 +47,15 @@ def _fetch_user():
             user_uuid = session['user_uuid']
         else:
             # Create a new user UUID so we can keep track of this browser
-            # TODO might be temporary, might be useful to convert anonymous users
             user_uuid = str(uuid4())
 
         session['user_uuid'] = user_uuid
-        g.current_user = User(uuid=user_uuid)
+
+        g.current_user = g.db_session.scalars(
+            sql.select(User)
+            .where(User.uuid == user_uuid)
+            .limit(1)
+        ).one_or_none()
 
 
 def _close_db_connection(response):
@@ -70,9 +76,3 @@ def _forbidden(_error):
 
 def _server_error(_error):
     return render_template('errors/500.html'), 500
-
-
-# TODO (2025-03-12) Temporary, will eventually be fetched from a database
-class User:
-    def __init__(self, uuid):
-        self.uuid = uuid

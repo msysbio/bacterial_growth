@@ -19,3 +19,4 @@ from .study_metabolite import StudyMetabolite
 from .study_user import StudyUser
 from .submission import Submission
 from .taxon import Taxon
+from .user import User
