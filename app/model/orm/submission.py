@@ -30,6 +30,10 @@ class Submission(OrmBase):
         foreign_keys=[studyUniqueID],
         primaryjoin="Submission.studyUniqueID == Study.studyUniqueID",
     )
+    user: Mapped['User'] = relationship(
+        foreign_keys=[userUniqueID],
+        primaryjoin="Submission.userUniqueID == User.uuid",
+    )
 
     studyDesign: Mapped[JSON] = mapped_column(JSON, nullable=False)
 

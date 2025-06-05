@@ -20,9 +20,9 @@
 
     <h3>Your projects</h3>
 
-    {% if projects: %}
+    {% if g.current_user.managedProjects: %}
       <ul>
-        {% for project in projects: %}
+        {% for project in g.current_user.managedProjects: %}
           <li>
             <a href="{{ url_for('project_show_page', projectId=project.publicId) }}">
               [{{ project.publicId }}] {{ project.name }}
@@ -45,9 +45,9 @@
 
     <h3>Your studies</h3>
 
-    {% if studies: %}
+    {% if g.current_user.managedStudies: %}
       <ul>
-        {% for study in studies: %}
+        {% for study in g.current_user.managedStudies: %}
           <li>
             <a href="{{ url_for('study_show_page', studyId=study.publicId) }}">
               [{{ study.publicId }}] {{ study.name }}

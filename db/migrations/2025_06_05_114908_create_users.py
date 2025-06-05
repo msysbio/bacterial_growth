@@ -5,7 +5,7 @@ def up(conn):
     query = """
         CREATE TABLE Users (
             id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-            uuid VARCHAR(100) NOT NULL,
+            uuid VARCHAR(100) COLLATE utf8mb4_bin NOT NULL,
             orcidId VARCHAR(100) NOT NULL,
             orcidToken VARCHAR(100) NOT NULL,
             name VARCHAR(255) NOT NULL,

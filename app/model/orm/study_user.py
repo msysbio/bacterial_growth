@@ -16,6 +16,7 @@ class StudyUser(OrmBase):
     id: Mapped[int] = mapped_column(sql.Integer, primary_key=True)
 
     studyUniqueID: Mapped[str] = mapped_column(sql.ForeignKey('Study.studyUniqueID'), nullable=False)
-    userUniqueID:  Mapped[str] = mapped_column(sql.String(100), nullable=False)
+    userUniqueID:  Mapped[str] = mapped_column(sql.ForeignKey('Users.uuid'),          nullable=False)
 
-    study: Mapped[List['Study']] = relationship(back_populates="studyUsers")
+    study: Mapped['Study'] = relationship(back_populates="studyUsers")
+    user:  Mapped['User']  = relationship(back_populates="studyUsers")

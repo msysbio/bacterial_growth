@@ -27,26 +27,8 @@ from app.model.lib import orcid
 
 
 def user_show_page():
-    projects = []
-    studies = []
-    custom_strains = []
-
     if not g.current_user:
         return redirect(url_for('user_login_page'))
-
-    projects = g.db_session.scalars(
-        sql.select(Project)
-        .join(ProjectUser)
-        .where(ProjectUser.userUniqueID == g.current_user.uuid)
-        .order_by(Project.projectId.asc())
-    ).all()
-
-    studies = g.db_session.scalars(
-        sql.select(Study)
-        .join(StudyUser)
-        .where(StudyUser.userUniqueID == g.current_user.uuid)
-        .order_by(Study.studyId.asc())
-    ).all()
 
     custom_strains = g.db_session.scalars(
         sql.select(Strain)
@@ -59,8 +41,6 @@ def user_show_page():
 
     return render_template(
         'pages/users/show.html',
-        projects=projects,
-        studies=studies,
         custom_strains=custom_strains,
     )
 

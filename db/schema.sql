@@ -501,7 +501,7 @@ DROP TABLE IF EXISTS Users;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE Users (
   id int NOT NULL AUTO_INCREMENT,
-  uuid varchar(100) NOT NULL,
+  uuid varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
   orcidId varchar(100) NOT NULL,
   orcidToken varchar(100) NOT NULL,
   `name` varchar(255) NOT NULL,
@@ -572,5 +572,5 @@ INSERT INTO MigrationVersions VALUES
 (133,'2025_05_21_143554_add_input_params_to_modeling_results','2025-05-21 12:37:48'),
 (136,'2025_05_22_235526_add_r_summary_to_modeling_results','2025-05-22 22:15:36'),
 (138,'2025_05_25_132228_add_public_id_to_experiments','2025-05-25 11:25:28'),
-(142,'2025_06_05_114908_create_users','2025-06-05 10:05:22');
+(143,'2025_06_05_114908_create_users','2025-06-05 12:25:49');
 
