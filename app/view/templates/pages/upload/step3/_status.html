@@ -23,9 +23,7 @@
             <span class="icon"></span>
             <span>{{ techniques[0].metaboliteIds|length }} Metabolites measured:</span>
             <span class="truncate">
-              <strong>
-                {{ submission_form.fetch_all_metabolites()|map(attribute="name")|join('</strong>, <strong>')|safe }}
-              </strong>
+              {{ submission_form.fetch_all_metabolites()|map(attribute="name")|join_tag('strong') }}
             </span>
           </li>
         {% else: %}
@@ -33,7 +31,7 @@
             <span class="icon"></span>
             <span>{{ techniques|length }} {{ type }} measurements:</span>
             <span class="truncate">
-              <strong>{{ techniques|map(attribute="short_name")|join('</strong>, <strong>')|safe }}</strong>
+              {{ techniques|map(attribute="short_name")|join_tag('strong') }}
             </span>
           </li>
         {% endif %}

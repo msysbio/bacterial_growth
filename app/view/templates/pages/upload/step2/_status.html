@@ -11,7 +11,7 @@
         {% if strain_count > 0: %}
           <span>{{ strain_count }} strain(s) selected:</span>
           <span class="truncate">
-            <strong>{{ submission_form.fetch_taxa()|map(attribute='short_name')|join('</strong>, <strong>')|safe }}</strong>
+            {{ submission_form.fetch_taxa()|map(attribute='short_name')|join_tag('strong') }}
           </span>
         {% else: %}
           <span>No existing strain(s) selected</span>
@@ -22,7 +22,7 @@
           <span class="icon"></span>
           {{ new_strain_count }} new strain(s) added:
           <span class="truncate">
-            <strong>{{ submission.studyDesign['new_strains']|map(attribute='name')|join('</strong>, <strong>')|safe }}</strong>
+            {{ submission.studyDesign['new_strains']|map(attribute='name')|join_tag('strong') }}
           </span>
         {% else: %}
           <span class="icon"></span> No new strain(s) added

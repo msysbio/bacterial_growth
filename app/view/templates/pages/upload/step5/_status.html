@@ -9,7 +9,7 @@
         <span class="icon"></span>
         <span>{{ experiments|length }} experiment(s):</span>
         <span class="truncate">
-          <strong>{{ experiments|map(attribute='name')|join('</strong>, <strong>')|safe }}</strong>
+          {{ experiments|map(attribute='name')|join_tag('strong') }}
         </span>
       </li>
     {% else %}
@@ -23,7 +23,7 @@
         <span class="icon"></span>
         <span>{{ bioreplicates|length }} bioreplicate(s):</span>
         <span class="truncate">
-          <strong>{{ bioreplicates|map(attribute='name')|join('</strong>, <strong>')|safe }}</strong>
+          {{ bioreplicates|map(attribute='name')|join_tag('strong') }}
         </span>
       </li>
     {% else %}

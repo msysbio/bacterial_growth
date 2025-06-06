@@ -19,6 +19,7 @@ def init_config(app):
 
     # 200MiB max size
     app.config['MAX_CONTENT_LENGTH'] = 200 * 1024 * 1024
+    app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
 
     if app_env == 'development':
         app.config.update(
