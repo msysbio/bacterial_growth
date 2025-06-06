@@ -2,10 +2,15 @@ from datetime import datetime, timezone
 
 import simplejson as json
 from wtforms import fields
+from werkzeug.exceptions import NotFound
 from sqlalchemy.orm import configure_mappers
 from sqlalchemy_utc.sqltypes import UtcDateTime
 from markupsafe import Markup
-from flask_admin import Admin, form
+from flask import (
+    g,
+    url_for,
+)
+from flask_admin import Admin, form, AdminIndexView, expose
 from flask_admin.model.form import converts
 from flask_admin.contrib.sqla import ModelView
 from flask_admin.contrib.sqla.form import AdminModelConverter
@@ -104,6 +109,14 @@ class AppDateTimeField(form.DateTimeField):
         raise ValueError(self.gettext("Not a valid datetime value."))
 
 
+class AppAdminIndexView(AdminIndexView):
+    @expose('/')
+    def index(self):
+        if not g.current_user or not g.current_user.isAdmin:
+            raise NotFound()
+        return super(AppAdminIndexView, self).index()
+
+
 class AppView(ModelView):
     can_export       = True
     can_view_details = True
@@ -117,11 +130,22 @@ class AppView(ModelView):
     column_type_formatters_export = FORMATTERS
     column_type_formatters_detail = FORMATTERS
 
+    def is_accessible(self):
+        return g.current_user and g.current_user.isAdmin
+
+    def inaccessible_callback(self, name, **kwargs):
+        raise NotFound()
+
 
 def init_admin(app):
     configure_mappers()
 
-    admin = Admin(app, name='μGrowthDB admin', template_mode='bootstrap4')
+    admin = Admin(
+        app,
+        name='μGrowthDB admin',
+        template_mode='bootstrap4',
+        index_view=AppAdminIndexView(),
+    )
 
     db_session = FLASK_DB.session
 

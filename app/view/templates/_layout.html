@@ -93,6 +93,14 @@
               About us
             </a>
           </li>
+          {% if g.current_user and g.current_user.isAdmin: %}
+            <li>
+              <a href="/admin/" style="border: 1px solid orange;">
+                <div class="emoji-icon">👷</div>
+                Admin
+              </a>
+            </li>
+          {% endif %}
         </ul>
       </nav>
     </aside>
