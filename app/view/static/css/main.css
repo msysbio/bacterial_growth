@@ -16,6 +16,10 @@ body *{
   color: var(--black);
 }
 
+h1 {
+  color: var(--dark-blue);
+}
+
 pre {
   font-family: monospace;
 }

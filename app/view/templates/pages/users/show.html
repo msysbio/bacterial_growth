@@ -7,7 +7,10 @@
 {% block content %}
   <div class="container profile-page">
     <div class="heading-row flex-row">
-      <h2>Profile page for {{ g.current_user.name }}</h2>
+      <h1>
+        <span class="icon icon-emoji">🧑‍🔬</span>
+        Profile page for {{ g.current_user.name }}
+      </h1>
 
       {{ post_button("Log out", url_for("user_logout_action"), class="flex-right") }}
     </div>

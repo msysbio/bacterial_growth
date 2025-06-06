@@ -38,11 +38,12 @@
 {% block content %}
   {% set submission = submission_form.submission %}
 
-  <header>
-    <img height="100" src="{{ url_for('static', filename='images/upload_banner.png') }}" />
-  </header>
-
   <div class="container upload-page">
+    <h1>
+      <span class="icon icon-emoji">📤</span>
+      Upload Growth Data
+    </h1>
+
     <article>
       {% if submission_form.step == 0 %}
         <p>
