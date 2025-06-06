@@ -12,6 +12,12 @@ docs/_build/
 # Ignore AutoAPI specific output (if necessary)
 docs/api/
 
+# Ignore var/ directory where the running process can store things
+var/backups/*
+var/mysql/*
+!var/backups/.keep
+!var/mysql/.keep
+
 # Configuration contains passwords, copy config/database.toml.example:
 db/config.toml
 

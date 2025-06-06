@@ -1,8 +1,8 @@
 services:
-  db:
+  mgrowthdb_mysql:
     image: mysql:8.4
     restart: always
-    container_name: bacterial_growth_db
+    container_name: mgrowthdb_mysql
     ports:
       - "3307:3306"
     environment:
@@ -10,9 +10,11 @@ services:
       MYSQL_USER:          'bacterial_growth'
       MYSQL_PASSWORD:      'nVI8imBD3bl24pcP'
       MYSQL_ROOT_PASSWORD: 'nVI8imBD3bl24pcP'
-  redis:
+    volumes:
+      - ./var/mysql/:/var/lib/mysql/:rw
+  mgrowthdb_redis:
     image: redis:7.4-alpine
     restart: always
-    container_name: bacterial_growth_redis
+    container_name: mgrowthdb_redis
     ports:
       - "6380:6379"
