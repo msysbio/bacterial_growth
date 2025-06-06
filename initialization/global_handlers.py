@@ -4,12 +4,15 @@ from flask import (
     g,
     session,
     render_template,
+    redirect,
+    url_for,
 )
 import sqlalchemy as sql
 import sqlalchemy.exc as sql_exceptions
 
 from db import get_connection, FLASK_DB
 from app.model.orm import User
+from app.model.lib.errors import LoginRequired
 
 
 def init_global_handlers(app):
@@ -24,6 +27,8 @@ def init_global_handlers(app):
 
     app.errorhandler(403)(_forbidden)
     app.errorhandler(500)(_server_error)
+
+    app.errorhandler(LoginRequired)(_redirect_to_login)
 
     return app
 
@@ -76,3 +81,7 @@ def _forbidden(_error):
 
 def _server_error(_error):
     return render_template('errors/500.html'), 500
+
+
+def _redirect_to_login(_error):
+    return redirect(url_for('user_login_page'))

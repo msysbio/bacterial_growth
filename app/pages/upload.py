@@ -24,6 +24,7 @@ from app.model.lib.submission_process import (
     persist_submission_to_database,
     validate_data_file,
 )
+from app.model.lib.errors import LoginRequired
 from app.view.forms.submission_form import SubmissionForm
 from app.view.forms.upload_step2_form import UploadStep2Form
 from app.view.forms.upload_step3_form import UploadStep3Form
@@ -285,7 +286,9 @@ def upload_step7_page():
 
 
 def _init_submission_form(step):
-    # TODO (2025-06-05) It should not actually be allowed for a non-user to be here
+    if g.current_user is None and step != 0:
+        raise LoginRequired()
+
     if g.current_user:
         user_uuid = g.current_user.uuid
     else:
@@ -295,7 +298,7 @@ def _init_submission_form(step):
         session.get('submission_id', None),
         step=step,
         db_session=g.db_session,
-        user_uuid=g.current_user.uuid,
+        user_uuid=user_uuid,
     )
 
 

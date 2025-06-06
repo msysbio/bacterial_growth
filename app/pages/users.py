@@ -124,6 +124,7 @@ def user_claim_study_action():
 
 def user_logout_action():
     del session['user_uuid']
+    del session['submission_id']
 
     return redirect(url_for('static_home_page'))
 
