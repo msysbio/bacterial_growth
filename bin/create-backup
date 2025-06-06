@@ -10,7 +10,7 @@ connection_params = get_cli_connection_params()
 timestamp = datetime.now().strftime("%Y-%m-%d-%H:%M:%S")
 
 # Redirect stdout before exec-ing
-fdout = os.open(f"{timestamp}_backup.sql", os.O_WRONLY | os.O_CREAT)
+fdout = os.open(f"var/backups/{timestamp}_backup.sql", os.O_WRONLY | os.O_CREAT)
 STDOUT = 1
 os.dup2(fdout, STDOUT)
 
