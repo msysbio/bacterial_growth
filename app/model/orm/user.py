@@ -39,6 +39,10 @@ class User(OrmBase):
     ownedProjects: Mapped[List['Project']] = relationship(back_populates='owner')
     ownedStudies:  Mapped[List['Study']]   = relationship(back_populates='owner')
 
+    submissions: Mapped[List['Submission']] = relationship(
+        back_populates='user',
+    )
+
     studyUsers: Mapped[List['StudyUser']] = owner_relationship()
     managedStudies: Mapped[List['Study']] = relationship(
         secondary='StudyUsers',

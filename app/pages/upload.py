@@ -35,11 +35,7 @@ def upload_status_page():
     submission_form = _init_submission_form(step=0)
 
     if g.current_user and g.current_user.uuid:
-        user_submissions = g.db_session.scalars(
-            sql.select(Submission)
-            .where(Submission.userUniqueID == g.current_user.uuid)
-            .order_by(Submission.updatedAt)
-        ).all()
+        user_submissions = g.current_user.submissions
     else:
         user_submissions = None
 

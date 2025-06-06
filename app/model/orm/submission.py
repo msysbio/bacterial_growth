@@ -1,3 +1,4 @@
+from typing import Optional
 from datetime import datetime
 
 import sqlalchemy as sql
@@ -20,25 +21,23 @@ class Submission(OrmBase):
 
     projectUniqueID: Mapped[str] = mapped_column(sql.String(100), nullable=False)
     studyUniqueID:   Mapped[str] = mapped_column(sql.String(100), nullable=False)
-    userUniqueID:    Mapped[str] = mapped_column(sql.String(100), nullable=False)
 
-    project: Mapped['Project'] = relationship(
+    project: Mapped[Optional['Project']] = relationship(
         foreign_keys=[projectUniqueID],
         primaryjoin="Submission.projectUniqueID == Project.projectUniqueID",
     )
-    study: Mapped['Study'] = relationship(
+    study: Mapped[Optional['Study']] = relationship(
         foreign_keys=[studyUniqueID],
         primaryjoin="Submission.studyUniqueID == Study.studyUniqueID",
     )
-    user: Mapped['User'] = relationship(
-        foreign_keys=[userUniqueID],
-        primaryjoin="Submission.userUniqueID == User.uuid",
-    )
+
+    userUniqueID: Mapped[str] = mapped_column(sql.ForeignKey('Users.uuid'), nullable=False)
+    user: Mapped['User'] = relationship(back_populates='submissions')
 
     studyDesign: Mapped[JSON] = mapped_column(JSON, nullable=False)
 
-    dataFileId: Mapped[int] = mapped_column(sql.ForeignKey('ExcelFiles.id'))
-    dataFile: Mapped['ExcelFile'] = relationship(
+    dataFileId: Mapped[int] = mapped_column(sql.ForeignKey('ExcelFiles.id'), nullable=True)
+    dataFile: Mapped[Optional['ExcelFile']] = relationship(
         foreign_keys=[dataFileId],
         cascade='all, delete-orphan',
         single_parent=True,

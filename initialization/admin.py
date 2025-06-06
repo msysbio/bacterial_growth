@@ -131,6 +131,7 @@ def init_admin(app):
 
     class SubmissionView(AppView):
         column_exclude_list = ['studyDesign', 'dataFile']
+        form_excluded_columns = ['project', 'study']
 
     admin.add_view(AppView(Project,           db_session, category="Studies"))
     admin.add_view(StudyView(Study,           db_session, category="Studies"))
