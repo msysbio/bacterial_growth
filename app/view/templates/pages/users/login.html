@@ -1,0 +1,23 @@
+{% extends '_layout.html' %}
+
+{% block title %}: Log in / Sign up{% endblock %}
+
+{% block content %}
+  <div class="container login-page">
+    <h2>Log in / Sign up</h2>
+
+    {% include 'shared/flashes.html' %}
+
+    <div class="login-form-container box">
+      <p>
+        To upload studies to the database, please confirm your identity
+        using an <a target="_blank" href="https://orcid.org/">ORCID iD</a>.
+      </p>
+
+      <p class="flex-row flex-center">
+        <a class="white-button flex-row flex-gap-6" href="{{ orcid_url }}">
+          <span class="icon icon-orcid"></span> Connect your ORCID iD
+        </a>
+      </p>
+    </div>
+  {% endblock %}

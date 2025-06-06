@@ -37,14 +37,19 @@ def search_index_page():
                 template_clause=template_clause,
             )
     else:
+        if g.current_user:
+            publish_clause = sql.or_(
+                Study.isPublished,
+                StudyUser.userUniqueID == g.current_user.uuid
+            )
+        else:
+            publish_clause = Study.isPublished
+
         # TODO (2025-04-15) Extract, test with multiple users
         studyIds = g.db_session.scalars(
             sql.select(Study.studyId)
             .join(StudyUser, isouter=True)
-            .where(sql.or_(
-                Study.isPublished,
-                StudyUser.userUniqueID == g.current_user.uuid
-            ))
+            .where(publish_clause)
             .order_by(Study.updatedAt.desc())
             .limit(5)
         ).all()

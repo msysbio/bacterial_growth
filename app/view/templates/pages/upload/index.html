@@ -63,6 +63,15 @@
         </p>
       {% endif %}
 
+      {% if g.current_user is none: %}
+        <p class="warning-message">
+          In order to upload your data, please
+          <a href="{{ url_for("user_login_page") }}">log in</a>
+          to the application using your
+          <a href="https://orcid.org/" target="_blank" rel="noreferrer">ORCID iD</a>.
+        </p>
+      {% endif %}
+
       {% if user_submissions %}
         {{ render_user_submissions(user_submissions, submission) }}
 
@@ -82,7 +91,7 @@
           {% endcall %}
 
           {% if submission_form.step == 1 %}
-            {{ render_step1_form(submission_form, submission, projects, studies) }}
+            {{ render_step1_form(submission_form, submission) }}
           {% else %}
             {{ render_step1_status(submission) }}
           {% endif %}

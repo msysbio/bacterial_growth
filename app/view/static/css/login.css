@@ -1,0 +1,41 @@
+.login-page {
+  .login-form-container {
+    width: 500px;
+    margin: 50px auto 0;
+    padding: 30px;
+  }
+
+  .submit-row {
+    justify-content: center;
+    align-items: center;
+  }
+
+  #orcidAuthButton {
+    display: flex;
+    flex-direction: row;
+    gap: 6px;
+    text-decoration: none;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+
+    padding: 0.7rem;
+    border: 1px solid rgb(8, 131, 149);
+    border-radius: var(--border-radius);
+    white-space: nowrap;
+
+    &:hover {
+      background-color: #eee;
+      color: inherit;
+    }
+  }
+
+  #orcidAuthSuccess {
+    margin-bottom: 10px;
+
+    img {
+      float: left;
+      margin-right: 6px;
+    }
+  }
+}

@@ -1,5 +1,7 @@
 import os
 
+from dotenv import load_dotenv
+
 
 def init_config(app):
     """
@@ -8,6 +10,12 @@ def init_config(app):
     app_env   = os.getenv('APP_ENV', 'development')
     log_level = os.getenv('LOG_LEVEL', None)
     timing    = os.getenv('TIME')
+
+    # Load .env file from local directory
+    load_dotenv('.env')
+
+    # Load env variables starting with "MGROWTHDB_" into the config
+    app.config.from_prefixed_env('MGROWTHDB')
 
     # 200MiB max size
     app.config['MAX_CONTENT_LENGTH'] = 200 * 1024 * 1024
@@ -18,7 +26,6 @@ def init_config(app):
             ASSETS_DEBUG=False,
             TEMPLATES_AUTO_RELOAD=True,
             EXPLAIN_TEMPLATE_LOADING=False,
-            SECRET_KEY='development_key',
         )
     elif app_env == 'test':
         app.config.update(
@@ -26,19 +33,13 @@ def init_config(app):
             ASSETS_DEBUG=False,
             TEMPLATES_AUTO_RELOAD=False,
             EXPLAIN_TEMPLATE_LOADING=False,
-            SECRET_KEY='testing_key',
         )
     elif app_env == 'production':
-        secret_key = os.getenv('SECRET_KEY', None)
-        if not secret_key:
-            raise KeyError("Please set a 'SECRET_KEY' environment variable for cookie encryption")
-
         app.config.update(
             DEBUG=False,
             ASSETS_DEBUG=False,
             TEMPLATES_AUTO_RELOAD=False,
             EXPLAIN_TEMPLATE_LOADING=True,
-            SECRET_KEY=secret_key,
             SESSION_COOKIE_SECURE=True,
         )
     else:

@@ -8,12 +8,10 @@
   {% endif %}
 
   <div class="subform-container box flex-column flex-gap-10 js-subform-container">
-    {% if g.current_user: %}
-      <input
-          name="{{ prefix }}userUniqueID"
-          type="hidden"
-          value="{{ g.current_user.uuid }}" />
-    {% endif %}
+    <input
+        name="{{ prefix }}userUniqueID"
+        type="hidden"
+        value="{{ g.current_user.uuid }}" />
 
     <div class="form-row">
       <div class="flex-column flex-gap-6 flex-1">

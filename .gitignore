@@ -24,3 +24,6 @@ app/view/static/.webassets-cache/*
 
 # Test coverage data
 .coverage
+
+# Environment configuration
+.env

@@ -22,7 +22,7 @@ class TestStudyDsf(unittest.TestCase):
         ])
         self.assertSqlQuery(query, """
             SELECT DISTINCT studyId
-            FROM Study
+            FROM Studies
             WHERE LOWER(studyName) LIKE '%example%'
         """)
 
@@ -42,7 +42,7 @@ class TestStudyDsf(unittest.TestCase):
         ])
         self.assertSqlQuery(query, """
             SELECT DISTINCT studyId
-            FROM Study
+            FROM Studies
             WHERE LOWER(studyName) LIKE '%human%'
             AND studyId IN (
                 SELECT DISTINCT studyId

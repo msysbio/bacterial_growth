@@ -5,6 +5,10 @@
 
   .chart-form {
     margin-top: 20px;
+
+    label {
+      word-break: break-all;
+    }
   }
 
   .form-input-blue {

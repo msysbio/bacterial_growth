@@ -49,7 +49,7 @@ class MeasurementTechnique(OrmBase):
     metaboliteIds: Mapped[sql.JSON] = mapped_column(sql.JSON, nullable=False)
     strainIds:     Mapped[sql.JSON] = mapped_column(sql.JSON, nullable=False)
 
-    studyUniqueID: Mapped[str] = mapped_column(sql.ForeignKey('Study.studyUniqueID'), nullable=False)
+    studyUniqueID: Mapped[str] = mapped_column(sql.ForeignKey('Studies.studyUniqueID'), nullable=False)
     study: Mapped['Study'] = relationship(back_populates="measurementTechniques")
 
     createdAt: Mapped[datetime] = mapped_column(UtcDateTime, server_default=FetchedValue())

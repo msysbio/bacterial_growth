@@ -4,10 +4,15 @@ from flask import (
     g,
     session,
     render_template,
+    redirect,
+    url_for,
 )
+import sqlalchemy as sql
 import sqlalchemy.exc as sql_exceptions
 
 from db import get_connection, FLASK_DB
+from app.model.orm import User
+from app.model.lib.errors import LoginRequired
 
 
 def init_global_handlers(app):
@@ -17,11 +22,13 @@ def init_global_handlers(app):
 
     app.after_request(_close_db_connection)
 
-    app.errorhandler(404)(_not_found)
-    app.errorhandler(sql_exceptions.NoResultFound)(_not_found)
+    app.errorhandler(404)(_render_not_found)
+    app.errorhandler(sql_exceptions.NoResultFound)(_render_not_found)
 
-    app.errorhandler(403)(_forbidden)
-    app.errorhandler(500)(_server_error)
+    app.errorhandler(403)(_render_forbidden)
+    app.errorhandler(500)(_render_server_error)
+
+    app.errorhandler(LoginRequired)(_redirect_to_login)
 
     return app
 
@@ -45,11 +52,15 @@ def _fetch_user():
             user_uuid = session['user_uuid']
         else:
             # Create a new user UUID so we can keep track of this browser
-            # TODO might be temporary, might be useful to convert anonymous users
             user_uuid = str(uuid4())
 
         session['user_uuid'] = user_uuid
-        g.current_user = User(uuid=user_uuid)
+
+        g.current_user = g.db_session.scalars(
+            sql.select(User)
+            .where(User.uuid == user_uuid)
+            .limit(1)
+        ).one_or_none()
 
 
 def _close_db_connection(response):
@@ -60,19 +71,17 @@ def _close_db_connection(response):
     return response
 
 
-def _not_found(_error):
+def _render_not_found(_error):
     return render_template('errors/404.html'), 404
 
 
-def _forbidden(_error):
+def _render_forbidden(_error):
     return render_template('errors/403.html'), 403
 
 
-def _server_error(_error):
+def _render_server_error(_error):
     return render_template('errors/500.html'), 500
 
 
-# TODO (2025-03-12) Temporary, will eventually be fetched from a database
-class User:
-    def __init__(self, uuid):
-        self.uuid = uuid
+def _redirect_to_login(_error):
+    return redirect(url_for('user_login_page'))

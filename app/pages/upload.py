@@ -24,6 +24,7 @@ from app.model.lib.submission_process import (
     persist_submission_to_database,
     validate_data_file,
 )
+from app.model.lib.errors import LoginRequired
 from app.view.forms.submission_form import SubmissionForm
 from app.view.forms.upload_step2_form import UploadStep2Form
 from app.view.forms.upload_step3_form import UploadStep3Form
@@ -34,12 +35,8 @@ from app.view.forms.upload_step5_form import UploadStep5Form
 def upload_status_page():
     submission_form = _init_submission_form(step=0)
 
-    if g.current_user.uuid:
-        user_submissions = g.db_session.scalars(
-            sql.select(Submission)
-            .where(Submission.userUniqueID == g.current_user.uuid)
-            .order_by(Submission.updatedAt)
-        ).all()
+    if g.current_user and g.current_user.uuid:
+        user_submissions = g.current_user.submissions
     else:
         user_submissions = None
 
@@ -60,29 +57,9 @@ def upload_step1_page():
             session['submission_id'] = submission_form.save()
             return redirect(url_for('upload_step2_page'))
 
-    if g.current_user:
-        projects = g.db_session.scalars(
-            sql.select(Project)
-            .join(ProjectUser)
-            .where(ProjectUser.userUniqueID == g.current_user.uuid)
-            .order_by(Project.projectId.asc())
-        ).all()
-
-        studies = g.db_session.scalars(
-            sql.select(Study)
-            .join(StudyUser)
-            .where(StudyUser.userUniqueID == g.current_user.uuid)
-            .order_by(Study.studyId.asc())
-        ).all()
-    else:
-        projects = []
-        studies = []
-
     return render_template(
         "pages/upload/index.html",
         submission_form=submission_form,
-        projects=projects,
-        studies=studies,
     )
 
 
@@ -289,11 +266,19 @@ def upload_step7_page():
 
 
 def _init_submission_form(step):
+    if g.current_user is None and step != 0:
+        raise LoginRequired()
+
+    if g.current_user:
+        user_uuid = g.current_user.uuid
+    else:
+        user_uuid = None
+
     return SubmissionForm(
         session.get('submission_id', None),
         step=step,
         db_session=g.db_session,
-        user_uuid=g.current_user.uuid,
+        user_uuid=user_uuid,
     )
 
 

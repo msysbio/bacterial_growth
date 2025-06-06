@@ -1,9 +1,16 @@
+from datetime import datetime, timezone
+
 import simplejson as json
 from wtforms import fields
+from werkzeug.exceptions import NotFound
 from sqlalchemy.orm import configure_mappers
 from sqlalchemy_utc.sqltypes import UtcDateTime
 from markupsafe import Markup
-from flask_admin import Admin, form
+from flask import (
+    g,
+    url_for,
+)
+from flask_admin import Admin, form, AdminIndexView, expose
 from flask_admin.model.form import converts
 from flask_admin.contrib.sqla import ModelView
 from flask_admin.contrib.sqla.form import AdminModelConverter
@@ -25,6 +32,7 @@ from app.model.orm import (
     StudyUser,
     Submission,
     Taxon,
+    User,
 )
 from app.model.lib.util import humanize_camelcased_string
 
@@ -82,7 +90,31 @@ class AppModelConverter(AdminModelConverter):
 
     @converts('UtcDateTime')
     def convert_datetime(self, field_args, **extra):
-        return form.DateTimeField(**field_args)
+        return AppDateTimeField(**field_args, default=datetime.utcnow)
+
+
+class AppDateTimeField(form.DateTimeField):
+    def process_formdata(self, valuelist):
+        if not valuelist:
+            return
+
+        date_str = " ".join(valuelist)
+        for format in self.strptime_format:
+            try:
+                self.data = datetime.strptime(date_str, format).replace(tzinfo=timezone.utc)
+                return
+            except ValueError:
+                self.data = None
+
+        raise ValueError(self.gettext("Not a valid datetime value."))
+
+
+class AppAdminIndexView(AdminIndexView):
+    @expose('/')
+    def index(self):
+        if not g.current_user or not g.current_user.isAdmin:
+            raise NotFound()
+        return super(AppAdminIndexView, self).index()
 
 
 class AppView(ModelView):
@@ -98,20 +130,32 @@ class AppView(ModelView):
     column_type_formatters_export = FORMATTERS
     column_type_formatters_detail = FORMATTERS
 
+    def is_accessible(self):
+        return g.current_user and g.current_user.isAdmin
+
+    def inaccessible_callback(self, name, **kwargs):
+        raise NotFound()
+
 
 def init_admin(app):
     configure_mappers()
 
-    admin = Admin(app, name='μGrowthDB admin', template_mode='bootstrap4')
+    admin = Admin(
+        app,
+        name='μGrowthDB admin',
+        template_mode='bootstrap4',
+        index_view=AppAdminIndexView(),
+    )
 
     db_session = FLASK_DB.session
 
     class StudyView(AppView):
         column_searchable_list = ['studyName', 'studyDescription']
-        form_excluded_columns = ['measurements']
+        form_excluded_columns = ['measurements', 'measurementContexts', 'measurementTechniques']
 
     class SubmissionView(AppView):
         column_exclude_list = ['studyDesign', 'dataFile']
+        form_excluded_columns = ['project', 'study']
 
     admin.add_view(AppView(Project,           db_session, category="Studies"))
     admin.add_view(StudyView(Study,           db_session, category="Studies"))
@@ -134,6 +178,10 @@ def init_admin(app):
     admin.add_view(MetaboliteView(Metabolite, db_session, category="External data"))
     admin.add_view(TaxonView(Taxon,           db_session, category="External data"))
 
+    class UserView(AppView):
+        form_excluded_columns = ['createdAt', 'updatedAt', 'lastLoginAt']
+
+    admin.add_view(UserView(User,       db_session, category="Users"))
     admin.add_view(AppView(StudyUser,   db_session, category="Users"))
     admin.add_view(AppView(ProjectUser, db_session, category="Users"))
 

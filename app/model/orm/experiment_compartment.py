@@ -13,7 +13,7 @@ class ExperimentCompartment(OrmBase):
 
     id: Mapped[int] = mapped_column(sql.Integer, primary_key=True)
 
-    studyId: Mapped[str] = mapped_column(sql.ForeignKey('Study.studyId'))
+    studyId: Mapped[str] = mapped_column(sql.ForeignKey('Studies.studyId'))
 
     experimentId:  Mapped[int] = mapped_column(sql.ForeignKey('Experiments.id'))
     compartmentId: Mapped[int] = mapped_column(sql.ForeignKey('Compartments.id'))

@@ -14,7 +14,7 @@ class Perturbation(OrmBase):
     id:          Mapped[int] = mapped_column(primary_key=True)
     description: Mapped[str] = mapped_column(sql.String)
 
-    studyId: Mapped[str] = mapped_column(sql.ForeignKey('Study.studyId'), nullable=False)
+    studyId: Mapped[str] = mapped_column(sql.ForeignKey('Studies.studyId'), nullable=False)
     study: Mapped['Study'] = relationship(back_populates='perturbations')
 
     experimentId: Mapped[int] = mapped_column(sql.ForeignKey('Experiments.id'), nullable=False)
