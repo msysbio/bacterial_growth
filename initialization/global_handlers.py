@@ -22,11 +22,11 @@ def init_global_handlers(app):
 
     app.after_request(_close_db_connection)
 
-    app.errorhandler(404)(_not_found)
-    app.errorhandler(sql_exceptions.NoResultFound)(_not_found)
+    app.errorhandler(404)(_render_not_found)
+    app.errorhandler(sql_exceptions.NoResultFound)(_render_not_found)
 
-    app.errorhandler(403)(_forbidden)
-    app.errorhandler(500)(_server_error)
+    app.errorhandler(403)(_render_forbidden)
+    app.errorhandler(500)(_render_server_error)
 
     app.errorhandler(LoginRequired)(_redirect_to_login)
 
@@ -71,15 +71,15 @@ def _close_db_connection(response):
     return response
 
 
-def _not_found(_error):
+def _render_not_found(_error):
     return render_template('errors/404.html'), 404
 
 
-def _forbidden(_error):
+def _render_forbidden(_error):
     return render_template('errors/403.html'), 403
 
 
-def _server_error(_error):
+def _render_server_error(_error):
     return render_template('errors/500.html'), 500
 
 

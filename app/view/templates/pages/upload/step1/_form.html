@@ -41,7 +41,7 @@
               New project
             </option>
 
-            {% for project in projects: %}
+            {% for project in g.current_user.managedProjects: %}
               <option
                   value="{{ project.projectUniqueID }}"
                   {{ "selected" if project.projectUniqueID == submission.projectUniqueID }}
@@ -93,7 +93,7 @@
               New study
             </option>
 
-            {% for study in studies: %}
+            {% for study in g.current_user.managedStudies: %}
               <option
                   value="{{ study.studyUniqueID }}"
                   {{ "selected" if study.studyUniqueID == submission.studyUniqueID }}

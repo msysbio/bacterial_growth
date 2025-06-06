@@ -57,29 +57,9 @@ def upload_step1_page():
             session['submission_id'] = submission_form.save()
             return redirect(url_for('upload_step2_page'))
 
-    if g.current_user:
-        projects = g.db_session.scalars(
-            sql.select(Project)
-            .join(ProjectUser)
-            .where(ProjectUser.userUniqueID == g.current_user.uuid)
-            .order_by(Project.projectId.asc())
-        ).all()
-
-        studies = g.db_session.scalars(
-            sql.select(Study)
-            .join(StudyUser)
-            .where(StudyUser.userUniqueID == g.current_user.uuid)
-            .order_by(Study.studyId.asc())
-        ).all()
-    else:
-        projects = []
-        studies = []
-
     return render_template(
         "pages/upload/index.html",
         submission_form=submission_form,
-        projects=projects,
-        studies=studies,
     )
 
 

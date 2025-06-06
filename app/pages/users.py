@@ -24,11 +24,12 @@ from app.model.orm import (
     User,
 )
 from app.model.lib import orcid
+from app.model.lib.errors import LoginRequired
 
 
 def user_show_page():
     if not g.current_user:
-        return redirect(url_for('user_login_page'))
+        raise LoginRequired()
 
     custom_strains = g.db_session.scalars(
         sql.select(Strain)
@@ -65,6 +66,9 @@ def user_backdoor_page():
 
 
 def user_claim_project_action():
+    if not g.current_user:
+        raise LoginRequired()
+
     project_uuid = request.form['uuid'].strip()
     user_uuid    = g.current_user.uuid
 
@@ -94,6 +98,9 @@ def user_claim_project_action():
 
 
 def user_claim_study_action():
+    if not g.current_user:
+        raise LoginRequired()
+
     study_uuid = request.form['uuid'].strip()
     user_uuid  = g.current_user.uuid
 
@@ -123,8 +130,10 @@ def user_claim_study_action():
 
 
 def user_logout_action():
-    del session['user_uuid']
-    del session['submission_id']
+    if 'user_uuid' in session:
+        del session['user_uuid']
+    if 'submission_id' in session:
+        del session['submission_id']
 
     return redirect(url_for('static_home_page'))
 
