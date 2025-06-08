@@ -3,6 +3,7 @@ import os
 import app.pages.metabolites as metabolite_pages
 import app.pages.search as search_pages
 import app.pages.static as static_pages
+import app.pages.help as help_pages
 import app.pages.strains as strain_pages
 import app.pages.studies as study_pages
 import app.pages.experiments as experiment_pages
@@ -19,8 +20,10 @@ APP_ENV = os.getenv('APP_ENV', 'development')
 
 def init_routes(app):
     app.add_url_rule("/",       view_func=static_pages.static_home_page)
-    app.add_url_rule("/help/",  view_func=static_pages.static_help_page)
     app.add_url_rule("/about/", view_func=static_pages.static_about_page)
+
+    app.add_url_rule("/help/",               view_func=help_pages.help_index_page)
+    app.add_url_rule("/help/<string:name>/", view_func=help_pages.help_show_page)
 
     app.add_url_rule("/upload/", view_func=upload_pages.upload_status_page)
 

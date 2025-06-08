@@ -1,0 +1,35 @@
+{% extends '_layout.html' %}
+
+{% block title %}: Help{% endblock %}
+
+{% block content %}
+  <div class="container help-page">
+    <h1>
+      <span class="icon icon-emoji">❓</span>
+      Help
+    </h1>
+
+    <br>
+
+    <article>
+      <ul>
+        <li>
+          <a href="{{ url_for('help_show_page', name="bacterial-growth-data") }}">
+            Bacterial Growth Data
+          </a>
+        </li>
+        <li>
+          <a href="{{ url_for('help_show_page', name="our-database") }}">
+            Our Database
+          </a>
+        </li>
+        <li>
+          <a href="{{ url_for('help_show_page', name="uploading-process") }}">
+            Uploading process
+          </a>
+        </li>
+      </ul>
+    </article>
+  </div>
+
+{% endblock %}

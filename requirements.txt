@@ -23,6 +23,7 @@ celery[redis]
 gunicorn
 requests
 watchdog
+markdown-it-py
 
 # Database
 sqlalchemy
