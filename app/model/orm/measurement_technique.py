@@ -159,3 +159,6 @@ class MeasurementTechnique(OrmBase):
             contexts = list(group)
 
             yield ((bioreplicate, compartment), contexts)
+
+    def __str__(self):
+        return f"<MeasurementTechnique type={self.type}, id={self.id}>"

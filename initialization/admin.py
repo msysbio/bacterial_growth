@@ -1,3 +1,4 @@
+import io
 from datetime import datetime, timezone
 
 import simplejson as json
@@ -9,26 +10,37 @@ from markupsafe import Markup
 from flask import (
     g,
     url_for,
+    send_file,
+    request,
 )
 from flask_admin import Admin, form, AdminIndexView, expose
 from flask_admin.model.form import converts
 from flask_admin.contrib.sqla import ModelView
 from flask_admin.contrib.sqla.form import AdminModelConverter
 from flask_admin._compat import as_unicode
+from flask_admin.model.template import EndpointLinkRowAction, LinkRowAction
 
 from db import FLASK_DB
 from app.model.orm.orm_base import OrmBase
 from app.model.orm import (
+    Bioreplicate,
+    Community,
+    Compartment,
+    ExcelFile,
+    Experiment,
+    ExperimentCompartment,
     Measurement,
     MeasurementContext,
     MeasurementTechnique,
     Metabolite,
     ModelingRequest,
     ModelingResult,
+    Perturbation,
     Project,
     ProjectUser,
     Strain,
     Study,
+    StudyMetabolite,
     StudyUser,
     Submission,
     Taxon,
@@ -41,7 +53,7 @@ def json_formatter(_view, data, _name):
     return Markup(f"<pre>{json.dumps(data, indent=2, use_decimal=True)}</pre>")
 
 
-def record_formatter(_view, record, _name):
+def record_formatter(_view, record, *args):
     if hasattr(record, 'publicId'):
         return record.publicId
     elif hasattr(record, 'name'):
@@ -143,24 +155,55 @@ def init_admin(app):
     admin = Admin(
         app,
         name='μGrowthDB admin',
-        template_mode='bootstrap4',
         index_view=AppAdminIndexView(),
     )
 
     db_session = FLASK_DB.session
 
     class StudyView(AppView):
-        column_searchable_list = ['studyName', 'studyDescription']
+        column_searchable_list = ['studyName']
+        column_exclude_list = ['studyDescription']
         form_excluded_columns = ['measurements', 'measurementContexts', 'measurementTechniques']
 
     class SubmissionView(AppView):
         column_exclude_list = ['studyDesign', 'dataFile']
         form_excluded_columns = ['project', 'study']
 
+    class ExcelFileView(AppView):
+        column_exclude_list         = ['content']
+        column_details_exclude_list = ['content']
+
+        can_edit   = False
+        can_create = False
+        can_export = False
+
+        column_extra_row_actions = [
+            EndpointLinkRowAction("fa fa-download", ".download_view"),
+        ]
+
+        @expose("/download", methods=("GET",))
+        def download_view(self):
+            file = g.db_session.get(ExcelFile, request.args['id'])
+
+            return send_file(
+                io.BytesIO(file.content),
+                as_attachment=True,
+                download_name=file.filename
+            )
+
     admin.add_view(AppView(Project,           db_session, category="Studies"))
     admin.add_view(StudyView(Study,           db_session, category="Studies"))
     admin.add_view(SubmissionView(Submission, db_session, category="Studies"))
     admin.add_view(AppView(Strain,            db_session, category="Studies"))
+    admin.add_view(AppView(StudyMetabolite,   db_session, category="Studies"))
+    admin.add_view(ExcelFileView(ExcelFile,   db_session, category="Studies"))
+
+    admin.add_view(AppView(Experiment,            db_session, category="Experiments"))
+    admin.add_view(AppView(ExperimentCompartment, db_session, category="Experiments"))
+    admin.add_view(AppView(Compartment,           db_session, category="Experiments"))
+    admin.add_view(AppView(Bioreplicate,          db_session, category="Experiments"))
+    admin.add_view(AppView(Community,             db_session, category="Experiments"))
+    admin.add_view(AppView(Perturbation,          db_session, category="Experiments"))
 
     admin.add_view(AppView(MeasurementTechnique, db_session, category="Measurements"))
     admin.add_view(AppView(MeasurementContext,   db_session, category="Measurements"))

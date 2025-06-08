@@ -12,6 +12,7 @@ dotenv
 
 # Web
 Flask
+Flask-Admin==2.0.0a4
 Flask-Assets
 Flask-WTF
 Flask-SQLAlchemy
@@ -19,7 +20,6 @@ Flask-DebugToolbar
 cssmin
 plotly
 celery[redis]
-flask-admin
 gunicorn
 requests
 watchdog

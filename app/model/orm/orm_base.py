@@ -20,7 +20,17 @@ class OrmBase(DeclarativeBase):
         }
 
     def __str__(self):
-        return f"<{type(self).__name__} {self._asdict()}>"
+        parts = []
+
+        if hasattr(self, 'id'):
+            parts.append(f"id={self.id}")
+        if hasattr(self, 'publicId'):
+            parts.append(f"publicId={self.publicId}")
+
+        return f"<{type(self).__name__} {', '.join(parts)}>"
+
+    def __repr__(self):
+        return f"{type(self).__name__}({', '.join([f"{k}={repr(v)}" for k, v in self._asdict().items()])}>"
 
     def _validate_inclusion(self, key, value, valid_values):
         if value not in valid_values:
