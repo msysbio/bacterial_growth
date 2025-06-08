@@ -1,3 +1,6 @@
+# Pinned setuptools to avoid deprecation warning:
+setuptools<80
+
 # Core
 pandas
 pyyaml
