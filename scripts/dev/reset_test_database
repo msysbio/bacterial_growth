@@ -3,7 +3,7 @@
 set -e
 
 mysql -u root --password=nVI8imBD3bl24pcP --port=3307 --protocol=tcp <<EOF
-  drop database BacterialGrowthTest;
+  drop database if exists BacterialGrowthTest;
   create database BacterialGrowthTest;
   grant all on BacterialGrowthTest.* to bacterial_growth;
 EOF
