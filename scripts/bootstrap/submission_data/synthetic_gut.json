@@ -152,7 +152,7 @@
       ]
     }
   ],
-  "new_strains": [],
+  "custom_strains": [],
   "compartments": [
     {
       "H2": 10.0,

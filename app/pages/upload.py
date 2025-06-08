@@ -218,7 +218,7 @@ def download_data_template_xlsx():
 
     metabolite_names = [m.name for m in submission_form.fetch_all_metabolites()]
     strain_names = [t.name for t in submission_form.fetch_taxa()]
-    strain_names += [s['name'] for s in submission.studyDesign['new_strains']]
+    strain_names += [s['name'] for s in submission.studyDesign['custom_strains']]
 
     spreadsheet = data_spreadsheet.create_excel(
         submission,

@@ -42,16 +42,16 @@ Page('.upload-page .step-content.step-2.active', function($step2) {
 
   $existingStrainSelect.trigger('change');
 
-  // Initialize creation of new strains:
+  // Initialize creation of custom strains:
   $step2.initAjaxSubform({
-    prefixRegex:    /new_strains-(\d+)-/,
-    prefixTemplate: 'new_strains-{}-',
+    prefixRegex:    /custom_strains-(\d+)-/,
+    prefixTemplate: 'custom_strains-{}-',
 
     buildSubform: function(index) {
       let templateHtml = $('template.new-strain-form').html();
       let $newForm = $(templateHtml);
 
-      $newForm.addPrefix(`new_strains-${index}-`);
+      $newForm.addPrefix(`custom_strains-${index}-`);
 
       return $newForm;
     },

@@ -33,12 +33,12 @@ DEFAULT_STUDY_DESIGN = {
     'timepoint_count': None,
     'time_units':      None,
 
-    'strains':      [],
-    'new_strains':  [],
-    'techniques':   [],
-    'compartments': [],
-    'communities':  [],
-    'experiments':  [],
+    'strains':        [],
+    'custom_strains': [],
+    'techniques':     [],
+    'compartments':   [],
+    'communities':    [],
+    'experiments':    [],
 }
 
 
@@ -120,8 +120,8 @@ class SubmissionForm:
         # Existing strains
         self.submission.studyDesign['strains'] = data['strains']
 
-        # Add parent species name to new strain data:
-        for strain in data['new_strains']:
+        # Add parent species name to custom strain data:
+        for strain in data['custom_strains']:
             if 'species_name' in strain:
                 continue
 
@@ -132,7 +132,11 @@ class SubmissionForm:
             ).one_or_none()
 
         # Save new strains
-        self.submission.studyDesign['new_strains'] = data['new_strains']
+        self.submission.studyDesign['custom_strains'] = data['custom_strains']
+
+        # Clean up strain names:
+        for strain_data in self.submission.studyDesign['custom_strains']:
+            strain_data['name'] = strain_data['name'].strip()
 
         flag_modified(self.submission, 'studyDesign')
 

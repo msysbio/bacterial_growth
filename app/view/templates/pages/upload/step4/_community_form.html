@@ -37,7 +37,7 @@
             </option>
           {% endfor %}
 
-          {% for strain in submission.studyDesign['new_strains']: %}
+          {% for strain in submission.studyDesign['custom_strains']: %}
             <option
                 value="custom|{{ strain['name'] }}"
                 {{ "selected" if strainIdentifiers and "custom|{}".format(strain['name']) in strainIdentifiers }}>

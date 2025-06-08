@@ -496,10 +496,10 @@ def _create_average_measurement_context(
         db_session.add(measurement)
 
 
-def _find_new_strain(submission, identifier):
-    for new_strain_data in submission.studyDesign['new_strains']:
-        if new_strain_data['name'] == identifier:
-            return new_strain_data
+def _find_custom_strain(submission, identifier):
+    for custom_strain_data in submission.studyDesign['custom_strains']:
+        if custom_strain_data['name'] == identifier:
+            return custom_strain_data
     else:
         raise IndexError(f"New strain with name {repr(identifier)} not found in submission")
 
@@ -526,7 +526,7 @@ def _get_expected_column_names(submission_form):
                 if technique.includeStd:
                     strain_columns.add(f"{column} STD")
 
-            for strain in submission.studyDesign['new_strains']:
+            for strain in submission.studyDesign['custom_strains']:
                 column = technique.csv_column_name(strain['name'])
                 strain_columns.add(column)
                 if technique.includeStd:
@@ -569,7 +569,7 @@ def _build_strain(db_session, identifier, submission, study, user_uuid):
 
     elif identifier.startswith('custom|'):
         identifier = identifier.removeprefix('custom|')
-        custom_strain_data = _find_new_strain(submission, identifier)
+        custom_strain_data = _find_custom_strain(submission, identifier)
 
         strain_params = {
             'name':        custom_strain_data['name'],
