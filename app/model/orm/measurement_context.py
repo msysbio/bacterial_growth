@@ -75,24 +75,30 @@ class MeasurementContext(OrmBase):
         technique    = self.technique
         bioreplicate = self.bioreplicate
         compartment  = self.compartment
+        experiment   = bioreplicate.experiment
 
         if technique.subjectType == 'metabolite':
             label_parts = [f"<b>{subject.name}</b>"]
         else:
             label_parts = [technique.short_name]
 
+        if len(experiment.compartments) <= 1:
+            bioreplicate_label = f"<b>{bioreplicate.name}</b>"
+        else:
+            bioreplicate_label = f"<b>{bioreplicate.name}<sub>{compartment.name}</sub></b>"
+
         if technique.subjectType == 'bioreplicate':
             label_parts.append('of the')
-            label_parts.append(f"<b>{subject.name}<sub>{compartment.name}</sub></b>")
+            label_parts.append(bioreplicate_label)
             label_parts.append('community')
         elif technique.subjectType == 'metabolite':
             label_parts.append('in')
-            label_parts.append(f"{bioreplicate.name}<sub>{compartment.name}</sub>")
+            label_parts.append(bioreplicate_label)
         else:
             label_parts.append('of')
             label_parts.append(f"<b>{subject.name}</b>")
             label_parts.append('in')
-            label_parts.append(f"{bioreplicate.name}<sub>{compartment.name}</sub>")
+            label_parts.append(bioreplicate_label)
 
         label = ' '.join(label_parts)
 
