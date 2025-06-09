@@ -12,7 +12,6 @@ from initialization.global_handlers import init_global_handlers
 from initialization.template_filters import init_template_filters
 from initialization.admin import init_admin
 from initialization.celery import init_celery
-from initialization.debug_toolbar import init_debug_toolbar
 
 
 def create_app():
@@ -31,7 +30,6 @@ def create_app():
     app = init_template_filters(app)
     app = init_admin(app)
     app = init_celery(app)
-    app = init_debug_toolbar(app)
 
     init_plotly()
 

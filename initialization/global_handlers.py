@@ -1,14 +1,17 @@
 from uuid import uuid4
 
 from flask import (
+    current_app,
     g,
-    session,
-    render_template,
     redirect,
+    render_template,
+    request,
+    session,
     url_for,
 )
 import sqlalchemy as sql
 import sqlalchemy.exc as sql_exceptions
+from flask_sqlalchemy.record_queries import get_recorded_queries
 
 from db import get_connection, FLASK_DB
 from app.model.orm import User
@@ -39,6 +42,9 @@ def _make_session_permanent():
 
 
 def _open_db_connection():
+    if request.endpoint == 'static':
+        return
+
     if 'db_conn' not in g:
         g.db_conn = get_connection()
 
@@ -47,6 +53,9 @@ def _open_db_connection():
 
 
 def _fetch_user():
+    if request.endpoint == 'static':
+        return
+
     if 'user' not in g:
         if 'user_uuid' in session:
             user_uuid = session['user_uuid']
@@ -64,6 +73,21 @@ def _fetch_user():
 
 
 def _close_db_connection(response):
+    if request.endpoint == 'static':
+        return response
+
+    if current_app.config['SQLALCHEMY_RECORD_QUERIES']:
+        import sqlparse
+
+        recorded_queries = list(get_recorded_queries())
+
+        for query_info in recorded_queries:
+            # print(sqlparse.format(query_info.statement, reindent=True))
+            duration_ms = round((query_info.end_time - query_info.start_time) * 1_000, 2)
+            current_app.logger.info(f"[SQL {duration_ms}ms] " + query_info.statement)
+
+        current_app.logger.info(f"SQL query count: {len(recorded_queries)}")
+
     db_conn = g.pop('db_conn', None)
     if db_conn is not None:
         db_conn.close()
