@@ -24,6 +24,7 @@ gunicorn
 requests
 watchdog
 markdown-it-py
+beautifulsoup4
 
 # Database
 sqlalchemy
