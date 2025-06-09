@@ -1,4 +1,5 @@
 {% from 'utils/_post_button.html' import post_button %}
+{% from 'utils/_strain_link.html' import render_strain_link %}
 
 {% extends '_layout.html' %}
 
@@ -76,11 +77,7 @@
 
       <ul>
         {% for strain in custom_strains: %}
-          <li>
-            <a href="{{ url_for('strain_show_page', id=strain.id) }}">
-              {{ strain.name }}
-            </a>
-          </li>
+          <li>{{ render_strain_link(strain) }}</li>
         {% endfor %}
       </ul>
     {% endif %}

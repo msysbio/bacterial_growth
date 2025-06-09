@@ -7,16 +7,7 @@ from flask import (
 )
 
 from db import get_connection
-from app.model.orm import (
-    Taxon,
-    Strain,
-)
-
-
-def strain_show_page(id):
-    strain = g.db_session.get_one(Strain, id)
-
-    return render_template("pages/strains/show.html", strain=strain)
+from app.model.orm import Taxon
 
 
 def taxa_completion_json():

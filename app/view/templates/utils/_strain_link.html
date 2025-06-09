@@ -1,0 +1,14 @@
+{% macro render_strain_link(strain) %}
+  {% if strain.defined: %}
+    <a target="_blank" rel="noreferrer" href="{{ strain.NCBId|ncbi_url }}">
+      {{ strain.name }}
+    </a>
+  {% else: %}
+    {{ strain.name }}
+    (from <a target="_blank" rel="noreferrer" href="{{ strain.NCBId|ncbi_url }}">NCBI:{{ strain.NCBId }}</a>)
+    {%- if strain.description: -%}
+      <br>
+      {{ strain.description }}
+    {% endif %}
+  {% endif %}
+{% endmacro %}

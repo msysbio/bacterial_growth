@@ -1,5 +1,6 @@
 {% from 'utils/_dataframe.html' import render_dataframe %}
 {% from 'utils/_time_tag.html' import time_tag %}
+{% from 'utils/_strain_link.html' import render_strain_link %}
 {% from 'pages/studies/_experiments_toc.html' import render_experiments_toc %}
 
 {% extends '_layout.html' %}
@@ -93,11 +94,7 @@
 
               <ol>
                 {% for strain in experiment.community.get_strains(g.db_session): %}
-                  <li>
-                    <a href="{{ url_for('strain_show_page', id=strain.id) }}">
-                      {{ strain.name }}
-                    </a>
-                  </li>
+                  <li>{{ render_strain_link(strain) }}</li>
                 {% endfor %}
               </ol>
 

@@ -37,6 +37,8 @@ a[target="_blank"]::after {
   margin-left: 0.1em;
   background-size: 100%;
   background-image: url("/static/images/external-link.svg");
+  vertical-align: middle;
+  opacity: 0.7;
 }
 
 #page-sidebar {
