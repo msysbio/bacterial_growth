@@ -132,9 +132,9 @@
                     <ul class="measurement-techniques">
                       {% for measurement_context in bioreplicate.measurementContexts: %}
                         <li class="measurement-context-container">
-                          {% set subject = measurement_context.get_subject(g.db_session) %}
+                          {% set subject      = measurement_context.get_subject(g.db_session) %}
                           {% set measurements = measurement_context.measurements %}
-                          {% set technique = measurement_context.technique %}
+                          {% set technique    = measurement_context.technique %}
 
                           <div class="js-table-row">
                             <span class="js-compare-container" data-context-ids="{{ measurement_context.id }}">

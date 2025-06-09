@@ -99,17 +99,27 @@ class MeasurementContext(OrmBase):
         return label
 
     def get_subject(self, db_session):
+        if not hasattr(db_session, '_measurement_subject_cache'):
+            setattr(db_session, '_measurement_subject_cache', {})
+
+        cache_key = (self.subjectType, self.subjectId)
+        if cache_key in db_session._measurement_subject_cache:
+            return db_session._measurement_subject_cache[cache_key]
+
         from app.model.orm import Metabolite, Strain, Bioreplicate
 
         if self.subjectType == 'metabolite':
-            return db_session.scalars(
+            subject = db_session.scalars(
                 sql.select(Metabolite)
                 .where(Metabolite.chebiId == self.subjectId)
                 .limit(1)
             ).one_or_none()
         elif self.subjectType == 'strain':
-            return db_session.get(Strain, self.subjectId)
+            subject = db_session.get(Strain, self.subjectId)
         elif self.subjectType == 'bioreplicate':
-            return db_session.get(Bioreplicate, self.subjectId)
+            subject = db_session.get(Bioreplicate, self.subjectId)
         else:
             raise ValueError(f"Unknown subject type: {self.subjectType}")
+
+        db_session._measurement_subject_cache[cache_key] = subject
+        return db_session._measurement_subject_cache[cache_key]

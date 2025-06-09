@@ -13,6 +13,7 @@ from sqlalchemy.sql.expression import literal
 
 import app.model.lib.study_dfs as study_dfs
 from app.model.orm import (
+    Bioreplicate,
     Experiment,
     Measurement,
     MeasurementTechnique,
@@ -33,7 +34,24 @@ import app.model.lib.util as util
 
 
 def study_show_page(studyId):
-    study = _fetch_study(studyId, check_user_visibility=False)
+    study = _fetch_study(
+        studyId,
+        check_user_visibility=False,
+        sql_options=(
+            sql.orm.selectinload(
+                Study.experiments,
+                Experiment.bioreplicates,
+                Bioreplicate.measurementContexts,
+                MeasurementContext.technique,
+            ),
+            sql.orm.selectinload(
+                Study.experiments,
+                Experiment.bioreplicates,
+                Bioreplicate.measurementContexts,
+                MeasurementContext.measurements,
+            ),
+        )
+    )
 
     if study.visible_to_user(g.current_user):
         return render_template("pages/studies/show.html", study=study)
@@ -272,10 +290,13 @@ def study_modeling_chart_fragment(studyId, measurementContextId):
     )
 
 
-def _fetch_study(studyId, check_user_visibility=True):
+def _fetch_study(studyId, check_user_visibility=True, sql_options=None):
+    sql_options = sql_options or ()
+
     study = g.db_session.scalars(
         sql.select(Study)
         .where(Study.studyId == studyId)
+        .options(*sql_options)
         .limit(1)
     ).one()
 
