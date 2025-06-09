@@ -29,6 +29,16 @@ a:hover {
   color: #0060df;
 }
 
+a[target="_blank"]::after {
+  content: '';
+  display: inline-block;
+  width: 0.9em;
+  height: 0.9em;
+  margin-left: 0.1em;
+  background-size: 100%;
+  background-image: url("/static/images/external-link.svg");
+}
+
 #page-sidebar {
   position: fixed;
   width: var(--sidebar-width);
