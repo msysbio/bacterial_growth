@@ -35,7 +35,8 @@ def init_config(app):
             ASSETS_DEBUG=False,
             TEMPLATES_AUTO_RELOAD=False,
             EXPLAIN_TEMPLATE_LOADING=False,
-            WTF_CSRF_ENABLED = False
+            WTF_CSRF_ENABLED=False,
+            SECRET_KEY='testing_key',
         )
     elif app_env == 'production':
         app.config.update(
