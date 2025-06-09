@@ -47,7 +47,8 @@ class TestStudyDsf(unittest.TestCase):
             AND studyId IN (
                 SELECT DISTINCT studyId
                 FROM StudyMetabolites
-                WHERE LOWER(name) LIKE '%acetyl%'
+                INNER JOIN Metabolites ON Metabolites.chebiId = StudyMetabolites.chebi_id
+                WHERE LOWER(Metabolites.name) LIKE '%acetyl%'
             )
         """)
 
