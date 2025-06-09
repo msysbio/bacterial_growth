@@ -1,7 +1,7 @@
-# TODO (2025-05-17) CFUs
 MEASUREMENT_RATIOS = {
     # (Source,   Target):     source * ratio = target
     ('Cells/μL', 'Cells/mL'): 1_000,
+    ('CFUs/μL',  'CFUs/mL'):  1_000,
     ('mM',       'μM'):       1_000,
     ('mM',       'nM'):       1_000_000,
     ('mM',       'pM'):       1_000_000_000,
