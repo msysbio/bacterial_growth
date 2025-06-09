@@ -11,8 +11,9 @@ def init_config(app):
     log_level = os.getenv('LOG_LEVEL', None)
     timing    = os.getenv('TIME')
 
-    # Load .env file from local directory
-    load_dotenv('.env')
+    # Load .env file from local directory, except in test mode
+    if app_env != 'test':
+        load_dotenv('.env')
 
     # Load env variables starting with "MGROWTHDB_" into the config
     app.config.from_prefixed_env('MGROWTHDB')
