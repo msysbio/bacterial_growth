@@ -40,8 +40,6 @@ def persist_submission_to_database(submission_form):
     if errors:
         return errors
 
-    # TODO (2025-04-15) Simpler transaction handling
-
     with get_transaction() as db_transaction:
         db_trans_session = get_session(db_transaction)
 

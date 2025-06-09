@@ -74,5 +74,3 @@ def convert_time(time, source, target):
         raise ValueError(f"Conversion from seconds to {target} unsupported")
 
     return round(result, 2)
-
-

@@ -11,8 +11,6 @@ from wtforms.validators import DataRequired
 
 from app.view.forms.base_form import BaseForm
 
-# TODO (2024-09-30) Extract types of vessels etc into enums in the database for easy model lookup
-
 
 class UploadStep3Form(BaseForm):
 
