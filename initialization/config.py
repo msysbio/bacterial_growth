@@ -25,7 +25,7 @@ def init_config(app):
         app.config.update(
             DEBUG=True,
             ASSETS_DEBUG=False,
-            SQLALCHEMY_RECORD_QUERIES=True,
+            SQLALCHEMY_RECORD_QUERIES=False,
             TEMPLATES_AUTO_RELOAD=True,
             EXPLAIN_TEMPLATE_LOADING=False,
         )
@@ -37,6 +37,8 @@ def init_config(app):
             EXPLAIN_TEMPLATE_LOADING=False,
             WTF_CSRF_ENABLED=False,
             SECRET_KEY='testing_key',
+            SERVER_NAME='',
+            PREFERRED_URL_SCHEME='http://',
         )
     elif app_env == 'production':
         app.config.update(

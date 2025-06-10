@@ -2,13 +2,17 @@ import tests.init  # noqa: F401
 
 import unittest
 
-from bs4 import BeautifulSoup
-
 from tests.page_test import PageTest
 from app.model.lib.dev import bootstrap_study
 
 
 class TestSearch(PageTest):
+    def setUp(self):
+        super().setUp()
+
+        self._bootstrap_taxa()
+        self._bootstrap_metabolites()
+
     def test_no_query(self):
         bootstrap_study(self.db_session, 'synthetic_gut', 'test_user')
         bootstrap_study(self.db_session, 'ri_bt_bh_in_chemostat_controls', 'test_user')

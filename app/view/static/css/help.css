@@ -1,4 +1,12 @@
 .help-page {
+  .highlight {
+    background-color: #fafa44;
+  }
+
+  .page-list {
+    transition: opacity var(--transition-length) ease;
+  }
+
   h2 {
     border-bottom: 2px solid var(--light-blue);
     padding-bottom: 4px;
@@ -15,6 +23,10 @@
   }
 
   ul {
-    padding-left: 10px;
+    padding-left: 20px;
+
+    li {
+      margin-top: 10px;
+    }
   }
 }

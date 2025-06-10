@@ -48,11 +48,11 @@ class PageTest(DatabaseTest):
         self.app    = create_app()
         self.client = self.app.test_client()
 
-        # Bootstrap taxa:
+    def _bootstrap_taxa(self):
         for ncbi_id, name in TAXON_NAMES.items():
             self.create_taxon(ncbiId=ncbi_id, name=name)
 
-        # Bootstrap metabolites:
+    def _bootstrap_metabolites(self):
         for chebi_id, name in METABOLITE_NAMES.items():
             self.create_metabolite(chebiId=chebi_id, name=name)
 

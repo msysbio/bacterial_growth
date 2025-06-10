@@ -29,7 +29,7 @@ $.fn.ajaxSubmit = function(params) {
   return $.ajax({
     url: $form.prop('action') + urlQuery,
     dataType: 'html',
-    method: 'POST',
+    method: $form.prop('method'),
     data: $form.serializeArray(),
     ...params
   });

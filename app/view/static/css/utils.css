@@ -6,6 +6,10 @@
   display: none !important;
 }
 
+.loading {
+  opacity: 0.5;
+}
+
 .full {
   width: 100%;
 }
