@@ -1,4 +1,9 @@
 .help-page {
+  h2 {
+    border-bottom: 2px solid var(--light-blue);
+    padding-bottom: 4px;
+  }
+
   table {
     border-collapse: collapse;
 
@@ -7,9 +12,9 @@
       border: 1px solid var(--border-color);
       vertical-align: top;
     }
+  }
 
   ul {
     padding-left: 10px;
-  }
   }
 }
