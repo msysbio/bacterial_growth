@@ -13,21 +13,25 @@ class TestSearch(PageTest):
         bootstrap_study(self.db_session, 'synthetic_gut', 'test_user')
         bootstrap_study(self.db_session, 'ri_bt_bh_in_chemostat_controls', 'test_user')
 
-        response = self.client.post('/search/', data={
-            'clauses-0-value': 'Synthetic human gut',
-        })
+        response = self.client.get('/search/')
         response_text = self._get_text(response)
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("Synthetic human gut bacterial community", response_text)
         self.assertIn("RI, BT and BH in chemostat: Controls", response_text)
 
+        response = self.client.get('/search/', query_string={'clauses-0-value': ''})
+        response_text = self._get_text(response)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Synthetic human gut bacterial community", response_text)
+        self.assertIn("RI, BT and BH in chemostat: Controls", response_text)
 
     def test_basic_query(self):
         bootstrap_study(self.db_session, 'synthetic_gut', 'test_user')
         bootstrap_study(self.db_session, 'ri_bt_bh_in_chemostat_controls', 'test_user')
 
-        response = self.client.post('/search/', data={
+        response = self.client.get('/search/', query_string={
             'clauses-0-option': 'Study Name',
             'clauses-0-value': 'Synthetic human gut',
         })
@@ -37,7 +41,7 @@ class TestSearch(PageTest):
         self.assertIn("Synthetic human gut bacterial community", response_text)
         self.assertNotIn("RI, BT and BH in chemostat: Controls", response_text)
 
-        response = self.client.post('/search/', data={
+        response = self.client.get('/search/', query_string={
             'clauses-0-option': 'Study Name',
             'clauses-0-value': 'chemostat',
         })

@@ -16,75 +16,78 @@ def dynamical_query(all_advance_query):
 
     for query_dict in all_advance_query:
         where_clause = ""
-        if query_dict['option']:
-            if query_dict['option'] == 'Project Name':
-                project_name = query_dict['value'].strip().lower()
-                if project_name != '':
-                    where_clause = f"""
-                    FROM Studies
-                    WHERE projectUniqueID IN (
-                        SELECT projectUniqueID
-                        FROM Projects
-                        WHERE LOWER(projectName) LIKE '%{project_name}%'
-                    )
-                    """
-            elif query_dict['option'] == 'Project ID':
-                project_id = query_dict['value']
+
+        if not query_dict['option']:
+            query_dict['option'] = 'Study Name'
+
+        if query_dict['option'] == 'Project Name':
+            project_name = query_dict['value'].strip().lower()
+            if project_name != '':
                 where_clause = f"""
                 FROM Studies
                 WHERE projectUniqueID IN (
                     SELECT projectUniqueID
                     FROM Projects
-                    WHERE projectId = '{project_id}'
+                    WHERE LOWER(projectName) LIKE '%{project_name}%'
                 )
                 """
-            elif query_dict['option'] == 'Study Name':
-                study_name = query_dict['value'].strip().lower()
-                where_clause = f"""
-                    FROM Studies
-                    WHERE LOWER(studyName) LIKE '%{study_name}%'
-                """
-            elif query_dict['option'] == 'Study ID':
-                study_id = query_dict['value']
-                where_clause = f"""
+        elif query_dict['option'] == 'Project ID':
+            project_id = query_dict['value']
+            where_clause = f"""
+            FROM Studies
+            WHERE projectUniqueID IN (
+                SELECT projectUniqueID
+                FROM Projects
+                WHERE projectId = '{project_id}'
+            )
+            """
+        elif query_dict['option'] == 'Study Name':
+            study_name = query_dict['value'].strip().lower()
+            where_clause = f"""
                 FROM Studies
-                WHERE studyId = '{study_id}'
-                """
-            elif query_dict['option'] == 'Microbial Strain':
-                microb_strain = query_dict['value'].strip().lower()
-                where_clause = f"""
-                FROM Strains
-                WHERE LOWER(name) LIKE '%{microb_strain}%'
-                """
-            elif query_dict['option'] == 'NCBI ID':
-                microb_ID = query_dict['value']
-                where_clause = f"""
-                FROM Strains
-                WHERE NCBId = '{microb_ID}'
-                """
-            elif query_dict['option'] == 'Metabolites':
-                metabo = query_dict['value'].strip().lower()
-                where_clause = f"""
-                FROM StudyMetabolites
-                INNER JOIN Metabolites ON Metabolites.chebiId = StudyMetabolites.chebi_id
-                WHERE LOWER(Metabolites.name) LIKE '%{metabo}%'
-                """
-            elif query_dict['option'] == 'chEBI ID':
-                chebi_id = query_dict['value']
+                WHERE LOWER(studyName) LIKE '%{study_name}%'
+            """
+        elif query_dict['option'] == 'Study ID':
+            study_id = query_dict['value']
+            where_clause = f"""
+            FROM Studies
+            WHERE studyId = '{study_id}'
+            """
+        elif query_dict['option'] == 'Microbial Strain':
+            microb_strain = query_dict['value'].strip().lower()
+            where_clause = f"""
+            FROM Strains
+            WHERE LOWER(name) LIKE '%{microb_strain}%'
+            """
+        elif query_dict['option'] == 'NCBI ID':
+            microb_ID = query_dict['value']
+            where_clause = f"""
+            FROM Strains
+            WHERE NCBId = '{microb_ID}'
+            """
+        elif query_dict['option'] == 'Metabolites':
+            metabo = query_dict['value'].strip().lower()
+            where_clause = f"""
+            FROM StudyMetabolites
+            INNER JOIN Metabolites ON Metabolites.chebiId = StudyMetabolites.chebi_id
+            WHERE LOWER(Metabolites.name) LIKE '%{metabo}%'
+            """
+        elif query_dict['option'] == 'chEBI ID':
+            chebi_id = query_dict['value']
 
-                if not chebi_id.startswith('CHEBI:'):
-                    chebi_id = f"CHEBI:{chebi_id}"
+            if not chebi_id.startswith('CHEBI:'):
+                chebi_id = f"CHEBI:{chebi_id}"
 
-                where_clause = f"""
-                FROM StudyMetabolites
-                WHERE chebi_id = '{chebi_id}'
-                """
-            elif query_dict['option'] == 'pH':
-                start, end = query_dict['value']
-                where_clause = f"""
-                FROM Compartments
-                WHERE initialPh BETWEEN {start} AND {end}
-                """
+            where_clause = f"""
+            FROM StudyMetabolites
+            WHERE chebi_id = '{chebi_id}'
+            """
+        elif query_dict['option'] == 'pH':
+            start, end = query_dict['value']
+            where_clause = f"""
+            FROM Compartments
+            WHERE initialPh BETWEEN {start} AND {end}
+            """
         logic_add = ""
         if 'logic_operator' in query_dict:
             if query_dict['logic_operator'] == 'AND':

@@ -4,6 +4,9 @@ from wtforms.validators import Optional
 
 
 class SearchFormClause(FlaskForm):
+    class Meta:
+        csrf = False
+
     option = SelectField('option', choices=[
         'Study Name',
         'Study ID',

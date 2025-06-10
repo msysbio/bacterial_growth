@@ -21,9 +21,7 @@
       </p>
 
       <p>
-        <form action="{{ url_for('search_index_page') }}" method="POST" class="simple-form">
-          {{ form.csrf_token }}
-
+        <form action="{{ url_for('search_index_page') }}" class="simple-form">
           {% for clause in form.clauses: %}
 
             <div class="form-row clause">

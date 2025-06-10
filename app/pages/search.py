@@ -6,6 +6,7 @@ other criteria.
 from flask import (
     g,
     render_template,
+    request,
 )
 import sqlalchemy as sql
 
@@ -18,14 +19,16 @@ from app.model.orm import (
 
 
 def search_index_page():
-    form = SearchForm()
+    form = SearchForm(request.args)
 
     template_clause = SearchFormClause()
     results = []
 
-    if form.validate_on_submit():
-        query = study_dfs.dynamical_query(form.data['clauses'])
+    if form.data['clauses'] and form.data['clauses'][0]['value']:
+        if not form.data['clauses'][0]['option']:
+            form.data
 
+        query = study_dfs.dynamical_query(form.data['clauses'])
         studyIds = [studyId for (studyId,) in g.db_conn.execute(sql.text(query))]
 
         if len(studyIds) == 0:
