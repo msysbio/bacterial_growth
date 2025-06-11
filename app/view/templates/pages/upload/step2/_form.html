@@ -60,14 +60,14 @@
       <template class="strain-list-item">
         <li>
           <strong>${name}</strong>
-          (<a href="https://www.ncbi.nlm.nih.gov/datasets/taxonomy/${id}/" target="_blank">NCBI:${id}</a>)
+          ({{ "https://www.ncbi.nlm.nih.gov/datasets/taxonomy/${id}/"|external_link("NCBI:${id}") }})
         </li>
       </template>
 
       <template class="new-strain-parent-preview">
         <div>
           Parent strain: <strong>${name}</strong>
-          (<a href="https://www.ncbi.nlm.nih.gov/datasets/taxonomy/${id}/" target="_blank">NCBI:${id}</a>)
+          ({{ "https://www.ncbi.nlm.nih.gov/datasets/taxonomy/${id}/"|external_link("NCBI:${id}") }})
         </div>
       </template>
 

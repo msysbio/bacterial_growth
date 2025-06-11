@@ -69,7 +69,7 @@
           In order to upload your data, please
           <a href="{{ url_for("user_login_page") }}">log in</a>
           to the application using your
-          <a href="https://orcid.org/" target="_blank" rel="noreferrer">ORCID iD</a>.
+          {{ "https://orcid.org/"|external_link("ORCID iD") }}.
         </p>
       {% endif %}
 

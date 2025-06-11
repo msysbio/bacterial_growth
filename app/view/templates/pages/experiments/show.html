@@ -16,7 +16,7 @@
 
       <p class="small">
         {% if study.studyURL: %}
-          <strong>Publication URL</strong>: {{ experiment.study.studyURL|urlize(target="_blank") }}
+          <strong>Publication URL</strong>: {{ experiment.study.studyURL|external_link }}
           <br>
         {% endif %}
       </p>
@@ -39,9 +39,7 @@
 
               Medium:
               {% if compartment.mediumUrl: %}
-                <a target="_blank" href="{{ compartment.mediumUrl }}">
-                  {{ compartment.mediumName }}
-                </a>
+                {{ compartment.mediumUrl|external_link(compartment.mediumName) }}
               {% else: %}
                 {{ compartment.mediumName }}
               {% endif %}

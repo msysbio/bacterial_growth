@@ -22,8 +22,8 @@
 
     {% if result.studyURL: %}
       <p>
-        <strong>URL</strong>:
-        <a target="_blank" href="{{ result.studyURL }}">{{ result.studyURL }}</a>
+        <strong>Publication URL</strong>:
+        {{ result.studyURL|external_link() }}
       </p>
     {% endif %}
 
@@ -57,11 +57,7 @@
           <td>
             <ul>
               {% for metabolite in result.metabolites: %}
-                <li>
-                  <a href="{{ metabolite.chebiId|chebi_url }}" target="_blank" rel="noreferrer">
-                    {{ metabolite.name }}
-                  </a>
-                </li>
+                <li>{{ metabolite.chebiId|chebi_url|external_link(metabolite.name) }}</li>
               {% endfor %}
             </ul>
           </td>

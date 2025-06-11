@@ -29,7 +29,7 @@ a:hover {
   color: #0060df;
 }
 
-a[target="_blank"]::after {
+a.external::after {
   content: '';
   display: inline-block;
   width: 0.9em;

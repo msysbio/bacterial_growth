@@ -29,8 +29,7 @@
         by different experimental conditions and characteristics like the
         microbial strains or metabolites that were analyzed in the study.
         All of the data at µGrowthDB is publicly available for everyone.
-
-        <a target="_blank" href="{{ url_for('help_show_page', name='searching-for-studies') }}">Read more</a>
+        {{ "searching-for-studies"|help_link("Read more") }}.
       </p>
 
       <h3>
@@ -48,10 +47,10 @@
 
       <p>
         We allow researchers to authenticate themselves using
-        <a href="https://orcid.org/" target="_blank" rel="noreferrer">ORCID iD</a>
+        {{ "https://orcid.org/"|external_link("ORCID iD") }}
         and upload their experimental data by following a step-by-step process
         that ensures it fits a standardized structure.
-        <a target="_blank" href="{{ url_for('help_show_page', name='uploading-process') }}">Read more</a>
+        {{ "uploading-process"|help_link("Read more") }}.
       </p>
 
       <h3>
@@ -68,11 +67,10 @@
 
       <p>
         Study owners can fit select growth models to their data through the web interface, courtesy of the
-        <a href="https://cran.r-project.org/web/packages/growthrates/" target="_blank" rel="noreferrer">
-          growthrates R package
-        </a>. Growth parameters can be downloaded in CSV format.
+        {{ "https://cran.r-project.org/web/packages/growthrates/"|external_link("growthrates R package") }}.
+        Growth parameters can be downloaded in CSV format.
 
-        <a target="_blank" href="{{ url_for('help_show_page', name='data-analysis') }}">Read more</a>
+        {{ "data-analysis"|help_link("Read more") }}.
       </p>
     </article>
   </div>

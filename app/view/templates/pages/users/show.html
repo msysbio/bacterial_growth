@@ -16,9 +16,7 @@
       {{ post_button("Log out", url_for("user_logout_action"), class="flex-right") }}
     </div>
 
-    <p>
-      ORCID: {{ g.current_user.orcidUrl|urlize(target="_blank", rel="noreferrer") }}
-    </p>
+    <p>ORCID: {{ g.current_user.orcidUrl|external_link() }}</p>
 
     {% include 'shared/flashes.html' %}
 
