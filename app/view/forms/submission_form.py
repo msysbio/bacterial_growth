@@ -24,14 +24,7 @@ DEFAULT_STUDY_DESIGN = {
     'project': {'name': None, 'description': None},
     'study':   {'name': None, 'description': None, 'url': None},
 
-    'vessel_type':     None,
-    'bottle_count':    None,
-    'plate_count':     None,
-    'vessel_count':    None,
-    'column_count':    None,
-    'row_count':       None,
-    'timepoint_count': None,
-    'time_units':      None,
+    'time_units': None,
 
     'strains':        [],
     'custom_strains': [],
@@ -142,6 +135,8 @@ class SubmissionForm:
 
     def update_study_design(self, data):
         study_design = {**self.submission.studyDesign, **data}
+        if 'csrf_token' in study_design:
+            del study_design['csrf_token']
 
         if study_design['vessel_type'] == 'bottles':
             study_design['vessel_count'] = study_design['bottle_count']
@@ -220,23 +215,6 @@ class SubmissionForm:
             return ''
         else:
             return f"{dimensions} {vessel_name}"
-
-    def timepoint_description(self):
-        timepoint_count = int(self.submission.studyDesign['timepoint_count'])
-        if timepoint_count < 1:
-            return ''
-
-        long_time_units = None
-        match self.submission.studyDesign['time_units']:
-            case 'd': long_time_units = 'days'
-            case 'h': long_time_units = 'hours'
-            case 'm': long_time_units = 'minutes'
-            case 's': long_time_units = 'seconds'
-
-        if long_time_units is None:
-            return ''
-        else:
-            return f"{timepoint_count} time points measured in {long_time_units}"
 
     def technique_descriptions(self):
         ordering = ('bioreplicate', 'strain', 'metabolite')

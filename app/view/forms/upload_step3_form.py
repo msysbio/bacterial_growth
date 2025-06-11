@@ -23,6 +23,6 @@ class UploadStep3Form(BaseForm):
         units         = StringField('units', validators=[DataRequired()])
         description   = StringField('description')
         includeStd    = BooleanField('includeStd')
-        metaboliteIds = SelectMultipleField('metaboliteIds')
+        metaboliteIds = SelectMultipleField('metaboliteIds', choices=[], validate_choice=False)
 
     techniques = FieldList(FormField(TechniqueForm))

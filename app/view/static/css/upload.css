@@ -115,6 +115,8 @@
     }
 
     .preview {
+      transition: opacity var(--transition-length) ease;
+
       .header {
         display: flex;
         flex-orientation: row;

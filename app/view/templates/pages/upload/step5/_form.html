@@ -12,15 +12,21 @@
     <p>
       Organize the data you've entered so far into experiments. Each experiment
       has a single community, but may have multiple separate compartments that
-      are being measured.
+      are being measured. Pick the time unit that you will use when upload
+      measurements:
     </p>
+
+    <div class="form-row flex-row">
+      <label>
+        <div class="required">Time units</div>
+        {{ upload_form['timeUnits'](class='form-input-blue form-input-full') }}
+      </label>
+    </div>
 
     <p>
       For each experiment, name the biological replicates of the experimental
       design. These will show up as rows in the data spreadsheet.
     </p>
-
-    <br>
 
     <div class="js-subform-list flex-column flex-gap-10">
       {% include 'pages/upload/step5/_subform_list.html' %}

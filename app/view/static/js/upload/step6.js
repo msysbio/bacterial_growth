@@ -42,8 +42,10 @@ Page('.upload-page .step-content.step-6.active', function($step6) {
     let $fileInput = $('#data-template-input');
     let formData   = new FormData();
     let file       = $fileInput[0].files[0];
+    let $preview   = $step6.find('.js-preview');
 
     formData.append("file", file, file.name);
+    $preview.addClass('loading');
 
     $.ajax({
       type: 'POST',
@@ -53,9 +55,8 @@ Page('.upload-page .step-content.step-6.active', function($step6) {
       contentType: false,
       processData: false,
       success: function(response) {
-        let $preview = $step6.find('.js-preview');
-
         $preview.html(response);
+        $preview.removeClass('loading');
         $preview.find('select').trigger('change');
       }
     })

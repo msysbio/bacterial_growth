@@ -185,7 +185,7 @@ def _save_study(db_session, submission_form):
         'studyURL':         submission.studyDesign['study'].get('url', ''),
         'studyUniqueID':    submission.studyUniqueID,
         'projectUniqueID':  submission.projectUniqueID,
-        'timeUnits':        submission.studyDesign['time_units'],
+        'timeUnits':        submission.studyDesign['timeUnits'],
     }
 
     if submission_form.type != 'update_study':

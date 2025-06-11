@@ -18,8 +18,7 @@
     <div class="form-row">
       <label>
         <div class="required">Name</div>
-        {# Note: Have to access the input using [], since there is an existing `.name` attribute #}
-        {{ form['name'](class='form-input-blue form-input-full') }}
+        {{ form['name'](class='form-input-blue form-input-full', placeholder="Full") }}
       </label>
 
       <label class="full">

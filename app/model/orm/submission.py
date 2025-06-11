@@ -51,7 +51,7 @@ class Submission(OrmBase):
         return sum([
             1 if self.projectUniqueID and self.studyUniqueID else 0,
             1 if len(self.studyDesign.get('strains', [])) + len(self.studyDesign.get('custom_strains', [])) > 0 else 0,
-            1 if len(self.studyDesign.get('techniques', [])) > 0 and self.studyDesign.get('timepoint_count', 0) else 0,
+            1 if len(self.studyDesign.get('techniques', [])) > 0 else 0,
             1 if len(self.studyDesign.get('compartments', [])) > 0 and len(self.studyDesign.get('communities', [])) > 0 else 0,
             1 if len(self.studyDesign.get('experiments', [])) > 0 else 0,
             1 if self.dataFileId else 0,

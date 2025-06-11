@@ -173,27 +173,6 @@ class TestSubmissionForm(DatabaseTest):
         submission_form.update_study_design({'vessel_type': 'well_plates', 'row_count': None})
         self.assertEqual(submission_form.vessel_description(), "")
 
-    def test_timepoint_description(self):
-        submission_form = SubmissionForm(db_session=self.db_session)
-
-        submission_form.update_study_design({'timepoint_count': 7, 'time_units': 'h'})
-        self.assertEqual(submission_form.timepoint_description(), "7 time points measured in hours")
-
-        submission_form.update_study_design({'timepoint_count': 3, 'time_units': 'd'})
-        self.assertEqual(submission_form.timepoint_description(), "3 time points measured in days")
-
-        submission_form.update_study_design({'timepoint_count': 13, 'time_units': 'm'})
-        self.assertEqual(submission_form.timepoint_description(), "13 time points measured in minutes")
-
-        submission_form.update_study_design({'timepoint_count': 80, 'time_units': 's'})
-        self.assertEqual(submission_form.timepoint_description(), "80 time points measured in seconds")
-
-        # Invalid inputs:
-        submission_form.update_study_design({'timepoint_count': 0, 'time_units': 's'})
-        self.assertEqual(submission_form.timepoint_description(), "")
-        submission_form.update_study_design({'timepoint_count': 10, 'time_units': 'unknown'})
-        self.assertEqual(submission_form.timepoint_description(), "")
-
     def test_technique_descriptions(self):
         submission_form = SubmissionForm(db_session=self.db_session)
 
