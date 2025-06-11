@@ -16,8 +16,12 @@ def external_link(url, text=None):
     return Markup(f"""<a class="external" target="_blank" rel="noreferrer" href="{url}">{text}</a>""")
 
 
-def help_link(page_name, text=None):
+def help_link(page_name, text=None, section=None, css_class=''):
     text = text or page_name.replace('-', ' ').title()
     url = url_for('help_show_page', name=page_name)
 
-    return Markup(f"""<a target="_blank" href="{url}">{text}</a>""")
+    if section:
+        url += '#'
+        url += section
+
+    return Markup(f"""<a class="{css_class}" target="_blank" href="{url}">{text}</a>""")

@@ -17,7 +17,7 @@
 {% from 'pages/upload/_user_submissions.html' import render_user_submissions %}
 {% from 'utils/_post_button.html' import post_button %}
 
-{% macro section_link(current_step, target_step, page) %}
+{% macro section_link(current_step, target_step, page, help_section) %}
   {% if target_step != current_step %}
     <a class="section-heading" href="{{ url_for(page) }}">
       {{ caller() }}
@@ -25,6 +25,10 @@
       <img src="{{ url_for('static', filename='images/icons/edit.svg') }}" />
     </a>
   {% else %}
+    <div style="font-size: 14px; float: right">
+      {{ "uploading-process"|help_link("❓ Help", section="step-{}".format(target_step), css_class="white-button small-button") }}
+    </div>
+
     <h2 class="section-heading">
       {{ caller() }}
     </h2>
