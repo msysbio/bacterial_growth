@@ -71,12 +71,7 @@ class TestSubmissionForm(DatabaseTest):
         # First submission, creates project and study:
         submission = self.create_submission(
             studyUniqueID=s1.uuid,
-            studyDesign={
-                "vessel_type": "bottles",
-                "vessel_count": 6,
-                "timepoint_count": 6,
-                "bottle_count": 6,
-            },
+            studyDesign={'timeUnits': "m"},
         )
         self.db_session.add(submission)
         self.db_session.flush()
@@ -91,8 +86,7 @@ class TestSubmissionForm(DatabaseTest):
         })
 
         s2_study_design = submission_form.submission.studyDesign
-        self.assertEqual(s2_study_design['bottle_count'], 6)
-        self.assertEqual(s2_study_design['timepoint_count'], 6)
+        self.assertEqual(s2_study_design['timeUnits'], 'm')
 
     def test_strains(self):
         t1 = self.create_taxon(name="R. intestinalis")
@@ -149,29 +143,6 @@ class TestSubmissionForm(DatabaseTest):
             [m.name for m in submission_form.fetch_metabolites_for_technique(0)],
             ['glucose', 'trehalose'],
         )
-
-    def test_vessel_description(self):
-        submission_form = SubmissionForm(db_session=self.db_session)
-
-        submission_form.update_study_design({'vessel_type': 'bottles', 'bottle_count': 3})
-        self.assertEqual(submission_form.vessel_description(), "3 bottles")
-
-        submission_form.update_study_design({'vessel_type': 'agar_plates', 'plate_count': 5})
-        self.assertEqual(submission_form.vessel_description(), "5 agar plates")
-
-        submission_form.update_study_design({'vessel_type': 'well_plates', 'row_count': 5, 'column_count': 10})
-        self.assertEqual(submission_form.vessel_description(), "5x10 well-plates")
-
-        submission_form.update_study_design({'vessel_type': 'mini_react', 'row_count': 10, 'column_count': 12})
-        self.assertEqual(submission_form.vessel_description(), "10x12 mini-bioreactors")
-
-        # Invalid inputs:
-        submission_form.update_study_design({'vessel_type': 'incorrect', 'row_count': 10, 'column_count': 12})
-        self.assertEqual(submission_form.vessel_description(), "")
-        submission_form.update_study_design({'vessel_type': 'bottles', 'bottle_count': None})
-        self.assertEqual(submission_form.vessel_description(), "")
-        submission_form.update_study_design({'vessel_type': 'well_plates', 'row_count': None})
-        self.assertEqual(submission_form.vessel_description(), "")
 
     def test_technique_descriptions(self):
         submission_form = SubmissionForm(db_session=self.db_session)

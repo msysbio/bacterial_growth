@@ -15,13 +15,7 @@
     "74426",
     "818"
   ],
-  "row_count": null,
-  "plate_count": null,
-  "vessel_type": "bottles",
-  "bottle_count": 6,
-  "column_count": null,
-  "vessel_count": 6,
-  "timepoint_count": 6,
+  "timeUnits": "h",
   "techniques": [
     {
       "type": "fc",
@@ -60,7 +54,6 @@
       ]
     }
   ],
-  "time_units": "h",
   "communities": [
     {
       "name": "Full",
@@ -127,32 +120,13 @@
       ],
       "communityName": "Full",
       "perturbations": [],
-      "cultivationMode": "chemostat",
-      "compartmentNames": [
-        "WC"
-      ]
-    },
-    {
-      "name": "Control",
-      "description": "blank control",
-      "bioreplicates": [
-        {
-          "name": "biorepBlank",
-          "isBlank": true,
-          "position": "bottle7",
-          "isControl": true,
-          "biosampleUrl": ""
-        }
-      ],
-      "communityName": "Blank",
-      "perturbations": [],
+      "timepointCount": 6,
       "cultivationMode": "chemostat",
       "compartmentNames": [
         "WC"
       ]
     }
   ],
-  "custom_strains": [],
   "compartments": [
     {
       "H2": 10.0,
@@ -165,12 +139,13 @@
       "initialPh": 6.5,
       "mediumUrl": "",
       "mediumName": "Wilkins-Chalgren Anerobe Broth (WC)",
-      "carbonSource": true,
+      "carbonSource": false,
       "stirringMode": "",
       "stirringSpeed": null,
       "inoculumVolume": 1.0,
       "initialTemperature": 37.0,
       "inoculumConcentration": 1000000.0
     }
-  ]
+  ],
+  "custom_strains": []
 }

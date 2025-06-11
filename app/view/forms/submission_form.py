@@ -24,7 +24,7 @@ DEFAULT_STUDY_DESIGN = {
     'project': {'name': None, 'description': None},
     'study':   {'name': None, 'description': None, 'url': None},
 
-    'time_units': None,
+    'timeUnits': None,
 
     'strains':        [],
     'custom_strains': [],
@@ -138,11 +138,6 @@ class SubmissionForm:
         if 'csrf_token' in study_design:
             del study_design['csrf_token']
 
-        if study_design['vessel_type'] == 'bottles':
-            study_design['vessel_count'] = study_design['bottle_count']
-        elif study_design['vessel_type'] == 'agar_plates':
-            study_design['vessel_count'] = study_design['plate_count']
-
         self.submission.studyDesign = study_design
         flag_modified(self.submission, 'studyDesign')
 
@@ -191,30 +186,6 @@ class SubmissionForm:
     def error_messages(self):
         # Flatten messages per property:
         return list(itertools.chain.from_iterable(self.errors.values()))
-
-    def vessel_description(self):
-        study_design = self.submission.studyDesign
-
-        dimensions = None
-        if study_design['vessel_type'] in ('bottles', 'agar_plates'):
-            # one-dimensional, just return the single count:
-            dimensions = study_design['vessel_count']
-        elif study_design['vessel_type'] in ('well_plates', 'mini_react'):
-            # row x column
-            if study_design['row_count'] and study_design['column_count']:
-                dimensions = f"{study_design['row_count']}x{study_design['column_count']}"
-
-        vessel_name = None
-        match study_design['vessel_type']:
-            case 'bottles':     vessel_name = 'bottles'
-            case 'agar_plates': vessel_name = 'agar plates'
-            case 'well_plates': vessel_name = 'well-plates'
-            case 'mini_react':  vessel_name = 'mini-bioreactors'
-
-        if dimensions is None or vessel_name is None:
-            return ''
-        else:
-            return f"{dimensions} {vessel_name}"
 
     def technique_descriptions(self):
         ordering = ('bioreplicate', 'strain', 'metabolite')

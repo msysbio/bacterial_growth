@@ -13,14 +13,7 @@
     "53443",
     "818"
   ],
-  "row_count": null,
-  "column_count": null,
-  "plate_count": null,
-  "vessel_count": 6,
-  "vessel_type": "bottles",
-  "bottle_count": 6,
-  "timepoint_count": 9,
-  "time_units": "h",
+  "timeUnits": "h",
   "techniques": [
     {
       "type": "fc",
@@ -124,13 +117,13 @@
       ],
       "communityName": "Full",
       "perturbations": [],
+      "timepointCount": 9,
       "cultivationMode": "chemostat",
       "compartmentNames": [
         "WC"
       ]
     }
   ],
-  "custom_strains": [],
   "compartments": [
     {
       "H2": null,
@@ -150,5 +143,6 @@
       "initialTemperature": null,
       "inoculumConcentration": null
     }
-  ]
+  ],
+  "custom_strains": []
 }
