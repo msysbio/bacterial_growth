@@ -119,7 +119,9 @@ $.fn.initAjaxSubform = function(params) {
     e.preventDefault();
     e.stopPropagation();
 
-    $(e.currentTarget).parents('.js-subform-container').first().remove();
+    $(e.currentTarget).parents('.js-subform-container').first().fadeOut(150, function() {
+      $(this).remove();
+    });
   });
 
   $container.on('click', '.js-duplicate-trigger', function(e) {
@@ -171,6 +173,9 @@ $.fn.initAjaxSubform = function(params) {
           // Give it a different style:
           $newSubform.addClass('new');
 
+          // Add fade-in effect
+          $newSubform.hide().fadeIn(150);
+
           // Add it to the end of the list:
           $subformList.append($newSubform);
 
@@ -211,6 +216,9 @@ $.fn.initAjaxSubform = function(params) {
 
           // Add it to the end of the list:
           $subformList.append($newSubform);
+
+          // Add fade-in effect
+          $newSubform.hide().fadeIn(150);
 
           // Trigger necessary javascript
           params.initializeSubform($newSubform, subformCount);
@@ -302,6 +310,9 @@ $.fn.initClientSideSubform = function(params) {
 
     // Give it a different style:
     $newSubform.addClass('new');
+
+    // Add fade-in effect
+    $newSubform.hide().fadeIn(150);
 
     // Trigger pre-add callback
     params.beforeAdd($newSubform);
