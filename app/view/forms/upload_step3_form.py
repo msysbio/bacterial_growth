@@ -25,24 +25,4 @@ class UploadStep3Form(BaseForm):
         includeStd    = BooleanField('includeStd')
         metaboliteIds = SelectMultipleField('metaboliteIds')
 
-    vessel_type = SelectField('vessel_type', choices=[
-        ('bottles',     "Bottles"),
-        ('agar_plates', "Agar plates"),
-        ('well_plates', "Well plates"),
-        ('mini_react',  "Mini-bioreactors"),
-    ], validators=[DataRequired()])
-
-    time_units = SelectField('time_units', choices=[
-        ('h', 'Hours (h)'),
-        ('m', 'Minutes (m)'),
-        ('s', 'Seconds (s)'),
-    ])
-
-    bottle_count = IntegerField('bottle_count')
-    plate_count  = IntegerField('plate_count')
-    column_count = IntegerField('column_count')
-    row_count    = IntegerField('row_count')
-
-    timepoint_count = IntegerField('timepoint_count', validators=[DataRequired()])
-
     techniques = FieldList(FormField(TechniqueForm))

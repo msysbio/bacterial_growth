@@ -46,6 +46,8 @@ class UploadStep5Form(BaseForm):
         name        = StringField('name', validators=[DataRequired()])
         description = TextAreaField('description', validators=[DataRequired()])
 
+        # timepoint_count = IntegerField('timepoint_count', validators=[DataRequired()])
+
         cultivationMode = SelectField('cultivationMode', choices=[
             ('batch',     "Batch"),
             ('fed-batch', "Fed-batch"),
@@ -76,6 +78,11 @@ class UploadStep5Form(BaseForm):
             if len(names) == 0:
                 raise ValidationError("at least one is required")
 
+    # time_units = SelectField('time_units', choices=[
+    #     ('h', 'Hours (h)'),
+    #     ('m', 'Minutes (m)'),
+    #     ('s', 'Seconds (s)'),
+    # ])
     experiments = FieldList(FormField(ExperimentForm))
 
     def validate_experiments(self, field):

@@ -5,25 +5,19 @@
     {% set prefix = 'techniques-{}-'.format(index)  %}
   {% endif %}
 
-  <div class="subform-container box technique-container js-technique-container" data-subject-type="strain">
+  <div
+    class="subform-container box technique-container js-subform-container"
+    data-index="{{ index if index is not none else '' }}"
+    data-subject-type="strain">
     <img
         width="90"
         class="form-icon"
         alt="Strain-level measurement"
         src="/static/images/large-icons/bacteria.png" />
-
     <h3>
-      <span class="js-index">{{ "{}.".format(index + 1) if index is not none }}</span>
+      <span class="js-index">{{ index + 1 if index is not none else '' }}</span>.
       Strain-level measurement
     </h3>
-
-    <p>
-      Counts of specific strains within a vessel. Could be measured directly
-      (e.g. via fluorescence), or it could be calculated based on relative
-      measurements multiplied by total counts.
-    </p>
-
-    <br>
 
     <input type="hidden" name="{{ prefix }}subjectType" value="strain" />
 
@@ -95,18 +89,14 @@
     </div>
 
     <div class="form-row" style="margin-top: 10px">
-      <label class="full" style="align-content: center;">
+      <label
+          data-tooltip="If you have multiple technical replicates, you can submit your point estimate as the measurement and add the standard deviation in a separate column.">
         Include STD:
         <input
             type="checkbox"
             class="js-include-std"
             name="{{ prefix }}includeStd"
             {{ "checked" if data and data['includeStd'] }} />
-        <div class="help">
-          If you have multiple technical replicates, you can submit your point
-          estimate as the measurement and add the standard deviation in a
-          separate column.
-        </div>
       </label>
     </div>
 

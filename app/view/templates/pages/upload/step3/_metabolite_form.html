@@ -5,27 +5,19 @@
     {% set prefix = 'techniques-{}-'.format(index)  %}
   {% endif %}
 
-  <div class="subform-container box technique-container js-technique-container" data-subject-type="metabolite">
+  <div
+    class="subform-container box technique-container js-subform-container"
+    data-index="{{ index if index is not none else '' }}"
+    data-subject-type="metabolite">
     <img
         width="110"
         class="form-icon"
         alt="Metabolite measurement"
         src="/static/images/large-icons/trehalose.png" />
-
     <h3>
-      <span class="js-index">{{ "{}.".format(index + 1) if index is not none }}</span>
+      <span class="js-index">{{ index + 1 if index is not none else '' }}</span>.
       Metabolite measurement
     </h3>
-
-    <p>
-      Start typing the name of metabolites in the input field and pick the ones
-      the study measures. In case you do not find a specific metabolite, choose
-      the closest one from the list and leave a note in the "Description"
-      field. For more information visit the
-      <a href="https://www.ebi.ac.uk/chebi">ChEBI website</a>.
-    </p>
-
-    <br>
 
     <input type="hidden" name="{{ prefix }}type" value="metabolite" />
     <input type="hidden" name="{{ prefix }}subjectType" value="metabolite" />
@@ -77,18 +69,14 @@
     </div>
 
     <div class="form-row" style="margin-top: 10px">
-      <label class="full" style="align-content: center;">
+      <label
+          data-tooltip="If you have multiple technical replicates, you can submit your point estimate as the measurement and add the standard deviation in a separate column.">
         Include STD:
         <input
             type="checkbox"
             class="js-include-std"
             name="{{ prefix }}includeStd"
             {{ "checked" if data and data['includeStd'] }} />
-        <div class="help">
-          If you have multiple technical replicates, you can submit your point
-          estimate as the measurement and add the standard deviation in a
-          separate column.
-        </div>
       </label>
     </div>
 
@@ -99,7 +87,7 @@
       </div>
 
       <div class="no-label flex-right">
-        <a href="#" class="white-button flex-row js-remove">
+        <a href="#" class="white-button flex-row js-remove-trigger">
           <span class="icon icon-remove"></span> Remove
         </a>
       </div>

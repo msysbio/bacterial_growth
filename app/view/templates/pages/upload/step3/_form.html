@@ -3,64 +3,12 @@
 {% from 'pages/upload/step3/_metabolite_form.html' import render_metabolite_form %}
 
 {% macro render_step3_form(submission_form, upload_form) %}
-  <p>
-    Please describe the vessels (biological replicates) that you use in the
-    study and how many time-points you measured. If your experiments have
-    different time-points, please count all <em>distinct</em> times you
-    measured in your entire study.
-  </p>
-
-  <br>
-
   <form
       class="simple-form"
       action="{{ url_for('upload_step3_page') }}"
       method="POST">
 
     {{ upload_form.csrf_token }}
-
-    <div class="form-row full">
-      <label>
-        <div>Type of vessel used</div>
-        {{ upload_form.vessel_type(class='form-input-blue') }}
-      </label>
-
-      <div class="vessel-count vessel-bottles">
-        <label>
-          <div>Number of bottles</div>
-          {{ upload_form.bottle_count(class='form-input-blue') }}
-        </label>
-      </div>
-
-      <div class="vessel-count vessel-agar_plates hidden">
-        <label>
-          <div>Number of plates</div>
-          {{ upload_form.plate_count(class='form-input-blue') }}
-        </label>
-      </div>
-
-      <div class="vessel-count vessel-well_plates vessel-mini_react hidden">
-        <label>
-          <div>Number of columns</div>
-          {{ upload_form.column_count(class='form-input-blue') }}
-        </label>
-
-        <label>
-          <div>Number of rows</div>
-          {{ upload_form.row_count(class='form-input-blue') }}
-        </label>
-      </div>
-
-      <label>
-        <div>Number of measurement time-points</div>
-        {{ upload_form.timepoint_count(class='form-input-blue form-input-full') }}
-      </label>
-
-      <label>
-        <div>Time units</div>
-        {{ upload_form.time_units(class='form-input-blue form-input-full') }}
-      </label>
-    </div>
 
     <p>
       For every type of growth measurement you performed, please add a new
@@ -70,17 +18,32 @@
       techniques.
     </p>
 
-    <br>
+    <ul>
+      <li>
+        <strong>Community-level</strong>:
+        Growth measurements of entire communities of cells within the same
+        vessel compartment, or of a property of the compartment (pH).
+      </li>
+      <li>
+        <strong>Strain-level</strong>:
+        Growth measurements for individiual microbial strains within a
+        compartment. Could be measured directly (e.g. via fluorescence), or it
+        could be calculated based on relative measurements multiplied by total
+        counts.
+      </li>
+      <li>
+        <strong>Metabolites</strong>:
+        Measurements of metabolite concentrations during cell growth. In case
+        you do not find a specific metabolite, choose the closest one from the
+        list and leave a note in the "Description" field. For more information
+        visit the
+        {{ "https://www.ebi.ac.uk/chebi"|external_link("ChEBI website") }}.
+      </li>
+    </ul>
 
-    {% for technique in submission_form.submission['studyDesign']['techniques']: %}
-      {% if technique['subjectType'] == 'bioreplicate': %}
-        {{ render_bioreplicate_form(data=technique, index=loop.index0) }}
-      {% elif technique['subjectType'] == 'strain': %}
-        {{ render_strain_form(data=technique, index=loop.index0) }}
-      {% elif technique['subjectType'] == 'metabolite': %}
-        {{ render_metabolite_form(submission_form, data=technique, index=loop.index0) }}
-      {% endif %}
-    {% endfor %}
+    <div class="js-subform-list flex-column flex-gap-10">
+      {% include 'pages/upload/step3/_subform_list.html' %}
+    </div>
 
     <div class="form-row">
       <p style="margin-top: 0; align-content: center;">
@@ -88,22 +51,13 @@
       </p>
 
       <div class="flex-right flex-row flex-gap-10">
-        <a
-            href="#"
-            class="white-button flex-row js-add js-add-bioreplicate"
-            data-tooltip="Growth measurements of entire communities of cells within the same vessel compartment.">
+        <a href="#" class="white-button flex-row js-add-trigger js-add-bioreplicate">
           <span class="icon icon-add"></span> Community
         </a>
-        <a
-          href="#"
-          class="white-button flex-row js-add js-add-strains"
-          data-tooltip="Growth measurements for individiual species within a compartment.">
+        <a href="#" class="white-button flex-row js-add-trigger js-add-strains">
           <span class="icon icon-add"></span> Strains
         </a>
-        <a
-          href="#"
-          class="white-button flex-row js-add js-add-metabolites"
-          data-tooltip="Measurements of metabolite concentrations during cell growth.">
+        <a href="#" class="white-button flex-row js-add-trigger js-add-metabolites">
           <span class="icon icon-add"></span> Metabolites
         </a>
       </div>
@@ -122,10 +76,7 @@
     </template>
 
     <div class="form-row">
-      <input
-          type="submit"
-          class="form-input-blue"
-          value="Next" />
+      <input type="submit" class="form-input-blue" value="Next" />
     </div>
   </form>
 

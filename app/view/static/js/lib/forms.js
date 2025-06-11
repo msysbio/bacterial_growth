@@ -95,7 +95,7 @@ $.fn.initAjaxSubform = function(params) {
     prefixTemplate: null,
 
     // Create and return a jquery element for the new form:
-    buildSubform: function() {},
+    buildSubform: function(index, $addButton) {},
 
     // Triggered after duplication is performed, useful to reset attributes
     // that should be unique:
@@ -177,6 +177,9 @@ $.fn.initAjaxSubform = function(params) {
           // Trigger necessary javascript
           params.initializeSubform($newSubform, subformCount);
 
+          // Initialize any new tooltips:
+          initTooltips();
+
           setTimeout(function() {
             // Scroll to container:
             $(document).scrollTo($newSubform, 150, {offset: -20});
@@ -198,7 +201,7 @@ $.fn.initAjaxSubform = function(params) {
       success: function(response) {
         loadResponse(response, function($subformList, subformCount) {
           // Build up new form:
-          let $newSubform = params.buildSubform(subformCount);
+          let $newSubform = params.buildSubform(subformCount, $addButton);
 
           // Add sequential number:
           $newSubform.find('.js-index').text(`${subformCount + 1}`);
@@ -211,6 +214,9 @@ $.fn.initAjaxSubform = function(params) {
 
           // Trigger necessary javascript
           params.initializeSubform($newSubform, subformCount);
+
+          // Initialize any new tooltips:
+          initTooltips();
         });
       }
     })
@@ -237,6 +243,9 @@ $.fn.initAjaxSubform = function(params) {
 
     $subforms.each(function(index) {
       params.initializeSubform($(this), index);
+
+      // Initialize any new tooltips:
+      initTooltips();
     });
   }
 }
@@ -249,7 +258,7 @@ $.fn.initClientSideSubform = function(params) {
 
   let defaultParams = {
     // Create and return a jquery element for the new form:
-    buildSubform: function() {},
+    buildSubform: function(index, $addButton) {},
 
     // Triggered after a new form is created, before it's actually added to the
     // DOM, allows adding some placeholder data.
@@ -286,7 +295,7 @@ $.fn.initClientSideSubform = function(params) {
     let subformCount = $subformList.find('.js-subform-container').length;
 
     // Build up new form:
-    let $newSubform = params.buildSubform(subformCount);
+    let $newSubform = params.buildSubform(subformCount, $addButton);
 
     // Add sequential number:
     $newSubform.find('.js-index').text(`${subformCount + 1}`);
