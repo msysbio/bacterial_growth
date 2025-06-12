@@ -10,7 +10,6 @@ from sqlalchemy.orm import (
 )
 from sqlalchemy.schema import FetchedValue
 from sqlalchemy_utc.sqltypes import UtcDateTime
-from app.model.lib.db import execute_into_df
 
 from app.model.orm.orm_base import OrmBase
 
@@ -159,3 +158,6 @@ class MeasurementTechnique(OrmBase):
             contexts = list(group)
 
             yield ((bioreplicate, compartment), contexts)
+
+    def __str__(self):
+        return f"<MeasurementTechnique type={self.type}, id={self.id}>"

@@ -15,7 +15,6 @@ from app.model.orm import (
     ExperimentCompartment,
     Measurement,
     MeasurementContext,
-    Metabolite,
     Perturbation,
     Project,
     ProjectUser,
@@ -26,7 +25,6 @@ from app.model.orm import (
     Taxon,
 )
 from app.model.lib.util import group_by_unique_name, is_non_negative_float
-from app.model.lib.db import execute_into_df
 
 
 def persist_submission_to_database(submission_form):
@@ -39,8 +37,6 @@ def persist_submission_to_database(submission_form):
 
     if errors:
         return errors
-
-    # TODO (2025-04-15) Simpler transaction handling
 
     with get_transaction() as db_transaction:
         db_trans_session = get_session(db_transaction)
@@ -187,7 +183,7 @@ def _save_study(db_session, submission_form):
         'studyURL':         submission.studyDesign['study'].get('url', ''),
         'studyUniqueID':    submission.studyUniqueID,
         'projectUniqueID':  submission.projectUniqueID,
-        'timeUnits':        submission.studyDesign['time_units'],
+        'timeUnits':        submission.studyDesign['timeUnits'],
     }
 
     if submission_form.type != 'update_study':
@@ -446,6 +442,7 @@ def _create_average_measurements(db_session, study, experiment):
                         subject_type=subject_type
                     )
 
+
 def _create_average_measurement_context(
     db_session,
     parent_records,
@@ -496,10 +493,10 @@ def _create_average_measurement_context(
         db_session.add(measurement)
 
 
-def _find_new_strain(submission, identifier):
-    for new_strain_data in submission.studyDesign['new_strains']:
-        if new_strain_data['name'] == identifier:
-            return new_strain_data
+def _find_custom_strain(submission, identifier):
+    for custom_strain_data in submission.studyDesign['custom_strains']:
+        if custom_strain_data['name'] == identifier:
+            return custom_strain_data
     else:
         raise IndexError(f"New strain with name {repr(identifier)} not found in submission")
 
@@ -526,7 +523,7 @@ def _get_expected_column_names(submission_form):
                 if technique.includeStd:
                     strain_columns.add(f"{column} STD")
 
-            for strain in submission.studyDesign['new_strains']:
+            for strain in submission.studyDesign['custom_strains']:
                 column = technique.csv_column_name(strain['name'])
                 strain_columns.add(column)
                 if technique.includeStd:
@@ -569,7 +566,7 @@ def _build_strain(db_session, identifier, submission, study, user_uuid):
 
     elif identifier.startswith('custom|'):
         identifier = identifier.removeprefix('custom|')
-        custom_strain_data = _find_new_strain(submission, identifier)
+        custom_strain_data = _find_custom_strain(submission, identifier)
 
         strain_params = {
             'name':        custom_strain_data['name'],

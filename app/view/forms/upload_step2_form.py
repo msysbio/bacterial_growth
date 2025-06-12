@@ -21,9 +21,9 @@ class UploadStep2Form(BaseForm):
         description = TextAreaField('description')
         species     = SelectField('species', choices=[], validate_choice=False)
 
-    strains     = SelectMultipleField('strains', choices=[], validate_choice=False)
-    new_strains = FieldList(FormField(NewStrainForm))
+    strains        = SelectMultipleField('strains', choices=[], validate_choice=False)
+    custom_strains = FieldList(FormField(NewStrainForm))
 
-    def validate_new_strains(self, field):
+    def validate_custom_strains(self, field):
         names = [s['name'] for s in field.data]
         self._validate_uniqueness("Strain names are not unique", names)

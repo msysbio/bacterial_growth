@@ -7,8 +7,10 @@
 
       <li class="complete">
         <span class="icon"></span>
-        Project name:
-        <strong>{{ submission.studyDesign['project']['name'] }}</strong>
+        <span>Project name:</span>
+        <span class="truncate">
+          <strong>{{ submission.studyDesign['project']['name'] }}</strong>
+        </span>
       </li>
       <li class="complete">
         <span class="icon"></span>
@@ -16,11 +18,16 @@
         <code class="inline">{{ submission.projectUniqueID }}</code>
       </li>
       <li class="complete">
-        <span class="icon"></span> Study name: <strong>{{ submission.studyDesign['study']['name'] }}</strong>
+        <span class="icon"></span>
+        <span>Study name:</span>
+        <span class="truncate">
+          <strong>{{ submission.studyDesign['study']['name'] }}</strong>
+        </span>
       </li>
       <li class="complete">
         <span class="icon"></span>
-        Study unique ID: <code class="inline">{{ submission.studyUniqueID }}</code>
+        <span>Study unique ID:</span>
+        <code class="inline">{{ submission.studyUniqueID }}</code>
       </li>
 
     {% else %}

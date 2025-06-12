@@ -7,8 +7,8 @@
 
     <div class="form-row form-row-compact">
       <label>
-        <div class="required">Name</div>
-        {{ form['name'](class='form-input-blue form-input-full') }}
+        <div class="required">Name (max. 5 letters)</div>
+        {{ form['name'](class='form-input-blue form-input-full', placeholder="C1", maxlength=5) }}
       </label>
 
       <label>

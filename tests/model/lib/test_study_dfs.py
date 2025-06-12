@@ -3,7 +3,7 @@ import tests.init  # noqa: F401
 import unittest
 import re
 
-import app.model.lib.study_dfs as study_dfs
+from app.model.lib.search import dynamical_query
 
 
 class TestStudyDsf(unittest.TestCase):
@@ -17,39 +17,43 @@ class TestStudyDsf(unittest.TestCase):
         self.assertEqual(actual, expected)
 
     def test_dynamical_query_with_simple_arguments(self):
-        query = study_dfs.dynamical_query([
+        query, values = dynamical_query([
             {'option': 'Study Name', 'value': 'Example'}
         ])
         self.assertSqlQuery(query, """
             SELECT DISTINCT studyId
             FROM Studies
-            WHERE LOWER(studyName) LIKE '%example%'
+            WHERE LOWER(studyName) LIKE :value_0
         """)
+        self.assertEqual(values, ['%example%'])
 
-        query = study_dfs.dynamical_query([
+        query, values = dynamical_query([
             {'option': 'Microbial Strain', 'value': 'Rhodospirillum'}
         ])
         self.assertSqlQuery(query, """
             SELECT DISTINCT studyId
             FROM Strains
-            WHERE LOWER(name) LIKE '%rhodospirillum%'
+            WHERE LOWER(name) LIKE :value_0
         """)
+        self.assertEqual(values, ['%rhodospirillum%'])
 
     def test_dynamical_query_with_logic_operators(self):
-        query = study_dfs.dynamical_query([
+        query, values = dynamical_query([
             {'option': 'Study Name', 'value': 'human'},
             {'option': 'Metabolites', 'value': 'acetyl', 'logic_operator': 'AND'}
         ])
         self.assertSqlQuery(query, """
             SELECT DISTINCT studyId
             FROM Studies
-            WHERE LOWER(studyName) LIKE '%human%'
+            WHERE LOWER(studyName) LIKE :value_0
             AND studyId IN (
                 SELECT DISTINCT studyId
                 FROM StudyMetabolites
-                WHERE LOWER(name) LIKE '%acetyl%'
+                INNER JOIN Metabolites ON Metabolites.chebiId = StudyMetabolites.chebi_id
+                WHERE LOWER(Metabolites.name) LIKE :value_1
             )
         """)
+        self.assertEqual(values, ['%human%', '%acetyl%'])
 
 
 if __name__ == '__main__':

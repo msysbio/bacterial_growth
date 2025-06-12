@@ -50,9 +50,12 @@
                   {% set description = "Measurements in compartment {} of biological replicate {}".format(compartment.name, bioreplicate.name) %}
                 {% endif %}
 
-                <h4
-                    data-tooltip="{{ description }}">
-                  {{ bioreplicate.name }}<sub>{{ compartment.name }}</sub>
+                <h4 data-tooltip="{{ description }}">
+                  {% if experiment.compartments|length <= 1: %}
+                    {{ bioreplicate.name }}
+                  {% else: %}
+                    {{ bioreplicate.name }}<sub>{{ compartment.name }}</sub>
+                  {% endif %}
                 </h4>
               </div>
             {% endif %}
@@ -75,7 +78,9 @@
                     {{ "data-axis-right" if measurement_context.id in form.right_axis_ids }}
                     class="js-measurement-toggle" />
                 <label for="{{ key }}">
-                  {% if subjectType == 'bioreplicate' %}
+                  {{ subject.compartments }}
+
+                  {% if subjectType == 'bioreplicate' and experiment.compartments|length > 1: %}
                     {{ subject.name }}<sub>{{ measurement_context.compartment.name }}</sub>
                   {% else: %}
                     {{ subject.name }}

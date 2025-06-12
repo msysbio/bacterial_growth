@@ -36,15 +36,16 @@ class UploadStep5Form(BaseForm):
                 csrf = False
 
             startTimepoint = IntegerField('startTimepoint', validators=[DataRequired()])
-            description = TextAreaField('description', validators=[DataRequired()])
+            description    = TextAreaField('description', validators=[DataRequired()])
 
             removedCompartmentName = SelectField('removedCompartmentName', choices=[], validate_choice=False)
             addedCompartmentName   = SelectField('addedCompartmentName',   choices=[], validate_choice=False)
             oldCommunityName       = SelectField('oldCommunityName',       choices=[], validate_choice=False)
             newCommunityName       = SelectField('newCommunityName',       choices=[], validate_choice=False)
 
-        name        = StringField('name', validators=[DataRequired()])
-        description = TextAreaField('description', validators=[DataRequired()])
+        name           = StringField('name', validators=[DataRequired()])
+        description    = TextAreaField('description', validators=[DataRequired()])
+        timepointCount = IntegerField('timepointCount', validators=[DataRequired()])
 
         cultivationMode = SelectField('cultivationMode', choices=[
             ('batch',     "Batch"),
@@ -76,6 +77,11 @@ class UploadStep5Form(BaseForm):
             if len(names) == 0:
                 raise ValidationError("at least one is required")
 
+    timeUnits = SelectField('timeUnits', choices=[
+        ('h', 'Hours (h)'),
+        ('m', 'Minutes (m)'),
+        ('s', 'Seconds (s)'),
+    ])
     experiments = FieldList(FormField(ExperimentForm))
 
     def validate_experiments(self, field):

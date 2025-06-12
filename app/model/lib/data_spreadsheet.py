@@ -30,7 +30,7 @@ TECHNIQUE_DESCRIPTIONS = {
 def create_excel(submission, metabolite_names, strain_names):
     workbook = Workbook()
 
-    short_time_units = submission.studyDesign['time_units']
+    short_time_units = submission.studyDesign['timeUnits']
     long_time_units = TIME_UNITS[short_time_units]
 
     headers_common = {
@@ -140,7 +140,7 @@ def _fill_sheet(workbook, sheet_title, headers, submission):
     for experiment in submission.studyDesign['experiments']:
         for bioreplicate in experiment['bioreplicates']:
             for compartment_name in experiment['compartmentNames']:
-                for _ in range(submission.studyDesign['timepoint_count']):
+                for _ in range(experiment['timepointCount']):
                     sheet.cell(row=row_index, column=1, value=bioreplicate['name'])
                     sheet.cell(row=row_index, column=2, value=compartment_name)
 

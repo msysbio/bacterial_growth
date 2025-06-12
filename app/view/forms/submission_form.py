@@ -24,21 +24,14 @@ DEFAULT_STUDY_DESIGN = {
     'project': {'name': None, 'description': None},
     'study':   {'name': None, 'description': None, 'url': None},
 
-    'vessel_type':     None,
-    'bottle_count':    None,
-    'plate_count':     None,
-    'vessel_count':    None,
-    'column_count':    None,
-    'row_count':       None,
-    'timepoint_count': None,
-    'time_units':      None,
+    'timeUnits': None,
 
-    'strains':      [],
-    'new_strains':  [],
-    'techniques':   [],
-    'compartments': [],
-    'communities':  [],
-    'experiments':  [],
+    'strains':        [],
+    'custom_strains': [],
+    'techniques':     [],
+    'compartments':   [],
+    'communities':    [],
+    'experiments':    [],
 }
 
 
@@ -120,8 +113,8 @@ class SubmissionForm:
         # Existing strains
         self.submission.studyDesign['strains'] = data['strains']
 
-        # Add parent species name to new strain data:
-        for strain in data['new_strains']:
+        # Add parent species name to custom strain data:
+        for strain in data['custom_strains']:
             if 'species_name' in strain:
                 continue
 
@@ -132,17 +125,18 @@ class SubmissionForm:
             ).one_or_none()
 
         # Save new strains
-        self.submission.studyDesign['new_strains'] = data['new_strains']
+        self.submission.studyDesign['custom_strains'] = data['custom_strains']
+
+        # Clean up strain names:
+        for strain_data in self.submission.studyDesign['custom_strains']:
+            strain_data['name'] = strain_data['name'].strip()
 
         flag_modified(self.submission, 'studyDesign')
 
     def update_study_design(self, data):
         study_design = {**self.submission.studyDesign, **data}
-
-        if study_design['vessel_type'] == 'bottles':
-            study_design['vessel_count'] = study_design['bottle_count']
-        elif study_design['vessel_type'] == 'agar_plates':
-            study_design['vessel_count'] = study_design['plate_count']
+        if 'csrf_token' in study_design:
+            del study_design['csrf_token']
 
         self.submission.studyDesign = study_design
         flag_modified(self.submission, 'studyDesign')
@@ -192,47 +186,6 @@ class SubmissionForm:
     def error_messages(self):
         # Flatten messages per property:
         return list(itertools.chain.from_iterable(self.errors.values()))
-
-    def vessel_description(self):
-        study_design = self.submission.studyDesign
-
-        dimensions = None
-        if study_design['vessel_type'] in ('bottles', 'agar_plates'):
-            # one-dimensional, just return the single count:
-            dimensions = study_design['vessel_count']
-        elif study_design['vessel_type'] in ('well_plates', 'mini_react'):
-            # row x column
-            if study_design['row_count'] and study_design['column_count']:
-                dimensions = f"{study_design['row_count']}x{study_design['column_count']}"
-
-        vessel_name = None
-        match study_design['vessel_type']:
-            case 'bottles':     vessel_name = 'bottles'
-            case 'agar_plates': vessel_name = 'agar plates'
-            case 'well_plates': vessel_name = 'well-plates'
-            case 'mini_react':  vessel_name = 'mini-bioreactors'
-
-        if dimensions is None or vessel_name is None:
-            return ''
-        else:
-            return f"{dimensions} {vessel_name}"
-
-    def timepoint_description(self):
-        timepoint_count = int(self.submission.studyDesign['timepoint_count'])
-        if timepoint_count < 1:
-            return ''
-
-        long_time_units = None
-        match self.submission.studyDesign['time_units']:
-            case 'd': long_time_units = 'days'
-            case 'h': long_time_units = 'hours'
-            case 'm': long_time_units = 'minutes'
-            case 's': long_time_units = 'seconds'
-
-        if long_time_units is None:
-            return ''
-        else:
-            return f"{timepoint_count} time points measured in {long_time_units}"
 
     def technique_descriptions(self):
         ordering = ('bioreplicate', 'strain', 'metabolite')

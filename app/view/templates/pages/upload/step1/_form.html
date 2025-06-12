@@ -1,4 +1,4 @@
-{% macro render_step1_form(submission_form, submission, projects, studies) %}
+{% macro render_step1_form(submission_form, submission) %}
   <p>
     A project groups multiple studies together. You can start a new project or
     select an existing one. This name must be unique across our database.
@@ -150,7 +150,7 @@
             class="form-input-blue form-input-full">
           <option value="">
           </option>
-          {% for study in studies: %}
+          {% for study in g.current_user.managedStudies: %}
             <option value="{{ study.studyUniqueID }}">
               [{{ study.studyId }}] {{ study.studyName }}
             </option>

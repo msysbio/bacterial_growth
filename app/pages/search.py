@@ -6,11 +6,12 @@ other criteria.
 from flask import (
     g,
     render_template,
+    request,
 )
 import sqlalchemy as sql
 
 from app.view.forms.search_form import SearchForm, SearchFormClause
-import app.model.lib.study_dfs as study_dfs
+from app.model.lib.search import dynamical_query
 from app.model.orm import (
     Study,
     StudyUser,
@@ -18,15 +19,21 @@ from app.model.orm import (
 
 
 def search_index_page():
-    form = SearchForm()
+    form = SearchForm(request.args)
 
     template_clause = SearchFormClause()
     results = []
 
-    if form.validate_on_submit():
-        query = study_dfs.dynamical_query(form.data['clauses'])
+    if form.data['clauses'] and form.data['clauses'][0]['value']:
+        if not form.data['clauses'][0]['option']:
+            form.data
 
-        studyIds = [studyId for (studyId,) in g.db_conn.execute(sql.text(query))]
+        query, values = dynamical_query(form.data['clauses'])
+        value_dict = {f"value_{i}": v for i, v in enumerate(values)}
+        studyIds = [
+            studyId for (studyId,)
+            in g.db_conn.execute(sql.text(query), value_dict)
+        ]
 
         if len(studyIds) == 0:
             message = "Couldn't find a study with these parameters."

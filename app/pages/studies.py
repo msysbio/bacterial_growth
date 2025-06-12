@@ -7,15 +7,11 @@ from flask import (
     request,
 )
 from werkzeug.exceptions import Forbidden
-import pandas as pd
 import sqlalchemy as sql
-from sqlalchemy.sql.expression import literal
 
-import app.model.lib.study_dfs as study_dfs
 from app.model.orm import (
+    Bioreplicate,
     Experiment,
-    Measurement,
-    MeasurementTechnique,
     MeasurementContext,
     ModelingRequest,
     ModelingResult,
@@ -26,14 +22,29 @@ from app.view.forms.comparative_chart_form import ComparativeChartForm
 from app.model.lib.chart import Chart
 from app.model.lib.modeling_tasks import process_modeling_request
 from app.model.lib.model_export import export_model_csv
-from app.model.lib.figures import make_figure_with_traces
-from app.model.lib.db import execute_into_df
 from app.model.lib.log_transform import apply_log_transform
 import app.model.lib.util as util
 
 
 def study_show_page(studyId):
-    study = _fetch_study(studyId, check_user_visibility=False)
+    study = _fetch_study(
+        studyId,
+        check_user_visibility=False,
+        sql_options=(
+            sql.orm.selectinload(
+                Study.experiments,
+                Experiment.bioreplicates,
+                Bioreplicate.measurementContexts,
+                MeasurementContext.technique,
+            ),
+            sql.orm.selectinload(
+                Study.experiments,
+                Experiment.bioreplicates,
+                Bioreplicate.measurementContexts,
+                MeasurementContext.measurements,
+            ),
+        )
+    )
 
     if study.visible_to_user(g.current_user):
         return render_template("pages/studies/show.html", study=study)
@@ -117,6 +128,7 @@ def study_download_models_csv(studyId):
         as_attachment=True,
         download_name=f"{studyId}_models.csv",
     )
+
 
 def study_visualize_page(studyId):
     study = _fetch_study(studyId)
@@ -203,9 +215,11 @@ def study_modeling_chart_fragment(studyId, measurementContextId):
     study = _fetch_study(studyId)
     args = request.args.to_dict()
 
+    # TODO (2025-06-12) Unused?
+    # width  = args.pop('width')
+    # height = args.pop('height')
+
     modeling_type = args.pop('modelingType')
-    width         = args.pop('width')
-    height        = args.pop('height')
     log_transform = args.pop('logTransform', 'false') == 'true'
 
     measurement_context = g.db_session.get(MeasurementContext, measurementContextId)
@@ -272,10 +286,13 @@ def study_modeling_chart_fragment(studyId, measurementContextId):
     )
 
 
-def _fetch_study(studyId, check_user_visibility=True):
+def _fetch_study(studyId, check_user_visibility=True, sql_options=None):
+    sql_options = sql_options or ()
+
     study = g.db_session.scalars(
         sql.select(Study)
         .where(Study.studyId == studyId)
+        .options(*sql_options)
         .limit(1)
     ).one()
 

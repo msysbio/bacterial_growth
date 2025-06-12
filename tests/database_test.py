@@ -232,7 +232,7 @@ class DatabaseTest(unittest.TestCase):
             'projectUniqueID': str(uuid4()),
             'userUniqueID': str(uuid4()),
             'studyDesign': {
-                'time_units': 'h',
+                'timeUnits': 'h',
                 'project': {
                     'name': 'Test project',
                 },

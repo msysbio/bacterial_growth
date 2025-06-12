@@ -1,4 +1,5 @@
 {% from 'pages/experiments/_bioreplicates_toc.html' import render_bioreplicates_toc %}
+{% from 'utils/_strain_link.html' import render_strain_link %}
 
 {% extends '_layout.html' %}
 
@@ -15,7 +16,7 @@
 
       <p class="small">
         {% if study.studyURL: %}
-          <strong>Publication URL</strong>: {{ experiment.study.studyURL|urlize(target="_blank") }}
+          <strong>Publication URL</strong>: {{ experiment.study.studyURL|external_link }}
           <br>
         {% endif %}
       </p>
@@ -38,9 +39,7 @@
 
               Medium:
               {% if compartment.mediumUrl: %}
-                <a target="_blank" href="{{ compartment.mediumUrl }}">
-                  {{ compartment.mediumName }}
-                </a>
+                {{ compartment.mediumUrl|external_link(compartment.mediumName) }}
               {% else: %}
                 {{ compartment.mediumName }}
               {% endif %}
@@ -56,11 +55,7 @@
 
         <ol>
           {% for strain in experiment.community.get_strains(g.db_session): %}
-            <li>
-              <a href="{{ url_for('strain_show_page', id=strain.id) }}">
-                {{ strain.name }}
-              </a>
-            </li>
+            <li>{{ render_strain_link(strain) }}</li>
           {% endfor %}
         </ol>
 

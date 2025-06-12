@@ -1,3 +1,6 @@
+# Pinned setuptools to avoid deprecation warning:
+setuptools<80
+
 # Core
 pandas
 pyyaml
@@ -9,17 +12,18 @@ dotenv
 
 # Web
 Flask
+Flask-Admin==2.0.0a4
 Flask-Assets
 Flask-WTF
 Flask-SQLAlchemy
-Flask-DebugToolbar
 cssmin
 plotly
 celery[redis]
-flask-admin
 gunicorn
 requests
 watchdog
+markdown-it-py
+beautifulsoup4
 
 # Database
 sqlalchemy

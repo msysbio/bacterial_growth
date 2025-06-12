@@ -1,0 +1,32 @@
+.help-page {
+  .highlight {
+    background-color: #fafa44;
+  }
+
+  .page-list {
+    transition: opacity var(--transition-length) ease;
+  }
+
+  h2 {
+    border-bottom: 2px solid var(--light-blue);
+    padding-bottom: 4px;
+  }
+
+  table {
+    border-collapse: collapse;
+
+    th, td {
+      padding: 6px 13px;
+      border: 1px solid var(--border-color);
+      vertical-align: top;
+    }
+  }
+
+  ul {
+    padding-left: 20px;
+
+    li {
+      margin-top: 10px;
+    }
+  }
+}

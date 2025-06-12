@@ -5,108 +5,98 @@
     {% set prefix = 'techniques-{}-'.format(index)  %}
   {% endif %}
 
-  <div class="subform-container box technique-container js-technique-container" data-subject-type="strain">
+  <div
+    class="subform-container box technique-container js-subform-container"
+    data-index="{{ index if index is not none else '' }}"
+    data-subject-type="strain">
     <img
         width="90"
         class="form-icon"
         alt="Strain-level measurement"
         src="/static/images/large-icons/bacteria.png" />
-
     <h3>
-      <span class="js-index">{{ "{}.".format(index + 1) if index is not none }}</span>
+      <span class="js-index">{{ index + 1 if index is not none else '' }}</span>.
       Strain-level measurement
     </h3>
-
-    <p>
-      Counts of specific strains within a vessel. Could be measured directly
-      (e.g. via fluorescence), or it could be calculated based on relative
-      measurements multiplied by total counts.
-    </p>
-
-    <br>
 
     <input type="hidden" name="{{ prefix }}subjectType" value="strain" />
 
     <div class="form-row">
-      <label style="width: 50%;">
-        <div>Type of measurement technique</div>
-        <select
-            name="{{ prefix }}type"
-            class="form-input-full form-input-blue js-type-select" />
-          <option value="fc" data-column-name="FC counts" {{ "selected" if data['type'] == 'fc' }}>
-            Flow Cytometry per species
-          </option>
-          <option value="plates" data-column-name="plate counts" {{ "selected" if data['type'] == 'plates' }}>
-            Plate Counts per species
-          </option>
-          <option value="16s" data-column-name="rRNA reads" {{ "selected" if data['type'] == '16s' }}>
-            16S rRNA-seq
-          </option>
-        </select>
-      </label>
+      <div class="flex-column flex-gap-6 flex-1">
+        <label class="full">
+          <div>Type of measurement technique</div>
+          <select
+              name="{{ prefix }}type"
+              class="form-input-full form-input-blue js-type-select" />
+            <option value="fc" data-column-name="FC counts" {{ "selected" if data['type'] == 'fc' }}>
+              Flow Cytometry per species
+            </option>
+            <option value="plates" data-column-name="plate counts" {{ "selected" if data['type'] == 'plates' }}>
+              Plate Counts per species
+            </option>
+            <option value="16s" data-column-name="rRNA reads" {{ "selected" if data['type'] == '16s' }}>
+              16S rRNA-seq
+            </option>
+          </select>
+        </label>
 
-      <label style="width: 50%;">
-        <span>Units:</span>
-        <select
-            name="{{ prefix }}units"
-            class="form-input-full form-input-blue js-unit-select" />
-          <optgroup label="Cells per volume">
-            <option value="Cells/mL" {{ "selected" if data['units'] == 'Cells/mL' }}>
-              Cells/mL
-            </option>
-            <option value="Cells/μL" {{ "selected" if data['units'] == 'Cells/μL' }}>
-              Cells/μL
-            </option>
-          </optgroup>
+        <label class="full">
+          <span>Units:</span>
+          <select
+              name="{{ prefix }}units"
+              class="form-input-full form-input-blue js-unit-select" />
+            <optgroup label="Cells per volume">
+              <option value="Cells/mL" {{ "selected" if data['units'] == 'Cells/mL' }}>
+                Cells/mL
+              </option>
+              <option value="Cells/μL" {{ "selected" if data['units'] == 'Cells/μL' }}>
+                Cells/μL
+              </option>
+            </optgroup>
 
-          <optgroup label="CFUs per volume">
-            <option value="CFUs/mL" {{ "selected" if data['units'] == 'CFUs/mL' }}>
-              CFUs/mL
-            </option>
-            <option value="CFUs/μL" {{ "selected" if data['units'] == 'CFUs/μL' }}>
-              CFUs/μL
-            </option>
-          </optgroup>
+            <optgroup label="CFUs per volume">
+              <option value="CFUs/mL" {{ "selected" if data['units'] == 'CFUs/mL' }}>
+                CFUs/mL
+              </option>
+              <option value="CFUs/μL" {{ "selected" if data['units'] == 'CFUs/μL' }}>
+                CFUs/μL
+              </option>
+            </optgroup>
 
-          <optgroup label="Indirect measurements">
-            <option value="reads" {{ "selected" if data['units'] == 'reads' }}>
-              Reads
-            </option>
-          </optgroup>
+            <optgroup label="Indirect measurements">
+              <option value="reads" {{ "selected" if data['units'] == 'reads' }}>
+                Reads
+              </option>
+            </optgroup>
 
-          <optgroup label="Unitless/unknown">
-            <option value="" {{ "selected" if data['units'] == '' }}>
-              N/A
-            </option>
-          </optgroup>
-        </select>
-      </label>
-    </div>
+            <optgroup label="Unitless/unknown">
+              <option value="" {{ "selected" if data['units'] == '' }}>
+                N/A
+              </option>
+            </optgroup>
+          </select>
+        </label>
+      </div>
 
-    <div class="form-row">
-      <label class="full">
+      <label class="flex-2">
         <div>Description of methodology</div>
         <textarea
             name="{{ prefix }}description"
             class="form-input-full form-input-blue"
             placeholder="Example: We measured total FC and multiplied it by the relative bacterial density..."
-            rows=2>{{ data['description'] if data }}</textarea>
+            rows=5>{{ data['description'] if data }}</textarea>
       </label>
     </div>
 
     <div class="form-row" style="margin-top: 10px">
-      <label class="full" style="align-content: center;">
+      <label
+          data-tooltip="If you have multiple technical replicates, you can submit your point estimate as the measurement and add the standard deviation in a separate column.">
         Include STD:
         <input
             type="checkbox"
             class="js-include-std"
             name="{{ prefix }}includeStd"
             {{ "checked" if data and data['includeStd'] }} />
-        <div class="help">
-          If you have multiple technical replicates, you can submit your point
-          estimate as the measurement and add the standard deviation in a
-          separate column.
-        </div>
       </label>
     </div>
 
@@ -117,7 +107,7 @@
       </div>
 
       <div class="no-label flex-right">
-        <a href="#" class="white-button flex-row js-remove">
+        <a href="#" class="white-button flex-row js-remove-trigger">
           <span class="icon icon-remove"></span> Remove
         </a>
       </div>

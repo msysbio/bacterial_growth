@@ -9,16 +9,8 @@ from flask import (
     session,
 )
 import sqlalchemy as sql
-from sqlalchemy.sql.expression import literal
 
-from app.model.orm import (
-    Bioreplicate,
-    Measurement,
-    MeasurementTechnique,
-    MeasurementContext,
-)
-from app.model.lib.db import execute_into_df
-from app.model.lib.figures import make_figure_with_secondary_axis
+from app.model.orm import MeasurementContext
 from app.view.forms.comparative_chart_form import ComparativeChartForm
 
 

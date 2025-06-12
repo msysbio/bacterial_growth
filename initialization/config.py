@@ -11,21 +11,21 @@ def init_config(app):
     log_level = os.getenv('LOG_LEVEL', None)
     timing    = os.getenv('TIME')
 
-    # Load .env file from local directory
-    load_dotenv('.env')
+    # Load .env file from local directory, except in test mode
+    if app_env != 'test':
+        load_dotenv('.env')
 
     # Load env variables starting with "MGROWTHDB_" into the config
     app.config.from_prefixed_env('MGROWTHDB')
 
     # 200MiB max size
     app.config['MAX_CONTENT_LENGTH'] = 200 * 1024 * 1024
-    app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
 
     if app_env == 'development':
         app.config.update(
             DEBUG=True,
             ASSETS_DEBUG=False,
-            SQLALCHEMY_RECORD_QUERIES=True,
+            SQLALCHEMY_RECORD_QUERIES=False,
             TEMPLATES_AUTO_RELOAD=True,
             EXPLAIN_TEMPLATE_LOADING=False,
         )
@@ -35,6 +35,10 @@ def init_config(app):
             ASSETS_DEBUG=False,
             TEMPLATES_AUTO_RELOAD=False,
             EXPLAIN_TEMPLATE_LOADING=False,
+            WTF_CSRF_ENABLED=False,
+            SECRET_KEY='testing_key',
+            SERVER_NAME='',
+            PREFERRED_URL_SCHEME='http://',
         )
     elif app_env == 'production':
         app.config.update(

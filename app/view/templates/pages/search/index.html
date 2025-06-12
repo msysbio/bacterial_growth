@@ -1,3 +1,4 @@
+{% from 'utils/_form_errors.html' import render_form_errors %}
 {% from 'pages/search/_result.html' import render_result %}
 
 {% extends '_layout.html' %}
@@ -20,9 +21,7 @@
       </p>
 
       <p>
-        <form action="{{ url_for('search_index_page') }}" method="POST" class="simple-form">
-          {{ form.csrf_token }}
-
+        <form action="{{ url_for('search_index_page') }}" class="simple-form">
           {% for clause in form.clauses: %}
 
             <div class="form-row clause">
@@ -42,7 +41,7 @@
 
               <label class="flex-grow">
                 <span>Enter text here:</span>
-                {{ clause.value(class="form-input-full form-input-blue", required="true") }}
+                {{ clause.value(class="form-input-full form-input-blue") }}
               </label>
             </div>
 
@@ -97,7 +96,7 @@
 
         <label class="flex-grow">
           <span>Enter text here:</span>
-          {{ template_clause.value(class="form-input-full form-input-blue", required="true") }}
+          {{ template_clause.value(class="form-input-full form-input-blue") }}
         </label>
 
         <div class="no-label">

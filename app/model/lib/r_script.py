@@ -60,7 +60,7 @@ class RScript:
         if raw_data is None:
             return None
 
-        return { entry[key_name]: entry[value_name] for entry in raw_data }
+        return {entry[key_name]: entry[value_name] for entry in raw_data}
 
     def read_flat_json(self, filename, discard_keys=[]):
         raw_data = self._read_raw_json(filename)

@@ -1,21 +1,14 @@
-import csv
 from typing import List
-from io import StringIO
-from decimal import Decimal
 
 import sqlalchemy as sql
 from sqlalchemy.orm import (
     Mapped,
     mapped_column,
     relationship,
-    aliased,
 )
-from sqlalchemy.ext.hybrid import hybrid_property
 
 from app.model.orm.orm_base import OrmBase
 from app.model.lib.db import execute_into_df
-from app.model.lib.conversion import convert_time
-from app.model.lib.util import group_by_unique_name
 
 
 class MeasurementContext(OrmBase):
@@ -75,41 +68,57 @@ class MeasurementContext(OrmBase):
         technique    = self.technique
         bioreplicate = self.bioreplicate
         compartment  = self.compartment
+        experiment   = bioreplicate.experiment
 
         if technique.subjectType == 'metabolite':
             label_parts = [f"<b>{subject.name}</b>"]
         else:
             label_parts = [technique.short_name]
 
+        if len(experiment.compartments) <= 1:
+            bioreplicate_label = f"<b>{bioreplicate.name}</b>"
+        else:
+            bioreplicate_label = f"<b>{bioreplicate.name}<sub>{compartment.name}</sub></b>"
+
         if technique.subjectType == 'bioreplicate':
             label_parts.append('of the')
-            label_parts.append(f"<b>{subject.name}<sub>{compartment.name}</sub></b>")
+            label_parts.append(bioreplicate_label)
             label_parts.append('community')
         elif technique.subjectType == 'metabolite':
             label_parts.append('in')
-            label_parts.append(f"{bioreplicate.name}<sub>{compartment.name}</sub>")
+            label_parts.append(bioreplicate_label)
         else:
             label_parts.append('of')
             label_parts.append(f"<b>{subject.name}</b>")
             label_parts.append('in')
-            label_parts.append(f"{bioreplicate.name}<sub>{compartment.name}</sub>")
+            label_parts.append(bioreplicate_label)
 
         label = ' '.join(label_parts)
 
         return label
 
     def get_subject(self, db_session):
+        if not hasattr(db_session, '_measurement_subject_cache'):
+            setattr(db_session, '_measurement_subject_cache', {})
+
+        cache_key = (self.subjectType, self.subjectId)
+        if cache_key in db_session._measurement_subject_cache:
+            return db_session._measurement_subject_cache[cache_key]
+
         from app.model.orm import Metabolite, Strain, Bioreplicate
 
         if self.subjectType == 'metabolite':
-            return db_session.scalars(
+            subject = db_session.scalars(
                 sql.select(Metabolite)
                 .where(Metabolite.chebiId == self.subjectId)
                 .limit(1)
             ).one_or_none()
         elif self.subjectType == 'strain':
-            return db_session.get(Strain, self.subjectId)
+            subject = db_session.get(Strain, self.subjectId)
         elif self.subjectType == 'bioreplicate':
-            return db_session.get(Bioreplicate, self.subjectId)
+            subject = db_session.get(Bioreplicate, self.subjectId)
         else:
             raise ValueError(f"Unknown subject type: {self.subjectType}")
+
+        db_session._measurement_subject_cache[cache_key] = subject
+        return db_session._measurement_subject_cache[cache_key]

@@ -1,4 +1,4 @@
-{% from 'pages/upload/step2/_new_strain_form.html' import render_new_strain_form %}
+{% from 'pages/upload/step2/_custom_strain_form.html' import render_custom_strain_form %}
 
 {% macro render_step2_form(submission_form, upload_form) %}
 
@@ -9,7 +9,7 @@
 
   <p>
     If you do not find your microbial strains, define your own by clicking "Add
-    new strain" and specifying its name and parent strain species.
+    custom strain" and specifying its name and parent strain species.
   </p>
 
   <p>
@@ -52,7 +52,7 @@
 
         <div class="flex-right">
           <a href="#" class="white-button flex-row js-add-trigger">
-            <span class="icon icon-add"></span> Add new strain
+            <span class="icon icon-add"></span> Add custom strain
           </a>
         </div>
       </div>
@@ -60,20 +60,20 @@
       <template class="strain-list-item">
         <li>
           <strong>${name}</strong>
-          (<a href="https://www.ncbi.nlm.nih.gov/datasets/taxonomy/${id}/" target="_blank">NCBI:${id}</a>)
+          ({{ "https://www.ncbi.nlm.nih.gov/datasets/taxonomy/${id}/"|external_link("NCBI:${id}") }})
         </li>
       </template>
 
       <template class="new-strain-parent-preview">
         <div>
           Parent strain: <strong>${name}</strong>
-          (<a href="https://www.ncbi.nlm.nih.gov/datasets/taxonomy/${id}/" target="_blank">NCBI:${id}</a>)
+          ({{ "https://www.ncbi.nlm.nih.gov/datasets/taxonomy/${id}/"|external_link("NCBI:${id}") }})
         </div>
       </template>
 
       <template class="new-strain-form">
         {% set subform = upload_form.get_template('NewStrainForm') %}
-        {{ render_new_strain_form(form=subform, submission_form=submission_form, index=None) }}
+        {{ render_custom_strain_form(form=subform, submission_form=submission_form, index=None) }}
       </template>
     </form>
   </p>

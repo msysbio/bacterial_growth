@@ -1,4 +1,5 @@
 {% from 'utils/_dataframe.html' import render_dataframe %}
+{% from 'utils/_strain_link.html' import render_strain_link %}
 
 {% macro render_result(result) %}
   <div class="search-result">
@@ -21,8 +22,8 @@
 
     {% if result.studyURL: %}
       <p>
-        <strong>URL</strong>:
-        <a target="_blank" href="{{ result.studyURL }}">{{ result.studyURL }}</a>
+        <strong>Publication URL</strong>:
+        {{ result.studyURL|external_link() }}
       </p>
     {% endif %}
 
@@ -32,7 +33,7 @@
       <table class="simple-table">
         <tr>
           <th>Techniques</th>
-          <th>Species</th>
+          <th>Strains</th>
           <th>Metabolites</th>
         </tr>
 
@@ -48,9 +49,7 @@
           <td>
             <ul>
               {% for strain in result.strains: %}
-                <li>
-                  <a href="{{ url_for('strain_show_page', id=strain.id) }}">{{ strain.name }}</a>
-                </li>
+                <li>{{ render_strain_link(strain) }}</li>
               {% endfor %}
             </ul>
           </td>
@@ -58,11 +57,7 @@
           <td>
             <ul>
               {% for metabolite in result.metabolites: %}
-                <li>
-                  <a href="{{ url_for('metabolite_show_page', chebiId=metabolite.chebiId) }}">
-                    {{ metabolite.name }}
-                  </a>
-                </li>
+                <li>{{ metabolite.chebiId|chebi_url|external_link(metabolite.name) }}</li>
               {% endfor %}
             </ul>
           </td>

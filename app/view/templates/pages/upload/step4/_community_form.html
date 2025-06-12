@@ -18,8 +18,7 @@
     <div class="form-row">
       <label>
         <div class="required">Name</div>
-        {# Note: Have to access the input using [], since there is an existing `.name` attribute #}
-        {{ form['name'](class='form-input-blue form-input-full') }}
+        {{ form['name'](class='form-input-blue form-input-full', placeholder="Full") }}
       </label>
 
       <label class="full">
@@ -37,7 +36,7 @@
             </option>
           {% endfor %}
 
-          {% for strain in submission.studyDesign['new_strains']: %}
+          {% for strain in submission.studyDesign['custom_strains']: %}
             <option
                 value="custom|{{ strain['name'] }}"
                 {{ "selected" if strainIdentifiers and "custom|{}".format(strain['name']) in strainIdentifiers }}>

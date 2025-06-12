@@ -12,11 +12,11 @@ Page('.upload-page .step-content.step-1.active', function($step1) {
     let $option = $select.find('option:selected');
 
     let $name = $form.find('input[name=project_name]');
-    if ($name.val() == '') {
+    if ($option.data('name') != '') {
       $name.val($option.data('name'));
     }
     let $description = $form.find('textarea[name=project_description]');
-    if ($description.val() == '') {
+    if ($option.data('description') != '') {
       $description.val($option.data('description'));
     }
 

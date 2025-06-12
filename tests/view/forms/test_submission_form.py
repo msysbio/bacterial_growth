@@ -71,12 +71,7 @@ class TestSubmissionForm(DatabaseTest):
         # First submission, creates project and study:
         submission = self.create_submission(
             studyUniqueID=s1.uuid,
-            studyDesign={
-                "vessel_type": "bottles",
-                "vessel_count": 6,
-                "timepoint_count": 6,
-                "bottle_count": 6,
-            },
+            studyDesign={'timeUnits': "m"},
         )
         self.db_session.add(submission)
         self.db_session.flush()
@@ -91,8 +86,7 @@ class TestSubmissionForm(DatabaseTest):
         })
 
         s2_study_design = submission_form.submission.studyDesign
-        self.assertEqual(s2_study_design['bottle_count'], 6)
-        self.assertEqual(s2_study_design['timepoint_count'], 6)
+        self.assertEqual(s2_study_design['timeUnits'], 'm')
 
     def test_strains(self):
         t1 = self.create_taxon(name="R. intestinalis")
@@ -101,7 +95,7 @@ class TestSubmissionForm(DatabaseTest):
         submission_form = SubmissionForm(db_session=self.db_session)
         self.assertEqual(submission_form.fetch_taxa(), [])
 
-        submission_form.update_strains({'strains': [t1.ncbiId], 'new_strains': []})
+        submission_form.update_strains({'strains': [t1.ncbiId], 'custom_strains': []})
         submission = submission_form.submission
 
         self.assertEqual(
@@ -109,16 +103,16 @@ class TestSubmissionForm(DatabaseTest):
             ['R. intestinalis'],
         )
 
-        new_strains = [
+        custom_strains = [
             {'name': 'R. intestinalis 2',     'species': t1.ncbiId},
             {'name': 'B. thetaiotaomicron 2', 'species': t2.ncbiId},
             {'name': 'R. intestinalis 3',     'species': t1.ncbiId},
             {'name': 'Nonexistent',           'species': '999'},
         ]
-        submission_form.update_strains({'strains': [], 'new_strains': new_strains})
+        submission_form.update_strains({'strains': [], 'custom_strains': custom_strains})
 
         self.assertEqual(
-            sorted([(s['name'], s['species_name']) for s in submission.studyDesign['new_strains']]),
+            sorted([(s['name'], s['species_name']) for s in submission.studyDesign['custom_strains']]),
             sorted([
                 ('R. intestinalis 2',     'R. intestinalis'),
                 ('R. intestinalis 3',     'R. intestinalis'),
@@ -149,50 +143,6 @@ class TestSubmissionForm(DatabaseTest):
             [m.name for m in submission_form.fetch_metabolites_for_technique(0)],
             ['glucose', 'trehalose'],
         )
-
-    def test_vessel_description(self):
-        submission_form = SubmissionForm(db_session=self.db_session)
-
-        submission_form.update_study_design({'vessel_type': 'bottles', 'bottle_count': 3})
-        self.assertEqual(submission_form.vessel_description(), "3 bottles")
-
-        submission_form.update_study_design({'vessel_type': 'agar_plates', 'plate_count': 5})
-        self.assertEqual(submission_form.vessel_description(), "5 agar plates")
-
-        submission_form.update_study_design({'vessel_type': 'well_plates', 'row_count': 5, 'column_count': 10})
-        self.assertEqual(submission_form.vessel_description(), "5x10 well-plates")
-
-        submission_form.update_study_design({'vessel_type': 'mini_react', 'row_count': 10, 'column_count': 12})
-        self.assertEqual(submission_form.vessel_description(), "10x12 mini-bioreactors")
-
-        # Invalid inputs:
-        submission_form.update_study_design({'vessel_type': 'incorrect', 'row_count': 10, 'column_count': 12})
-        self.assertEqual(submission_form.vessel_description(), "")
-        submission_form.update_study_design({'vessel_type': 'bottles', 'bottle_count': None})
-        self.assertEqual(submission_form.vessel_description(), "")
-        submission_form.update_study_design({'vessel_type': 'well_plates', 'row_count': None})
-        self.assertEqual(submission_form.vessel_description(), "")
-
-    def test_timepoint_description(self):
-        submission_form = SubmissionForm(db_session=self.db_session)
-
-        submission_form.update_study_design({'timepoint_count': 7, 'time_units': 'h'})
-        self.assertEqual(submission_form.timepoint_description(), "7 time points measured in hours")
-
-        submission_form.update_study_design({'timepoint_count': 3, 'time_units': 'd'})
-        self.assertEqual(submission_form.timepoint_description(), "3 time points measured in days")
-
-        submission_form.update_study_design({'timepoint_count': 13, 'time_units': 'm'})
-        self.assertEqual(submission_form.timepoint_description(), "13 time points measured in minutes")
-
-        submission_form.update_study_design({'timepoint_count': 80, 'time_units': 's'})
-        self.assertEqual(submission_form.timepoint_description(), "80 time points measured in seconds")
-
-        # Invalid inputs:
-        submission_form.update_study_design({'timepoint_count': 0, 'time_units': 's'})
-        self.assertEqual(submission_form.timepoint_description(), "")
-        submission_form.update_study_design({'timepoint_count': 10, 'time_units': 'unknown'})
-        self.assertEqual(submission_form.timepoint_description(), "")
 
     def test_technique_descriptions(self):
         submission_form = SubmissionForm(db_session=self.db_session)

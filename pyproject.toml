@@ -1,5 +1,6 @@
 [tool.pytest.ini_options]
 pythonpath = ["."]
+testpaths = ["tests"]
 
 [tool.pytest_env]
 APP_ENV = "test"

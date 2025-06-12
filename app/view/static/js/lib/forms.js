@@ -29,7 +29,7 @@ $.fn.ajaxSubmit = function(params) {
   return $.ajax({
     url: $form.prop('action') + urlQuery,
     dataType: 'html',
-    method: 'POST',
+    method: $form.prop('method'),
     data: $form.serializeArray(),
     ...params
   });
@@ -95,7 +95,7 @@ $.fn.initAjaxSubform = function(params) {
     prefixTemplate: null,
 
     // Create and return a jquery element for the new form:
-    buildSubform: function() {},
+    buildSubform: function(index, $addButton) {},
 
     // Triggered after duplication is performed, useful to reset attributes
     // that should be unique:
@@ -119,7 +119,9 @@ $.fn.initAjaxSubform = function(params) {
     e.preventDefault();
     e.stopPropagation();
 
-    $(e.currentTarget).parents('.js-subform-container').first().remove();
+    $(e.currentTarget).parents('.js-subform-container').first().fadeOut(150, function() {
+      $(this).remove();
+    });
   });
 
   $container.on('click', '.js-duplicate-trigger', function(e) {
@@ -171,11 +173,17 @@ $.fn.initAjaxSubform = function(params) {
           // Give it a different style:
           $newSubform.addClass('new');
 
+          // Add fade-in effect
+          $newSubform.hide().fadeIn(150);
+
           // Add it to the end of the list:
           $subformList.append($newSubform);
 
           // Trigger necessary javascript
           params.initializeSubform($newSubform, subformCount);
+
+          // Initialize any new tooltips:
+          initTooltips();
 
           setTimeout(function() {
             // Scroll to container:
@@ -198,7 +206,7 @@ $.fn.initAjaxSubform = function(params) {
       success: function(response) {
         loadResponse(response, function($subformList, subformCount) {
           // Build up new form:
-          let $newSubform = params.buildSubform(subformCount);
+          let $newSubform = params.buildSubform(subformCount, $addButton);
 
           // Add sequential number:
           $newSubform.find('.js-index').text(`${subformCount + 1}`);
@@ -209,8 +217,14 @@ $.fn.initAjaxSubform = function(params) {
           // Add it to the end of the list:
           $subformList.append($newSubform);
 
+          // Add fade-in effect
+          $newSubform.hide().fadeIn(150);
+
           // Trigger necessary javascript
           params.initializeSubform($newSubform, subformCount);
+
+          // Initialize any new tooltips:
+          initTooltips();
         });
       }
     })
@@ -237,6 +251,9 @@ $.fn.initAjaxSubform = function(params) {
 
     $subforms.each(function(index) {
       params.initializeSubform($(this), index);
+
+      // Initialize any new tooltips:
+      initTooltips();
     });
   }
 }
@@ -249,7 +266,7 @@ $.fn.initClientSideSubform = function(params) {
 
   let defaultParams = {
     // Create and return a jquery element for the new form:
-    buildSubform: function() {},
+    buildSubform: function(index, $addButton) {},
 
     // Triggered after a new form is created, before it's actually added to the
     // DOM, allows adding some placeholder data.
@@ -286,13 +303,16 @@ $.fn.initClientSideSubform = function(params) {
     let subformCount = $subformList.find('.js-subform-container').length;
 
     // Build up new form:
-    let $newSubform = params.buildSubform(subformCount);
+    let $newSubform = params.buildSubform(subformCount, $addButton);
 
     // Add sequential number:
     $newSubform.find('.js-index').text(`${subformCount + 1}`);
 
     // Give it a different style:
     $newSubform.addClass('new');
+
+    // Add fade-in effect
+    $newSubform.hide().fadeIn(150);
 
     // Trigger pre-add callback
     params.beforeAdd($newSubform);

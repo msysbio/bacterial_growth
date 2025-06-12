@@ -1,5 +1,4 @@
 from wtforms import (
-    BooleanField,
     DecimalField,
     FieldList,
     FormField,
@@ -45,8 +44,6 @@ class UploadStep4Form(BaseForm):
 
         initialPh          = DecimalField('initialPh',          validators=[Optional()])
         initialTemperature = DecimalField('initialTemperature', validators=[Optional()])
-
-        carbonSource = BooleanField('carbonSource')
 
     class CommunityForm(BaseForm):
         class Meta:

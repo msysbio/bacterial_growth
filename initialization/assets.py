@@ -8,6 +8,7 @@ def init_assets(app):
         # External libraries:
         'js/vendor/jquery-3.7.1.js',
         'js/vendor/jquery.scrollTo-2.1.3.js',
+        'js/vendor/jquery-throttle-debounce-1.1.js',
         'js/vendor/select2-4.0.13.js',
         'js/vendor/popper-core-2.11.8.js',
         'js/vendor/tippy-6.3.7.js',
@@ -30,6 +31,7 @@ def init_assets(app):
         'js/study_visualize.js',
         'js/study_manage.js',
         'js/comparison.js',
+        'js/help.js',
         filters='rjsmin',
         output='build/app.js'
     ))
@@ -63,6 +65,7 @@ def init_assets(app):
         'css/study-manage.css',
         'css/experiment.css',
         'css/comparison.css',
+        'css/help.css',
         filters='cssmin',
         output='build/app.css'
     ))

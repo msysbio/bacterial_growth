@@ -5,92 +5,83 @@
     {% set prefix = 'techniques-{}-'.format(index)  %}
   {% endif %}
 
-  <div class="subform-container box technique-container js-technique-container" data-subject-type="bioreplicate">
+  <div
+      class="subform-container box technique-container js-subform-container"
+      data-index="{{ index if index is not none else '' }}"
+      data-subject-type="bioreplicate">
     <img
         width="80"
         class="form-icon"
         alt="Community-level measurement"
         src="/static/images/large-icons/test-tube.png" />
-
     <h3>
-      <span class="js-index">{{ "{}.".format(index + 1) if index is not none }}</span>
+      <span class="js-index">{{ index + 1 if index is not none else '' }}</span>.
       Community-level measurement
     </h3>
-
-    <p>
-      Measurement of the cell abundances in an entire community, or of a
-      property of its environment (pH).
-    </p>
-
-    <br>
 
     <input type="hidden" name="{{ prefix }}subjectType" value="bioreplicate" />
 
     <div class="form-row">
-      <label style="width: 50%;">
-        <div>Type of measurement technique</div>
-        <select
-            name="{{ prefix }}type"
-            class="form-input-full form-input-blue js-type-select" />
-          <option value="fc" data-column-name="FC" {{ "selected" if data['type'] == 'fc' }}>
-            Flow Cytometry
-          </option>
-          <option value="od" data-column-name="OD" {{ "selected" if data['type'] == 'od' }}>
-            Optical Density (absorbance)
-          </option>
-          <option value="ph" data-column-name="pH" {{ "selected" if data['type'] == 'ph' }}>
-            pH
-          </option>
-        </select>
-      </label>
-
-      <label style="width: 50%;">
-        <span>Units:</span>
-        <select
-            name="{{ prefix }}units"
-            class="form-input-full form-input-blue js-unit-select" />
-          <optgroup label="Cells per volume">
-            <option value="Cells/mL" {{ "selected" if data['units'] == 'Cells/mL' }}>
-              Cells/mL
+      <div class="flex-column flex-gap-6 flex-1">
+        <label class="full">
+          <div>Type of measurement technique</div>
+          <select
+              name="{{ prefix }}type"
+              class="form-input-full form-input-blue js-type-select" />
+            <option value="fc" data-column-name="FC" {{ "selected" if data['type'] == 'fc' }}>
+              Flow Cytometry
             </option>
-            <option value="Cells/μL" {{ "selected" if data['units'] == 'Cells/μL' }}>
-              Cells/μL
+            <option value="od" data-column-name="OD" {{ "selected" if data['type'] == 'od' }}>
+              Optical Density (absorbance)
             </option>
-          </optgroup>
-
-          <optgroup label="Unitless/unknown">
-            <option value="" {{ "selected" if data['units'] == '' }}>
-              N/A
+            <option value="ph" data-column-name="pH" {{ "selected" if data['type'] == 'ph' }}>
+              pH
             </option>
-          </optgroup>
-        </select>
-      </label>
-    </div>
+          </select>
+        </label>
 
-    <div class="form-row">
-      <label class="full">
+        <label class="full">
+          <span>Units:</span>
+          <select
+              name="{{ prefix }}units"
+              class="form-input-full form-input-blue js-unit-select" />
+            <optgroup label="Cells per volume">
+              <option value="Cells/mL" {{ "selected" if data['units'] == 'Cells/mL' }}>
+                Cells/mL
+              </option>
+              <option value="Cells/μL" {{ "selected" if data['units'] == 'Cells/μL' }}>
+                Cells/μL
+              </option>
+            </optgroup>
+
+            <optgroup label="Unitless/unknown">
+              <option value="" {{ "selected" if data['units'] == '' }}>
+                N/A
+              </option>
+            </optgroup>
+          </select>
+        </label>
+      </div>
+
+      <label class="flex-2">
         <div>Description of methodology</div>
         <textarea
             name="{{ prefix }}description"
             class="form-input-full form-input-blue"
-            placeholder="Example: We used the Foobar OD9000 machine with..."
-            rows=2>{{ data['description'] if data }}</textarea>
+            placeholder="Example: We used a <brand name> flow cytometer with CYBR Green I staining..."
+            rows=5>{{ data['description'] if data }}</textarea>
       </label>
     </div>
 
     <div class="form-row" style="margin-top: 10px">
-      <label class="full" style="align-content: center;">
+      <label
+          data-tooltip="If you have multiple technical replicates, you can submit your point estimate as the measurement and add the standard deviation in a separate column.">
         Include STD:
         <input
             type="checkbox"
             class="js-include-std"
             name="{{ prefix }}includeStd"
             {{ "checked" if data and data['includeStd'] }} />
-        <div class="help">
-          If you have multiple technical replicates, you can submit your point
-          estimate as the measurement and add the standard deviation in a
-          separate column.
-        </div>
       </label>
     </div>
 
@@ -101,7 +92,7 @@
       </div>
 
       <div class="no-label flex-right">
-        <a href="#" class="white-button flex-row js-remove">
+        <a href="#" class="white-button flex-row js-remove-trigger">
           <span class="icon icon-remove"></span> Remove
         </a>
       </div>

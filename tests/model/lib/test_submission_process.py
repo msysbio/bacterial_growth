@@ -151,7 +151,7 @@ class TestSubmissionProcess(DatabaseTest):
             'project': {'name': 'Test project'},
             'study':   {'name': 'Test study'},
 
-            'new_strains': [{
+            'custom_strains': [{
                 'name': 'Custom strain',
                 'description': 'test',
                 'species': t_ri.ncbiId,

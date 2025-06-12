@@ -7,7 +7,6 @@ from sqlalchemy.orm import (
     Mapped,
     mapped_column,
     relationship,
-    aliased,
 )
 from sqlalchemy.ext.hybrid import hybrid_property
 
@@ -136,22 +135,3 @@ class Measurement(OrmBase):
         db_session.commit()
 
         return measurements
-
-
-# TODO (2025-05-15) Move or remove
-def _generate_technique_name(technique_type, subject_type):
-    match (technique_type.lower(), subject_type):
-        case ('fc', 'bioreplicate'):
-            return 'FC'
-        case ('fc', 'strain'):
-            return 'FC counts per species'
-        case ('metabolite', _):
-            return 'Metabolites'
-        case ('16s', _):
-            return '16S rRNA-seq'
-        case ('ph', _):
-            return 'pH'
-        case ('od', _):
-            return 'OD'
-        case _:
-            raise ValueError(f"Unknown technique name for type {technique_type}, subject {subject_type}")

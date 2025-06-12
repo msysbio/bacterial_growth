@@ -67,6 +67,14 @@
           {% endfor %}
         </select>
       </label>
+
+      <label
+          class="full"
+          data-tooltip="Number of timepoints measured for the experiment">
+        <div class="required">Timepoint count</div>
+        {# Note: Have to access the input using [], since there is an existing `.name` attribute #}
+        {{ form['timepointCount'](class='form-input-blue form-input-full') }}
+      </label>
     </div>
 
     <div class="form-row">

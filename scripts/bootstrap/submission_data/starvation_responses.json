@@ -8,17 +8,11 @@
     "name": "Starvation responses impact interaction of human gut bacteria BT-RI",
     "description": "in vitro batch system containing mucin beads to emulate the dynamic host environment and to study its impact on the interactions between two abundant and prevalent human gut bacteria."
   },
-  "vessel_count": 18,
-  "timepoint_count": 19,
-  "row_count": null,
-  "column_count": null,
-  "plate_count": null,
-  "vessel_type": "bottles",
-  "bottle_count": 18,
   "strains": [
     "166486",
     "818"
   ],
+  "timeUnits": "h",
   "techniques": [
     {
       "type": "od",
@@ -66,7 +60,6 @@
       ]
     }
   ],
-  "time_units": "h",
   "communities": [
     {
       "name": "BT",
@@ -117,6 +110,7 @@
       ],
       "communityName": "BT",
       "perturbations": [],
+      "timepointCount": 17,
       "cultivationMode": "batch",
       "compartmentNames": [
         "WC",
@@ -151,6 +145,7 @@
       ],
       "communityName": "BT",
       "perturbations": [],
+      "timepointCount": 14,
       "cultivationMode": "batch",
       "compartmentNames": [
         "WC"
@@ -184,6 +179,7 @@
       ],
       "communityName": "BT",
       "perturbations": [],
+      "timepointCount": 16,
       "cultivationMode": "batch",
       "compartmentNames": [
         "WC",
@@ -218,6 +214,7 @@
       ],
       "communityName": "BT",
       "perturbations": [],
+      "timepointCount": 14,
       "cultivationMode": "batch",
       "compartmentNames": [
         "WC"
@@ -249,8 +246,9 @@
           "biosampleUrl": ""
         }
       ],
-      "communityName": "BT",
+      "communityName": "BT_RI",
       "perturbations": [],
+      "timepointCount": 16,
       "cultivationMode": "batch",
       "compartmentNames": [
         "WC",
@@ -283,15 +281,15 @@
           "biosampleUrl": ""
         }
       ],
-      "communityName": "BT",
+      "communityName": "BT_RI",
       "perturbations": [],
+      "timepointCount": 14,
       "cultivationMode": "batch",
       "compartmentNames": [
         "WC"
       ]
     }
   ],
-  "new_strains": [],
   "compartments": [
     {
       "H2": 10.0,
@@ -304,7 +302,6 @@
       "initialPh": 5.0,
       "mediumUrl": "https://mediadive.dsmz.de/medium/339",
       "mediumName": "Wilkins-Chalgren Anaerobe Broth (WC)",
-      "carbonSource": true,
       "stirringMode": "linear",
       "stirringSpeed": 170.0,
       "inoculumVolume": 1.0,
@@ -317,17 +314,17 @@
       "O2": null,
       "CO2": null,
       "name": "MUCIN",
-      "volume": 60.0,
-      "pressure": 1.0,
+      "volume": null,
+      "pressure": null,
       "initialPh": null,
-      "mediumUrl": "https://mediadive.dsmz.de/medium/339",
+      "mediumUrl": "",
       "mediumName": "Mucin",
-      "carbonSource": true,
-      "stirringMode": "linear",
+      "stirringMode": "",
       "stirringSpeed": null,
       "inoculumVolume": null,
       "initialTemperature": 37.0,
       "inoculumConcentration": null
     }
-  ]
+  ],
+  "custom_strains": []
 }

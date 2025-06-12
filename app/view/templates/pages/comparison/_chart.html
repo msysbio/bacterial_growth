@@ -53,31 +53,7 @@
         <div class="middle {{ "align-right" if right_axis }}">
           [{{ study.publicId }}: {{ experiment.name }}]
 
-          {% if technique.subjectType == 'metabolite': %}
-            <strong>{{ subject.name }}</strong>
-          {% else: %}
-            {{ technique.short_name }}
-          {% endif %}
-
-          {% if (left_axis and chart.mixed_units_left) or (right_axis and chart.mixed_units_right): %}
-            {% if technique.units and technique.units != 'reads': %}
-              ({{ technique.units }})
-            {% endif %}
-          {% endif %}
-
-          {% if technique.subjectType == 'bioreplicate' %}
-            of the
-            <strong>{{ subject.name }}<sub>{{ compartment.name }}</sub></strong>
-            community
-          {% elif technique.subjectType == 'metabolite': %}
-            in
-            {{ bioreplicate.name }}<sub>{{ compartment.name }}</sub>
-          {% else: %}
-            of
-            <strong>{{ subject.name }}</strong>
-            in
-            {{ bioreplicate.name }}<sub>{{ compartment.name }}</sub>
-          {% endif %}
+          {{ measurement_context.get_chart_label()|safe }}
         </div>
 
         <div class="flex-row right" data-tooltip="Move data trace to the right axis">
