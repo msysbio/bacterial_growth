@@ -16,7 +16,6 @@ class SearchFormClause(FlaskForm):
         'NCBI ID',
         'Metabolites',
         'chEBI ID',
-        'pH',
     ])
     value = StringField('value', validators=[Optional()])
     logic_operator = SelectField('logic_operator', validators=[Optional()], choices=['AND', 'OR', 'NOT'])

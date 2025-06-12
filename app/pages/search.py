@@ -28,8 +28,12 @@ def search_index_page():
         if not form.data['clauses'][0]['option']:
             form.data
 
-        query = study_dfs.dynamical_query(form.data['clauses'])
-        studyIds = [studyId for (studyId,) in g.db_conn.execute(sql.text(query))]
+        query, values = study_dfs.dynamical_query(form.data['clauses'])
+        value_dict = {f"value_{i}": v for i, v in enumerate(values)}
+        studyIds = [
+            studyId for (studyId,)
+            in g.db_conn.execute(sql.text(query), value_dict)
+        ]
 
         if len(studyIds) == 0:
             message = "Couldn't find a study with these parameters."

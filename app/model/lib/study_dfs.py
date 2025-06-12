@@ -9,10 +9,10 @@ it's just bags of data that are rendered as tables.
 import sqlalchemy as sql
 
 
-# TODO (2024-08-24) Sanitize: return (query, params)
 def dynamical_query(all_advance_query):
     base_query = "SELECT DISTINCT studyId"
     search_final_query = ""
+    values = []
 
     for query_dict in all_advance_query:
         where_clause = ""
@@ -28,9 +28,10 @@ def dynamical_query(all_advance_query):
                 WHERE projectUniqueID IN (
                     SELECT projectUniqueID
                     FROM Projects
-                    WHERE LOWER(projectName) LIKE '%{project_name}%'
+                    WHERE LOWER(projectName) LIKE :value_{len(values)}
                 )
                 """
+                values.append(f'%{project_name}%')
         elif query_dict['option'] == 'Project ID':
             project_id = query_dict['value']
             where_clause = f"""
@@ -38,40 +39,46 @@ def dynamical_query(all_advance_query):
             WHERE projectUniqueID IN (
                 SELECT projectUniqueID
                 FROM Projects
-                WHERE projectId = '{project_id}'
+                WHERE projectId = :value_{len(values)}
             )
             """
+            values.append(project_id)
         elif query_dict['option'] == 'Study Name':
             study_name = query_dict['value'].strip().lower()
             where_clause = f"""
                 FROM Studies
-                WHERE LOWER(studyName) LIKE '%{study_name}%'
+                WHERE LOWER(studyName) LIKE :value_{len(values)}
             """
+            values.append(f"%{study_name}%")
         elif query_dict['option'] == 'Study ID':
             study_id = query_dict['value']
             where_clause = f"""
             FROM Studies
-            WHERE studyId = '{study_id}'
+            WHERE studyId = :value_{len(values)}
             """
+            values.append(study_id)
         elif query_dict['option'] == 'Microbial Strain':
             microb_strain = query_dict['value'].strip().lower()
             where_clause = f"""
             FROM Strains
-            WHERE LOWER(name) LIKE '%{microb_strain}%'
+            WHERE LOWER(name) LIKE :value_{len(values)}
             """
+            values.append(f"%{microb_strain}%")
         elif query_dict['option'] == 'NCBI ID':
             microb_ID = query_dict['value']
             where_clause = f"""
             FROM Strains
-            WHERE NCBId = '{microb_ID}'
+            WHERE NCBId = :value_{len(values)}
             """
+            values.append(microb_ID)
         elif query_dict['option'] == 'Metabolites':
             metabo = query_dict['value'].strip().lower()
             where_clause = f"""
             FROM StudyMetabolites
             INNER JOIN Metabolites ON Metabolites.chebiId = StudyMetabolites.chebi_id
-            WHERE LOWER(Metabolites.name) LIKE '%{metabo}%'
+            WHERE LOWER(Metabolites.name) LIKE :value_{len(values)}
             """
+            values.append(f"%{metabo}%")
         elif query_dict['option'] == 'chEBI ID':
             chebi_id = query_dict['value']
 
@@ -80,14 +87,12 @@ def dynamical_query(all_advance_query):
 
             where_clause = f"""
             FROM StudyMetabolites
-            WHERE chebi_id = '{chebi_id}'
+            WHERE chebi_id = :value_{len(values)}
             """
-        elif query_dict['option'] == 'pH':
-            start, end = query_dict['value']
-            where_clause = f"""
-            FROM Compartments
-            WHERE initialPh BETWEEN {start} AND {end}
-            """
+            values.append(chebi_id)
+        else:
+            raise ValueError(f"Unknown option: {query_dict['option']}")
+
         logic_add = ""
         if 'logic_operator' in query_dict:
             if query_dict['logic_operator'] == 'AND':
@@ -105,4 +110,5 @@ def dynamical_query(all_advance_query):
         search_final_query += final_query
 
     search_final_query = search_final_query + ";"
-    return search_final_query
+
+    return search_final_query, values
