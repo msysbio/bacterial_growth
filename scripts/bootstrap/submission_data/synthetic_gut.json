@@ -139,7 +139,6 @@
       "initialPh": 6.5,
       "mediumUrl": "",
       "mediumName": "Wilkins-Chalgren Anerobe Broth (WC)",
-      "carbonSource": false,
       "stirringMode": "",
       "stirringSpeed": null,
       "inoculumVolume": 1.0,

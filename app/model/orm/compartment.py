@@ -36,8 +36,6 @@ class Compartment(OrmBase):
     initialPh:             Mapped[Decimal] = mapped_column(sql.Numeric(7, 2), nullable=True)
     initialTemperature:    Mapped[Decimal] = mapped_column(sql.Numeric(7, 2), nullable=True)
 
-    # carbonSource: Mapped[bool] = mapped_column(sql.Boolean)
-
     mediumName: Mapped[str]  = mapped_column(sql.String(100), nullable=True)
     mediumUrl:  Mapped[str]  = mapped_column(sql.String(100), nullable=True)
 
