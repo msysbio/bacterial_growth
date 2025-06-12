@@ -14,23 +14,23 @@
   {% endfor %}
 {% else: %}
   <li>
+    <a href="{{ url_for('help_show_page', name="main-concepts") }}">
+      Main Concepts
+    </a>
+  </li>
+  <li>
     <a href="{{ url_for('help_show_page', name="bacterial-growth-data") }}">
       Bacterial Growth Data
     </a>
   </li>
   <li>
-    <a href="{{ url_for('help_show_page', name="our-database") }}">
-      Our Database
-    </a>
-  </li>
-  <li>
     <a href="{{ url_for('help_show_page', name="uploading-process") }}">
-      Uploading process
+      Uploading Process
     </a>
   </li>
   <li>
     <a href="{{ url_for('help_show_page', name="data-analysis") }}">
-      Data analysis
+      Data Analysis
     </a>
   </li>
 {% endif %}

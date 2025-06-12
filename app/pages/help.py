@@ -70,8 +70,8 @@ class HelpPages:
         return results
 
     def process_once(self):
-        if self._html_cache:
-            return
+        # if self._html_cache:
+        #     return
 
         for file in self.root_dir.iterdir():
             extension = file.suffix
@@ -123,7 +123,7 @@ def help_show_page(name):
     html_content = HELP_PAGES.render_html(name)
 
     return render_template(
-        "pages/help/page.html",
+        "pages/help/show.html",
         title=title,
         content=html_content,
     )
