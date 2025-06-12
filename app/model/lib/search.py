@@ -1,9 +1,7 @@
 """
-A module with functions used to fetch data related to a study packaged up in
-pandas dataframes.
-
-This will likely be changed to be a bit more generally usable, since right now,
-it's just bags of data that are rendered as tables.
+This module contains the main function that performs the search query. In the
+long run, it should be replaced by something that uses a full-text search and
+is less complicated.
 """
 
 
