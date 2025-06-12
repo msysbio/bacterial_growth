@@ -106,9 +106,6 @@ def upload_step3_page():
         submission_form.update_study_design(upload_form.data)
         session['submission_id'] = submission_form.save()
 
-        import simplejson as json
-        print(json.dumps(submission_form.submission.studyDesign, use_decimal=True, indent=2))
-
         return redirect(url_for('upload_step4_page'))
 
     return render_template(
