@@ -77,12 +77,9 @@ def _close_db_connection(response):
         return response
 
     if current_app.config['SQLALCHEMY_RECORD_QUERIES']:
-        import sqlparse
-
         recorded_queries = list(get_recorded_queries())
 
         for query_info in recorded_queries:
-            # print(sqlparse.format(query_info.statement, reindent=True))
             duration_ms = round((query_info.end_time - query_info.start_time) * 1_000, 2)
             current_app.logger.info(f"[SQL {duration_ms}ms] " + query_info.statement)
 
