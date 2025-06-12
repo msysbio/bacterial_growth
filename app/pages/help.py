@@ -43,10 +43,19 @@ class HelpPages:
                 else:
                     ranges.append(range(start_index, end_index))
 
-            excerpts = [text[r.start:r.stop] for r in ranges]
+            excerpts = []
+
+            for excerpt in [text[r.start:r.stop] for r in ranges]:
+                # Remove possibly partial first/last word, add truncation:
+                if ranges[0].start > 0:
+                    excerpt = re.sub(r'^[a-zA-Z.?!,:]*\s*', '', excerpt)
+                if ranges[-1].stop < len(text):
+                    excerpt = re.sub(r'\s*[a-zA-Z.?!,:]*$', '', excerpt)
+
+                excerpts.append(excerpt)
 
             if excerpts:
-                full_excerpt = '[...]'.join(excerpts)
+                full_excerpt = ' [...] '.join(excerpts)
 
                 if ranges[0].start > 0:
                     full_excerpt = '...' + full_excerpt
@@ -81,7 +90,7 @@ class HelpPages:
                 self._html_cache[base_key] = html_content
 
                 soup = BeautifulSoup(html_content, 'html.parser')
-                self._text_cache[base_key] = soup.get_text(' ', strip=True)
+                self._text_cache[base_key] = ' '.join(soup.get_text(' ', strip=True).split())
 
 
 HELP_PAGES = HelpPages()
