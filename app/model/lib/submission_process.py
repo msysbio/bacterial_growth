@@ -15,7 +15,6 @@ from app.model.orm import (
     ExperimentCompartment,
     Measurement,
     MeasurementContext,
-    Metabolite,
     Perturbation,
     Project,
     ProjectUser,
@@ -26,7 +25,6 @@ from app.model.orm import (
     Taxon,
 )
 from app.model.lib.util import group_by_unique_name, is_non_negative_float
-from app.model.lib.db import execute_into_df
 
 
 def persist_submission_to_database(submission_form):
@@ -443,6 +441,7 @@ def _create_average_measurements(db_session, study, experiment):
                         subject_id=subject_id,
                         subject_type=subject_type
                     )
+
 
 def _create_average_measurement_context(
     db_session,

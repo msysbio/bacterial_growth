@@ -2,8 +2,6 @@ import tests.init  # noqa: F401
 
 import unittest
 
-import sqlalchemy as sql
-
 from app.model.lib.modeling_tasks import _process_modeling_request
 from tests.database_test import DatabaseTest
 

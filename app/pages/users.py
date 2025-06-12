@@ -12,7 +12,6 @@ from flask import (
     url_for,
 )
 import sqlalchemy as sql
-import requests
 from werkzeug.exceptions import NotFound
 
 from app.model.orm import (
@@ -139,10 +138,8 @@ def user_logout_action():
 
 
 def _user_login_show():
-    app_env         = os.getenv('APP_ENV', 'development')
     orcid_client_id = current_app.config["ORCID_CLIENT_ID"]
-
-    orcid_url = orcid.get_login_url(orcid_client_id, request.host)
+    orcid_url       = orcid.get_login_url(orcid_client_id, request.host)
 
     return render_template(
         "pages/users/login.html",

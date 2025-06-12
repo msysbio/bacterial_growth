@@ -5,7 +5,6 @@ from sqlalchemy.orm import (
     Mapped,
     mapped_column,
 )
-from sqlalchemy.ext.hybrid import hybrid_property
 
 from app.model.orm.orm_base import OrmBase
 

@@ -1,5 +1,6 @@
 import numpy as np
 
+
 def apply_log_transform(df):
     if 'std' in df and not df['std'].isnull().all():
         # Transform std values by summing them and transforming the results:

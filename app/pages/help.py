@@ -55,7 +55,7 @@ class HelpPages:
 
                 results.append({
                     'name': name,
-                    'excerpt_html': re.sub(regex, fr'<span class="highlight">\1</span>', full_excerpt),
+                    'excerpt_html': re.sub(regex, r'<span class="highlight">\1</span>', full_excerpt),
                 })
 
         return results

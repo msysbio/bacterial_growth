@@ -7,7 +7,6 @@ from sqlalchemy.orm import (
     Mapped,
     mapped_column,
     relationship,
-    aliased,
 )
 from sqlalchemy.ext.hybrid import hybrid_property
 

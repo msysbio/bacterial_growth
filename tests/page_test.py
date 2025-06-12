@@ -1,7 +1,5 @@
 import tests.init  # noqa: F401
 
-import unittest
-
 from bs4 import BeautifulSoup
 
 from main import create_app

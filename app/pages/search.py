@@ -11,7 +11,7 @@ from flask import (
 import sqlalchemy as sql
 
 from app.view.forms.search_form import SearchForm, SearchFormClause
-import app.model.lib.study_dfs as study_dfs
+from app.model.lib.search import dynamical_query
 from app.model.orm import (
     Study,
     StudyUser,
@@ -28,7 +28,7 @@ def search_index_page():
         if not form.data['clauses'][0]['option']:
             form.data
 
-        query, values = study_dfs.dynamical_query(form.data['clauses'])
+        query, values = dynamical_query(form.data['clauses'])
         value_dict = {f"value_{i}": v for i, v in enumerate(values)}
         studyIds = [
             studyId for (studyId,)

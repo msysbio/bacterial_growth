@@ -1,4 +1,3 @@
-from decimal import Decimal
 import unittest
 
 from app.model.lib.conversion import (

@@ -1,10 +1,6 @@
 import tests.init  # noqa: F401
 
 import unittest
-from tempfile import TemporaryDirectory
-from pathlib import Path
-
-from flask import render_template
 
 from tests.page_test import PageTest
 from app.pages.help import HelpPages
@@ -41,7 +37,6 @@ class TestHelpPages(PageTest):
             """To <span class="highlight">upload your data</span> in µGrowthDB""",
             results[0]['excerpt_html']
         )
-
 
 
 if __name__ == '__main__':

@@ -1,10 +1,6 @@
 import json
 
-from flask import (
-    g,
-    render_template,
-    request,
-)
+from flask import request
 
 from db import get_connection
 from app.model.orm import Taxon

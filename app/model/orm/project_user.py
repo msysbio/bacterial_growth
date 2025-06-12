@@ -1,5 +1,3 @@
-from typing import List
-
 import sqlalchemy as sql
 from sqlalchemy.orm import (
     Mapped,

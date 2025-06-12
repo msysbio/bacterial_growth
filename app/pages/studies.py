@@ -7,16 +7,11 @@ from flask import (
     request,
 )
 from werkzeug.exceptions import Forbidden
-import pandas as pd
 import sqlalchemy as sql
-from sqlalchemy.sql.expression import literal
 
-import app.model.lib.study_dfs as study_dfs
 from app.model.orm import (
     Bioreplicate,
     Experiment,
-    Measurement,
-    MeasurementTechnique,
     MeasurementContext,
     ModelingRequest,
     ModelingResult,
@@ -27,8 +22,6 @@ from app.view.forms.comparative_chart_form import ComparativeChartForm
 from app.model.lib.chart import Chart
 from app.model.lib.modeling_tasks import process_modeling_request
 from app.model.lib.model_export import export_model_csv
-from app.model.lib.figures import make_figure_with_traces
-from app.model.lib.db import execute_into_df
 from app.model.lib.log_transform import apply_log_transform
 import app.model.lib.util as util
 
@@ -136,6 +129,7 @@ def study_download_models_csv(studyId):
         download_name=f"{studyId}_models.csv",
     )
 
+
 def study_visualize_page(studyId):
     study = _fetch_study(studyId)
 
@@ -221,9 +215,11 @@ def study_modeling_chart_fragment(studyId, measurementContextId):
     study = _fetch_study(studyId)
     args = request.args.to_dict()
 
+    # TODO (2025-06-12) Unused?
+    # width  = args.pop('width')
+    # height = args.pop('height')
+
     modeling_type = args.pop('modelingType')
-    width         = args.pop('width')
-    height        = args.pop('height')
     log_transform = args.pop('logTransform', 'false') == 'true'
 
     measurement_context = g.db_session.get(MeasurementContext, measurementContextId)

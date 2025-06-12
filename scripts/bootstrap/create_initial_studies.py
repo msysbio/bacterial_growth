@@ -1,12 +1,6 @@
 from uuid import uuid4
-from datetime import datetime, UTC
-
-import simplejson as json
-import sqlalchemy as sql
 
 from db import get_session
-from app.view.forms.submission_form import SubmissionForm
-from app.model.lib.submission_process import persist_submission_to_database
 from app.model.lib.dev import bootstrap_study
 
 STUDY_KEYS = [

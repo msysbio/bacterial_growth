@@ -1,8 +1,6 @@
-import re
 import json
 
-from flask import render_template, request
-import sqlalchemy as sql
+from flask import request
 
 from db import get_connection
 from app.model.orm import Metabolite

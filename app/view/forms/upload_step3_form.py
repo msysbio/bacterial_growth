@@ -2,8 +2,6 @@ from wtforms import (
     BooleanField,
     FieldList,
     FormField,
-    IntegerField,
-    SelectField,
     SelectMultipleField,
     StringField,
 )

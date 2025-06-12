@@ -1,5 +1,4 @@
 from wtforms import (
-    BooleanField,
     DecimalField,
     FieldList,
     FormField,

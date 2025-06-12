@@ -6,8 +6,6 @@ This will likely be changed to be a bit more generally usable, since right now,
 it's just bags of data that are rendered as tables.
 """
 
-import sqlalchemy as sql
-
 
 def dynamical_query(all_advance_query):
     base_query = "SELECT DISTINCT studyId"

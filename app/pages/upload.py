@@ -9,16 +9,8 @@ from flask import (
     url_for,
     send_file,
 )
-import sqlalchemy as sql
 
-from app.model.orm import (
-    Submission,
-    ExcelFile,
-    Project,
-    ProjectUser,
-    Study,
-    StudyUser,
-)
+from app.model.orm import ExcelFile
 import app.model.lib.data_spreadsheet as data_spreadsheet
 from app.model.lib.submission_process import (
     persist_submission_to_database,
