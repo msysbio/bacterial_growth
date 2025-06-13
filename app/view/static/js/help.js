@@ -1,4 +1,4 @@
-Page('.help-page', function($page) {
+Page('.help-page-index', function($page) {
   let $pageList = $page.find('.js-page-list');
   let $searchInput = $('.js-search-input');
 
