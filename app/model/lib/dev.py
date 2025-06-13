@@ -70,3 +70,5 @@ def bootstrap_study(db_session, study_key, user_uuid):
     study.publishedAt = datetime.now(UTC)
     db_session.add(study)
     db_session.commit()
+
+    return study
