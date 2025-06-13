@@ -38,18 +38,7 @@ A continuous fermentation is characterized by the constant addition of new nutri
 
 ## Quantification of Microbial Cultures
 
-Quantifying the number of cells over a period of time allows a better understanding of how the specific population grows, reaches a maximum density, and declines. This also allows to calculate the growth rate and with it gain insights about the growth kinetics. This information is important to understand how microorganisms behave for different pH and temperature values, or nutrients available. In co-cultures, more than one microbial strain is cultivated in the same medium simultaneously. This allows us to study mutualistic and antagonistic interactions between these strains, as well as their dynamics. Quantification is crucial not only to assess microbial growth but also to prepare the inoculum samples. Different techniques have been developed to quantify microbial cells in a sample. All of these quantify cells in different units (Table below) and have different characteristics as discussed below.
-
-<br>
-
-| Measurement techniques     | Units                                          |
-| ---                        | ---                                            |
-| Direct Microscopic Count   | Cells per volume (e.g., cells/mL, cells/cm³)   |
-| Colony Forming Units (CFU) | CFU/mL (liquid samples), CFU/g (solid samples) |
-| Optical Density (OD)       | OD is dimensionless                            |
-| Flow Cytometry (FC)        | cells/mL                                       |
-| 16S rRNA Seq               | Normalized read counts                         |
-
+Quantifying the number of cells over a period of time allows a better understanding of how the specific population grows, reaches a maximum density, and declines. This also allows to calculate the growth rate and with it gain insights about the growth kinetics. This information is important to understand how microorganisms behave for different pH and temperature values, or nutrients available. In co-cultures, more than one microbial strain is cultivated in the same medium simultaneously. This allows us to study mutualistic and antagonistic interactions between these strains, as well as their dynamics. Quantification is crucial not only to assess microbial growth but also to prepare the inoculum samples. Different techniques have been developed to quantify microbial cells in a sample.
 
 ### Direct Microscopic Count
 
