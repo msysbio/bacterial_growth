@@ -8,6 +8,7 @@ from flask import (
 from markdown_it import MarkdownIt
 from markupsafe import Markup
 from bs4 import BeautifulSoup
+from werkzeug.exceptions import NotFound
 
 
 class HelpPages:
@@ -21,7 +22,10 @@ class HelpPages:
         self._text_cache = {}
 
     def render_html(self, base_path):
-        return self._html_cache[base_path]
+        try:
+            return self._html_cache[base_path]
+        except KeyError as e:
+            raise NotFound() from e
 
     def search(self, query):
         results = []
@@ -70,8 +74,8 @@ class HelpPages:
         return results
 
     def process_once(self):
-        # if self._html_cache:
-        #     return
+        if self._html_cache:
+            return
 
         for file in self.root_dir.iterdir():
             extension = file.suffix

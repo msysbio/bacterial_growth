@@ -22,7 +22,7 @@ class TestHelpPages(PageTest):
 
         self.assertIn(
             '<h2>How to upload my data?</h2>',
-            str(self.help_pages.render_html('uploading-process')),
+            str(self.help_pages.render_html('upload-process')),
         )
 
         with self.assertRaises(KeyError):
@@ -32,7 +32,7 @@ class TestHelpPages(PageTest):
         results = self.help_pages.search('upload your data')
 
         self.assertEqual(len(results), 1)
-        self.assertEqual(results[0]['name'], 'uploading-process')
+        self.assertEqual(results[0]['name'], 'upload-process')
         self.assertIn(
             """To <span class="highlight">upload your data</span> in µGrowthDB""",
             results[0]['excerpt_html']
