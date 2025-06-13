@@ -53,7 +53,7 @@
         <div class="middle {{ "align-right" if right_axis }}">
           [{{ study.publicId }}: {{ experiment.name }}]
 
-          {{ measurement_context.get_chart_label()|safe }}
+          {{ measurement_context.get_chart_label(g.db_session)|safe }}
         </div>
 
         <div class="flex-row right" data-tooltip="Move data trace to the right axis">
