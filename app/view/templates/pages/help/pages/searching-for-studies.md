@@ -1,3 +1,0 @@
-## Search form
-
-TODO
