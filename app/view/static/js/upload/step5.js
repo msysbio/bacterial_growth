@@ -59,7 +59,7 @@ Page('.upload-page .step-content.step-5.active', function($step5) {
           }
 
           let newName = lastName.replace(/\d+$/, function(m) {
-            return parseInt(m[0], 10) + 1
+            return parseInt(m, 10) + 1
           });
 
           if (newName == lastName) {
