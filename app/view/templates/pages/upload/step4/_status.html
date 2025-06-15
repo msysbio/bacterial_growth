@@ -21,7 +21,7 @@
     {% if communities|length > 0: %}
       <li class="complete">
         <span class="icon"></span>
-        <span>{{ communities|length }} communities(s):</span>
+        <span>{{ communities|length }} communities:</span>
         <span class="truncate">
           {{ communities|map(attribute='name')|join_tag('strong') }}
         </span>
