@@ -69,6 +69,8 @@ Page('.upload-page .step-content.step-3.active', function($step3) {
       $unitsSelect.val('reads');
     } else if (type == 'plates') {
       $unitsSelect.val('CFUs/mL');
+    } else if (type == 'fc') {
+      $unitsSelect.val('Cells/mL');
     } else {
     }
   }

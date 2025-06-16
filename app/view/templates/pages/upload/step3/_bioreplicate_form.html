@@ -28,11 +28,14 @@
           <select
               name="{{ prefix }}type"
               class="form-input-full form-input-blue js-type-select" />
-            <option value="fc" data-column-name="FC" {{ "selected" if data['type'] == 'fc' }}>
+            <option value="fc" data-column-name="FC counts" {{ "selected" if data['type'] == 'fc' }}>
               Flow Cytometry
             </option>
             <option value="od" data-column-name="OD" {{ "selected" if data['type'] == 'od' }}>
               Optical Density (absorbance)
+            </option>
+            <option value="plates" data-column-name="plate counts" {{ "selected" if data['type'] == 'plates' }}>
+              Plate Counts
             </option>
             <option value="ph" data-column-name="pH" {{ "selected" if data['type'] == 'ph' }}>
               pH
@@ -51,6 +54,15 @@
               </option>
               <option value="Cells/μL" {{ "selected" if data['units'] == 'Cells/μL' }}>
                 Cells/μL
+              </option>
+            </optgroup>
+
+            <optgroup label="CFUs per volume">
+              <option value="CFUs/mL" {{ "selected" if data['units'] == 'CFUs/mL' }}>
+                CFUs/mL
+              </option>
+              <option value="CFUs/μL" {{ "selected" if data['units'] == 'CFUs/μL' }}>
+                CFUs/μL
               </option>
             </optgroup>
 
