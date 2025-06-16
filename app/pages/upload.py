@@ -62,11 +62,12 @@ def upload_step2_page():
     if _request_is_ajax():
         return _step2_partial(upload_form, submission_form)
 
-    if request.method == 'POST' and upload_form.validate():
+    if request.method == 'POST':
         submission_form.update_strains(upload_form.data)
-        session['submission_id'] = submission_form.save()
 
-        return redirect(url_for('upload_step3_page'))
+        if upload_form.validate():
+            session['submission_id'] = submission_form.save()
+            return redirect(url_for('upload_step3_page'))
 
     return render_template(
         "pages/upload/index.html",
@@ -76,8 +77,9 @@ def upload_step2_page():
 
 
 def _step2_partial(upload_form, submission_form):
+    submission_form.update_strains(upload_form.data)
+
     if upload_form.validate():
-        submission_form.update_strains(upload_form.data)
         session['submission_id'] = submission_form.save()
 
     return render_template(
@@ -94,11 +96,12 @@ def upload_step3_page():
     if _request_is_ajax():
         return _step3_partial(upload_form, submission_form)
 
-    if request.method == 'POST' and upload_form.validate():
+    if request.method == 'POST':
         submission_form.update_study_design(upload_form.data)
-        session['submission_id'] = submission_form.save()
 
-        return redirect(url_for('upload_step4_page'))
+        if upload_form.validate():
+            session['submission_id'] = submission_form.save()
+            return redirect(url_for('upload_step4_page'))
 
     return render_template(
         "pages/upload/index.html",
@@ -108,8 +111,9 @@ def upload_step3_page():
 
 
 def _step3_partial(upload_form, submission_form):
+    submission_form.update_study_design(upload_form.data)
+
     if upload_form.validate():
-        submission_form.update_study_design(upload_form.data)
         session['submission_id'] = submission_form.save()
 
     return render_template(
@@ -126,11 +130,12 @@ def upload_step4_page():
     if _request_is_ajax():
         return _step4_partial(upload_form, submission_form, request.args['subform_type'])
 
-    if request.method == 'POST' and upload_form.validate():
+    if request.method == 'POST':
         submission_form.update_study_design(upload_form.data)
-        session['submission_id'] = submission_form.save()
 
-        return redirect(url_for('upload_step5_page'))
+        if upload_form.validate():
+            session['submission_id'] = submission_form.save()
+            return redirect(url_for('upload_step5_page'))
 
     return render_template(
         "pages/upload/index.html",
@@ -140,8 +145,9 @@ def upload_step4_page():
 
 
 def _step4_partial(upload_form, submission_form, subform_type):
+    submission_form.update_study_design(upload_form.data)
+
     if upload_form.validate():
-        submission_form.update_study_design(upload_form.data)
         session['submission_id'] = submission_form.save()
 
     return render_template(
@@ -158,11 +164,12 @@ def upload_step5_page():
     if _request_is_ajax():
         return _step5_partial(upload_form, submission_form)
 
-    if request.method == 'POST' and upload_form.validate():
+    if request.method == 'POST':
         submission_form.update_study_design(upload_form.data)
-        session['submission_id'] = submission_form.save()
 
-        return redirect(url_for('upload_step6_page'))
+        if upload_form.validate():
+            session['submission_id'] = submission_form.save()
+            return redirect(url_for('upload_step6_page'))
 
     return render_template(
         "pages/upload/index.html",
@@ -172,8 +179,9 @@ def upload_step5_page():
 
 
 def _step5_partial(upload_form, submission_form):
+    submission_form.update_study_design(upload_form.data)
+
     if upload_form.validate():
-        submission_form.update_study_design(upload_form.data)
         session['submission_id'] = submission_form.save()
 
     return render_template(
