@@ -162,4 +162,4 @@ In step 7, the data will already have been processed and your study should be cr
 
 You can review your study, but it will only be visible to the public once you click the "Publish" button. This will only be allowed after a 24-hour period. If you are just experimenting with the interface, you can simply avoid publishing altogether. In the future, the application may have a "test mode" to more clearly separate "test" studies and ones intended for publishing.
 
-After submitting and publishing your study, you can still come back to this submission to update it, if necessary. To retract a study, please send us an email to explain your situation. You can find contact details on our lab's website, {{ "http://msysbiology.com/"|external_link() }}.
+After submitting and publishing your study, you can still come back to this submission to update it, if necessary. To retract a study, please send us an email to explain your situation. You can can contact us at <a href="mailto:mgrowthdb@kuleuven.be">mgrowthdb@kuleuven.be</a>.
