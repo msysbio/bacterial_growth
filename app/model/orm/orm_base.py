@@ -30,7 +30,7 @@ class OrmBase(DeclarativeBase):
         return f"<{type(self).__name__} {', '.join(parts)}>"
 
     def __repr__(self):
-        return f"{type(self).__name__}({', '.join([f"{k}={repr(v)}" for k, v in self._asdict().items()])}>"
+        return f"{type(self).__name__}({', '.join([f'{k}={repr(v)}' for k, v in self._asdict().items()])}>"
 
     def _validate_inclusion(self, key, value, valid_values):
         if value not in valid_values:
