@@ -46,7 +46,7 @@ extensions = [
 # -- Options for autoapi -------------------------------------------------------
 
 # NOTE: This pair works good in the RTD
-autoapi_dirs = ['../lib', '../initialization', '../models', '../forms', '../legacy', '../pages']
+autoapi_dirs = ['../app', '../initialization']
 autoapi_ignore = []
 
 
