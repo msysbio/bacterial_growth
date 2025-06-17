@@ -1,0 +1,31 @@
+{% macro render_step3_status(submission_form, submission) %}
+
+  <ul class="upload-status">
+    {% if submission.studyDesign['techniques']|length > 0: %}
+      {% for (type, techniques) in submission_form.technique_descriptions(): %}
+        {% if type == 'Metabolite': %}
+          <li class="complete">
+            <span class="icon"></span>
+            <span>{{ techniques[0].metaboliteIds|length }} Metabolites measured:</span>
+            <span class="truncate">
+              {{ submission_form.fetch_all_metabolites()|map(attribute="name")|join_tag('strong') }}
+            </span>
+          </li>
+        {% else: %}
+          <li class="complete">
+            <span class="icon"></span>
+            <span>{{ techniques|length }} {{ type }} measurements:</span>
+            <span class="truncate">
+              {{ techniques|map(attribute="short_name")|join_tag('strong') }}
+            </span>
+          </li>
+        {% endif %}
+      {% endfor %}
+    {% else %}
+      <li class="incomplete">
+        <span class="icon"></span> No measurement techniques added yet
+      </li>
+    {% endif %}
+  </ul>
+
+{% endmacro %}

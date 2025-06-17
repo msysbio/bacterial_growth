@@ -1,0 +1,99 @@
+{% from 'utils/_post_button.html' import post_button %}
+{% from 'pages/studies/manage/_modeling_form.html' import render_modeling_form %}
+
+{% extends '_layout.html' %}
+
+{% block title %}: Manage study {{ study.studyId }}{% endblock %}
+
+{% block content %}
+  <div class="container study-page study-manage-page" data-study-id="{{ study.studyId }}">
+    {% include 'pages/studies/_header.html' %}
+
+    <article>
+      <h1>{{ study.studyName }}</h1>
+
+      {% include 'pages/studies/_navigation_buttons.html' %}
+
+      <h2>Private Unique Identifier</h2>
+
+      <p>
+        This private ID can be used to gain access to the study for
+        editing purposes. Only share it with other users that need that
+        access.
+      </p>
+
+      <p>
+        <div class="copy-button-wrapper flex-row flex-grow">
+          <button type="button" class="js-copy-button copy-button green-button">
+            Copy 📋
+          </button>
+          <input
+              type="text"
+              value="{{ study.uuid }}"
+              class="js-export-url export-url form-input-blue full"
+              readonly />
+        </div>
+      </p>
+
+      <h2>Edit study</h2>
+
+      <p>
+        To re-upload the data or apply changes to the experimental design, you
+        need to go through the submission process again
+        (<a href="{{ url_for('upload_status_page') }}">Upload data</a>)
+        and choose to update this study.
+      </p>
+
+      {% set lastSubmission = study.find_last_submission(g.db_session) %}
+
+      {% if lastSubmission: %}
+        <p>
+          You can also edit the latest submission that updated this study by
+          clicking on this button:
+        </p>
+
+        <p>
+          {{ post_button("Edit submission", url_for('edit_submission_action', id=lastSubmission.id)) }}
+        </p>
+      {% endif %}
+
+      <h2>Growth models</h2>
+
+      <p>
+        Select a type of model to fit on the study's measurements. The results
+        will be available for visualization once the calculation is finished.
+        {{ "data-analysis"|help_link("Read more") }}.
+      </p>
+
+      <div class="flex-row">
+        {{ post_button(
+          "Download completed models as CSV",
+          url_for('study_download_models_csv', studyId=study.publicId),
+          class="flex-right"
+        ) }}
+      </div>
+
+      <form
+          action="{{ url_for('study_modeling_submit_action', studyId=study.publicId) }}"
+          class="simple-form modeling-form js-modeling-form">
+        <div class="columns">
+          <div class="controls-column">
+            {{ render_modeling_form(study) }}
+          </div>
+
+          <div class="chart-column box">
+            <div class="chart js-chart">
+              <div class="chart-placeholder">
+                📊
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </article>
+  </div>
+
+  {% assets "plotly_js" %}
+  <script src="{{ ASSET_URL }}" type="text/javascript"></script>
+  {% endassets %}
+{% endblock %}

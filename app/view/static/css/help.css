@@ -1,0 +1,52 @@
+.help-page-index {
+  .highlight {
+    background-color: #fafa44;
+  }
+
+  .page-list {
+    transition: opacity var(--transition-length) ease;
+  }
+
+  ul {
+    padding-left: 20px;
+
+    li {
+      margin-top: 10px;
+    }
+  }
+}
+
+.help-page {
+  h2 {
+    border-bottom: 2px solid var(--light-blue);
+    padding-bottom: 4px;
+    clear: both;
+  }
+
+  .image-container {
+    display: flex;
+    flex-direction: column;
+    row-gap: 10px;
+  }
+
+  img {
+    border: 2px solid var(--border-color);
+    border-radius: var(--border-radius);
+    padding: 10px;
+
+    &.no-border {
+      border: 0;
+      padding: 0;
+    }
+  }
+
+  table {
+    border-collapse: collapse;
+
+    th, td {
+      padding: 6px 13px;
+      border: 1px solid var(--border-color);
+      vertical-align: top;
+    }
+  }
+}

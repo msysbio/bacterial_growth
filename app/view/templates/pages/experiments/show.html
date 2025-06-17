@@ -1,0 +1,138 @@
+{% from 'pages/experiments/_bioreplicates_toc.html' import render_bioreplicates_toc %}
+{% from 'utils/_strain_link.html' import render_strain_link %}
+
+{% extends '_layout.html' %}
+
+{% block title %}: Experiment {{ experiment.publicId }}{% endblock %}
+
+{% block content %}
+  {% set study = experiment.study %}
+
+  <div class="container experiment-page">
+    {% include 'pages/experiments/_header.html' %}
+
+    <article>
+      <h1>Experiment: {{ experiment.name }}</h1>
+
+      <p class="small">
+        {% if study.studyURL: %}
+          <strong>Publication URL</strong>: {{ experiment.study.studyURL|external_link }}
+          <br>
+        {% endif %}
+      </p>
+
+      {% if experiment.description: %}
+        <p>{{ experiment.description }}</p>
+      {% endif %}
+
+      <br>
+
+      <div>
+        <h3>Compartments</h3>
+
+        <ol>
+          {% for compartment in experiment.compartments: %}
+            <li>
+              <strong>{{ compartment.name }}</strong>
+
+              <br>
+
+              Medium:
+              {% if compartment.mediumUrl: %}
+                {{ compartment.mediumUrl|external_link(compartment.mediumName) }}
+              {% else: %}
+                {{ compartment.mediumName }}
+              {% endif %}
+
+              <br>
+
+              Properties: {{ compartment.properties_description|safe }}
+            </li>
+          {% endfor %}
+        </ol>
+
+        <h3>Community: {{ experiment.community.name }}</h3>
+
+        <ol>
+          {% for strain in experiment.community.get_strains(g.db_session): %}
+            <li>{{ render_strain_link(strain) }}</li>
+          {% endfor %}
+        </ol>
+
+        <div class="flex-row">
+          <div class="bioreplicates">
+            <h2>Biological replicates</h2>
+
+            <ol class="bioreplicates-list">
+              {% for bioreplicate in experiment.bioreplicates %}
+                {% set measurement_context_ids = bioreplicate.measurementContexts|map(attribute="id") %}
+
+                <li>
+                  <h4 id="bioreplicate-{{ bioreplicate.id }}">{{ bioreplicate.name }}</h4>
+
+                  <span class="js-compare-container" data-context-ids="{{ measurement_context_ids|join(',') }}">
+                    <span class="js-compare" data-tooltip="Compare">
+                      <a href="#" class="white-button no-border small-button">↔</a>
+                    </span>
+
+                    <span class="js-uncompare hidden" data-tooltip="Comparing, click to remove from comparison">
+                      👆
+                      <a href="#" class="white-button no-border small-button">➖</a>
+                    </span>
+                  </span>
+
+                  <a
+                      href="{{ url_for('study_visualize_page', studyId=study.publicId, l=measurement_context_ids|join(',')) }}"
+                      class="white-button no-border small-button"
+                      data-tooltip="Visualize">
+                    📈
+                  </a>
+
+                  <br>
+
+                  <strong>Measurements</strong>:
+
+                  <ul class="measurement-techniques">
+                    {% for measurement_context in bioreplicate.measurementContexts: %}
+                      <li class="measurement-context-container">
+                        {% set subject = measurement_context.get_subject(g.db_session) %}
+                        {% set measurements = measurement_context.measurements %}
+                        {% set technique = measurement_context.technique %}
+
+                        <div class="js-table-row">
+                          <span class="js-compare-container" data-context-ids="{{ measurement_context.id }}">
+                            <span class="js-compare" data-tooltip="Compare">
+                              <a href="#" class="white-button no-border small-button">↔</a>
+                            </span>
+
+                            <span class="js-uncompare hidden" data-tooltip="Comparing, click to remove from comparison">
+                              👆
+                              <a href="#" class="white-button no-border small-button">➖</a>
+                            </span>
+                          </span>
+
+                          <a
+                              href="{{ url_for('study_visualize_page', studyId=study.publicId, l=measurement_context.id) }}"
+                              class="white-button no-border small-button"
+                              data-tooltip="Visualize">
+                            📈
+                          </a>
+
+                          {{ measurement_context.get_chart_label(g.db_session)|safe }}
+                        </div>
+                      </li>
+                    {% endfor %}
+                  </ul>
+                </li>
+              {% endfor %}
+            </ol>
+          </div>
+
+          <div class="toc-container">
+            {{ render_bioreplicates_toc(experiment) }}
+          </div>
+        </div>
+      </div>
+    </article>
+  </div>
+{% endblock %}

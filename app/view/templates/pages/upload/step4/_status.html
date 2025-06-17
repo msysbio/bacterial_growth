@@ -1,0 +1,36 @@
+{% macro render_step4_status(submission_form, submission) %}
+
+  <ul class="upload-status">
+    {% set compartments = submission.studyDesign['compartments'] %}
+    {% set communities = submission.studyDesign['communities'] %}
+
+    {% if compartments|length > 0: %}
+      <li class="complete">
+        <span class="icon"></span>
+        <span>{{ compartments|length }} compartment(s):</span>
+        <span class="truncate">
+          {{ compartments|map(attribute='name')|join_tag('strong') }}
+        </span>
+      </li>
+    {% else: %}
+      <li class="incomplete">
+        <span class="icon"></span> No compartments defined
+      </li>
+    {% endif %}
+
+    {% if communities|length > 0: %}
+      <li class="complete">
+        <span class="icon"></span>
+        <span>{{ communities|length }} communities:</span>
+        <span class="truncate">
+          {{ communities|map(attribute='name')|join_tag('strong') }}
+        </span>
+      </li>
+    {% else: %}
+      <li class="incomplete">
+        <span class="icon"></span> No communities defined
+      </li>
+    {% endif %}
+  </ul>
+
+{% endmacro %}

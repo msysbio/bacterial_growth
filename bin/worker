@@ -1,0 +1,3 @@
+#!/bin/sh
+
+celery -A scripts.run_celery worker --loglevel INFO

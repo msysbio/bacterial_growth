@@ -1,0 +1,83 @@
+{% from 'utils/_post_button.html' import post_button %}
+{% from 'utils/_strain_link.html' import render_strain_link %}
+
+{% extends '_layout.html' %}
+
+{% block title %}: Profile{% endblock %}
+
+{% block content %}
+  <div class="container profile-page">
+    <div class="heading-row flex-row">
+      <h1>
+        <span class="icon icon-emoji">🧑‍🔬</span>
+        Profile page for {{ g.current_user.name }}
+      </h1>
+
+      {{ post_button("Log out", url_for("user_logout_action"), class="flex-right") }}
+    </div>
+
+    <p>ORCID: {{ g.current_user.orcidUrl|external_link() }}</p>
+
+    {% include 'shared/flashes.html' %}
+
+    <h3>Your projects</h3>
+
+    {% if g.current_user.managedProjects: %}
+      <ul>
+        {% for project in g.current_user.managedProjects: %}
+          <li>
+            <a href="{{ url_for('project_show_page', projectId=project.publicId) }}">
+              [{{ project.publicId }}] {{ project.name }}
+            </a>
+          </li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+
+    <form action="{{ url_for('user_claim_project_action') }}" class="simple-form" method="POST">
+      <div class="form-row full">
+        <label class="uuid full">
+          <span>Claim project by UUID:</span>
+          <input name="uuid" class="form-input-full form-input-blue" type="text" required />
+        </label>
+
+        <input type="submit" class="flex-end" value="Get access" />
+      </div>
+    </form>
+
+    <h3>Your studies</h3>
+
+    {% if g.current_user.managedStudies: %}
+      <ul>
+        {% for study in g.current_user.managedStudies: %}
+          <li>
+            <a href="{{ url_for('study_show_page', studyId=study.publicId) }}">
+              [{{ study.publicId }}] {{ study.name }}
+            </a>
+          </li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+
+    <form action="{{ url_for('user_claim_study_action') }}" class="simple-form" method="POST">
+      <div class="form-row full">
+        <label class="uuid full">
+          <span>Claim study by UUID:</span>
+          <input name="uuid" class="form-input-full form-input-blue" type="text" required />
+        </label>
+
+        <input type="submit" class="flex-end" value="Get access" />
+      </div>
+    </form>
+
+    {% if custom_strains: %}
+      <h3>Your custom strains</h3>
+
+      <ul>
+        {% for strain in custom_strains: %}
+          <li>{{ render_strain_link(strain) }}</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+  </div>
+{% endblock %}

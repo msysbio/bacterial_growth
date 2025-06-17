@@ -1,0 +1,174 @@
+{% from 'utils/_dataframe.html' import render_dataframe %}
+{% from 'utils/_time_tag.html' import time_tag %}
+{% from 'utils/_strain_link.html' import render_strain_link %}
+{% from 'pages/studies/_experiments_toc.html' import render_experiments_toc %}
+
+{% extends '_layout.html' %}
+
+{% block title %}: Study {{ study.studyId }}{% endblock %}
+
+{% block content %}
+  <div class="container study-page">
+    {% include 'pages/studies/_header.html' %}
+
+    <article>
+      <h1>{{ study.studyName }}</h1>
+
+      {% include 'pages/studies/_navigation_buttons.html' %}
+
+      <h2>Basic information</h2>
+
+      <p class="small">
+        {% if study.studyURL: %}
+          <strong>Publication URL</strong>: {{ study.studyURL|external_link }}
+          <br>
+        {% endif %}
+
+        <strong>Uploaded on</strong>
+        {{ time_tag(study.createdAt, format="%Y-%m-%d") -}}
+        {% if study.owner: %}
+          by
+          {{ study.owner.orcidUrl|external_link(study.owner.name) }}
+        {% endif %}
+        <br>
+
+        <strong>Last update</strong>:
+        {{ time_tag(study.updatedAt, format="%Y-%m-%d") }}
+        <br>
+      </p>
+
+      {% if study.description: %}
+        <p>{{ study.description }}</p>
+      {% endif %}
+
+      <div class="flex-row">
+        <div class="experiments">
+          {% for experiment in study.experiments: %}
+            <div class="experiment-container">
+              <h2 id="experiment-{{ experiment.id }}">
+                Experiment {{ loop.index }}: {{ experiment.name }}
+              </h2>
+
+              {% if experiment.publicId: %}
+                <p class="small">
+                  <strong>Public ID</strong>:
+                  <a href="{{ url_for('experiment_show_page', publicId=experiment.publicId) }}">
+                    {{ experiment.publicId }}
+                  </a>
+                  <br>
+                </p>
+              {% endif %}
+
+              {% if experiment.description: %}
+                <p>{{ experiment.description }}</p>
+              {% endif %}
+
+              <br>
+
+              <h3>Compartments</h3>
+
+              <ol>
+                {% for compartment in experiment.compartments: %}
+                  <li>
+                    <strong>{{ compartment.name }}</strong>
+
+                    <br>
+
+                    Medium:
+                    {% if compartment.mediumUrl: %}
+                      {{ compartment.mediumUrl|external_link(compartment.mediumName) }}
+                    {% else: %}
+                      {{ compartment.mediumName }}
+                    {% endif %}
+
+                    <br>
+
+                    Properties: {{ compartment.properties_description|safe }}
+                  </li>
+                {% endfor %}
+              </ol>
+
+              <h3>Community: {{ experiment.community.name }}</h3>
+
+              <ol>
+                {% for strain in experiment.community.get_strains(g.db_session): %}
+                  <li>{{ render_strain_link(strain) }}</li>
+                {% endfor %}
+              </ol>
+
+              <h3>Biological replicates</h3>
+
+              <ol class="bioreplicates-list">
+                {% for bioreplicate in experiment.bioreplicates %}
+                  {% set measurement_context_ids = bioreplicate.measurementContexts|map(attribute="id") %}
+
+                  <li>
+                    <strong>{{ bioreplicate.name }}</strong>
+
+                    <span class="js-compare-container" data-context-ids="{{ measurement_context_ids|join(',') }}">
+                      <span class="js-compare" data-tooltip="Compare">
+                        <a href="#" class="white-button no-border small-button">↔</a>
+                      </span>
+
+                      <span class="js-uncompare hidden" data-tooltip="Comparing, click to remove from comparison">
+                        👆
+                        <a href="#" class="white-button no-border small-button">➖</a>
+                      </span>
+                    </span>
+
+                    <a
+                        href="{{ url_for('study_visualize_page', studyId=study.publicId, l=measurement_context_ids|join(',')) }}"
+                        class="white-button no-border small-button"
+                        data-tooltip="Visualize">
+                      📈
+                    </a>
+
+                    <br>
+
+                    <strong>Measurements</strong>:
+
+                    <ul class="measurement-techniques">
+                      {% for measurement_context in bioreplicate.measurementContexts: %}
+                        <li class="measurement-context-container">
+                          {% set subject      = measurement_context.get_subject(g.db_session) %}
+                          {% set measurements = measurement_context.measurements %}
+                          {% set technique    = measurement_context.technique %}
+
+                          <div class="js-table-row">
+                            <span class="js-compare-container" data-context-ids="{{ measurement_context.id }}">
+                              <span class="js-compare" data-tooltip="Compare">
+                                <a href="#" class="white-button no-border small-button">↔</a>
+                              </span>
+
+                              <span class="js-uncompare hidden" data-tooltip="Comparing, click to remove from comparison">
+                                👆
+                                <a href="#" class="white-button no-border small-button">➖</a>
+                              </span>
+                            </span>
+
+                            <a
+                                href="{{ url_for('study_visualize_page', studyId=study.publicId, l=measurement_context.id) }}"
+                                class="white-button no-border small-button"
+                                data-tooltip="Visualize">
+                              📈
+                            </a>
+
+                            {{ measurement_context.get_chart_label(g.db_session)|safe }}
+                          </div>
+                        </li>
+                      {% endfor %}
+                    </ul>
+                  </li>
+                {% endfor %}
+              </ol>
+            </div>
+          {% endfor %}
+        </div>
+
+        <div class="toc-container">
+          {{ render_experiments_toc(study) }}
+        </div>
+      </div>
+    </article>
+  </div>
+{% endblock %}

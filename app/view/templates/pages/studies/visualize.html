@@ -1,0 +1,46 @@
+{% from 'pages/studies/visualize/_chart_form.html' import render_chart_form %}
+
+{% extends '_layout.html' %}
+
+{% block title %}: Visualize Study{% endblock %}
+
+{% block content %}
+  <div class="container study-page study-visualize-page" data-study-id="{{ study.publicId }}">
+    {% include 'pages/studies/_header.html' %}
+
+    <article>
+      <h1>{{ study.studyName }}</h1>
+
+      {% include 'pages/studies/_navigation_buttons.html' %}
+
+      <p>
+        Select an experiment and measurement technique and then check the boxes
+        of the measurement subjects you wish to plot. You can add multiple data
+        traces on the chart and use the controls at its bottom to shift them
+        between the left and right axes to group them by units, e.g. cell
+        counts on the left axis, metabolites on the right one.
+        {{ "data-analysis"|help_link("Read more") }}.
+      </p>
+
+      <form class="simple-form chart-form js-chart-form">
+        <div class="columns">
+          <div class="controls-column">
+            {{ render_chart_form(chart_form, study) }}
+          </div>
+
+          <div class="chart-column box">
+            <div class="chart">
+              <div class="chart-placeholder">
+                📊
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </article>
+  </div>
+
+  {% assets "plotly_js" %}
+  <script src="{{ ASSET_URL }}" type="text/javascript"></script>
+  {% endassets %}
+{% endblock %}

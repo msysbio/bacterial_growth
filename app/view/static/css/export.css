@@ -1,0 +1,68 @@
+.export-page {
+  .columns {
+    column-gap: 20px;
+  }
+
+  .column-left { width: 40%; }
+  .column-right { width: 60%; }
+
+  h2 {
+    margin-bottom: 20px;
+  }
+
+  .section-delimiter {
+    label {
+      display: block;
+      line-height: 32px;
+    }
+
+    input[name="custom_delimiter"] {
+      width: 40px;
+      height: 32px;
+    }
+  }
+
+  .section-experiment {
+    margin-top: 20px;
+
+    label {
+      display: block;
+      line-height: 2;
+    }
+  }
+
+  .section-bioreplicates {
+    margin-top: 20px;
+  }
+
+  .box {
+    border: 2px solid var(--border-color);
+    border-radius: var(--border-radius);
+    padding: 10px;
+
+    h4 {
+      margin-top: 0;
+    }
+  }
+
+  .preview {
+    overflow-x: auto;
+
+    h3:first-child {
+      margin-top: 0;
+    }
+
+    pre {
+      font-family: monospace;
+    }
+  }
+
+  .export-url {
+    width: 100%;
+  }
+
+  .submit-row {
+    column-gap: 20px !important;
+    line-height: 42px;
+  }
+}

@@ -1,0 +1,414 @@
+.clear {
+  clear: both;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.loading {
+  opacity: 0.5;
+}
+
+.full {
+  width: 100%;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.flex-row {
+  display: flex;
+  flex-direction: row;
+}
+
+.flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.flex-grow {
+  flex-grow: 1;
+}
+
+.flex-1 {
+  flex: 1;
+}
+.flex-2 {
+  flex: 2;
+}
+
+.flex-right {
+  margin-left: auto;
+}
+
+.flex-end {
+  align-self: flex-end;
+}
+
+.flex-center {
+  justify-content: center;
+  align-items: center;
+}
+
+.flex-gap-10 {
+  gap: 10px;
+}
+
+.flex-gap-6 {
+  gap: 6px;
+}
+
+.margin-top-10 {
+  margin-top: 10px;
+}
+
+code.inline {
+  font-family: monospace;
+  font-size: 16px;
+  background-color: var(--light-blue);
+  padding: 0 6px;
+}
+
+.truncate {
+  overflow-x: hidden;
+  text-overflow: ellipsis;
+}
+
+hr {
+  clear: both;
+  height: 2px;
+  background-color: var(--border-color);
+  border: 0;
+  border-radius: 4px;
+  margin: 16px 0;
+}
+
+.box {
+  border: 2px solid var(--border-color);
+  border-radius: var(--border-radius);
+  padding: 10px;
+
+  &.new {
+    border-style: dashed;
+  }
+}
+
+.box-light {
+  border-color: var(--light-border-color);
+}
+
+.error-message,
+.flash-error {
+  display: block;
+  background: pink;
+  padding: 10px;
+  border-left: 4px solid #d02631;
+}
+
+.warning-message,
+.flash-warning {
+  display: block;
+  background: #fff3cd;
+  padding: 10px;
+  border-left: 4px solid #ffeeba;
+}
+
+.error-message-list {
+  background: pink;
+  border-left: 4px solid #d02631;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+table.simple-table {
+  border-collapse: collapse;
+
+  th, td {
+    padding: 6px 13px;
+    border: 1px solid var(--border-color);
+    vertical-align: top;
+  }
+
+  ul {
+    padding-left: 10px;
+  }
+}
+
+.dataframe-container {
+  overflow: auto;
+  max-height: 500px;
+}
+
+table.dataframe-table {
+  border-spacing: 0;
+  font-size: 13px;
+
+  th {
+    background-color: var(--sidebar-color);
+  }
+
+  th, td {
+    padding: 6px 13px;
+    border: 1px solid var(--border-color);
+    vertical-align: top;
+    max-width: 300px;
+    white-space: nowrap;
+    overflow-x: hidden;
+    text-overflow: ellipsis;
+  }
+
+  tr.highlight {
+    background-color: var(--light-blue);
+  }
+
+  /* Border-collapse + rounded borders doesn't seem to work well. Might end up
+   * doing something different */
+  tr:first-child th:first-child {
+    border-top-left-radius: 4px;
+  }
+  tr:first-child th:last-child {
+    border-top-right-radius: 4px;
+  }
+  tr:last-child td:first-child {
+    border-bottom-left-radius: 4px;
+  }
+  tr:last-child td:last-child {
+    border-bottom-right-radius: 4px;
+  }
+}
+
+form.simple-form {
+  display: flex;
+  flex-direction: column;
+  row-gap: 10px;
+
+  .no-label {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+  }
+
+  .required {
+    font-weight: bold;
+  }
+
+  .required::after {
+    content: "* ";
+    color: red;
+  }
+
+  .form-row {
+    display: flex;
+    column-gap: 10px;
+
+    label.full {
+      flex-grow: 1;
+    }
+
+    .form-input-full {
+      width: 100%;
+    }
+
+    label span,
+    label div {
+      font-size: 14px;
+      line-height: 2;
+
+      &.help {
+        line-height: 1.2;
+      }
+    }
+  }
+
+  input[type="submit"],
+  button[type="submit"] {
+    cursor: pointer;
+    padding: 0.7rem;
+    border: 1px solid rgb(8, 131, 149);
+    border-radius: var(--border-radius);
+    background-color: rgb(8, 131, 149);
+    color: white;
+
+    &.small-button {
+      padding: 0.3rem;
+    }
+
+    &:hover {
+      background-color: rgb(7, 110, 126);
+    }
+
+    span {
+      color: white;
+    }
+
+    &.icon {
+      border: none !important;
+      background-color: transparent !important;
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+  }
+
+  button {
+    cursor: pointer;
+  }
+
+  input.error,
+  textarea.error {
+    border: 1px solid red;
+    box-shadow: inset 0 0 5px #a94442;
+  }
+
+  select[disabled],
+  input[disabled],
+  textarea[disabled]
+  {
+    color: gray;
+  }
+
+  button[disabled] {
+    background-color: gray;
+    &:hover {
+      background-color: gray;
+    }
+  }
+}
+
+.help {
+  font-style: italic;
+  opacity: 0.6;
+}
+
+.form-input-blue {
+  background-color: var(--light-blue);
+  border: 1px solid transparent;
+  border-radius: var(--border-radius);
+  padding: 0.7rem;
+}
+
+.green-button {
+  display: inline-block;
+  padding: 0.7rem;
+  border: 1px solid rgb(8, 131, 149);
+  border-radius: var(--border-radius);
+  background-color: rgb(8, 131, 149);
+  color: white;
+  text-decoration: none;
+  line-height: 1.1;
+  white-space: nowrap;
+
+  &.flex-row {
+    display: flex;
+    gap: 6px;
+  }
+
+  &:hover {
+    background-color: rgb(7, 110, 126);
+    color: white;
+  }
+
+  &.small-button {
+    padding: 0.3rem;
+  }
+}
+
+.white-button {
+  display: inline-block;
+  padding: 0.7rem;
+  border: 1px solid rgb(8, 131, 149);
+  border-radius: var(--border-radius);
+  background-color: white;
+  text-decoration: none;
+  line-height: 1.1;
+  color: var(--black);
+  white-space: nowrap;
+
+  &.flex-row {
+    display: flex;
+    gap: 6px;
+  }
+
+  &:hover {
+    background-color: #eee;
+    color: inherit;
+  }
+
+  &:visited {
+    color: inherit;
+  }
+
+  &.small-button {
+    padding: 0.3rem;
+  }
+
+  &.orange-border {
+    border: 1px solid orange;
+  }
+
+  &.no-border {
+    border: none;
+  }
+}
+
+.tabs {
+  .tab-headers {
+    display: flex;
+    column-gap: 20px;
+    border-bottom: 2px solid rgba(7, 25, 82, 0.1);
+    font-size: 24px;
+
+    span {
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    span.active {
+      color: rgb(7, 110, 126);
+      border-bottom: 2px solid rgb(7, 110, 126);
+      margin-bottom: -2px;
+    }
+  }
+
+  .tab-body {
+    display: none;
+  }
+
+  .tab-body.active {
+    display: block;
+  }
+}
+
+.copy-button-wrapper {
+  .copy-button {
+    white-space: nowrap;
+    border-radius: var(--border-radius) 0 0 var(--border-radius);
+    cursor: pointer;
+  }
+
+  input[type="text"] {
+    border-radius: 0 var(--border-radius) var(--border-radius) 0;
+  }
+}
+
+.icon {
+  width: 18px;
+  height: 18px;
+  background-size: cover;
+  flex-shrink: 0;
+}
+
+.icon.icon-edit           { background-image: url('/static/images/icons/edit.svg'); }
+.icon.icon-remove         { background-image: url('/static/images/icons/red-minus.svg'); }
+.icon.icon-delete         { background-image: url('/static/images/icons/square-red-minus.svg'); }
+.icon.icon-add            { background-image: url('/static/images/icons/green-plus.svg'); }
+.icon.icon-download-black { background-image: url('/static/images/icons/download-black.svg'); }
+.icon.icon-download-white { background-image: url('/static/images/icons/download-white.svg'); }
+.icon.icon-chart          { background-image: url('/static/images/icons/chart-dots-2.svg'); }
+.icon.icon-tool           { background-image: url('/static/images/icons/tool.svg'); }
+.icon.icon-info           { background-image: url('/static/images/icons/info-circle.svg'); }
+.icon.icon-duplicate      { background-image: url('/static/images/icons/transition-bottom.svg'); }
+.icon.icon-left           { background-image: url('/static/images/icons/chevrons-left.svg'); }
+.icon.icon-right          { background-image: url('/static/images/icons/chevrons-right.svg'); }
+.icon.icon-orcid          { background-image: url('/static/images/icons/orcid-authenticated.svg'); }

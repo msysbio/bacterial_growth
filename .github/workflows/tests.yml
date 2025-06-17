@@ -1,0 +1,76 @@
+# Info: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python
+
+name: Python tests
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+env:
+  APP_ENV: "test"
+  PYTHONPATH: "."
+
+permissions:
+  contents: read
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    services:
+      # Reference: https://stackoverflow.com/a/75555069
+      mysql:
+        image: mysql:8.4
+        env:
+          # The MySQL docker container requires these environment variables to be set
+          # so we can create and migrate the test database.
+          # See: https://hub.docker.com/_/mysql
+          MYSQL_DATABASE: BacterialGrowthTest
+          MYSQL_ROOT_PASSWORD: testrootpass
+        ports:
+          # Opens port 3306 on service container and host
+          # https://docs.github.com/en/actions/using-containerized-services/about-service-containers
+          - 3306:3306
+          # Before continuing, verify the mysql container is reachable from the ubuntu host
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Python 3.12
+      uses: actions/setup-python@v3
+      with:
+        python-version: "3.12"
+
+    - name: Set up R
+      uses: r-lib/actions/setup-r@v2
+
+    - name: Set up database
+      run: |
+        cat > db/config.toml <<EOF
+        [test]
+        username = "root"
+        password = "testrootpass"
+        database = "BacterialGrowthTest"
+        EOF
+
+        mysql -u root --protocol=tcp --password=testrootpass <<EOF
+          drop database BacterialGrowthTest;
+          create database BacterialGrowthTest;
+        EOF
+
+        mysql -u root --protocol=tcp --password=testrootpass --database="BacterialGrowthTest" < db/schema.sql
+
+    - name: Install python dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pytest
+        pip install -r requirements.txt
+
+    - name: Install R dependencies
+      run: |
+        Rscript -e 'install.packages(c("growthrates", "jsonlite"), repos="https://cloud.r-project.org")'
+
+    - name: Run tests
+      run: |
+        pytest tests/

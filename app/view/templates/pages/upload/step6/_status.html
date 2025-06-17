@@ -1,0 +1,20 @@
+{% macro render_step6_status(submission) %}
+
+  <ul class="upload-status">
+    {% if submission.dataFileId: %}
+      <li class="complete">
+        <span class="icon"></span>
+        Experimental data uploaded:
+
+        <a href="{{ url_for('download_excel_file', id=submission.dataFile.id) }}">
+          {{ submission.dataFile.filename }}
+        </a>
+      </li>
+    {% else %}
+      <li class="incomplete">
+        <span class="icon"></span> Experimental data not uploaded
+      </li>
+    {% endif %}
+  </ul>
+
+{% endmacro %}

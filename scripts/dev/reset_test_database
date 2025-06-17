@@ -1,0 +1,13 @@
+#! /bin/sh
+
+set -e
+
+mysql -u root --password=nVI8imBD3bl24pcP --port=3307 --protocol=tcp <<EOF
+  drop database if exists BacterialGrowthTest;
+  create database BacterialGrowthTest;
+  grant all on BacterialGrowthTest.* to bacterial_growth;
+EOF
+
+export APP_ENV=test
+
+bin/dbconsole < db/schema.sql

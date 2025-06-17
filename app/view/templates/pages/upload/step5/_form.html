@@ -1,0 +1,54 @@
+{% from 'pages/upload/step5/_experiment_form.html' import render_experiment_form %}
+
+{% macro render_step5_form(submission_form, upload_form) %}
+
+  <form
+      class="simple-form"
+      action="{{ url_for('upload_step5_page') }}"
+      method="POST">
+
+    {{ upload_form.csrf_token }}
+
+    <p>
+      Organize the data you've entered so far into experiments. Each experiment
+      has a single community, but may have multiple separate compartments that
+      are being measured. Pick the time unit that you will use when upload
+      measurements:
+    </p>
+
+    <div class="form-row flex-row">
+      <label>
+        <div class="required">Time units</div>
+        {{ upload_form['timeUnits'](class='form-input-blue form-input-full') }}
+      </label>
+    </div>
+
+    <p>
+      For each experiment, name the biological replicates of the experimental
+      design. These will show up as rows in the data spreadsheet.
+    </p>
+
+    <div class="js-subform-list flex-column flex-gap-10">
+      {% include 'pages/upload/step5/_subform_list.html' %}
+    </div>
+
+    <div class="form-row flex-right flex-row">
+      <a href="#" class="white-button flex-row js-add-trigger js-add-experiment">
+        <span class="icon icon-add"></span> Experiment
+      </a>
+    </div>
+
+    <div class="form-row">
+      <input
+          type="submit"
+          class="form-input-blue"
+          value="Next" />
+    </div>
+
+    <template class="experiment-form">
+      {% set subform = upload_form.get_template('ExperimentForm') %}
+      {{ render_experiment_form(form=subform, submission_form=submission_form, index=None) }}
+    </template>
+  </form>
+
+{% endmacro %}

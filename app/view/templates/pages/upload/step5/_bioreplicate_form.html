@@ -1,0 +1,42 @@
+{% macro render_bioreplicate_form(form, submission_form, index) %}
+  {% set submission = submission_form.submission %}
+
+  <div class="compact-subform-container js-subform-container" data-subject-type="bioreplicate">
+    <div class="form-row">
+      <label class="full" data-tooltip="A unique identifier that will be placed in the data spreadsheet rows">
+        <div class="required">Name</div>
+        {# Note: Have to access the input using [], since there is an existing `.name` attribute #}
+        {{ form['name'](class='form-input-blue form-input-full', placeholder="AB_CD_E") }}
+      </label>
+
+      <label class="full" data-tooltip="The bottle/well-plate location, e.g Bottle1 or C3">
+        <div>Position</div>
+        {{ form['position'](class='form-input-blue form-input-full', placeholder="A1") }}
+      </label>
+
+      <label class="full" data-tooltip="A link to an external URL with additional information">
+        <div>Biosample URL</div>
+        {{ form['biosampleUrl'](class='form-input-blue form-input-full', placeholder="https://example.org") }}
+      </label>
+
+      <div class="no-label">
+        <label style="white-space: nowrap;">
+          {{ form['isControl'](class='form-input-blue') }}
+          Control
+        </label>
+
+        <label style="white-space: nowrap;">
+          {{ form['isBlank'](class='form-input-blue') }}
+          Blank
+        </label>
+      </div>
+
+      <div class="no-label flex-right">
+        <a href="#" class="white-button flex-row js-remove-trigger">
+          <span class="icon icon-remove"></span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+{% endmacro %}

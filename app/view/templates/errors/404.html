@@ -1,0 +1,20 @@
+{% extends '_layout.html' %}
+
+{% block title %}: 404 Not Found{% endblock %}
+
+{% block content %}
+  <div class="container">
+    <article>
+      <h1>404 Not Found</h1>
+
+      <p>
+        The requested URL was not found on the server:
+        <code class="inline">{{ request.full_path|trim('?') }}</code>.
+      </p>
+
+      <p>
+        If you entered the URL manually please check your spelling and try again.
+      </p>
+    </article>
+  </div>
+{% endblock %}

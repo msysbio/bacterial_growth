@@ -1,0 +1,23 @@
+{% from 'utils/_dataframe.html' import render_dataframe %}
+
+{% extends '_layout.html' %}
+
+{% block title %}: Study {{ study.studyId }}{% endblock %}
+
+{% block content %}
+  <div class="container study-page">
+    {% include 'pages/studies/_header.html' %}
+
+    <article>
+      <h1>{{ study.studyName }}</h1>
+
+      {% if study.studyDescription: %}
+        <p>{{ study.studyDescription }}</p>
+      {% endif %}
+
+      <p>
+        <em>This study is not published yet, so its data is not available at this time.</em>
+      </p>
+    </article>
+  </div>
+{% endblock %}

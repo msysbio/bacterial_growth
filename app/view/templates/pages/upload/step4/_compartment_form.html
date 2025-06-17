@@ -1,0 +1,100 @@
+{% macro render_compartment_form(form, index) %}
+  <div class="subform-container box js-subform-container">
+    <h3>
+      Compartment <span class="js-index">{{ index + 1 if index is not none else '' }}</span>
+      {%- if form.data['name']: -%}: {{ form.data['name'] }}{% endif %}
+    </h3>
+
+    <div class="form-row form-row-compact">
+      <label>
+        <div class="required">Name (max. 5 letters)</div>
+        {{ form['name'](class='form-input-blue form-input-full', placeholder="C1", maxlength=5) }}
+      </label>
+
+      <label>
+        <div>Medium name</div>
+        {{ form.mediumName(class="form-input-blue form-input-full", placeholder="e.g. Wilkins-Chalgren") }}
+      </label>
+
+      <label data-tooltip="A link to a URL with information about the medium. MediaDive is recommended">
+        <div>Medium URL</div>
+        {{ form.mediumUrl(class="form-input-blue form-input-full", placeholder="https://mediadive.dsmz.de/medium/339") }}
+      </label>
+    </div>
+
+    <div class="form-row form-row-compact">
+      <label>
+        <div>Volume (mL)</div>
+        {{ form.volume(class='form-input-blue') }}
+      </label>
+
+      <label>
+        <div>Pressure (atm)</div>
+        {{ form.pressure(class='form-input-blue') }}
+      </label>
+
+      <label>
+        <div>Stirring mode</div>
+        {{ form.stirringMode(class='form-input-blue') }}
+      </label>
+
+      <label>
+        <div>Stirring speed (rpm)</div>
+        {{ form.stirringSpeed(class='form-input-blue') }}
+      </label>
+    </div>
+
+    <div class="form-row form-row-compact">
+      <label>
+        <div>O<sub>2</sub>%</div>
+        {{ form.O2(class='form-input-blue') }}
+      </label>
+
+      <label>
+        <div>CO<sub>2</sub>%</div>
+        {{ form.CO2(class='form-input-blue') }}
+      </label>
+
+      <label>
+        <div>H<sub>2</sub>%</div>
+        {{ form.H2(class='form-input-blue') }}
+      </label>
+
+      <label>
+        <div>N<sub>2</sub>%</div>
+        {{ form.N2(class='form-input-blue') }}
+      </label>
+
+      <label>
+        <div>Initial pH</div>
+        {{ form.initialPh(class='form-input-blue') }}
+      </label>
+
+      <label>
+        <div>Initial temp. (&deg;C)</div>
+        {{ form.initialTemperature(class='form-input-blue') }}
+      </label>
+    </div>
+
+    <div class="form-row">
+      <label>
+        <div>Inoculum concentration (Cells/mL)</div>
+        {{ form.inoculumConcentration(class='form-input-blue') }}
+      </label>
+
+      <label>
+        <div>Inoculum volume (mL)</div>
+        {{ form.inoculumVolume(class='form-input-blue') }}
+      </label>
+
+      <a href="#" class="white-button flex-row flex-end js-duplicate-trigger">
+        <span class="icon icon-duplicate"></span> Duplicate
+      </a>
+
+      <a href="#" class="white-button flex-row flex-right flex-end js-remove-trigger">
+        <span class="icon icon-remove"></span> Remove
+      </a>
+    </div>
+  </div>
+
+{% endmacro %}

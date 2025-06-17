@@ -1,0 +1,68 @@
+{% from 'utils/_dataframe.html' import render_dataframe %}
+{% from 'utils/_strain_link.html' import render_strain_link %}
+
+{% macro render_result(result) %}
+  <div class="search-result">
+    <h3>
+      <a href="{{ url_for('study_show_page', studyId=result.publicId) }}">
+        [{{ result.publicId }}] {{ result.name }}
+      </a>
+    </h3>
+
+    {% if result.description: %}
+      <p>{{ result.description }}</p>
+    {% endif %}
+
+    <p>
+      <strong>Project ID</strong>:
+      <a href="{{ url_for('project_show_page', projectId=result.project.publicId) }}">
+        {{ result.project.publicId }}
+      </a>
+    </p>
+
+    {% if result.studyURL: %}
+      <p>
+        <strong>Publication URL</strong>:
+        {{ result.studyURL|external_link() }}
+      </p>
+    {% endif %}
+
+    <br>
+
+    <p>
+      <table class="simple-table">
+        <tr>
+          <th>Techniques</th>
+          <th>Strains</th>
+          <th>Metabolites</th>
+        </tr>
+
+        <tr>
+          <td>
+            <ul>
+              {% for technique_name in result.measurementTechniques|map(attribute="short_name")|unique: %}
+                <li>{{ technique_name }}</li>
+              {% endfor %}
+            </ul>
+          </td>
+
+          <td>
+            <ul>
+              {% for strain in result.strains: %}
+                <li>{{ render_strain_link(strain) }}</li>
+              {% endfor %}
+            </ul>
+          </td>
+
+          <td>
+            <ul>
+              {% for metabolite in result.metabolites: %}
+                <li>{{ metabolite.chebiId|chebi_url|external_link(metabolite.name) }}</li>
+              {% endfor %}
+            </ul>
+          </td>
+        </tr>
+      </table>
+    </p>
+  </div>
+{% endmacro %}

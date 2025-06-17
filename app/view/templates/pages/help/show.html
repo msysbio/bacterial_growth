@@ -1,0 +1,19 @@
+{% extends '_layout.html' %}
+
+{% block title %}: Help{% endblock %}
+
+{% block content %}
+  <div class="container help-page">
+    <h1>
+      <span class="icon icon-emoji">❓</span>
+      Help: {{ title }}
+    </h1>
+
+    <br>
+
+    <article>
+      {{ content }}
+    </article>
+  </div>
+
+{% endblock %}

@@ -1,0 +1,56 @@
+.experiment-page {
+  nav ul {
+    margin: 0;
+    padding-left: 12px;
+
+    li::marker {
+      font-weight: 900;
+      content: "> ";
+    }
+  }
+
+  .small {
+    font-size: 14px;
+  }
+
+  h1 {
+    color: var(--dark-blue);
+  }
+
+  h2 {
+    border-bottom: 2px solid var(--light-blue);
+    padding-bottom: 4px;
+  }
+
+  h3 {
+    margin-top: 0;
+  }
+
+  h4 {
+    margin-top: 0;
+    display: inline-block;
+  }
+
+  .bioreplicates-toc {
+    position: sticky;
+    top: 20px;
+    margin-top: 20px;
+    margin-left: 20px;
+    flex: 1;
+    min-width: 200px;
+
+    h2 {
+      font-size: 16px;
+      margin-top: 10px;
+      margin-bottom: 10px;
+    }
+    h2:first-child {
+      margin-top: 0;
+    }
+
+    ol {
+      margin: 0;
+      padding-left: 20px;
+    }
+  }
+}

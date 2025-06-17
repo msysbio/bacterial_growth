@@ -1,0 +1,330 @@
+{
+  "study": {
+    "url": "https://doi.org/10.1038/s41396-023-01501-1",
+    "name": "Starvation responses impact interaction of human gut bacteria BT-RI",
+    "description": "we used an in vitro batch system containing mucin beads to emulate the dynamic host environment and to study its impact on the interactions between two abundant and prevalent human gut bacteria."
+  },
+  "project": {
+    "name": "Starvation responses impact interaction of human gut bacteria BT-RI",
+    "description": "in vitro batch system containing mucin beads to emulate the dynamic host environment and to study its impact on the interactions between two abundant and prevalent human gut bacteria."
+  },
+  "strains": [
+    "166486",
+    "818"
+  ],
+  "timeUnits": "h",
+  "techniques": [
+    {
+      "type": "od",
+      "units": "",
+      "includeStd": false,
+      "description": "",
+      "subjectType": "bioreplicate",
+      "metaboliteIds": []
+    },
+    {
+      "type": "ph",
+      "units": "",
+      "includeStd": false,
+      "description": "",
+      "subjectType": "bioreplicate",
+      "metaboliteIds": []
+    },
+    {
+      "type": "fc",
+      "units": "Cells/μL",
+      "includeStd": false,
+      "description": "",
+      "subjectType": "strain",
+      "metaboliteIds": []
+    },
+    {
+      "type": "metabolite",
+      "units": "mM",
+      "includeStd": false,
+      "description": "",
+      "subjectType": "metabolite",
+      "metaboliteIds": [
+        "CHEBI:15361",
+        "CHEBI:15740",
+        "CHEBI:17012",
+        "CHEBI:17234",
+        "CHEBI:17968",
+        "CHEBI:24996",
+        "CHEBI:26806",
+        "CHEBI:27082",
+        "CHEBI:28260",
+        "CHEBI:30089",
+        "CHEBI:33984",
+        "CHEBI:37684"
+      ]
+    }
+  ],
+  "communities": [
+    {
+      "name": "BT",
+      "strainIdentifiers": [
+        "existing|818"
+      ]
+    },
+    {
+      "name": "RI",
+      "strainIdentifiers": [
+        "existing|166486"
+      ]
+    },
+    {
+      "name": "BT_RI",
+      "strainIdentifiers": [
+        "existing|166486",
+        "existing|818"
+      ]
+    }
+  ],
+  "experiments": [
+    {
+      "name": "BT_MUCIN",
+      "description": "BT with WC plus mucin beads for 120 h",
+      "bioreplicates": [
+        {
+          "name": "BT_MUCIN_1",
+          "isBlank": false,
+          "position": "",
+          "isControl": false,
+          "biosampleUrl": ""
+        },
+        {
+          "name": "BT_MUCIN_2",
+          "isBlank": false,
+          "position": "",
+          "isControl": false,
+          "biosampleUrl": ""
+        },
+        {
+          "name": "BT_MUCIN_3",
+          "isBlank": false,
+          "position": "",
+          "isControl": false,
+          "biosampleUrl": ""
+        }
+      ],
+      "communityName": "BT",
+      "perturbations": [],
+      "timepointCount": 17,
+      "cultivationMode": "batch",
+      "compartmentNames": [
+        "WC",
+        "MUCIN"
+      ]
+    },
+    {
+      "name": "BT_WC",
+      "description": "BT with WC for 120h",
+      "bioreplicates": [
+        {
+          "name": "BT_WC_1",
+          "isBlank": false,
+          "position": "",
+          "isControl": false,
+          "biosampleUrl": ""
+        },
+        {
+          "name": "BT_WC_2",
+          "isBlank": false,
+          "position": "",
+          "isControl": false,
+          "biosampleUrl": ""
+        },
+        {
+          "name": "BT_WC_3",
+          "isBlank": false,
+          "position": "",
+          "isControl": false,
+          "biosampleUrl": ""
+        }
+      ],
+      "communityName": "BT",
+      "perturbations": [],
+      "timepointCount": 14,
+      "cultivationMode": "batch",
+      "compartmentNames": [
+        "WC"
+      ]
+    },
+    {
+      "name": "RI_MUCIN",
+      "description": "RI in WC plus mucin beads for 120 h",
+      "bioreplicates": [
+        {
+          "name": "RI_MUCIN_1",
+          "isBlank": false,
+          "position": "",
+          "isControl": false,
+          "biosampleUrl": ""
+        },
+        {
+          "name": "RI_MUCIN_2",
+          "isBlank": false,
+          "position": "",
+          "isControl": false,
+          "biosampleUrl": ""
+        },
+        {
+          "name": "RI_MUCIN_3",
+          "isBlank": false,
+          "position": "",
+          "isControl": false,
+          "biosampleUrl": ""
+        }
+      ],
+      "communityName": "BT",
+      "perturbations": [],
+      "timepointCount": 16,
+      "cultivationMode": "batch",
+      "compartmentNames": [
+        "WC",
+        "MUCIN"
+      ]
+    },
+    {
+      "name": "RI_WC",
+      "description": "RI in WC for 120 hours",
+      "bioreplicates": [
+        {
+          "name": "RI_WC_1",
+          "isBlank": false,
+          "position": "",
+          "isControl": false,
+          "biosampleUrl": ""
+        },
+        {
+          "name": "RI_WC_2",
+          "isBlank": false,
+          "position": "",
+          "isControl": false,
+          "biosampleUrl": ""
+        },
+        {
+          "name": "RI_WC_3",
+          "isBlank": false,
+          "position": "",
+          "isControl": false,
+          "biosampleUrl": ""
+        }
+      ],
+      "communityName": "BT",
+      "perturbations": [],
+      "timepointCount": 14,
+      "cultivationMode": "batch",
+      "compartmentNames": [
+        "WC"
+      ]
+    },
+    {
+      "name": "BTRI_MUCIN",
+      "description": "co-culture of BT and RI with WC plus mucin beads for 120 h",
+      "bioreplicates": [
+        {
+          "name": "BTRI_MUCIN_1",
+          "isBlank": false,
+          "position": "",
+          "isControl": false,
+          "biosampleUrl": ""
+        },
+        {
+          "name": "BTRI_MUCIN_2",
+          "isBlank": false,
+          "position": "",
+          "isControl": false,
+          "biosampleUrl": ""
+        },
+        {
+          "name": "BTRI_MUCIN_3",
+          "isBlank": false,
+          "position": "",
+          "isControl": false,
+          "biosampleUrl": ""
+        }
+      ],
+      "communityName": "BT_RI",
+      "perturbations": [],
+      "timepointCount": 16,
+      "cultivationMode": "batch",
+      "compartmentNames": [
+        "WC",
+        "MUCIN"
+      ]
+    },
+    {
+      "name": "BTRI_WC",
+      "description": "co-culture of BT and RI in WC for 120 h",
+      "bioreplicates": [
+        {
+          "name": "BTRI_WC_1",
+          "isBlank": false,
+          "position": "",
+          "isControl": false,
+          "biosampleUrl": ""
+        },
+        {
+          "name": "BTRI_WC_2",
+          "isBlank": false,
+          "position": "",
+          "isControl": false,
+          "biosampleUrl": ""
+        },
+        {
+          "name": "BTRI_WC_3",
+          "isBlank": false,
+          "position": "",
+          "isControl": false,
+          "biosampleUrl": ""
+        }
+      ],
+      "communityName": "BT_RI",
+      "perturbations": [],
+      "timepointCount": 14,
+      "cultivationMode": "batch",
+      "compartmentNames": [
+        "WC"
+      ]
+    }
+  ],
+  "compartments": [
+    {
+      "H2": 10.0,
+      "N2": 80.0,
+      "O2": null,
+      "CO2": 10.0,
+      "name": "WC",
+      "volume": 60.0,
+      "pressure": 1.0,
+      "initialPh": 5.0,
+      "mediumUrl": "https://mediadive.dsmz.de/medium/339",
+      "mediumName": "Wilkins-Chalgren Anaerobe Broth (WC)",
+      "stirringMode": "linear",
+      "stirringSpeed": 170.0,
+      "inoculumVolume": 1.0,
+      "initialTemperature": 37.0,
+      "inoculumConcentration": 1960000.0
+    },
+    {
+      "H2": null,
+      "N2": null,
+      "O2": null,
+      "CO2": null,
+      "name": "MUCIN",
+      "volume": null,
+      "pressure": null,
+      "initialPh": null,
+      "mediumUrl": "",
+      "mediumName": "Mucin",
+      "stirringMode": "",
+      "stirringSpeed": null,
+      "inoculumVolume": null,
+      "initialTemperature": 37.0,
+      "inoculumConcentration": null
+    }
+  ],
+  "custom_strains": []
+}

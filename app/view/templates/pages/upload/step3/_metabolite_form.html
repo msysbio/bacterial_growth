@@ -1,0 +1,100 @@
+{% macro render_metabolite_form(submission_form, data, index) %}
+  {% if index is none: %}
+    {% set prefix = '' %}
+  {% else: %}
+    {% set prefix = 'techniques-{}-'.format(index)  %}
+  {% endif %}
+
+  <div
+    class="subform-container box technique-container js-subform-container"
+    data-index="{{ index if index is not none else '' }}"
+    data-subject-type="metabolite">
+    <img
+        width="110"
+        class="form-icon"
+        alt="Metabolite measurement"
+        src="/static/images/large-icons/trehalose.png" />
+    <h3>
+      <span class="js-index">{{ index + 1 if index is not none else '' }}</span>.
+      Metabolite measurement
+    </h3>
+
+    <input type="hidden" name="{{ prefix }}type" value="metabolite" />
+    <input type="hidden" name="{{ prefix }}subjectType" value="metabolite" />
+
+    <div class="form-row">
+      <label class="full">
+        <span>List of metabolites:</span>
+        <select
+            multiple="multiple"
+            name="{{ prefix }}metaboliteIds"
+            required
+            placeholder="Example: glucose"
+            class="form-input-blue form-input-full js-metabolites-select">
+          {% for metabolite in submission_form.fetch_metabolites_for_technique(index): %}
+            <option value="{{ metabolite.chebiId }}" selected>
+              {{ metabolite.name }} ({{ metabolite.chebiId }})
+            </option>
+          {% endfor %}
+        </select>
+      </label>
+
+      <label style="width: 30%;">
+        <span>Units:</span>
+        <select
+            name="{{ prefix }}units"
+            class="form-input-full form-input-blue js-unit-select" />
+          <optgroup label="Molar concentration">
+            <option value="mM">Milimolars (mM)</option>
+            <option value="μM">Micromolars (μM)</option>
+            <option value="nM">Nanomolars (nM)</option>
+            <option value="pM">Picomolars (pM)</option>
+          </optgroup>
+          <optgroup label="Mass concentration">
+            <option value="g/L">Grams per Liter (g/L)</option>
+          </optgroup>
+          <optgroup label="Other">
+            <option value="AUC">AUC</option>
+          </optgroup>
+        </select>
+      </label>
+    </div>
+
+    <div class="form-row">
+      <label class="full">
+        <div>Description of methodology</div>
+        <textarea
+            name="{{ prefix }}description"
+            class="form-input-full form-input-blue"
+            placeholder="Example: We used HPLC..."
+            rows=2>{{ data['description'] if data }}</textarea>
+      </label>
+    </div>
+
+    <div class="form-row" style="margin-top: 10px">
+      <label
+          data-tooltip="If you have multiple technical replicates, you can submit your point estimate as the measurement and add the standard deviation in a separate column.">
+        Include STD:
+        <input
+            type="checkbox"
+            class="js-include-std"
+            name="{{ prefix }}includeStd"
+            {{ "checked" if data and data['includeStd'] }} />
+      </label>
+    </div>
+
+    <hr>
+
+    <div class="form-row">
+      <div class="js-preview">
+      </div>
+
+      <div class="no-label flex-right">
+        <a href="#" class="white-button flex-row js-remove-trigger">
+          <span class="icon icon-remove"></span> Remove
+        </a>
+      </div>
+    </div>
+  </div>
+
+{% endmacro %}

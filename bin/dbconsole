@@ -1,0 +1,14 @@
+#! /usr/bin/env python3
+
+import os
+from db import get_cli_connection_params
+
+connection_params = get_cli_connection_params()
+
+os.execv(
+    '/usr/bin/mysql', [
+        '/usr/bin/mysql',
+        '--local-infile',
+        *connection_params
+    ]
+)

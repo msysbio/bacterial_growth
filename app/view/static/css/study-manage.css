@@ -1,0 +1,82 @@
+.study-manage-page {
+  h4 {
+    margin-top: 0;
+  }
+
+  .model-row {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    padding: 2px 8px;
+    border-radius: var(--border-radius);
+
+    input[type="radio"] {
+      margin: 0;
+    }
+    label {
+      word-break: break-all;
+    }
+  }
+
+  .r-summary pre {
+    padding: 10px;
+    background-color: #eee;
+  }
+
+  .form-input-blue {
+    padding: 0.5rem !important;
+  }
+
+  .modeling-form {
+    margin-top: 20px;
+  }
+
+  .chart-placeholder {
+    height: 300px;
+  }
+
+  .modeling-form {
+    .columns {
+      display: flex;
+      flex-direction: row;
+      column-gap: 10px;
+
+      .controls-column {
+        width: 30%;
+      }
+
+      .chart-column {
+        width: 70%;
+        overflow-x: hidden;
+      }
+    }
+
+    .experiment {
+      display: flex;
+      flex-direction: column;
+      row-gap: 6px;
+    }
+
+    .highlight {
+      background-color: var(--light-blue);
+    }
+
+    .modeling-fields {
+      display: flex;
+      flex-direction: column;
+      row-gap: 10px;
+    }
+  }
+
+  .measurement-subjects {
+    .box {
+      padding-left: 0;
+      padding-right: 0;
+
+      > .flex-row {
+        padding: 3px 10px;
+      }
+    }
+  }
+}

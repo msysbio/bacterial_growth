@@ -1,0 +1,100 @@
+{% from 'utils/_time_tag.html' import time_tag %}
+{% from 'utils/_post_icon_button.html' import post_icon_button %}
+
+{% macro render_user_submissions(user_submissions, current_submission) %}
+  <p>
+    Your ongoing submissions:
+  </p>
+
+  <br>
+
+  <div class="user-submissions">
+    <table class="dataframe-table full">
+      <tr>
+        <th></th>
+        <th>Project</th>
+        <th>Study</th>
+        <th>Last update</th>
+        <th>Start time</th>
+        <th>Progress</th>
+        <th>Actions</th>
+      </tr>
+
+      {% for user_submission in user_submissions %}
+        {% set isPublished = user_submission.study and user_submission.study.isPublished %}
+        {% set isCurrent = user_submission.id == current_submission.id %}
+
+        <tr class="{{ "current" if isCurrent }} {{ "published" if isPublished }}">
+          <td align="center">
+            {% if isPublished: %}
+              <span data-tooltip="Published submission">
+                ✅
+              </span>
+            {% elif user_submission.project is none: %}
+              <span data-tooltip="New study in a new project">
+                📚
+              </span>
+            {% elif user_submission.study is none: %}
+              <span data-tooltip="New study in an existing project">
+                📋
+              </span>
+            {% else %}
+              <span data-tooltip="Update study in an existing project">
+                🔃
+              </span>
+            {% endif %}
+          </td>
+
+          <td>
+            {% set project_name = user_submission.studyDesign.get('project', {}).get('name', '') %}
+
+            {% if user_submission.project: %}
+              [<a
+                   href="{{ url_for('project_show_page', projectId=user_submission.project.projectId) }}"
+                   data-tooltip="{{ project_name }}">{{ user_submission.project.projectId }}</a>]
+            {% else: %}
+              <span data-tooltip="{{ project_name }}">
+                [New] {{ project_name|truncate(20) if project_name is not none }}
+              </span>
+            {% endif %}
+          </td>
+          <td>
+            {% set study_name = user_submission.studyDesign.get('study', {}).get('name', '') %}
+
+            {% if user_submission.study: %}
+              [<a
+                   href="{{ url_for('study_show_page', studyId=user_submission.study.studyId) }}"
+                   data-tooltip="{{ study_name }}">{{ user_submission.study.studyId }}</a>]
+            {% else: %}
+              <span data-tooltip="{{ study_name }}">
+                [New] {{ study_name|truncate(20) if study_name is not none }}
+              </span>
+            {% endif %}
+          </td>
+          <td>{{ time_tag(user_submission.updatedAt, relative=True) }}</td>
+          <td>{{ time_tag(user_submission.createdAt, relative=True) }}</td>
+          <td align="center">
+            {{ user_submission.completed_step_count }}/7
+          </td>
+          <td align="center">
+            <span data-tooltip="Edit">
+              {{ post_icon_button(
+              "edit",
+              url_for('edit_submission_action', id=user_submission.id)
+              ) }}
+            </span>
+            |
+            <span data-tooltip="Delete">
+              {{ post_icon_button(
+                "delete",
+                url_for('delete_submission_action', id=user_submission.id),
+                confirm="This will discard the data in this submission, are you sure?"
+              ) }}
+            </span>
+          </td>
+        </tr>
+      {% endfor %}
+    </table>
+  </div>
+
+{% endmacro %}

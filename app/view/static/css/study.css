@@ -1,0 +1,84 @@
+.study-page {
+  nav ul {
+    margin: 0;
+    padding-left: 12px;
+
+    li::marker {
+      font-weight: 900;
+      content: "> ";
+    }
+  }
+
+  .small {
+    font-size: 14px;
+  }
+
+  h1 {
+    color: var(--dark-blue);
+  }
+
+  h2 {
+    border-bottom: 2px solid var(--light-blue);
+    padding-bottom: 4px;
+  }
+
+  h3 {
+    margin-top: 0;
+  }
+
+  .navigation-buttons {
+    .icon {
+      display: inline-block;
+      width: 18px;
+      height: 18px;
+      vertical-align: bottom;
+    }
+  }
+
+  .experiments {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin-top: 20px;
+
+    .measurement-context-container {
+      margin-top: 6px;
+    }
+
+    .bioreplicates-list li {
+      margin-top: 6px;
+    }
+  }
+
+  .chart-placeholder {
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 52px;
+    opacity: 0.5;
+  }
+
+  .experiments-toc {
+    position: sticky;
+    top: 20px;
+    margin-top: 20px;
+    margin-left: 20px;
+    flex: 1;
+    min-width: 200px;
+
+    h2 {
+      font-size: 16px;
+      margin-top: 10px;
+      margin-bottom: 10px;
+    }
+    h2:first-child {
+      margin-top: 0;
+    }
+
+    ol {
+      margin: 0;
+      padding-left: 20px;
+    }
+  }
+}

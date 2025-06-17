@@ -1,0 +1,44 @@
+{% extends '_layout.html' %}
+
+{% block title %}: Project {{ project.projectId }}{% endblock %}
+
+{% block content %}
+  <div class="container">
+    <article>
+      <h2>{{ project.projectName }}</h2>
+
+      {% if g.current_user and g.current_user.uuid in project.managerUuids: %}
+        <br>
+        <div class="warning-message">
+          Private UUID: <code class="inline">{{ project.uuid }}</code>
+
+          <div class="help">
+            This private ID can be used to gain access to the project for
+            editing purposes. Only share it with other users that need that
+            access.
+          </div>
+        </div>
+      {% endif %}
+
+      <p>
+        {{ project.projectDescription }}
+      </p>
+
+      <h3>List of studies</h3>
+
+      <ul>
+        {% for study in project.studies: %}
+          <li>
+            <a href="{{ url_for('study_show_page', studyId=study.studyId) }}">
+              [{{ study.studyId }}] {{ study.studyName }}
+            </a>
+
+            <p>
+              {{ study.studyDescription }}
+            </p>
+          </li>
+        {% endfor %}
+      </ul>
+    </article>
+  </div>
+{% endblock %}

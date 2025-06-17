@@ -1,0 +1,38 @@
+{% extends '_layout.html' %}
+
+{% block title %}: Help{% endblock %}
+
+{% block content %}
+  <div class="container help-page-index">
+    <h1>
+      <span class="icon icon-emoji">❓</span>
+      Help
+    </h1>
+
+    <br>
+
+    <form action="{{ url_for('help_index_page') }}" class="simple-form">
+      <div class="form-row">
+        <label class="full">
+          <input
+              type="text"
+              name="query"
+              placeholder="🔍 Search (type at least 3 characters)"
+              value="{{ request.args.get('query', '') }}"
+              class="form-input-blue full js-search-input" />
+        </label>
+
+        <a href="{{ url_for('help_index_page') }}" class="white-button flex-right">Reset</a>
+      </div>
+    </form>
+
+    <br>
+
+    <article>
+      <ul class="page-list js-page-list">
+        {% include 'pages/help/_page_list.html' %}
+      </ul>
+    </article>
+  </div>
+
+{% endblock %}

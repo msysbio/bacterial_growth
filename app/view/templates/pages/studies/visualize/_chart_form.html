@@ -1,0 +1,139 @@
+{% macro render_chart_form(form, study) %}
+  <div class="form-row">
+    <label>
+      <span>Experiment:</span>
+      <select name="experimentId" class="form-input-blue full">
+        {% for experiment in study.experiments: %}
+          <option value="{{ experiment.id }}">
+            {{- experiment.name }}: {{ experiment.description -}}
+          </option>
+        {% endfor %}
+      </select>
+    </label>
+  </div>
+
+  {% for experiment in study.experiments: %}
+    <div
+        class="experiment-container hidden js-experiment-container"
+        data-experiment-id="{{ experiment.id }}">
+      <p>{{ experiment.description }}</p>
+    </div>
+  {% endfor %}
+
+  <div class="form-row margin-top-10">
+    <label class="full">
+      <span>Measurement technique:</span>
+      <select name="techniqueId" class="form-input-blue full">
+        {% for technique in study.measurementTechniques: %}
+          <option value="{{ technique.id }}" data-subject-type="{{ technique.subjectType }}">
+          {{- technique.long_name_with_subject_type -}}
+          </option>
+        {% endfor %}
+      </select>
+    </label>
+  </div>
+
+  {% for experiment in study.experiments: %}
+    <div
+        class="experiment-container margin-top-10 hidden js-experiment-container"
+        data-experiment-id="{{ experiment.id }}">
+      <div class="experiment">
+        {% for technique in study.measurementTechniques: %}
+          {% for (bioreplicate, compartment), contexts in technique.get_grouped_contexts() if bioreplicate.experimentId == experiment.id: %}
+            {% if technique.subjectType != 'bioreplicate': %}
+              <div
+                  class="form-row hidden js-technique-row"
+                  data-technique-id="{{ technique.id }}">
+                {% if bioreplicate.name.startswith('Average('): %}
+                  {% set description = "Average measurements over compartment {} across all biological replicates of the experiment {}.".format(compartment.name, experiment.name) %}
+                {% else: %}
+                  {% set description = "Measurements in compartment {} of biological replicate {}".format(compartment.name, bioreplicate.name) %}
+                {% endif %}
+
+                <h4 data-tooltip="{{ description }}">
+                  {% if experiment.compartments|length <= 1: %}
+                    {{ bioreplicate.name }}
+                  {% else: %}
+                    {{ bioreplicate.name }}<sub>{{ compartment.name }}</sub>
+                  {% endif %}
+                </h4>
+              </div>
+            {% endif %}
+
+            {% for measurement_context in contexts: %}
+              {% set subjectType = measurement_context.subjectType %}
+              {% set subject     = measurement_context.get_subject(g.db_session) %}
+
+              {% set key = "measurementContext|{}".format(measurement_context.id) %}
+
+              <div
+                  class="form-row hidden js-technique-row js-context-row"
+                  data-technique-id="{{ measurement_context.techniqueId }}">
+                <input
+                    type="checkbox"
+                    name="{{ key }}"
+                    id="{{ key }}"
+                    {{ "checked" if measurement_context.id in form.measurement_context_ids }}
+                    {{ "data-axis-left" if measurement_context.id in form.left_axis_ids }}
+                    {{ "data-axis-right" if measurement_context.id in form.right_axis_ids }}
+                    class="js-measurement-toggle" />
+                <label for="{{ key }}">
+                  {{ subject.compartments }}
+
+                  {% if subjectType == 'bioreplicate' and experiment.compartments|length > 1: %}
+                    {{ subject.name }}<sub>{{ measurement_context.compartment.name }}</sub>
+                  {% else: %}
+                    {{ subject.name }}
+                  {% endif %}
+                </label>
+              </div>
+            {% endfor %}
+          {% endfor %}
+        {% endfor %}
+
+        <div class="form-row margin-top-10">
+          <a href="#" class="white-button js-select-all">Select all</a>
+          <a href="#" class="white-button flex-right js-clear-chart">Clear</a>
+        </div>
+
+        <div class="form-row">
+          <label class="full">
+            <span>Cell count units:</span>
+            <select name="cellCountUnits" class="form-input-blue full">
+              <option>Cells/mL</option>
+              <option>Cells/μL</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="form-row">
+          <label class="full">
+            <span>CFU count units</span>
+            <select name="cfuCountUnits" class="form-input-blue full">
+              <option>CFUs/mL</option>
+              <option>CFUs/μL</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="form-row">
+          <label class="full">
+            <span>Metabolite units:</span>
+            <select name="metaboliteUnits" class="form-input-blue full">
+              <optgroup label="Molar concentration">
+                <option value="mM">Milimolars (mM)</option>
+                <option value="μM">Micromolars (μM)</option>
+                <option value="nM">Nanomolars (nM)</option>
+                <option value="pM">Picomolars (pM)</option>
+              </optgroup>
+              <optgroup label="Mass concentration">
+                <option value="g/L">Grams per Liter (g/L)</option>
+              </optgroup>
+            </select>
+          </label>
+        </div>
+      </div>
+    </div>
+  {% endfor %}
+
+{% endmacro %}

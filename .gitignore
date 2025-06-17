@@ -1,26 +1,35 @@
-# Database files
-src/*.sql
-.streamlit/secrets.toml
+# Ignore __pycache__ globally:
+__pycache__
 
-src/names.dmp
-src/taxonomy_names.csv
-src/filtered_names.json
-.venv/
-__pycache__/
+# Ignore route dump used for tooling purposes and other Vim stuff:
+.routes.json
+.projections.json
+_project.vim
 
-# Server files
-#Data/
-IntermediateFiles/
+# Ignore _build from readthedocs when run locally
+docs/_build/
 
-# ========================================================================
+# Ignore AutoAPI specific output (if necessary)
+docs/api/
 
-src/__pycache__/
-src/__pycache__/*
+# Ignore var/ directory where the running process can store things
+var/backups/*
+var/mysql/*
+!var/backups/.keep
+!var/mysql/.keep
 
-# Ignore our secrets
-# secrets.toml
-poetry.lock
-pyproject.toml
+# Configuration contains passwords, copy config/database.toml.example:
+db/config.toml
 
+# Compiled assets:
+app/view/static/build/*
+app/view/static/.webassets-cache/*
 
-app/templates/yaml_templates/
+# Micromamba environment
+.micromamba/*
+
+# Test coverage data
+.coverage
+
+# Environment configuration
+.env

@@ -1,0 +1,108 @@
+{% extends '_layout.html' %}
+
+{% block title %}: Export study {{ studyId }}{% endblock %}
+
+{% block content %}
+  <div class="container study-page export-page" data-study-id="{{ studyId }}">
+    {% include 'pages/studies/_header.html' %}
+
+    <article>
+      <h1>{{ study.studyName }}</h1>
+
+      {% include 'pages/studies/_navigation_buttons.html' %}
+
+      <p>
+        {{ study.studyDescription }}
+      </p>
+
+      <form
+          class="simple-form"
+          action="{{ url_for('study_download_data_zip', studyId=studyId) }}"
+          method="GET">
+        <div class="flex-row columns">
+          <div class="column column-left">
+            <h2>Export options</h2>
+
+            <div class="section-delimiter">
+              <h4>CSV Delimiter</h4>
+
+              <label>
+                <input type="radio" name="delimiter" value="comma" checked />
+                Comma
+              </label>
+
+              <label>
+                <input type="radio" name="delimiter" value="tab" />
+                Tab
+              </label>
+
+              <label>
+                <input type="radio" name="delimiter" value="custom" />
+
+                Custom
+
+                <input
+                    type="text"
+                    name="custom_delimiter"
+                    value="|"
+                    maxlength="1"
+                    class="form-input-blue" />
+              </label>
+            </div>
+
+            <div class="section-all-none">
+              <h2>Biological replicates</h3>
+
+              <div class="form-row">
+                <button type="button" class="js-select-all white-button">Select all</button>
+                <button type="button" class="js-select-none white-button">Select none</button>
+              </div>
+            </div>
+
+            {% for experiment in study.experiments: %}
+              <div class="section-experiment">
+                <h4>Experiment: {{ experiment.name }}</h4>
+
+                <p>
+                  {{ experiment.description }}
+                </p>
+
+                <div class="section-bioreplicates box">
+                  {% for bioreplicate in experiment.bioreplicates: %}
+                    <label>
+                      <input
+                          type="checkbox"
+                          name="bioreplicates"
+                          value="{{ bioreplicate.id }}"
+                          checked />
+                      {{ bioreplicate.name }}
+                    </label>
+                  {% endfor %}
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+
+          <div class="column column-right">
+            <h2>Preview (first 5 rows)</h2>
+
+            <div class="preview js-preview box">
+
+            </div>
+          </div>
+        </div>
+
+        <div class="form-row submit-row">
+          <input type="submit" class="green-button" value="Download ZIP file" />
+
+          <div class="separator">or</div>
+
+          <div class="copy-button-wrapper flex-row flex-grow">
+            <button type="button" class="js-copy-button copy-button green-button">Copy 📋</button>
+            <input type="text" value="" class="js-export-url export-url form-input-blue" readonly />
+          </div>
+        </div>
+      </form>
+    </article>
+  </div>
+{% endblock %}

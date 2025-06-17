@@ -1,0 +1,12 @@
+{% macro render_strain_link(strain) %}
+  {% if strain.defined: %}
+    {{ strain.NCBId|ncbi_url|external_link(strain.name) }}
+  {% else: %}
+    {{ strain.name }}
+    (from {{ strain.NCBId|ncbi_url|external_link("NCBI:{}".format(strain.NCBId)) }})
+    {%- if strain.description: -%}
+      <br>
+      {{ strain.description }}
+    {% endif %}
+  {% endif %}
+{% endmacro %}

@@ -1,0 +1,169 @@
+{% macro render_modeling_form(study) %}
+
+  <input type="hidden" name="selectedMeasurementContextId" />
+
+  <div class="form-row">
+    <label>
+      <span>Experiment:</span>
+      <select name="experimentId" class="form-input-blue full">
+        {% for experiment in study.experiments: %}
+          <option value="{{ experiment.id }}">
+          {{- experiment.name }}: {{ experiment.description -}}
+          </option>
+        {% endfor %}
+      </select>
+    </label>
+  </div>
+
+  {% for experiment in study.experiments: %}
+    <div
+        class="experiment-container hidden js-experiment-container"
+        data-experiment-id="{{ experiment.id }}">
+      <p>{{ experiment.description }}</p>
+    </div>
+  {% endfor %}
+
+  <div class="form-row margin-top-10">
+    <label class="full">
+      <span>Measurement technique:</span>
+      <select name="techniqueId" class="form-input-blue full">
+        {% for technique in study.measurementTechniques if technique.is_growth: %}
+          <option value="{{ technique.id }}" data-subject-type="{{ technique.subjectType }}">
+          {{- technique.long_name_with_subject_type -}}
+          </option>
+        {% endfor %}
+      </select>
+    </label>
+  </div>
+
+  {% for experiment in study.experiments: %}
+    <div
+        class="experiment-container margin-top-10 hidden js-experiment-container"
+        data-experiment-id="{{ experiment.id }}">
+      <div class="experiment">
+        {% for technique in study.measurementTechniques if technique.is_growth: %}
+          {% for (bioreplicate, compartment), contexts in technique.get_grouped_contexts() if bioreplicate.experimentId == experiment.id: %}
+            {% if technique.subjectType != 'bioreplicate': %}
+              <div
+                  class="form-row hidden js-technique-row"
+                  data-technique-id="{{ technique.id }}">
+                {% if bioreplicate.name.startswith('Average('): %}
+                  {% set description = "Average measurements over compartment {} across all biological replicates of the experiment {}.".format(compartment.name, experiment.name) %}
+                {% else: %}
+                  {% set description = "Measurements in compartment {} of biological replicate {}".format(compartment.name, bioreplicate.name) %}
+                {% endif %}
+
+                <h4 data-tooltip="{{ description }}">
+                  {{ bioreplicate.name }}
+                  {%- if experiment.compartments|length > 1: -%}
+                    <sub>{{ compartment.name }}</sub>
+                  {%- endif -%}
+                </h4>
+              </div>
+            {% endif %}
+
+            {% for measurement_context in contexts: %}
+              {% set subjectType = measurement_context.subjectType %}
+              {% set subject     = measurement_context.get_subject(g.db_session) %}
+
+              {% set key = "measurementContext|{}".format(measurement_context.id) %}
+
+              <div
+                  class="form-row hidden model-row js-technique-row"
+                  data-technique-id="{{ technique.id }}">
+                <input
+                    type="radio"
+                    name="selectedContext"
+                    value="{{ key }}"
+                    id="{{ key }}"
+                    class="js-measurement-toggle" />
+                <label for="{{ key }}">
+                  {% if subjectType == 'bioreplicate' and experiment.compartments|length > 1 %}
+                    {{ subject.name }}<sub>{{ measurement_context.compartment.name }}</sub>
+                  {% else: %}
+                    {{ subject.name }}
+                  {% endif %}
+                </label>
+
+                <div class="js-modeling-result-state flex-right">
+                  {% for modeling_result in measurement_context.modelingResults: %}
+                    <div
+                        data-modeling-type="{{ modeling_result.type }}"
+                        class="hidden">
+                      {% if modeling_result.state == 'ready': %}
+                        ✅
+                      {% elif modeling_result.state == 'error': %}
+                        ❌
+                      {% elif modeling_result.state == 'in_progress': %}
+                        ⏳
+                      {% endif %}
+                    </div>
+                  {% endfor %}
+                </div>
+              </div>
+            {% endfor %}
+          {% endfor %}
+        {% endfor %}
+
+        <div class="form-row margin-top-10">
+          <a href="#" class="white-button js-select-all">Select all</a>
+          <a href="#" class="white-button flex-right js-clear-chart">Clear</a>
+        </div>
+      </div>
+    </div>
+  {% endfor %}
+
+  <hr>
+
+  <div class="modeling-fields">
+    <div class="form-row">
+      <label class="full">
+        <span>Modeling type</span>
+        <select name="modelingType" class="form-input-blue form-input-full">
+          <option value="easy_linear">"Easy linear" method</option>
+          <option value="logistic">Logistic model</option>
+          <option value="baranyi_roberts">Baranyi-Roberts model</option>
+        </select>
+      </label>
+    </div>
+
+    <div class="form-row hidden" data-modeling-input data-modeling-input-easy_linear>
+      <div class="form-row margin-top-10">
+        <label data-tooltip="Set to limit the number of points to use to determine the slope">
+          <span>Point count:</span>
+          <input
+              type="number"
+              name="pointCount"
+              min="2"
+              class="form-input-blue form-input-full"
+              value="{{ request.form['pointCount'] or 5 }}" />
+        </label>
+      </div>
+    </div>
+
+    <div class="form-row full hidden" data-modeling-input data-modeling-input-logistic data-modeling-input-baranyi_roberts>
+      <label class="full" data-tooltip="Set to limit the end value on the x-axis to pick for the calculation">
+        <span>End time:</span>
+        <input
+            type="number"
+            name="endTime"
+            min="0"
+            class="form-input-blue form-input-full"
+            value="{{ request.form['endTime'] or '' }}" />
+      </label>
+    </div>
+
+    <h3>Calculation status</h3>
+
+    <div class="help">
+      <div class="js-calculation-result">
+        Pending, submit the form to start calculation process.
+      </div>
+    </div>
+
+    <div class="flex-column flex-gap-10">
+      <input type="submit" class="flex-end" value="Calculate" />
+    </div>
+  </div>
+
+{% endmacro %}

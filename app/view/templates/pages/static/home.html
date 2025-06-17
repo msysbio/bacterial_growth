@@ -1,0 +1,77 @@
+{% extends '_layout.html' %}
+
+{% block content %}
+  <header>
+    <img width="640" height="200" src="{{ url_for('static', filename='images/logo.png') }}" />
+  </header>
+
+  <div class="container">
+    <article>
+      <h2>Welcome to µGrowthDB{% if g.current_user: %}, {{ g.current_user.name }}{% endif %}</h2>
+
+      <p>
+        µGrowthDB is a relational database that provides a structure to store
+        different types of microbial growth data. Our main objective is to
+        serve as a comprehensive resource for researchers interested in
+        studying the growth dynamics of microbial species by providing access
+        to growth projects and studies uploaded by other researchers.
+      </p>
+
+      <h3>
+        <a href="{{ url_for('search_index_page') }}">
+          Search for growth studies
+        </a>
+      </h3>
+
+      <p>
+        Users can search for experimental data collected from microbial growth
+        studies based on the study or project name. The search can be filtered
+        by different experimental conditions and characteristics like the
+        microbial strains or metabolites that were analyzed in the study.
+        All of the data at µGrowthDB is publicly available for everyone.
+        {{ "searching"|help_link("Read more") }}.
+      </p>
+
+      <h3>
+        <a href="{{ url_for('upload_status_page') }}">
+          Upload your project
+        </a>
+      </h3>
+
+      <p>
+        At µGrowthDB, we recognize the invaluable contributions of researchers
+        in advancing our understanding of microbial dynamics. Sharing growth
+        data publicly plays a crucial role in increasing scientific progress
+        and collaboration within the research community.
+      </p>
+
+      <p>
+        We allow researchers to authenticate themselves using
+        {{ "https://orcid.org/"|external_link("ORCID iD") }}
+        and upload their experimental data by following a step-by-step process
+        that ensures it fits a standardized structure.
+        {{ "upload-process"|help_link("Read more") }}.
+      </p>
+
+      <h3>
+        Visualize and analyze growth data
+      </h3>
+
+      <p>
+        Visitors can visualize the growth of microbial cultures within or
+        across experiments in any published study. They can also collect data
+        traces in different studies and investigate them in our
+        "<a href="{{ url_for('comparison_show_page') }}">Comparison view</a>".
+        For further analysis, the raw data can be downloaded from studies' "export" pages.
+      </p>
+
+      <p>
+        Study owners can fit select growth models to their data through the web interface, courtesy of the
+        {{ "https://cran.r-project.org/web/packages/growthrates/"|external_link("growthrates R package") }}.
+        Growth parameters can be downloaded in CSV format.
+
+        {{ "data-analysis"|help_link("Read more") }}.
+      </p>
+    </article>
+  </div>
+{% endblock %}

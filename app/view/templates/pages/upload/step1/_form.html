@@ -1,0 +1,173 @@
+{% macro render_step1_form(submission_form, submission) %}
+  <p>
+    A project groups multiple studies together. You can start a new project or
+    select an existing one. This name must be unique across our database.
+  </p>
+
+  <p>
+    Your study should describe a focused investigation on a particular research
+    question. Each study may have contain multiple experiments described in
+    later steps. Select one from the list to update the existing information.
+  </p>
+
+  <form
+      method="POST"
+      action="{{ url_for('upload_step1_page') }}"
+      class="simple-form">
+
+    {% if submission_form.errors: %}
+      <ul class="error-message-list">
+        {% for message in submission_form.error_messages(): %}
+          <li>{{ message }}</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+
+    <div class="columns">
+      <div class="column project-column">
+        <h3>Project</h3>
+
+        <br>
+
+        <div class="form-row">
+          <select
+              name="project_uuid"
+              id="project_uuid"
+              class="form-input-blue form-input-full js-project-select">
+            <option
+                value="_new"
+                data-name="{{ submission.studyDesign['project']['name'] or '' }}"
+                data-description="{{ submission.studyDesign['project']['description'] or '' }}">
+              New project
+            </option>
+
+            {% for project in g.current_user.managedProjects: %}
+              <option
+                  value="{{ project.projectUniqueID }}"
+                  {{ "selected" if project.projectUniqueID == submission.projectUniqueID }}
+                  data-name="{{ project.projectName }}"
+                  data-description="{{ project.projectDescription }}"
+                  data-study-uuids='{{ project.studyUuids|tojson }}'>
+                [{{ project.projectId }}] {{ project.projectName }}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="form-row">
+          <label class="full">
+            <span class="required">Project name:</span>
+            <input
+                type="text"
+                name="project_name"
+                required
+                value="{{ submission.studyDesign['project']['name'] or '' }}"
+                class="form-input-full form-input-blue {{ "error" if submission_form.has_error('project_name') }}"
+                placeholder="Example: A flexible Pipeline for Environmental DNA Metabarcoding Analysis..." />
+        </div>
+
+        <div class="form-row">
+          <label class="full">
+            <span>Project description:</span>
+            <textarea
+                name="project_description"
+                placeholder="Description of the studies collected in this project."
+                class="form-input-full form-input-blue">{{ submission.studyDesign['project']['description'] or '' }}</textarea>
+        </div>
+      </div>
+
+      <div class="column study-column">
+        <h3>Study</h3>
+
+        <br>
+
+        <div class="form-row">
+          <select
+              name="study_uuid"
+              id="study_uuid"
+              class="form-input-blue form-input-full js-study-select">
+            <option
+                value="_new"
+                data-name="{{ submission.studyDesign['study']['name'] or '' }}"
+                data-description="{{ submission.studyDesign['study']['description'] or '' }}">
+              New study
+            </option>
+
+            {% for study in g.current_user.managedStudies: %}
+              <option
+                  value="{{ study.studyUniqueID }}"
+                  {{ "selected" if study.studyUniqueID == submission.studyUniqueID }}
+                  data-name="{{ study.studyName }}"
+                  data-description="{{ study.studyDescription }}"
+                  data-project-uuid="{{ study.projectUniqueID }}">
+                [{{ study.studyId }}] {{ study.studyName }}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="form-row">
+          <label class="full">
+            <span class="required">Study name:</span>
+            <input
+                type="text"
+                name="study_name"
+                required
+                value="{{ submission.studyDesign['study']['name'] or '' }}"
+                class="form-input-full form-input-blue {{ "error" if submission_form.has_error('study_name') }}"
+                placeholder="Example: Cultivation of Bacterial Strains A, B and C" />
+        </div>
+
+        <div class="form-row">
+          <label class="full">
+            <span>Study description:</span>
+            <textarea
+                name="study_description"
+                placeholder="Example: Bacterial strains A, B, and C were growth in conditions D and E. Co-cultures and monocultures of each strains were studied. Growth, pH, metabolites were measured with F, G and H methods."
+                class="form-input-full form-input-blue">{{ submission.studyDesign['study']['description'] or '' }}</textarea>
+        </div>
+
+        <div class="form-row">
+          <label class="full">
+            <span>Study publication URL:</span>
+            <input
+                type="url"
+                name="study_url"
+                value="{{ submission.studyDesign['study']['url'] or '' }}"
+                class="form-input-full form-input-blue {{ "error" if submission_form.has_error('study_name') }}"
+                placeholder="Example: https://doi.org/10.1000/182" />
+        </div>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <label>
+        <span>Reuse study design from a previous study:</span>
+
+        <select
+            name="reuse_study_uuid"
+            id="reuse_study_uuid"
+            class="form-input-blue form-input-full">
+          <option value="">
+          </option>
+          {% for study in g.current_user.managedStudies: %}
+            <option value="{{ study.studyUniqueID }}">
+              [{{ study.studyId }}] {{ study.studyName }}
+            </option>
+          {% endfor %}
+        </select>
+
+        <div class="help">
+          If you choose a previous study, the following steps will be
+          pre-populated with the same strains, metabolites, etc. You might be
+          able to save some time and avoid re-entering the same details.
+        </div>
+      </label>
+    </div>
+
+    <div class="form-row">
+      <input type="submit" value="Next" />
+    </div>
+  </form>
+
+{% endmacro %}

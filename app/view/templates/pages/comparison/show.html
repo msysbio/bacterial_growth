@@ -1,0 +1,109 @@
+{% from 'utils/_post_button.html' import post_button %}
+
+{% extends '_layout.html' %}
+
+{% block title %}: Comparison view{% endblock %}
+
+{% block content %}
+  <div class="container comparison-page">
+    <h1>
+      <span class="icon icon-emoji">↔️</span>
+      Comparison view
+    </h1>
+
+    <article>
+      <p>
+        Collect measurements from one or multiple studies by going to their
+        "Visualize" pages and using the "Compare" button. From this table, use
+        the checkbox to add them to the chart and compare values.
+      </p>
+
+      <div style="float: right;">
+        {{ post_button("Clear collected comparisons", url_for("comparison_clear_action")) }}
+      </div>
+      <div style="clear: both;"></div>
+
+      <form class="js-chart-form">
+        {% for (study, measurement_contexts) in measurement_contexts_by_study.items(): %}
+          <h4>
+            [<a href="{{ url_for('study_show_page', studyId=study.publicId) }}">{{ study.publicId }}</a>]
+            {{ study.name }}
+          </h4>
+
+          {% for measurement_context in measurement_contexts: %}
+            {% set subjectType = measurement_context.subjectType %}
+            {% set subject     = measurement_context.get_subject(g.db_session) %}
+            {% set experiment  = measurement_context.bioreplicate.experiment %}
+
+            {% set key = "measurementContext|{}".format(measurement_context.id) %}
+
+            <div
+                class="form-row js-technique-row"
+                data-technique-id="{{ measurement_context.techniqueId }}"
+                data-bioreplicate-id="{{ measurement_context.bioreplicateId }}"
+                data-compartment-id="{{ measurement_context.compartmentId }}">
+              <input type="checkbox" name="{{ key }}" id="{{ key }}" class="js-measurement-toggle" />
+              <label for="{{ key }}">
+                {{ experiment.name }}: {{ measurement_context.get_chart_label(g.db_session)|safe }}
+              </label>
+            </div>
+          {% endfor %}
+        {% endfor %}
+
+        <div class="form-row margin-top-10">
+          <div class="columns">
+            <div>
+              <a href="#" class="white-button js-select-all">Select all</a>
+              <a href="#" class="white-button flex-right js-clear-chart">Clear</a>
+            </div>
+
+            <label class="flex-column flex-right">
+              <span>Cell count units:</span>
+              <select name="cellCountUnits" class="form-input-blue">
+                <option>Cells/mL</option>
+                <option>Cells/μL</option>
+              </select>
+            </label>
+
+            <label class="flex-column">
+              <span>CFU count units</span>
+              <select name="cfuCountUnits" class="form-input-blue">
+                <option>CFUs/mL</option>
+                <option>CFUs/μL</option>
+              </select>
+            </label>
+
+            <label class="flex-column">
+              <span>Metabolite units:</span>
+              <select name="metaboliteUnits" class="form-input-blue">
+                <optgroup label="Molar concentration">
+                  <option value="mM">Milimolars (mM)</option>
+                  <option value="μM">Micromolars (μM)</option>
+                  <option value="nM">Nanomolars (nM)</option>
+                  <option value="pM">Picomolars (pM)</option>
+                </optgroup>
+                <optgroup label="Mass concentration">
+                  <option value="g/L">Grams per Liter (g/L)</option>
+                </optgroup>
+              </select>
+            </label>
+          </div>
+        </div>
+
+        <br>
+
+        <div class="data-container">
+          <div class="chart-row chart js-chart">
+            <div class="chart-placeholder">
+              📊
+            </div>
+          </div>
+        </div>
+      </form>
+    </article>
+  </div>
+
+  {% assets "plotly_js" %}
+  <script src="{{ ASSET_URL }}" type="text/javascript"></script>
+  {% endassets %}
+{% endblock %}

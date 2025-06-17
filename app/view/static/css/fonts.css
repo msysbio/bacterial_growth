@@ -1,0 +1,14 @@
+/**
+ * Public Sans
+ *
+ * Info: https://fonts.google.com/specimen/Public+Sans
+ * License: [SIL Open Font License](https://fonts.google.com/specimen/Public+Sans/license)
+ */
+
+@font-face {
+  font-family: 'Public Sans';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(/static/fonts/PublicSans-Regular.ttf) format('woff2');
+}

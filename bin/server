@@ -1,0 +1,13 @@
+#! /bin/sh
+
+python main.py
+
+# If there's a syntax error, the flask server will crash, let's rerun it on
+# change:
+
+inotifywait -m -e modify ./** |
+  while read file_path file_event file_name; do
+    echo "DEBUG: $file_path $file_event $file_name"
+    python main.py
+    sleep 0.1
+  done

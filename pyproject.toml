@@ -1,0 +1,14 @@
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
+
+[tool.pytest_env]
+APP_ENV = "test"
+
+[tool.coverage.run]
+omit = [
+  "tests/*",
+  ".micromamba/*",
+]
+[tool.coverage.html]
+directory = "docs/test_coverage"

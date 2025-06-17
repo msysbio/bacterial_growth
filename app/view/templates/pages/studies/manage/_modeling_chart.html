@@ -1,0 +1,77 @@
+{% set units = measurement_context.technique.units %}
+
+{% macro render_param_input(data, name, description, show_units=False) %}
+  {% if data and name in data: %}
+    <div class="form-row">
+      <label class="full">
+        <span data-tooltip="{{ description }}">
+          {% if show_units and units != '': %}
+            {{ name }} ({{ units }}):
+          {% else: %}
+            {{ name }}:
+          {% endif %}
+        </span>
+        <input
+            type="text"
+            name="param-{{ name }}"
+            class="form-input-blue form-input-full"
+            value="{{ data[name] or '' }}"
+            readonly />
+      </label>
+    </div>
+  {% endif %}
+{% endmacro %}
+
+<div class="chart-container js-chart-preview">
+  {{ chart.to_html()|safe }}
+</div>
+
+<div class="form-row">
+  <input
+      type="checkbox"
+      class="js-log"
+      name="logTransform"
+      {{ "checked" if log_transform }} />
+  <span>Log view</span>
+</div>
+
+<br>
+
+
+<div class="columns">
+  <div class="column" style="width: 50%;">
+    <h3 style="margin-top: 10px">Coefficients:</h3>
+
+    {{ render_param_input(model_coefficients, "y0",    "y₀: initial value of abundance", show_units=True) }}
+    {{ render_param_input(model_coefficients, "y0_lm", "y₀ calculated as the intersection of the fit with the abscissa, the initial abundance if there was no lag", show_units=True) }}
+    {{ render_param_input(model_coefficients, "mumax", "μ: maximum growth rate (1/time)") }}
+    {{ render_param_input(model_coefficients, "K",     "K: carrying capacity (max. abundance)", show_units=True) }}
+    {{ render_param_input(model_coefficients, "lag",   "time duration of lag phase") }}
+    {{ render_param_input(model_coefficients, "h0",    "h₀: parameter specifying the initial physiological state of organisms (e.g. cells) and in consequence the lag phase (h0 = max growth rate * lag phase)") }}
+  </div>
+
+  <div class="column" style="width: 50%;">
+    {% if model_inputs|length > 0: %}
+      <h3 style="margin-top: 10px">Input parameters:</h3>
+
+      {{ render_param_input(model_inputs, "pointCount", "Number of points used to determine the greatest upward slope") }}
+      {{ render_param_input(model_inputs, "endTime",    "Time threshold to avoid fitting a death phase") }}
+    {% endif %}
+
+    <h3 style="margin-top: 10px">Quality of fit:</h3>
+
+    {{ render_param_input(model_fit, "r2",  "R²: coefficient of determination") }}
+    {{ render_param_input(model_fit, "rss", "RSS: residual sum of squares") }}
+  </div>
+</div>
+
+{% if r_summary: %}
+<div class="r-summary">
+  <h3 style="margin-top: 10px">
+    Output from
+    {{ "https://cran.r-project.org/web/packages/growthrates/index.html"|external_link("growthrates") }}
+  </h3>
+
+  <pre>{{ r_summary }}</pre>
+</div>
+{% endif %}

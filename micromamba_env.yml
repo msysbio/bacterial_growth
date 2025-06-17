@@ -1,0 +1,9 @@
+name: mgrowthdb
+channels:
+  - conda-forge
+  - anaconda
+  - bioconda
+dependencies:
+  - python =3.12
+  - r
+  - numpy

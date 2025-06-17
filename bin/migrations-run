@@ -1,0 +1,94 @@
+#! /usr/bin/env python3
+
+import os
+import sys
+import subprocess
+import re
+from pathlib import Path
+from importlib import import_module
+
+import sqlalchemy as sql
+
+from db import get_connection, get_cli_connection_params
+from app.model.lib.migrate import run
+
+def main():
+    migration_dir = os.path.abspath(f"{os.path.dirname(__file__)}/../db/migrations")
+    migration_files = Path(migration_dir).glob('*.py')
+    migration_names = {path.stem for path in migration_files}
+
+    direction = sys.argv[1] if len(sys.argv) > 1 else "up"
+    if direction not in ('up', 'down'):
+        print("Invalid migration direction: {direction}. Expected 'up' or 'down'")
+        sys.exit(1)
+
+    with get_connection() as conn:
+        # Bootstrap first migration
+        conn.execute(sql.text("""
+            CREATE TABLE IF NOT EXISTS MigrationVersions (
+                id         BIGINT AUTO_INCREMENT,
+                name       VARCHAR(255),
+                migratedAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+
+                PRIMARY KEY (id)
+            );
+        """))
+        conn.commit()
+
+        query = "SELECT name FROM MigrationVersions WHERE migratedAt IS NOT NULL"
+        applied_migrations = {name for (name,) in conn.execute(sql.text(query)).all()}
+        pending_migrations = migration_names - applied_migrations
+
+        if direction == 'up':
+            if len(pending_migrations) == 0:
+                print("> Database up-to-date, nothing to do")
+            else:
+                for name in sorted(pending_migrations):
+                    migration_module = import_module(f"db.migrations.{name}")
+                    run(migration_module.__file__, migration_module.up, migration_module.down, direction="up")
+        else:
+            if len(applied_migrations) == 0:
+                print("> No applied migrations to roll back")
+            else:
+                latest_migration = max(applied_migrations)
+                migration_module = import_module(f"db.migrations.{latest_migration}")
+                run(migration_module.__file__, migration_module.up, migration_module.down, direction="down")
+
+        # Dump database snapshot into schema.sql, only in development mode:
+        if os.getenv('APP_ENV', 'development') == 'development':
+            schema_path = 'db/schema.sql'
+            db_connection_params = get_cli_connection_params()
+
+            with open(schema_path, 'w') as f:
+                print(f"> Dumping schema in {schema_path}...")
+
+                schema_output = subprocess.run([
+                    '/usr/bin/mysqldump',
+                    '--no-data',
+                    '--skip-quote-names',
+                    *db_connection_params,
+                ], capture_output=True).stdout.decode('utf-8')
+
+                # Remove auto increment snapshots
+                schema_output = re.sub(r' AUTO_INCREMENT=[0-9]*\b', '', schema_output)
+
+                migration_version_data = subprocess.run([
+                    '/usr/bin/mysqldump',
+                    '--no-create-info',
+                    '--skip-quote-names',
+                    '--compact',
+                    *db_connection_params,
+                    'MigrationVersions',
+                ], capture_output=True).stdout.decode('utf-8')
+
+                # Reformat into multiple lines to make diffs nicer
+                migration_version_data = migration_version_data.replace("VALUES (", "VALUES\n(")
+                migration_version_data = "),\n(".join(migration_version_data.split('),('))
+
+                schema_output = re.sub(r'-- Dump completed.*', f"{migration_version_data}", schema_output)
+                Path(schema_path).write_text(schema_output)
+
+
+
+if __name__ == "__main__":
+    main()

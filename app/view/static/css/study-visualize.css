@@ -1,0 +1,93 @@
+.study-visualize-page {
+  h4 {
+    margin-top: 0;
+  }
+
+  .chart-form {
+    margin-top: 20px;
+
+    label {
+      word-break: break-all;
+    }
+  }
+
+  .form-input-blue {
+    padding: 0.5rem !important;
+  }
+
+  .columns {
+    display: flex;
+    flex-direction: row;
+    column-gap: 10px;
+
+    .controls-column {
+      width: 30%;
+    }
+
+    .chart-column {
+      width: 70%;
+      overflow-x: hidden;
+    }
+  }
+
+  .contexts-list {
+    font-size: 14px;
+    display: flex;
+    flex-direction: column;
+
+    .context-row {
+      display: flex;
+      flex-direction: row;
+    }
+
+    .left, .right {
+      justify-content: center;
+      align-items: center;
+      flex-grow: 0;
+    }
+    .left {
+      border-right: 1px solid var(--border-color);
+      padding-right: 5px;
+    }
+    .right {
+      border-left: 1px solid var(--border-color);
+      padding-left: 5px;
+    }
+
+    .middle {
+      flex-grow: 1;
+      padding: 0 5px;
+      border-right: 0;
+      border-left: 2px solid var(--border-color);
+    }
+    .middle.align-right {
+      text-align: right;
+      border-left: 0;
+      border-right: 2px solid var(--border-color);
+    }
+  }
+
+  .data-controls {
+    border-bottom: 2px solid var(--border-color);
+    padding: 4px 0;
+    margin-bottom: 10px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+
+    .column {
+      display: flex;
+      flex-direction: row;
+    }
+
+    input[type="checkbox"] {
+      margin: 0;
+    }
+  }
+
+  .experiment {
+    display: flex;
+    flex-direction: column;
+    row-gap: 6px;
+  }
+}

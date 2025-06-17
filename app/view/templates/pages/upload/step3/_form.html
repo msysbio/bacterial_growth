@@ -1,0 +1,83 @@
+{% from 'pages/upload/step3/_bioreplicate_form.html' import render_bioreplicate_form %}
+{% from 'pages/upload/step3/_strain_form.html' import render_strain_form %}
+{% from 'pages/upload/step3/_metabolite_form.html' import render_metabolite_form %}
+
+{% macro render_step3_form(submission_form, upload_form) %}
+  <form
+      class="simple-form"
+      action="{{ url_for('upload_step3_page') }}"
+      method="POST">
+
+    {{ upload_form.csrf_token }}
+
+    <p>
+      For every type of growth measurement you performed, please add a new
+      entry by using the buttons below. In the next step, you'll download a
+      data template where the rows will each represent a biological replicate
+      and a time point, and the columns will match the measurements from these
+      techniques.
+    </p>
+
+    <ul>
+      <li>
+        <strong>Community-level</strong>:
+        Growth measurements of entire communities of cells within the same
+        vessel compartment, or of a property of the compartment (pH).
+      </li>
+      <li>
+        <strong>Strain-level</strong>:
+        Growth measurements for individiual microbial strains within a
+        compartment. Could be measured directly (e.g. via fluorescence), or it
+        could be calculated based on relative measurements multiplied by total
+        counts.
+      </li>
+      <li>
+        <strong>Metabolites</strong>:
+        Measurements of metabolite concentrations during cell growth. In case
+        you do not find a specific metabolite, choose the closest one from the
+        list and leave a note in the "Description" field. For more information
+        visit the
+        {{ "https://www.ebi.ac.uk/chebi"|external_link("ChEBI website") }}.
+      </li>
+    </ul>
+
+    <div class="js-subform-list flex-column flex-gap-10">
+      {% include 'pages/upload/step3/_subform_list.html' %}
+    </div>
+
+    <div class="form-row">
+      <p style="margin-top: 0; align-content: center;">
+        Add a type of measurement included in the study:
+      </p>
+
+      <div class="flex-right flex-row flex-gap-10">
+        <a href="#" class="white-button flex-row js-add-trigger js-add-bioreplicate">
+          <span class="icon icon-add"></span> Community
+        </a>
+        <a href="#" class="white-button flex-row js-add-trigger js-add-strains">
+          <span class="icon icon-add"></span> Strains
+        </a>
+        <a href="#" class="white-button flex-row js-add-trigger js-add-metabolites">
+          <span class="icon icon-add"></span> Metabolites
+        </a>
+      </div>
+    </div>
+
+    <template class="bioreplicate-form">
+      {{ render_bioreplicate_form(data=None, index=None) }}
+    </template>
+
+    <template class="strain-form">
+      {{ render_strain_form(data=None, index=None) }}
+    </template>
+
+    <template class="metabolite-form">
+      {{ render_metabolite_form(submission_form, data=None, index=None) }}
+    </template>
+
+    <div class="form-row">
+      <input type="submit" class="form-input-blue" value="Next" />
+    </div>
+  </form>
+
+{% endmacro %}

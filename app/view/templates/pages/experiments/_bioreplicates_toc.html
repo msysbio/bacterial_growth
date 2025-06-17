@@ -1,0 +1,21 @@
+{% macro render_bioreplicates_toc(experiment) %}
+
+  <div class="box bioreplicates-toc">
+    <h2>Biological replicates</h2>
+
+    <ol>
+      {% for bioreplicate in experiment.bioreplicates: %}
+        <li>
+          <a href="#bioreplicate-{{ bioreplicate.id }}" class="js-smooth-scroll">
+            {{ bioreplicate.name }}
+          </a>
+        </li>
+      {% endfor %}
+    </ol>
+
+    <a href="#" class="js-scroll-top">
+      Back to top ⬆️
+    </a>
+  </div>
+
+{% endmacro %}

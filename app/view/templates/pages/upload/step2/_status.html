@@ -1,0 +1,39 @@
+{% macro render_step2_status(submission_form, submission) %}
+
+  {% set strain_count        = submission.studyDesign['strains']|length %}
+  {% set custom_strain_count = submission.studyDesign['custom_strains']|length %}
+
+  <ul class="upload-status">
+    {% if strain_count > 0 or custom_strain_count > 0 %}
+      <li class="complete">
+        <span class="icon"></span>
+
+        {% if strain_count > 0: %}
+          <span>{{ strain_count }} strain(s) selected:</span>
+          <span class="truncate">
+            {{ submission_form.fetch_taxa()|map(attribute='short_name')|join_tag('strong') }}
+          </span>
+        {% else: %}
+          <span>No existing strain(s) selected</span>
+        {% endif %}
+      </li>
+      <li class="complete">
+        {% if custom_strain_count > 0: %}
+          <span class="icon"></span>
+          {{ custom_strain_count }} custom strain(s) added:
+          <span class="truncate">
+            {{ submission.studyDesign['custom_strains']|map(attribute='name')|join_tag('strong') }}
+          </span>
+        {% else: %}
+          <span class="icon"></span> No custom strain(s) added
+        {% endif %}
+      </li>
+
+    {% else %}
+      <li class="incomplete">
+        <span class="icon"></span> No strains added
+      </li>
+    {% endif %}
+  </ul>
+
+{% endmacro %}

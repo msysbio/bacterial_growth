@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+
+    <title>
+      µGrowthDB{% block title %}{% endblock %}
+    </title>
+
+    <link rel="icon" href="{{ url_for('static', filename='images/favicon.ico') }}" sizes="72x72">
+
+    {% assets "app_css" %}
+    <link rel="stylesheet" href="{{ ASSET_URL }}" type="text/css" media="screen" />
+    {% endassets %}
+
+    {% assets "app_js" %}
+    <script src="{{ ASSET_URL }}" type="text/javascript"></script>
+    {% endassets %}
+  </head>
+
+  <body>
+    <aside id="page-sidebar">
+      <div class="close-sidebar">
+        <a href="#">
+          <img alt="Close sidebar" src="{{ url_for('static', filename='images/icons/chevrons-left.svg') }}" />
+        </a>
+      </div>
+
+      <header>
+        <img src="{{ url_for('static', filename='images/logo_sidebar3.png') }}" />
+      </header>
+
+      <nav>
+        <ul class="nav-links">
+          <li>
+            <a href="{{ url_for('static_home_page') }}" class="home-link">
+              <div class="emoji-icon">🏠</div>
+              Home
+            </a>
+          </li>
+          <li>
+            <a href="{{ url_for('search_index_page') }}">
+              <div class="emoji-icon">🔍</div>
+              Search
+            </a>
+          </li>
+          <li>
+            {% if 'compareData' in session and session['compareData'].get('contexts', [])|length > 0 %}
+              {% set compareData = session['compareData']['contexts'] %}
+            {% else: %}
+              {% set compareData = [] %}
+            {% endif %}
+
+            <a
+                href="{{ url_for('comparison_show_page') }}"
+                class="js-sidebar-compare"
+                data-compare-ids='{{ compareData|join(',') }}'>
+              <div class="emoji-icon">↔</div>
+              Compare
+              <span class="js-count count">
+                {% if compareData|length > 0 %}
+                  ({{ compareData|length }})
+                {% endif %}
+              </span>
+            </a>
+          </li>
+          <li>
+            {% if g.current_user: %}
+              <a href="{{ url_for('user_show_page') }}">
+                <div class="emoji-icon">🧑‍🔬</div>
+                Profile
+              </a>
+            {% else: %}
+              <a href="{{ url_for('user_login_page') }}">
+                <div class="emoji-icon">🔐</div>
+                Log in
+              </a>
+            {% endif %}
+          </li>
+          <li>
+            <a href="{{ url_for('upload_status_page') }}">
+              <div class="emoji-icon">📤</div>
+              Upload data
+            </a>
+          </li>
+          <li>
+            <a href="{{ url_for('help_index_page') }}">
+              <div class="emoji-icon">❓</div>
+              Help
+            </a>
+          </li>
+          <li>
+            <a href="{{ url_for('static_about_page') }}">
+              <div class="emoji-icon">🥼</div>
+              About us
+            </a>
+          </li>
+          {% if g.current_user and g.current_user.isAdmin: %}
+            <li>
+              <a href="/admin/" style="border: 1px solid orange;">
+                <div class="emoji-icon">👷</div>
+                Admin
+              </a>
+            </li>
+          {% endif %}
+        </ul>
+      </nav>
+    </aside>
+
+    <main id="main">
+      <div class="open-sidebar">
+        <a href="#">
+          <img alt="Open sidebar" src="{{ url_for('static', filename='images/icons/chevrons-right.svg') }}" />
+        </a>
+      </div>
+
+      {% block content %}{% endblock %}
+    </main>
+  </body>
+</html>
