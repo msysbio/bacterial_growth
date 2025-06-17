@@ -120,7 +120,7 @@ html_js_files = [
 html_output_encoding = "utf-8"
 
 # -- Options for PDF output --------------------------------------------------
-latex_logo = "_static/logo-free-white.png"
+latex_logo = "_static/logo.png"
 
 # -- Templating --------------------------------------------------------------
 
