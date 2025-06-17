@@ -64,7 +64,7 @@ class Compartment(OrmBase):
             "H<sub>2</sub>":          (self.H2, '%'),
             "N<sub>2</sub>":          (self.N2, '%'),
             "inoculum concentration": (self.inoculumConcentration, ' Cells/mL'),
-            "inoculum volume":        (self.inoculumVolume, ' Cells/mL'),
+            "inoculum volume":        (self.inoculumVolume, ' mL'),
             "initial pH":             (self.initialPh, ''),
             "initial temperature":    (self.initialTemperature, '°C'),
         }
